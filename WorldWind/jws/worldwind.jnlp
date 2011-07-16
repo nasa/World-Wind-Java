@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--$Id$-->
+<jnlp spec="1.0"
+      codebase="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/"
+      href="worldwind.jnlp">
+    <information>
+        <title>NASA World Wind Java</title>
+        <vendor>NASA</vendor>
+        <homepage href="http://worldwind.arc.nasa.gov/java"/>
+        <description>NASA World Wind Java version 1.2.0</description>
+        <description kind="short">NASA World Wind Planetary Visualization Software Library</description>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+
+    <resources>
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="512m"
+              max-heap-size="512m"/>
+        <property name="sun.java2d.noddraw" value="true"/>
+        <jar href="worldwind.jar"/>
+        <extension name="jogl" href="http://worldwind.arc.nasa.gov/java/jogl/webstart/jogl.jnlp"/>
+    </resources>
+
+    <!--Include the WebView native library JAR archive for all Mac OS X platforms.-->
+    <!--The WebView libraries are required by World Wind BrowserBalloons.-->
+    <resources os="Mac OS X">
+        <nativelib href="webview-natives-macosx.jar"/>
+    </resources>
+
+    <!--Include the WebView native library JAR archive for Windows 32-bit and 64-bit platforms.-->
+    <!--The WebView libraries are required by World Wind BrowserBalloons.-->
+    <resources os="Windows">
+        <nativelib href="webview-natives-windows.jar"/>
+    </resources>
+
+    <component-desc/>
+</jnlp>

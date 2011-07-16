@@ -1,0 +1,13 @@
+<wms-config>
+
+    <server>
+
+        <auto-discovery run="true" period="0"/>
+
+        <datafilestore>
+            <config-file>wms.DataFileStore.xml</config-file>
+        </datafilestore>
+
+    </server>
+
+</wms-config>

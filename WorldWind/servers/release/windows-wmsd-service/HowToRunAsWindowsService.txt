@@ -1,0 +1,34 @@
+The new WMSD windows service is based on Apache Commons Daemon.
+
+The "windows-wmsd-service" contains two sub-directories (win32 and win64),
+which contain the wmsd.exe (NASA World Wind WMS windows service launcher)
+and the wmsdW.exe (service monitor with a user interface that allows to change service parameters).
+
+There is also a windows batch file InstallAsWindowsService.bat in the root folder of
+the NASA World Wind WMS distribution. The script installs (registers)
+the NASA World Wind WMS windows service launcher (wmsd.exe).
+You need to run this script as Administrator (in Vista, Win7, Win 2008 just login-in
+as Administrator is not enough, you need to elevate your access and use "Run as Adminstrator").
+Edit the batch file only if you want to change execution parameters : which JDK (JVM) to use, memory sizes, etc.
+
+Once installed, the wmsd.exe service registers itself as "NASA World Wind WMS (Web Map Service)".
+
+There are plenty ways to start/stop the service after the install.
+
+1. Open service.msc, locate  "NASA World Wind WMS (Web Map Service)" and manage the service using a GUI
+
+OR
+
+2. execute command "net start wmsd" or "net stop wmsd" (run cmd.exe as Administrator)
+
+OR
+
+3. go to c:\opt\wms and use "wmsd" or "wmsdW" command
+
+wmsdW //ES//wmsd (to run service monitor and change parameters)
+
+wmsd OR wmsd //RS//wmsd  (to start the wmsd service)
+
+wmsd //DS//wmsd (uninstall the wmsd service)
+
+wmsd //TS//wmsd (To run "wmsd" service in console mode, not as a service)

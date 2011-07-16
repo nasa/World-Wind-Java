@@ -1,0 +1,4 @@
+Name:       GeoExpress Decode SDK
+Version:    7.0.0.2167
+Platform:   darwin9.universal.gccA40
+Build type: Release

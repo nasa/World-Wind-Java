@@ -1,0 +1,29 @@
+
+#
+# Algorithms
+#
+
+GDAL_ROOT	=	..
+
+EXTRAFLAGS =	-I../ogr/ogrsf_frmts $(GEOS_CFLAGS) 
+
+!INCLUDE ..\nmake.opt
+
+!IFDEF INCLUDE_OGR_FRMTS
+EXTRAFLAGS = $(EXTRAFLAGS) -DOGR_ENABLED
+OBJ_OGR_RELATED =	contour.obj polygonize.obj
+!ENDIF
+
+OBJ =	gdaldither.obj gdalmediancut.obj gdal_crs.obj gdaltransformer.obj \
+	gdalsimplewarp.obj gdalwarper.obj gdalwarpkernel.obj \
+	thinplatespline.obj gdal_tps.obj gdalrasterize.obj llrasterize.obj \
+	gdalwarpoperation.obj gdalchecksum.obj gdal_rpc.obj gdalgeoloc.obj \
+	gdalgrid.obj gdalcutline.obj gdalproximity.obj rasterfill.obj \
+	gdalsievefilter.obj gdalrasterpolygonenumerator.obj \
+	$(OBJ_OGR_RELATED)
+
+default:	$(OBJ) 
+
+clean:
+	-del *.obj
+

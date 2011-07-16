@@ -1,0 +1,49 @@
+
+OBJ		=	mrsiddataset.obj mrsidstream.obj
+
+PLUGIN_DLL 	=	gdal_MrSID.dll
+
+EXTRAFLAGS 	= 	$(MRSID_INCLUDE) $(GEOTIFF_INC) $(MRSID_FLAGS)
+
+GDAL_ROOT	=	..\..
+
+!INCLUDE $(GDAL_ROOT)\nmake.opt
+
+!IFNDEF GEOTIFF_INC
+GEOTIFF_INC   =	-I..\gtiff\libgeotiff  -I..\gtiff\libtiff
+!ENDIF
+
+!IFNDEF GEOTIFF_LIB
+GEOTIFF_LIB   =	..\gtiff\libtiff\*.obj ..\gtiff\libgeotiff\*.obj
+!ENDIF
+
+!IFNDEF JPEG_LIB
+JPEG_LIB   =	..\jpeg\libjpeg\*.obj ..\jpeg\libjpeg12\*.obj
+!ENDIF
+
+!IFNDEF ZLIB_LIB
+ZLIB_LIB   =	..\zlib\*.obj 
+!ENDIF
+
+
+default:	$(OBJ)
+	$(INSTALL) *.obj ..\o
+
+clean:
+	-del *.obj
+	-del *.dll
+	-del *.exp
+	-del *.lib
+	-del *.manifest
+
+plugin:	$(PLUGIN_DLL)
+
+$(PLUGIN_DLL):	$(OBJ)
+	link /dll $(LDEBUG) /out:$(PLUGIN_DLL) $(OBJ) \
+		$(GDAL_ROOT)/gdal_i.lib $(MRSID_LIB) $(GEOTIFF_LIB) $(JPEG_LIB) $(ZLIB_LIB)
+	if exist $(PLUGIN_DLL).manifest mt -manifest $(PLUGIN_DLL).manifest -outputresource:$(PLUGIN_DLL);2
+
+plugin-install:
+	-mkdir $(PLUGINDIR)
+	$(INSTALL) $(PLUGIN_DLL) $(PLUGINDIR)
+

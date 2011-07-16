@@ -1,0 +1,55 @@
+<!-- $Id$  -->
+<html>
+<body>
+
+<p>
+    The NASA WorldWind Web Mapping Service (WMS) is an implementation of the Open GIS Consortium's (OGC) WMS
+    specification, version 1.3. It is currently implemented as a stand-alone java application, and as such, is rather
+    lightweight to deploy and run. It is however architected to look much like a standard J2EE container environment,
+    whereby a <i>servlet</i> object acts upon request/response objects that emulate the J2EE
+    <code>HttpServletRequest</code> and <code>HttpServletResponse</code> classes. The intent of this design is to
+    facilitate a straightforward code migration if the services of a full J2EE container environment become warranted.
+</p>
+
+<p>
+    The core WMS code provides mechanisms for validating and responding to WMS requests. All policies and capabilities
+    regarding the sources and organization of geospatial data to be served are made by way of plugin classes that are
+    implementations of the {@link gov.nasa.worldwind.servers.wms.MapGenerator} interface. As of this release of the WMS,
+    there are example <code>MapGenerator</code>s that serve the NASA Blue Marble next-generation high-resolution
+    imagery, as well as NITF raster data (cadrg and CIB).
+</p>
+
+<p>
+    Sources of geospatial data are configured into the WMS by adding <code>&lt;MapSource&gt;</code> elements to the
+    <code>WEB-INF/config.xml</code> file. <code>&lt;MapSource&gt;</code> elements must specify a name, a description, a
+    root-directory under which the geospatial data are located (directly or indirectly), and the name of the <code>MapGenerator</code>
+    class that generates the requested maps. Additionally, a set of Java-style properties may be included in the <code>
+    &lt;MapSource&gt;</code> element, which are presumed to be specific to the given <code>MapGenerator</code>.
+</p>
+
+<p>
+    An example <code>&lt;MapSource&gt;</code> specification for the Blue Marble Generator is shown below. As
+    distributed, the <a href="http://earthobservatory.nasa.gov/Newsroom/BlueMarble/">Blue Marble NG</a> high-resolution
+    series have a regular naming scheme that identifies the resolution, the depicted features, and an implicit
+    geo-referencing. The <code>MapGenerator</code> expects properties that specify substrings of this name scheme for
+    the particular data series, in this example, the 21600x21600 imagery with topographical and bathyrithmic features:
+</p>
+    <pre>
+        &lt;mapsource name="bmng200401" title="BlueMarbleNG 01/2004"&gt;
+             &lt;description keywords="NASA; Blue Marble; Global Imagery; 2004"&gt;Nasa's BlueMarbleNG, 2004&lt;/description&gt;
+             &lt;root-dir&gt;/data/bluemarble/bm200401&lt;/root-dir&gt;
+             &lt;class&gt;gov.nasa.worldwind.servers.wms.generators.BlueMarbleNG500MGenerator&lt;/class&gt;
+             &lt;property name="BlueMarble500M.defaultTime" value="200401"/&gt;
+             &lt;property name="BlueMarble500M.namingscheme.prefix" value="world.topo.bathy" /&gt;
+             &lt;property name="BlueMarble500M.namingscheme.suffix" value="gtif" /&gt;
+         &lt;/mapsource&gt;
+    </pre>
+<p>
+    NOTE: This Blue Marble <code>MapGenerator</code> implementation uses utility programs from <a
+    href="http://www.gdal.org">GDAL</a> to extract sub-regions from the source images; see <code>config.xml</code> for
+    how the location of the GDAL installation on the local system can be configured into the WMS. It is further expected
+    that the original Blue Marble images have been pre-processed to convert into GeoTiff format, with explicit
+    georeferencing added to the files. The GDAL utility <code>gdal_translate</code> can be used to perform both steps.
+</p>
+</body>
+</html>

@@ -1,0 +1,4 @@
+Name:       GeoExpress Decode SDK
+Version:    7.0.0.2167
+Platform:   win64-vc8
+Build type: Release

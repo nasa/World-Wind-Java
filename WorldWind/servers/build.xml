@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--$Id$-->
+<project name="servers">
+
+    <!-- Compiles all World Wind Java Server Application sources under the 'servers/src' folder into Java class files
+         under the 'servers/classes' folder. We configure the javac task parameters 'source' and 'target' in order to
+         explicitly control the Java compiler version used to build World Wind classes. Without these parameters, the
+         javac task would use the most recent compiler available on the current machine, and the Java compiler version
+         used to build WorldWind classes would be unpredictable. For this reason, the Apache ANT manual strongly
+         recommends specifying the 'source' and 'target' parameters. See the following link for more detail:
+         http://ant.apache.org/manual/CoreTasks/javac.html
+
+         The Java compiler version used by the javac task is defined by the build parameter 'worldwind.jdk.version'.
+         By default, this parameter is defined in the file 'build/build.properties'. -->
+    <target name="compile.servers" depends="compile"
+            description="Compiles all World Wind Java Server Application sources under the 'servers/src' folder into Java class files under the 'servers/classes' folder.">
+        <mkdir dir="${servers.classes.dir}"/>
+        <javac srcdir="${servers.src.dir}"
+               destdir="${servers.classes.dir}"
+               source="${worldwind.jdk.version}"
+               target="${worldwind.jdk.version}"
+               fork="true"
+               includeantruntime="false"
+               memoryMaximumSize="512m">
+            <classpath>
+                <pathelement location="${worldwind.classes.dir}"/>
+                <pathelement location="jogl.jar"/>
+                <pathelement location="gluegen-rt.jar"/>
+                <pathelement location="gdal.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Builds the World Wind Server Applications Jar file 'worldwind-servers.jar'. Includes all World Wind Server
+         Applications under the package 'gov.nasa.worldwind.servers'. Excludes files added by Subversion, and files
+         added by the operating system. The resultant Jar file is dependent on the World Wind core Jar file, and has
+         that Jar files added to its class-path. -->
+    <target name="servers.jarfile" depends="compile.servers"
+            description="Builds the World Wind Server Applications Jar file 'worldwind-servers.jar'.">
+        <jar jarfile="${servers.dir}/${servers.jarfile}">
+            <manifest>
+                <attribute name="Class-Path" value="${worldwind.jarfile}"/>
+            </manifest>
+            <!-- Include class files for the World Wind Server Applications package 'gov.nasa.worldwind.servers'. -->
+            <fileset dir="${servers.classes.dir}">
+                <include name="gov/nasa/worldwind/servers/**/*.class"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!-- Creates the World Wind Server Applications deployment in the folder 'servers-deployment'. Includes all files
+         under 'servers/release' in the folder 'servers-deployment', and all files under 'lib-external/gdal/data' in the
+         folder 'servers-deployment/gdaldata'. Includes the World Wind Server Applications Jar file, the World Wind core
+         Jar file, the GDAL Jar file, the JOGL Jar file, and the Gluegen Jar file in the folder 'servers-deployment/lib'.
+         Includes all GDAL native libraries and license files in the folder 'servers-deployment/lib'. -->
+    <target name="servers.deployment" depends="clean.servers.deployment,
+                                            servers.jarfile,
+                                            worldwind.jarfile"
+            description="Creates the World Wind Server Applications deployment in the folder 'servers-deployment'.">
+        <mkdir dir="${servers.deployment.dir}"/>
+        <copy todir="${servers.deployment.dir}">
+            <fileset dir="${servers.dir}/release"/>
+        </copy>
+        <mkdir dir="${servers.deployment.dir}/gdaldata"/>
+        <copy todir="${servers.deployment.dir}/gdaldata">
+            <fileset dir="${gdal.dir}/data"/>
+        </copy>
+        <mkdir dir="${servers.deployment.dir}/lib"/>
+        <copy todir="${servers.deployment.dir}/lib">
+            <fileset dir="${servers.dir}">
+                <include name="${servers.jarfile}"/>
+            </fileset>
+            <fileset dir="${basedir}">
+                <include name="worldwind.jar"/>
+                <include name="jogl.jar"/>
+                <include name="gluegen-rt.jar"/>
+                <include name="gdal.jar"/>
+            </fileset>
+            <fileset dir="${gdal.dir}">
+                <include name="*.dll"/>
+                <include name="*.jnilib"/>
+                <include name="*.manifest"/>
+                <include name="*.so"/>
+                <include name="*.txt"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Packages the World Wind Server Applications deployment into a ZIP archive 'servers-deployment.zip'. -->
+    <target name="servers.deployment.zipfile" depends="servers.deployment"
+            description="Packages the World Wind Server Applications deployment into a ZIP archive 'servers-deployment.zip'.">
+        <zip destfile="${servers.deployment.zipfile}">
+            <fileset dir="${servers.deployment.dir}"/>
+        </zip>
+    </target>
+
+    <!-- Individual clean targets corresponding to each build target above. -->
+    <target name="clean.servers.classes">
+        <delete dir="${servers.classes.dir}"/>
+        <delete dir="${servers.test.classes.dir}"/>
+    </target>
+    <target name="clean.servers.jarfile">
+        <delete file="${servers.dir}/${servers.jarfile}"/>
+    </target>
+    <target name="clean.servers.deployment">
+        <delete dir="${servers.deployment.dir}"/>
+        <delete file="${servers.deployment.zipfile}"/>
+    </target>
+    <!-- Main clean target for the World Wind Server Applications. Removes all files and directories created by all
+         World Wind Server Application build targets. -->
+    <target name="clean.servers.all" depends="clean.servers.classes,
+                                              clean.servers.jarfile,
+                                              clean.servers.deployment"
+            description="Removes all files and directories created by all World Wind Server Application build targets."/>
+
+</project>

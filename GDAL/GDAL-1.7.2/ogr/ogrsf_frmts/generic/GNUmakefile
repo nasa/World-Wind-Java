@@ -1,0 +1,125 @@
+
+
+include ../../../GDALmake.opt
+
+OBJ	=	ogrsfdriverregistrar.o ogrlayer.o ogrdatasource.o \
+		ogrsfdriver.o ogrregisterall.o ogr_gensql.o \
+		ogr_attrind.o ogr_miattrind.o
+
+BASEFORMATS = \
+	-DAVCBIN_ENABLED \
+	-DBNA_ENABLED \
+	-DCSV_ENABLED \
+	-DDGN_ENABLED \
+	-DGML_ENABLED \
+	-DGMT_ENABLED \
+	-DGPX_ENABLED \
+	-DMEM_ENABLED \
+	-DNTF_ENABLED \
+	-DREC_ENABLED \
+	-DS57_ENABLED \
+	-DSDTS_ENABLED \
+	-DSHAPE_ENABLED \
+	-DTAB_ENABLED \
+	-DTIGER_ENABLED \
+	-DVRT_ENABLED \
+	-DKML_ENABLED \
+	-DGEOJSON_ENABLED \
+	-DGEOCONCEPT_ENABLED \
+	-DXPLANE_ENABLED \
+	-DGEORSS_ENABLED \
+	-DGTM_ENABLED \
+	-DDXF_ENABLED
+
+CXXFLAGS :=     $(CXXFLAGS) -DINST_DATA=\"$(INST_DATA)\" $(BASEFORMATS)
+
+ifeq ($(HAVE_OGDI),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DOGDI_ENABLED
+endif
+
+ifeq ($(HAVE_OCI),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DOCI_ENABLED
+endif
+
+ifeq ($(HAVE_SDE),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DSDE_ENABLED
+endif
+
+ifeq ($(HAVE_OGR_PG),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DPG_ENABLED
+endif
+
+ifeq ($(HAVE_MYSQL),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DMYSQL_ENABLED
+endif
+
+ifeq ($(HAVE_INGRES),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DINGRES_ENABLED
+endif
+
+ifeq ($(PCIDSK_SETTING),internal)
+CXXFLAGS :=	$(CXXFLAGS) -DPCIDSK_ENABLED
+endif
+
+ifeq ($(PCIDSK_SETTING),external)
+CXXFLAGS :=	$(CXXFLAGS) -DPCIDSK_ENABLED
+endif
+
+ifeq ($(HAVE_FME),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DFME_ENABLED
+endif
+
+ifeq ($(ODBC_SETTING),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DODBC_ENABLED
+endif
+
+ifeq ($(PGEO_SETTING),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DPGEO_ENABLED
+endif
+
+ifeq ($(HAVE_DODS),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DDODS_ENABLED
+endif
+
+ifeq ($(HAVE_SQLITE),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DSQLITE_ENABLED
+endif
+
+ifeq ($(HAVE_GRASS),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DGRASS_ENABLED
+endif
+
+ifeq ($(HAVE_XERCES),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DILI_ENABLED
+endif
+
+ifeq ($(HAVE_NAS),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DNAS_ENABLED
+endif
+
+ifeq ($(HAVE_DWGDIRECT),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DDWGDIRECT_ENABLED
+endif
+
+ifeq ($(HAVE_IDB),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DIDB_ENABLED
+endif
+
+ifeq ($(HAVE_PANORAMA),yes)
+CXXFLAGS :=	$(CXXFLAGS) -DPANORAMA_ENABLED
+endif
+
+ifeq ($(HAVE_VFK),yes)
+CFLAGS   :=	$(CFLAGS) -DVFK_ENABLED
+CXXFLAGS :=	$(CXXFLAGS) -DVFK_ENABLED
+endif
+
+CPPFLAGS	:=	-I.. -I../.. $(GDAL_INCLUDE) $(CPPFLAGS)
+
+default:	$(O_OBJ:.o=.$(OBJ_EXT))
+
+clean:
+	rm -f *.o $(O_OBJ)
+
+$(O_OBJ):	../../../GDALmake.opt
+

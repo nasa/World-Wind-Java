@@ -1,0 +1,115 @@
+###################################################################################
+# Prerequisites:                                                                  #
+###################################################################################
+ANT 1.8.1 >
+SWIG 2.0.0 >
+JAVA JDK
+
+###################################################################################
+# Environment variables:                                                          #
+###################################################################################
+
+JAVA_HOME="C:\Program Files\Java\jdk1.6.0_26"
+ANT_HOME=C:\apache-ant-1.8.2
+SWIG=C:\swigwin-2.0.4\swig.exe
+add %JAVA_HOME%\bin;%ANT%\bin;%SWIG%; to the global "PATH" variable
+make sure %TEMP% is set and valid
+
+###################################################################################
+# Windows 32 - gdalALLjni32.dll                                                   #
+###################################################################################
+
+To set WIN32 environment:
+"C:\Program Files (x86)\Microsoft Visual Studio 8\VC\bin\vcvars32.bat"
+
+## Go to GDAL root folder
+cd C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2
+
+cd PROJ-4.7.0
+nmake -f makefile.vc clean
+nmake -f makefile.vc CC_MD="/MD"
+
+# back to GDAL root folder (cd C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2)
+cd ..
+
+nmake -f makefile.vc clean
+nmake -f makefile.vc CC_MD="/MD" MRSID_DIR=C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2\MrSID\windows\Geo_DSDK-7.0.0.2167.VC8.WIN32 PROJ_DIR=C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2\PROJ-4.7.0
+
+cd swig
+nmake /f makefile.vc clean
+nmake /f makefile.vc java CC_MD="/MD" GDAL_JNI_LIBNAME=gdalalljni32.dll
+
+
+###################################################################################
+# Windows 32 - gdalMINjni32.dll                                                   #
+###################################################################################
+
+To set WIN32 environment:
+"C:\Program Files (x86)\Microsoft Visual Studio 8\VC\bin\vcvars32.bat"
+
+## Go to GDAL root folder
+cd C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2
+
+cd PROJ-4.7.0
+nmake -f makefile.vc clean
+nmake -f makefile.vc CC_MD="/MT"
+
+# back to GDAL root folder (cd C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2)
+cd ..
+
+nmake -f makefile.vc clean
+nmake -f makefile.vc CC_MD="/MT" PROJ_DIR=C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2\PROJ-4.7.0
+
+cd swig
+nmake /f makefile.vc clean
+nmake /f makefile.vc java CC_MD="/MT" GDAL_JNI_LIBNAME=gdalminjni32.dll
+
+
+###################################################################################
+# Windows 64 - gdalALLjni64.dll                                                   #
+###################################################################################
+To set WIN64 environment:
+(compiler running on Win64)
+"C:\Program Files (x86)\Microsoft Visual Studio 8\VC\bin\amd64\vcvarsamd64.bat" 
+OR (cross compiler running on 32-Bit)
+"C:\Program Files (x86)\Microsoft Visual Studio 8\VC\bin\x86_amd64\vcvarsx86_amd64.bat" 
+
+## Go to GDAL root folder
+cd C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2
+
+cd PROJ-4.7.0
+nmake -f makefile.vc clean
+nmake -f makefile.vc CC_MD="/MD"
+
+cd C:\depot\trunk\WorldWindJ-external\gdal\gdal-1.7.2
+nmake -f makefile.vc clean
+nmake -f makefile.vc WIN64=YES CC_MD="/MD" MRSID_DIR=C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2\MrSID\windows\Geo_DSDK-7.0.0.2167.VC8.WIN64  PROJ_DIR=C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2\PROJ-4.7.0
+
+cd swig
+nmake /f makefile.vc clean
+nmake /f makefile.vc java WIN64=YES CC_MD="/MD" GDAL_JNI_LIBNAME=gdalalljni64.dll
+
+###################################################################################
+# Windows 64 - gdalMINjni64.dll
+###################################################################################
+
+To set WIN64 environment:
+(compiler running on Win64)
+"C:\Program Files (x86)\Microsoft Visual Studio 8\VC\bin\amd64\vcvarsamd64.bat"
+OR (cross compiler running on 32-Bit)
+"C:\Program Files (x86)\Microsoft Visual Studio 8\VC\bin\x86_amd64\vcvarsx86_amd64.bat"
+
+## Go to GDAL root folder
+cd C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2
+
+cd PROJ-4.7.0
+nmake -f makefile.vc clean
+nmake -f makefile.vc CC_MD="/MT"
+
+cd ..
+nmake -f makefile.vc clean
+nmake -f makefile.vc WIN64=YES CC_MD="/MT" PROJ_DIR=C:\depot\worldwind32\trunk\GDAL\GDAL-1.7.2\PROJ-4.7.0
+
+cd swig
+nmake /f makefile.vc clean
+nmake /f makefile.vc java WIN64=YES CC_MD="/MT" GDAL_JNI_LIBNAME=gdalminjni64.dll

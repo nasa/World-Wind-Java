@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--$Id-->
+<!--This document specifies the initial layers to load into the layer manager-->
+<LayerList title="Base Layers">
+    <Layer className="gov.nasa.worldwind.layers.StarsLayer" title="Stars" actuate="onLoad"/>
+    <Layer className="gov.nasa.worldwind.layers.SkyGradientLayer" title="Sky" actuate="onLoad"/>
+    <Layer className="gov.nasa.worldwind.layers.Earth.BMNGOneImage" title="Earth Image" actuate="onLoad"/>
+    <Layer href="config/Earth/BMNGWMSLayer.xml" title="Blue Marble" actuate="onLoad"/>
+    <Layer href="config/Earth/LandsatI3WMSLayer.xml" title="Landsat 7 ICube" actuate="onLoad"/>
+    <Layer href="config/Earth/MSVirtualEarthAerialLayer.xml" title="MS Virtual Earth Satellite" actuate="onRequest"/>
+    <Layer className="gov.nasa.worldwind.layers.Earth.NASAWFSPlaceNameLayer" title="Place Names" actuate="onLoad"/>
+</LayerList>

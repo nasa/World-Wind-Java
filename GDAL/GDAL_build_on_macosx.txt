@@ -1,0 +1,47 @@
+export MACOSX_DEPLOYMENT_TARGET=10.6
+# export ARCHFLAGS="-arch i386 -arch x86_64"
+export ARCHFLAGS="-arch x86_64"
+-------------------------------------------------------
+First, build PROJ4
+-------------------------------------------------------
+
+cd trunk/GDAL/GDAL-1.7.2
+
+cd `pwd`/PROJ-4.7.0
+mkdir lib
+make clean
+./configure --enable-static --disable-shared --prefix=`pwd`/lib --libdir=`pwd`/lib
+make
+make install
+
+#Example to build a local install:
+#./configure --prefix=/usr/local --libdir=/usr/local/lib --enable-static --disable-shared
+#make
+#make install
+
+-------------------------------------------------------
+Build GDAL with PROJ4 statically linked
+-------------------------------------------------------
+
+# back to "trunk/GDAL/GDAL-1.7.2"
+cd ..
+
+make clean
+./configure  --prefix=`pwd` --libdir=`pwd` --without-libtool --with-libz=internal --with-png=internal --with-jpeg=internal --with-geotiff=internal --with-libtiff=internal   --with-threads --with-ogr --without-grass --without-pg --without-grass --without-libgrass --without-cfitsio --without-pcraster --without-netcdf --without-ogdi --without-fme --without-hdf4 --without-hdf5 --without-jasper --without-ecw --without-kakadu --without-msg --without-bsb --without-oci --without-grib --without-mysql --without-ingres --without-xerces --without-expat --without-odbc  --without-curl --without-sqlite3 --without-dwgdirect --without-idb --without-sde --without-geos --without-pam  --without-perl --without-php --without-ruby --without-python  --without-xerces --with-mrsid=`pwd`/MrSID/macosx/Geo_DSDK-7.0.0.2167 --with-jp2mrsid=yes --with-static-proj4=`pwd`/PROJ-4.7.0 --enable-static --disable-shared
+make
+
+# make ; cd swig/java ;  make clean veryclean generate build
+-------------------------------------------------------
+Generate JAVA bindings
+-------------------------------------------------------
+
+cd swig/java
+make clean
+make veryclean
+make generate
+make build
+# make clean veryclean generate build
+
+Optional step - remove debugging and symbolic tables
+strip -S -x libgdalalljni.jnilib -o /WorldWindJ/lib-external/gdal/macosx/libgdalalljni.jnilib
+# strip -S -x libgdalalljni.jnilib -o ../../../../WorldWind/lib-external/gdal/libgdalalljni.jnilib

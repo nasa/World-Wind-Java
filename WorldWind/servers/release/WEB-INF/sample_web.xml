@@ -1,0 +1,98 @@
+<ApplicationServer>
+
+    <Configuration>
+        <property name="gov.nasa.worldwind.avkey.GDAL.Path" value=""/>
+        <property name="gov.nasa.worldwind.avkey.GDAL.Debug" value="false"/>
+        <property name="gov.nasa.worldwind.avkey.GDAL.TimeOut" value="10000"/>
+        <property name="gov.nasa.worldwind.avkey.GDAL.CacheMax" value="2048"/>
+        <property name="gov.nasa.worldwind.avkey.Server.TempDirectory" value="/tmp"/>
+
+        <!-- Required for HTTPS protocol
+        <property name="gov.nasa.worldwind.avkey.KeystorePath" value="path-to-jks-file"/>
+        <property name="gov.nasa.worldwind.avkey.KeystoreUser" value="jks-user"/>
+        <property name="gov.nasa.worldwind.avkey.KeystorePassword" value="changeme"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Certificate" value="https://localhost/"/>
+        -->
+    </Configuration>
+
+    <Application>
+        <property name="gov.nasa.worldwind.avkey.Name" value="NASA WorldWind WMS Imagery Server"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Application.ClassName"
+                  value="gov.nasa.worldwind.servers.app.WMSServerApplication"/>
+
+        <property name="gov.nasa.worldwind.avkey.Server.Application.ConfigFile" value="wms.config.xml"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Port" value="8000"/>
+        <property name="gov.nasa.worldwind.avkey.Protocol" value="http"/>
+        <property name="gov.nasa.worldwind.avkey.Server.VirtualDirectory" value="/wms"/>
+        <property name="gov.nasa.worldwind.avkey.CapabilitiesTemplatePath" value="wms.capabilities_template.xml"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Capabilities.OnlineResource"
+                  value="http://localhost:8000/wms?"/>
+        <property name="gov.nasa.worldwind.avkey.Server.RedirectTo"
+                  value="http://localhost:8000/wms?REQUEST=GetCapabilities"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.Size" value="8"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.ConnectionTimeout" value="10000"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.ThreadTimeout" value="60000"/>
+    </Application>
+
+    <Application>
+        <property name="gov.nasa.worldwind.avkey.Name" value="NASA WorldWind Elevations Server"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Application.ClassName"
+                  value="gov.nasa.worldwind.servers.app.WMSServerApplication"/>
+
+        <property name="gov.nasa.worldwind.avkey.Server.Application.ConfigFile" value="elev.config.xml"/>
+
+        <!-- Specify a path to the application specific Data File Store
+
+        1. You can specify the location of the [app.]DataFileStore.xml. You may enter a full path, or relative,
+          WEB-INF/[app.]DataFileStore.xml or just [app.]DataFileStore.xml (we check both current folder and WEB-INF)
+
+         <property name="gov.nasa.worldwind.avkey.DataFileStoreConfigurationFileName" value="elev.DataFileStore.xml"/>
+
+        2. OR you can specify a folder where your data (tile caches) is located.
+        Note! If you need to specify multiple locations, you must use the #1 or #3 method of specifying Data File Store.
+         <property name="gov.nasa.worldwind.avkey.FileStoreLocation" value="/path/to/elevation/tile/caches" />
+
+        3. you may specify the application specific Data File Store in the application configuration file
+        specified in the "gov.nasa.worldwind.avkey.Server.Application.ConfigFile" property [app.]config.xml
+         in the <datafilestore><config-file>[app.]DataFileStore.xml</config-file></datafilestore> section
+        -->
+
+        <property name="gov.nasa.worldwind.avkey.Server.Port" value="8001"/>
+        <property name="gov.nasa.worldwind.avkey.Protocol" value="http"/>
+        <property name="gov.nasa.worldwind.avkey.Server.VirtualDirectory" value="/elev"/>
+        <property name="gov.nasa.worldwind.avkey.CapabilitiesTemplatePath" value="elev.capabilities_template.xml"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Capabilities.OnlineResource"
+                  value="http://localhost:8001/elev?"/>
+        <property name="gov.nasa.worldwind.avkey.Server.RedirectTo"
+                  value="http://localhost:8001/elev?REQUEST=GetCapabilities"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.Size" value="8"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.ConnectionTimeout" value="10000"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.ThreadTimeout" value="60000"/>
+    </Application>
+
+    <!-- NASA World Wind Application Server is capable of running multiple instances of Applications,
+    just make sure that another app is listening on a different port
+    -->
+    <!--
+    <Application>
+        <property name="gov.nasa.worldwind.avkey.Name" value="My WMS Imagery Server"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Application.ClassName"
+                  value="gov.nasa.worldwind.servers.app.WMSServerApplication"/>
+
+        <property name="gov.nasa.worldwind.avkey.Server.Application.ConfigFile" value="mywms.config.xml"/>
+        <property name="gov.nasa.worldwind.avkey.DataFileStoreConfigurationFileName" value="mywms.DataFileStore.xml"/>
+        <property name="gov.nasa.worldwind.avkey.Server.Port" value="8002"/>
+        <property name="gov.nasa.worldwind.avkey.Protocol" value="http"/>
+        <property name="gov.nasa.worldwind.avkey.Server.VirtualDirectory" value="/mywms"/>
+        <property name="gov.nasa.worldwind.avkey.CapabilitiesTemplatePath" value="mywms.capabilities_template.xml" />
+        <property name="gov.nasa.worldwind.avkey.Server.Capabilities.OnlineResource"
+                  value="http://localhost:8002/mywms?"/>
+        <property name="gov.nasa.worldwind.avkey.Server.RedirectTo"
+                  value="http://localhost:8002/mywms?REQUEST=GetCapabilities"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.Size" value="8"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.ConnectionTimeout" value="10000"/>
+        <property name="gov.nasa.worldwind.avkey.Server.ApplicationPool.ThreadTimeout" value="60000"/>
+    </Application>
+    -->
+
+</ApplicationServer>

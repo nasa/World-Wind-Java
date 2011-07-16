@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--$Id$-->
+<!--REPLACE EVERYTHING IN ALL CAPS WITH YOUR OWN INFORMATION-->
+<jnlp spec="1.0"
+      codebase="http://YOUR WEB SITE LOCATION, BE SURE TO LEAVE THIS TRAILING SLASH-->/"
+      href="THE NAME OF THIS FILE, E.G., MyDemo.jnlp">
+    <information>
+        <title>World Wind Java Application</title>
+        <vendor>YOUR VENDOR NAME</vendor>
+        <homepage href="YOUR WEB PAGE, E.G., worldwind.arc.nasa.gov"/>
+        <description>World Wind Java Basic Demo</description>
+        <description kind="short">World Wind Java Application</description>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+
+    <resources>
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="512m"
+              max-heap-size="512m"/>
+        <property name="sun.java2d.noddraw" value="true"/>
+        <jar href="YOUR APPLICATION JAR FILE NAME, e.g., MyDemo.jar" main="true"/>
+        <extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/>
+    </resources>
+    <application-desc main-class="worldwinddemo.MyBasicDemo"/>
+</jnlp>
+
+<!--Here's an example:-->
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<jnlp spec="1.0"-->
+      <!--codebase="http://worldwind.arc.nasa.gov/java/0.2.0/webstart/"-->
+      <!--href="BasicDemo.jnlp">-->
+    <!--<information>-->
+       <!--<title>World Wind Java Application</title>-->
+        <!--<vendor>NASA</vendor>-->
+        <!--<homepage href="http://worldwind.arc.nasa.gov"/>-->
+        <!--<description>World Wind Java Basic Demo</description>-->
+        <!--<description kind="short">World Wind Java Application</description>-->
+        <!--<offline-allowed/>-->
+    <!--</information>-->
+    <!--<security>-->
+        <!--<all-permissions/>-->
+    <!--</security>-->
+
+    <!--<resources>-->
+        <!--<j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="512m" max-heap-size="512m"/>-->
+        <!--<property name="sun.java2d.noddraw" value="true"/>-->
+        <!--<jar href="MyDemo.jar" main="true"/>-->
+        <!--<extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp" />-->
+    <!--</resources>-->
+    <!--<application-desc main-class="worldwinddemo.MyBasicDemo"/>-->
+<!--</jnlp>-->

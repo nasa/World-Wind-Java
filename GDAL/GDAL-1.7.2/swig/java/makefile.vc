@@ -1,0 +1,74 @@
+GDAL_ROOT	=	..\..
+
+!INCLUDE $(GDAL_ROOT)\nmake.opt
+
+!IFDEF DLLBUILD
+GDALLIB	=    $(GDAL_ROOT)\gdal_i.lib
+!ELSE
+GDALLIB	=    $(GDAL_ROOT)\gdal.lib
+!ENDIF
+
+!IFNDEF GDAL_JNI_LIBNAME
+GDAL_JNI_LIBNAME = gdalalljni.dll
+!ENDIF #GDAL_JNI_LIBNAME
+
+
+OBJ	=	gdal_wrap.obj gdalconst_wrap.obj ogr_wrap.obj osr_wrap.obj
+
+all:  ogr_dir  const_dir osr_dir  gdal_dir
+	set JAVA_HOME="$(JAVA_HOME)"
+	$(ANT_HOME)\bin\ant
+
+    
+ogr_dir:
+	cd ogr
+	$(MAKE) /f makefile.vc
+	cd ..
+
+gdal_dir:
+	cd gdal
+	$(MAKE) /f makefile.vc
+	cd ..
+	link $(OBJ)  $(GDALLIB) /out:$(GDAL_JNI_LIBNAME) /DLL
+	if exist $(GDAL_JNI_LIBNAME).manifest mt -manifest $(GDAL_JNI_LIBNAME).manifest -outputresource:$(GDAL_JNI_LIBNAME);2
+
+const_dir:
+	cd const
+	$(MAKE) /f makefile.vc
+	cd ..
+
+osr_dir:
+	cd osr
+	$(MAKE) /f makefile.vc
+	cd ..
+
+	
+clean:
+    if exist build\nul rmdir /s /q build
+    if exist org\nul rmdir /s /q org
+	cd gdal
+	$(MAKE) /f makefile.vc clean
+	cd ..
+	cd ogr
+	$(MAKE) /f makefile.vc clean
+	cd ..
+	cd const
+	$(MAKE) /f makefile.vc clean
+	cd ..
+	cd osr
+	$(MAKE) /f makefile.vc clean
+	cd ..	
+	-del gdal.lib
+	-del gdal.jar
+	-del *.dll
+	-del *.obj
+	-del *.exp
+	-del *.ilk
+	-del *.pdb
+	-del *.tlb
+	-del *.snk
+	-del *.cs
+	-del *.cpp
+	-del *.lib
+	-del *.dll.manifest
+

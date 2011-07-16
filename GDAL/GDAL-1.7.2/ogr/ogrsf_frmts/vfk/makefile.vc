@@ -1,0 +1,13 @@
+OBJ        = vfkreader.obj vfkdatablock.obj vfkpropertydefn.obj vfkfeature.obj vfkproperty.obj \
+	       ogrvfkdriver.obj ogrvfkdatasource.obj ogrvfklayer.obj
+
+EXTRAFLAGS = -I.. -I..\..
+
+GDAL_ROOT  = ..\..\..
+
+!INCLUDE $(GDAL_ROOT)\nmake.opt
+
+default: $(OBJ)
+
+clean:
+	-del *.obj *.pdb

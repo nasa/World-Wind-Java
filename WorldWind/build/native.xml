@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--$Id$-->
+<project name="native">
+
+    <!-- Builds the GDAL JAR files for deploying the GDAL native libraries in a Java Web Start application. -->
+    <target name="gdal.webstart.jarfiles"
+            description="Builds the GDAL JAR files for deploying the GDAL native libraries in a Java Web Start application.">
+        <!-- Builds the gdal-data.jar that contains only shared conversion tables -->
+        <jar jarfile="${basedir}/${gdal.webstart.jarfile.data}"
+             description="GDAL's shared data conversion tables">
+            <fileset dir="${gdal.dir}/data">
+                <include name="**"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+        <!-- GDAL NATIVE JAR for MAC OS X -->
+        <jar jarfile="${basedir}/${gdal.webstart.jarfile.macosx}"
+             description="build a jar file with GDAL natives for macosx universal">
+            <fileset dir="${gdal.dir}">
+                <include name="GDAL_License.txt"/>
+                <include name="LizardTech_DSDK_License.txt"/>
+                <include name="LizardTech_3rd_Party.txt"/>
+                <include name="LizardTech_Redistributable.txt"/>
+                <include name="libgdalalljni.jnilib"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+        <!-- GDAL NATIVE JAR for 32-bit linux -->
+        <jar jarfile="${basedir}/${gdal.webstart.jarfile.linux32}"
+             description="build a jar file with GDAL natives for Linux 32">
+            <fileset dir="${gdal.dir}">
+                <include name="GDAL_License.txt"/>
+                <include name="LizardTech_DSDK_License.txt"/>
+                <include name="LizardTech_3rd_Party.txt"/>
+                <include name="LizardTech_Redistributable.txt"/>
+                <include name="libgdalalljni32.so"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+        <!-- GDAL NATIVE JAR for 64-bit linux -->
+        <jar jarfile="${basedir}/${gdal.webstart.jarfile.linux64}"
+             description="build a jar file with GDAL natives for Linux 32">
+            <fileset dir="${gdal.dir}">
+                <include name="GDAL_License.txt"/>
+                <include name="LizardTech_DSDK_License.txt"/>
+                <include name="LizardTech_3rd_Party.txt"/>
+                <include name="LizardTech_Redistributable.txt"/>
+                <include name="libgdalalljni64.so"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+        <!-- GDAL NATIVE JAR for 32-bit Windows OS -->
+        <jar jarfile="${basedir}/${gdal.webstart.jarfile.win32}"
+             description="build a jar file with GDAL natives for 32-bit Windows OS">
+            <fileset dir="${gdal.dir}">
+                <include name="GDAL_License.txt"/>
+                <include name="LizardTech_DSDK_License.txt"/>
+                <include name="LizardTech_3rd_Party.txt"/>
+                <include name="LizardTech_Redistributable.txt"/>
+                <include name="gdalminjni32.dll"/>
+                <include name="gdalalljni32.dll"/>
+                <include name="gdalalljni32.dll.manifest"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+        <!-- GDAL NATIVE JAR for 64-bit Windows OS -->
+        <jar jarfile="${basedir}/${gdal.webstart.jarfile.win64}"
+             description="build a jar file with GDAL natives for 64-bit Windows OS">
+            <fileset dir="${gdal.dir}">
+                <include name="GDAL_License.txt"/>
+                <include name="LizardTech_DSDK_License.txt"/>
+                <include name="LizardTech_3rd_Party.txt"/>
+                <include name="LizardTech_Redistributable.txt"/>
+                <include name="gdalminjni64.dll"/>
+                <include name="gdalalljni64.dll"/>
+                <include name="gdalalljni64.dll.manifest"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!-- Builds the WebView native library for the current platform. The native libraries are placed in the World Wind
+         project root folder and overwrite any existing files of the same name.
+
+         On Mac OS X this compiles the Objective-C sources under the folder 'lib-external/webview/macosx' into
+         'libwebview.jnilib', and requires that the XCode and Java development toolkits for Mac are installed.
+
+         On Windows this compiles the C and C++ sources under 'lib-external/webview/windows' into 'WebView32.dll' and
+         'WebView64.dll', and requires that the Microsoft Visual C++ build tools are avialable on the path. -->
+    <target name="webview.libraries"
+            description="Builds the WebView native library for the current platform. On Mac OS X this builds 'libwebview.jnilib'. On Windows this builds 'WebView32.dll' and 'WebView64.dll'. ">
+        <!-- Build the WebView library on Mac OSX. -->
+        <exec os="Mac OS X" dir="${basedir}/lib-external/webview/macosx" executable="/bin/sh" failonerror="true">
+            <arg value="build.sh"/>
+        </exec>
+        <!-- Build the WebView library on Windows. This target requires that the Microsoft Visual C++ build tools are
+             available on the path. -->
+        <exec osfamily="Windows" dir="${basedir}/lib-external/webview/windows" executable="nmake" failonerror="true">
+            <arg value="clean"/>
+            <arg value="all"/>
+        </exec>
+    </target>
+
+    <!-- Builds the WebView JAR files for deploying the WebView native libraries in a Java Web Start application. ¬-->
+    <target name="webview.webstart.jarfiles"
+            description="Builds the WebView JAR files for deploying the WebView native libraries in a Java Web Start application.">
+        <!-- Archive the Mac OS X universal binaries. -->
+        <jar jarfile="${basedir}/${webview.webstart.jarfile.macosx}">
+            <fileset dir="${basedir}">
+                <include name="libwebview.jnilib"/>
+            </fileset>
+        </jar>
+        <!-- Archive the Windows 32-bit and 64-bit binaries. -->
+        <jar jarfile="${basedir}/${webview.webstart.jarfile.windows}">
+            <fileset dir="${basedir}">
+                <include name="WebView32.dll"/>
+                <include name="WebView64.dll"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!-- Individual clean targets corresponding to each build target above. -->
+    <target name="clean.gdal.webstart.jarfiles">
+        <delete file="${basedir}/${gdal.webstart.jarfile.data}"/>
+        <delete file="${basedir}/${gdal.webstart.jarfile.macosx}"/>
+        <delete file="${basedir}/${gdal.webstart.jarfile.linux32}"/>
+        <delete file="${basedir}/${gdal.webstart.jarfile.linux64}"/>
+        <delete file="${basedir}/${gdal.webstart.jarfile.win32}"/>
+        <delete file="${basedir}/${gdal.webstart.jarfile.win64}"/>
+    </target>
+    <target name="clean.webview.webstart.jarfiles">
+        <delete file="${basedir}/${webview.webstart.jarfile.macosx}"/>
+        <delete file="${basedir}/${webview.webstart.jarfile.windows}"/>
+    </target>
+    <!-- Main clean target for native build targets. Removes all files and directories created by all native build
+         targets. -->
+    <target name="clean.native.all" depends="clean.gdal.webstart.jarfiles, clean.webview.webstart.jarfiles"/>
+
+</project>
