@@ -43,6 +43,8 @@
                 <!-- Exclude the digital signature files.-->
                 <exclude name="**/keystore.*"/>
                 <exclude name="**/*wwstore*"/>
+                <!-- Exclude files added by the Bamboo build server. -->
+                <exclude name="**/build-number.txt"/>
                 <type type="file"/>
             </fileset>
         </copy>
