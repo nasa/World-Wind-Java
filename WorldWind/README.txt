@@ -17,7 +17,7 @@ Links to important World Wind sites that will help you get started using the Wor
 application:
 
 World Wind Developer's Guide:
-http://OneWorldWind.org
+http://goworldwind.org/
 
 World Wind Main Website:
 http://worldwind.arc.nasa.gov/java/
