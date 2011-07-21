@@ -1470,14 +1470,14 @@ public class Polygon extends AbstractShape
         {
             if (location instanceof Position)
             {
-                xmlWriter.writeCharacters(String.format("%f,%f,%f ",
+                xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
                     location.getLongitude().getDegrees(),
                     location.getLatitude().getDegrees(),
                     ((Position) location).getAltitude()));
             }
             else
             {
-                xmlWriter.writeCharacters(String.format("%f,%f ",
+                xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f ",
                     location.getLongitude().getDegrees(),
                     location.getLatitude().getDegrees()));
             }

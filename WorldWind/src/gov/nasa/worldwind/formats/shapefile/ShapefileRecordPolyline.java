@@ -11,6 +11,7 @@ import gov.nasa.worldwind.util.VecBuffer;
 import javax.xml.stream.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Locale;
 
 /**
  * Represents a Shapefile record with a polyline shape type. Polyline shapes represent an connected sequence of two or
@@ -214,7 +215,7 @@ public class ShapefileRecordPolyline extends ShapefileRecord
                 if (zValues != null && index < zValues.length)
                     z = zValues[index];
 
-                xmlWriter.writeCharacters(String.format("%f,%f,%f ",
+                xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
                     latLon.getLongitude().getDegrees(),
                     latLon.getLatitude().getDegrees(),
                     z));

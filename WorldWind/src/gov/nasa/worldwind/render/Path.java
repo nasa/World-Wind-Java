@@ -1323,7 +1323,7 @@ public class Path extends AbstractShape
         xmlWriter.writeStartElement("coordinates");
         for (Position position : this.positions)
         {
-            xmlWriter.writeCharacters(String.format("%f,%f,%f ",
+            xmlWriter.writeCharacters(String.format(Locale.US, "%f,%f,%f ",
                 position.getLongitude().getDegrees(),
                 position.getLatitude().getDegrees(),
                 position.getElevation()));

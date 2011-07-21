@@ -1443,7 +1443,7 @@ public class PointPlacemark extends WWObjectImpl
         xmlWriter.writeCharacters(altitudeMode);
         xmlWriter.writeEndElement();
 
-        final String coordString = String.format("%f,%f,%f",
+        final String coordString = String.format(Locale.US, "%f,%f,%f",
             position.getLongitude().getDegrees(),
             position.getLatitude().getDegrees(),
             position.getElevation());
