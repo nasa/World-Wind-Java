@@ -298,7 +298,7 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer
         // any state that could change the color needs to be disabled, such as GL_TEXTURE, GL_LIGHTING or GL_FOG.
         // re-draw with unique colors
         // store the object info in the selectable objects table
-        // read the color under the coursor
+        // read the color under the cursor
         // use the color code as a key to retrieve a selected object from the selectable objects table
         // create an instance of the PickedObject and add to the dc via the dc.addPickedObject() method
     }

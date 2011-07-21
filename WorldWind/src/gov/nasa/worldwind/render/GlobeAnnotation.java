@@ -320,7 +320,7 @@ public class GlobeAnnotation extends AbstractAnnotation implements Locatable, Mo
 
     protected Double computeLookAtDistance(DrawContext dc)
     {
-        // TODO: Remove this method once the new mechanism for scalilng and opacity is in place.
+        // TODO: Remove this method once the new mechanism for scaling and opacity is in place.
         View view = dc.getView();
 
         // Get point in the middle of the screen

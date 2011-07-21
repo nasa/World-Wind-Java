@@ -422,7 +422,7 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
             xmlWriter.writeEndElement();
         }
 
-        // KML does not allow seperate attributes for cap and side, so just use the side attributes.
+        // KML does not allow separate attributes for cap and side, so just use the side attributes.
         final ShapeAttributes normalAttributes = getAttributes();
         final ShapeAttributes highlightAttributes = getHighlightAttributes();
 
