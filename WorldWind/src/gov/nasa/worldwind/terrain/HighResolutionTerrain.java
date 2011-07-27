@@ -496,7 +496,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     }
 
     /**
-     * Determines the tile that contains a specfied location.
+     * Determines the tile that contains a specified location.
      *
      * @param latitude  the location's latitude.
      * @param longitude the location's longitude.
@@ -713,13 +713,13 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     }
 
     /**
-     * Computes a terrain tiles's vertices of draws them from the cache.
+     * Computes a terrain tile's vertices of draws them from the cache.
      *
-     * @param tile the tile to compute vertices forl
+     * @param tile the tile to compute vertices for
      *
      * @throws InterruptedException if the operation is interrupted.
      * @throws gov.nasa.worldwind.exception.WWTimeoutException
-     *                              if terrain data retrieval exceedes the currnet timeout.
+     *                              if terrain data retrieval exceeds the current timeout.
      */
     protected void makeVerts(RectTile tile) throws InterruptedException
     {
@@ -739,15 +739,15 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     }
 
     /**
-     * Computes a terrain tiles's vertices.
+     * Computes a terrain tile's vertices.
      *
-     * @param tile the tile to compute vertices forl
+     * @param tile the tile to compute vertices for
      *
      * @return the computed vertex information.
      *
      * @throws InterruptedException if the operation is interrupted.
      * @throws gov.nasa.worldwind.exception.WWTimeoutException
-     *                              if terrain data retrieval exceedes the currnet timeout.
+     *                              if terrain data retrieval exceeds the current timeout.
      */
     protected RenderInfo buildVerts(RectTile tile) throws InterruptedException
     {
