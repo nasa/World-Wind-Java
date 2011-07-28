@@ -247,11 +247,11 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
     double getElevations(Sector sector, List<? extends LatLon> latlons, double targetResolution, double[] buffer);
 
     /**
-     * Returns the elevations of a collection of locations. <em></em>Does not</em> replace any elevation values
-     * corresponding to the missing data signal with the elevation model's missing data replacement value. If a location
-     * within the elevation model's coverage area cannot currently be determined, the elevation model's minimum extreme
-     * elevation for that location is returned in the output buffer. If a location is outside the elevation model's
-     * coverage area, the output buffer for that location is not modified; it retains the buffer's original value.
+     * Returns the elevations of a collection of locations. <em>Does not</em> replace any elevation values corresponding
+     * to the missing data signal with the elevation model's missing data replacement value. If a location within the
+     * elevation model's coverage area cannot currently be determined, the elevation model's minimum extreme elevation
+     * for that location is returned in the output buffer. If a location is outside the elevation model's coverage area,
+     * the output buffer for that location is not modified; it retains the buffer's original value.
      *
      * @param sector           the sector in question.
      * @param latlons          the locations to return elevations for. If a location is null, the output buffer for that
