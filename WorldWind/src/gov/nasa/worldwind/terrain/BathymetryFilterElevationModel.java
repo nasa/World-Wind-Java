@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class BathymetryFilterElevationModel extends AbstractElevationModel
 {
-    private ElevationModel sourceModel;
-    private double threshold = 0d;
+    protected ElevationModel sourceModel;
+    protected double threshold = 0d;
 
     /**
      * Constructs an elevation model that filters the elevations from a specified elevation model.
@@ -164,5 +164,11 @@ public class BathymetryFilterElevationModel extends AbstractElevationModel
     protected double clampElevation(double elevation)
     {
         return elevation < this.threshold ? this.threshold : elevation;
+    }
+
+    @Override
+    public double getLocalDataAvailability(Sector sector, Double targetResolution)
+    {
+        return this.sourceModel.getLocalDataAvailability(sector, targetResolution);
     }
 }

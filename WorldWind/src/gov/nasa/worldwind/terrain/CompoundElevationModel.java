@@ -525,4 +525,17 @@ public class CompoundElevationModel extends AbstractElevationModel
             em.setNetworkRetrievalEnabled(networkRetrievalEnabled);
         }
     }
+
+    @Override
+    public double getLocalDataAvailability(Sector sector, Double targetResolution)
+    {
+        double availability = 0;
+
+        for (ElevationModel em : this.elevationModels)
+        {
+            availability += em.getLocalDataAvailability(sector, targetResolution);
+        }
+
+        return this.elevationModels.size() > 0 ? availability / this.elevationModels.size() : 1d;
+    }
 }

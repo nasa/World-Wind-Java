@@ -2616,4 +2616,53 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             throw new IllegalArgumentException(message);
         }
     }
+
+    public double getLocalDataAvailability(Sector sector, Double targetResolution)
+    {
+        if (sector == null)
+        {
+            String msg = Logging.getMessage("nullValue.SectorIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Level targetLevel = targetResolution != null
+            ? this.getTargetLevel(sector, targetResolution) : this.levels.getLastLevel();
+
+        // Count all the tiles intersecting the input sector.
+        long numLocalTiles = 0;
+        long numMissingTiles = 0;
+        LatLon delta = targetLevel.getTileDelta();
+        LatLon origin = this.getLevels().getTileOrigin();
+        final int nwRow = Tile.computeRow(delta.getLatitude(), sector.getMaxLatitude(), origin.getLatitude());
+        final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.getMinLongitude(), origin.getLongitude());
+        final int seRow = Tile.computeRow(delta.getLatitude(), sector.getMinLatitude(), origin.getLatitude());
+        final int seCol = Tile.computeColumn(delta.getLongitude(), sector.getMaxLongitude(), origin.getLongitude());
+
+        for (int row = nwRow; row >= seRow; row--)
+        {
+            for (int col = nwCol; col <= seCol; col++)
+            {
+                TileKey key = new TileKey(targetLevel.getLevelNumber(), row, col, targetLevel.getCacheName());
+                Sector tileSector = this.getLevels().computeSectorForKey(key);
+                Tile tile = new Tile(tileSector, targetLevel, row, col);
+                if (!this.isTileLocalOrAbsent(tile))
+                    ++numMissingTiles;
+                else
+                    ++numLocalTiles;
+            }
+        }
+
+        return numLocalTiles > 0 ? numLocalTiles / (double) (numLocalTiles + numMissingTiles) : 0d;
+    }
+
+    protected boolean isTileLocalOrAbsent(Tile tile)
+    {
+        if (this.getLevels().isResourceAbsent(tile))
+            return true;  // tile is absent
+
+        URL url = this.getDataFileStore().findFile(tile.getPath(), false);
+
+        return url != null && !this.isFileExpired(tile, url, this.getDataFileStore());
+    }
 }

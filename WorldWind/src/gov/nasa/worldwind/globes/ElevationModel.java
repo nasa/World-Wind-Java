@@ -306,4 +306,18 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      */
     void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
         throws Exception;
+
+    /**
+     * Returns the proportion of this elevation model's data that is local -- in the computer's data cache or installed
+     * data filestore -- for a specified sector and target resolution.
+     *
+     * @param sector           the sector of interest.
+     * @param targetResolution the desired horizontal resolution, in radians, of the raster or other elevation sample
+     *                         from which elevations are drawn. (To compute radians from a distance, divide the distance
+     *                         by the radius of the globe, ensuring that both the distance and the radius are in the
+     *                         same units.) Specify null to use this elevation model's best resolution.
+     *
+     * @return the fraction of the data that is local. A value of 1.0 indicates that all the data is available.
+     */
+    double getLocalDataAvailability(Sector sector, Double targetResolution);
 }
