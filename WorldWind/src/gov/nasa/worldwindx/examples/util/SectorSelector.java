@@ -354,6 +354,7 @@ public class SectorSelector extends WWObjectImpl
             Logging.logger().log(java.util.logging.Level.FINE, msg);
             throw new IllegalArgumentException(msg);
         }
+        System.out.println("A");
 
         if (this.getOperation() == NONE
             && event.getTopObject() != null && !(event.getTopObject() instanceof RegionShape))
@@ -361,6 +362,7 @@ public class SectorSelector extends WWObjectImpl
             this.setCursor(null);
             return;
         }
+        System.out.println("AA");
 
         if (event.getEventAction().equals(SelectEvent.LEFT_PRESS))
         {
@@ -411,6 +413,7 @@ public class SectorSelector extends WWObjectImpl
         }
         else if (event.getEventAction().equals(SelectEvent.ROLLOVER) && this.getOperation() == NONE)
         {
+            System.out.println("B");
             if (!(this.getWwd() instanceof Component))
                 return;
 
@@ -422,6 +425,7 @@ public class SectorSelector extends WWObjectImpl
 
             if (!(event.getTopObject() instanceof Movable))
                 return;
+            System.out.println("C");
 
             this.setCursor(this.determineAdjustmentSide((Movable) event.getTopObject(), this.getEdgeFactor()));
         }
