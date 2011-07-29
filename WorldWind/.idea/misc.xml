@@ -20,6 +20,7 @@
       </facet-type>
     </autodetection-disabled>
   </component>
+  <component name="IdProvider" IDEtalkID="0F645CF70D09511BAEC4B94A438A80BE" />
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/doc" />
     <option name="OPTION_SCOPE" value="package" />
@@ -36,6 +37,24 @@
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="false" />
+  </component>
+  <component name="NullableNotNullManager">
+    <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
+    <option name="myDefaultNotNull" value="org.jetbrains.annotations.NotNull" />
+    <option name="myNullables">
+      <value>
+        <list size="0" />
+      </value>
+    </option>
+    <option name="myNotNulls">
+      <value>
+        <list size="3">
+          <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
+          <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
+          <item index="2" class="java.lang.String" itemvalue="edu.umd.cs.findbugs.annotations.NonNull" />
+        </list>
+      </value>
+    </option>
   </component>
   <component name="ProjectResources">
     <default-html-doctype>http://www.w3.org/1999/xhtml</default-html-doctype>
@@ -103,5 +122,6 @@
     <option name="myVersion" value="124" />
     <option name="mySupportsUserInfoFilter" value="true" />
   </component>
+  <component name="WebServicesPlugin" addRequiredLibraries="true" />
 </project>
 
