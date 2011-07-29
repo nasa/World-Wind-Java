@@ -226,7 +226,7 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Returns the label for a spcified label name.
+     * Returns the label for a specified label name.
      *
      * @param labelName the name of the label to return.
      *
@@ -299,7 +299,7 @@ public class UnitsFormat extends AVListImpl
     /**
      * Indicates whether angles are displayed in degrees-minutes-seconds.
      *
-     * @return true if angles are displayed in degrees-minutes seconds, false if they're displayed in deceimal degrees.
+     * @return true if angles are displayed in degrees-minutes seconds, false if they're displayed in decimal degrees.
      */
     public boolean isShowDMS()
     {
@@ -309,7 +309,7 @@ public class UnitsFormat extends AVListImpl
     /**
      * Specifies whether angles are displayed in degrees-minutes-seconds.
      *
-     * @param showDMS true to display angles in degrees-minutes seconds, false to display them in deceimal degrees.
+     * @param showDMS true to display angles in degrees-minutes seconds, false to display them in decimal degrees.
      */
     public void setShowDMS(boolean showDMS)
     {
@@ -1070,11 +1070,11 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Format a terrain height value acording to the current configuration and append a new-line character.
+     * Format a terrain height value according to the current configuration and append a new-line character.
      * <p/>
      * The value is formatted using the current {@link #LABEL_TERRAIN_HEIGHT}, {@link #FORMAT_TERRAIN_HEIGHT} and length
      * units symbol. The default terrain height format is " (ve %3.1f): %,6d %s", where the %3.1f specifier stands for
-     * the vertical exaggeration, the %,6d specifer stands for the terrain height, and the %s specifier stands for the
+     * the vertical exaggeration, the %,6d specifier stands for the terrain height, and the %s specifier stands for the
      * units symbol.
      * <p/>
      * Note: While the <code>FORMAT_TERRAIN_HEIGHT</code> string may be specified by the application, the terrain height
@@ -1107,7 +1107,7 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Format a length according to the curent length configuration. Prepend a specified label and append a new-line
+     * Format a length according to the current length configuration. Prepend a specified label and append a new-line
      * character.
      * <p/>
      * The value is formatted using the current {@link #FORMAT_LENGTH} and length units symbol,  and is converted to the
@@ -1125,7 +1125,7 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Format a length according to the curent length configuration. Prepend a specified label.
+     * Format a length according to the current length configuration. Prepend a specified label.
      * <p/>
      * The value is formatted using the current {@link #FORMAT_LENGTH} and length units symbol,  and is converted to the
      * current length units prior to formatting. The default length format is " %,12.1f %s", where the %s specifier
@@ -1163,7 +1163,7 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Format an area value according to the curent length configuration and prepend a specified label.
+     * Format an area value according to the current length configuration and prepend a specified label.
      * <p/>
      * The value is formatted using the current {@link #FORMAT_AREA} and area units symbol,  and is converted to the
      * current area units prior to formatting. The default area format is " %,12.1f %s", where the %s specifier stands
