@@ -1145,7 +1145,7 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Format an area value according to the curent length configuration. Prepend a specified label and append a
+     * Format an area value according to the current length configuration. Prepend a specified label and append a
      * new-line character.
      * <p/>
      * The value is formatted using the current {@link #FORMAT_AREA} and area units symbol,  and is converted to the
