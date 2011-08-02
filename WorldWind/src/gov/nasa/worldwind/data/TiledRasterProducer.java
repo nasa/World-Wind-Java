@@ -725,14 +725,14 @@ public abstract class TiledRasterProducer extends AbstractDataStoreProducer
                 String strLimit = (String) o;
                 if ("Auto".equalsIgnoreCase(strLimit))
                 {
-                    return (int)Math.ceil( 0.75d * (double)maxNumOfLevels ); // 0.5 = half, 0.6 = 60%
+                    return (int)Math.floor( 0.5d * (double)maxNumOfLevels ); // 0.5 = half, 0.6 = 60%
                 }
                 else if( strLimit.endsWith("%"))
                 {
                     try
                     {
                         float percent = Float.parseFloat( strLimit.substring(0, strLimit.length()-1) );
-                        int limit = (int)Math.ceil( percent * (double)maxNumOfLevels );
+                        int limit = (int)Math.floor( percent * (double)maxNumOfLevels / 100d );
                         return (limit <= maxNumOfLevels) ? limit :maxNumOfLevels;
                     }
                     catch (Throwable t)

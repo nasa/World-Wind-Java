@@ -22,7 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.File;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -93,17 +93,18 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
 
     public static class InstalledDataFrame extends JFrame
     {
-        public static final String TOOLTIP_CHECKED =
-            "When checked, a full pyramid of tiles will be generated "
-                + "(slower option; more disk space is required; no need to keep source rasters)";
+        public static final String TOOLTIP_FULL_PYRAMID =
+            "Installing a full pyramid takes longer and consumes more space on the user’s hard drive, "
+                + "but has the best runtime performance, which is important for World Wind Server";
 
-        public static final String TOOLTIP_UNCHECKED =
-            "When unchecked, only three first lowest resolution levels will be generated "
-                + "(faster option; less disk space; source rasters are required)";
+        public static final String TOOLTIP_PARTIAL_PYRAMID =
+            "Installing a partial pyramid takes less time and consumes less space on the user’s hard drive"
+                + "but requires that the original data not be moved or deleted";
 
         protected FileStore fileStore;
         protected InstalledDataPanel dataConfigPanel;
         protected JFileChooser fileChooser;
+        protected File lastUsedFolder = null;
 
         public InstalledDataFrame(FileStore fileStore, WorldWindow worldWindow) throws HeadlessException
         {
@@ -116,13 +117,27 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
 
             this.fileStore = fileStore;
             this.dataConfigPanel = new InstalledDataPanel("Installed Surface Data", worldWindow);
-            this.fileChooser = new JFileChooser(Configuration.getUserHomeDirectory());
+            this.fileChooser = new JFileChooser(this.getLastUsedFolder());
             this.fileChooser.setAcceptAllFileFilterUsed(true);
-            this.fileChooser.setMultiSelectionEnabled(false);
             this.fileChooser.addChoosableFileFilter(new InstallableDataFilter());
-
+            this.fileChooser.setMultiSelectionEnabled(true);
+            this.fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             this.layoutComponents();
             this.loadPreviouslyInstalledData();
+        }
+
+        protected File getLastUsedFolder()
+        {
+            if (WWUtil.isEmpty(this.lastUsedFolder))
+                this.setLastUsedFolder(new File(Configuration.getUserHomeDirectory()));
+
+            return this.lastUsedFolder;
+        }
+
+        protected void setLastUsedFolder(File folder)
+        {
+            if (null != folder && folder.isDirectory())
+                this.lastUsedFolder = folder;
         }
 
         protected void loadPreviouslyInstalledData()
@@ -137,14 +152,16 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             t.start();
         }
 
-        protected void installFromFile()
+        protected void installFromFiles()
         {
             int retVal = this.fileChooser.showDialog(this, "Install");
             if (retVal != JFileChooser.APPROVE_OPTION)
                 return;
 
-            final File file = this.fileChooser.getSelectedFile();
-            if (file == null) // This should never happen, but we check anyway.
+            this.setLastUsedFolder(this.fileChooser.getCurrentDirectory());
+
+            final File[] files = this.fileChooser.getSelectedFiles();
+            if (files == null || files.length == 0)
                 return;
 
             Thread thread = new Thread(new Runnable()
@@ -156,7 +173,7 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
                     try
                     {
                         // Install the file into a form usable by World Wind components.
-                        dataConfig = installDataFromFile(InstalledDataFrame.this, file, fileStore);
+                        dataConfig = installDataFromFiles(InstalledDataFrame.this, files, fileStore);
                     }
                     catch (Exception e)
                     {
@@ -195,28 +212,46 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             {
                 public void actionPerformed(ActionEvent e)
                 {
-                    installFromFile();
+                    installFromFiles();
                 }
             });
 
-            JCheckBox fullPyramidCheckBox = new JCheckBox("Create a full pyramid", false);
+            JCheckBox fullPyramidCheckBox = new JCheckBox("Create a full pyramid", true);
+            // set default option "Full pyramid"
+            Configuration.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
+            Configuration.removeKey(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
+            fullPyramidCheckBox.setToolTipText(TOOLTIP_FULL_PYRAMID);
+
             fullPyramidCheckBox.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent e)
                 {
                     Object source = e.getSource();
-                    if (null != source && source instanceof JCheckBox)
+                    if (source instanceof JCheckBox)
                     {
-                        JCheckBox box = (JCheckBox) source;
-                        boolean selected = box.isSelected();
-                        Configuration.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, selected);
+                        JCheckBox checkBox = (JCheckBox) source;
+                        String tooltipText;
 
-                        String text = (selected) ? TOOLTIP_CHECKED : TOOLTIP_UNCHECKED;
-                        box.setToolTipText(text);
+                        if (checkBox.isSelected())
+                        {
+                            Configuration.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
+                            Configuration.removeKey(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL);
+                            tooltipText = TOOLTIP_FULL_PYRAMID;
+                        }
+                        else
+                        {
+                            Configuration.removeKey(AVKey.PRODUCER_ENABLE_FULL_PYRAMID);
+                            // Set partial pyramid level:
+                            // "0" - level zero only; "1" levels 0 and 1; "2" levels 0,1,2; etc
+                            // "100%" - full pyramid, "50%" half pyramid, "25%" quarter of pyramid, etc
+                            // "Auto" - whatever default is set in a TileProducer (50%)
+                            Configuration.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, "50%");
+                            tooltipText = TOOLTIP_PARTIAL_PYRAMID;
+                        }
+                        checkBox.setToolTipText(tooltipText);
                     }
                 }
             });
-            fullPyramidCheckBox.setToolTipText(TOOLTIP_UNCHECKED);
 
             Box box = Box.createHorizontalBox();
             box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // top, left, bottom, right
@@ -330,19 +365,14 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
     //********************  Installing Data From File  *************//
     //**************************************************************//
 
-    protected static Document installDataFromFile(Component parentComponent, File file, FileStore fileStore)
+    protected static Document installDataFromFiles(Component parentComponent, File[] files, FileStore fileStore)
         throws Exception
     {
         // Create a DataStoreProducer which is capable of processing the file.
-        final DataStoreProducer producer = createDataStoreProducerFromFile(file);
-        if (producer == null)
-        {
-            throw new IllegalArgumentException("Unrecognized file type");
-        }
+        final DataStoreProducer producer = createDataStoreProducerFromFiles(files);
 
         // Create a ProgressMonitor that will provide feedback on how
-        final ProgressMonitor progressMonitor = new ProgressMonitor(parentComponent,
-            "Installing " + file.getName(), null, 0, 100);
+        final ProgressMonitor progressMonitor = new ProgressMonitor(parentComponent, "Importing ....", null, 0, 100);
 
         final AtomicInteger progress = new AtomicInteger(0);
 
@@ -384,11 +414,12 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         try
         {
             // Install the file into the specified FileStore.
-            doc = createDataStoreFromFile(file, fileStore, producer);
+            doc = createDataStore(files, fileStore, producer);
 
-            // Create a raster server configuration document if the installation was successful and we're not converting
-            // a WW.NET tile set to a WW Java tile set. The raster server document enables the layer or elevation model
-            // created to display this data to create tiles from the original sources at runtime.
+            // Create a raster server configuration document if the installation was successful
+            // and we're not converting a WW.NET tile set to a WW Java tile set.
+            // The raster server document enables the layer or elevation model (created to display this data)
+            // to create tiles from the original sources at runtime.
             if (doc != null && !(producer instanceof WWDotNetLayerSetConverter))
                 createRasterServerConfigDoc(fileStore, producer);
 
@@ -413,8 +444,8 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         return doc;
     }
 
-    protected static Document createDataStoreFromFile(File file, FileStore fileStore,
-        DataStoreProducer producer) throws Exception
+    protected static Document createDataStore(File[] files,
+        FileStore fileStore, DataStoreProducer producer) throws Exception
     {
         File installLocation = DataInstallUtil.getDefaultInstallLocation(fileStore);
         if (installLocation == null)
@@ -427,8 +458,11 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         // Create the production parameters. These parameters instruct the DataStoreProducer where to install the cached
         // data, and what name to put in the data configuration document.
         AVList params = new AVListImpl();
-        params.setValue(AVKey.DATASET_NAME, file.getName());
-        params.setValue(AVKey.DATA_CACHE_NAME, file.getName());
+
+        String datasetName = askForDatasetName(suggestDatasetName(files));
+
+        params.setValue(AVKey.DATASET_NAME, datasetName);
+        params.setValue(AVKey.DATA_CACHE_NAME, datasetName);
         params.setValue(AVKey.FILE_STORE_LOCATION, installLocation.getAbsolutePath());
 
         // These parameters define producer's behavior:
@@ -437,19 +471,34 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         if (!enableFullPyramid)
         {
             params.setValue(AVKey.SERVICE_NAME, AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER);
-            params.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, 2);
+            // retrieve the value of the AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, default to "Auto" if missing
+            String maxLevel = Configuration.getStringValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, "Auto");
+            params.setValue(AVKey.TILED_RASTER_PRODUCER_LIMIT_MAX_LEVEL, maxLevel);
+        }
+        else
+        {
+            params.setValue(AVKey.PRODUCER_ENABLE_FULL_PYRAMID, true);
         }
 
         producer.setStoreParameters(params);
 
-        // Use the specified file as the the production data source.
-        producer.offerDataSource(file, null);
-
         try
         {
+            for (File file : files)
+            {
+                producer.offerDataSource(file, null);
+                Thread.yield();
+            }
+
             // Convert the file to a form usable by World Wind components, according to the specified DataStoreProducer.
             // This throws an exception if production fails for any reason.
             producer.startProduction();
+        }
+        catch (InterruptedException ie)
+        {
+            producer.removeProductionState();
+            Thread.interrupted();
+            throw ie;
         }
         catch (Exception e)
         {
@@ -474,8 +523,146 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         return null;
     }
 
+    protected static String askForDatasetName(String suggestedName)
+    {
+        String datasetName = suggestedName;
+
+        for (; ; )
+        {
+            Object o = JOptionPane.showInputDialog(null, "Name:", "Enter dataset name",
+                JOptionPane.QUESTION_MESSAGE, null, null, datasetName);
+
+            if (!(o instanceof String)) // user canceled the input
+            {
+                Thread.interrupted();
+
+                String msg = Logging.getMessage("generic.OperationCancelled", "Import");
+                Logging.logger().info(msg);
+                throw new WWRuntimeException(msg);
+            }
+
+            datasetName = WWIO.replaceIllegalFileNameCharacters((String) o);
+
+            String message = "Import as `" + datasetName + "` ?";
+
+            int userChoice = JOptionPane.showOptionDialog(
+                null, // parentComponent
+                message,
+                null, // title
+                JOptionPane.YES_NO_CANCEL_OPTION, // option type
+                JOptionPane.QUESTION_MESSAGE, // message type
+                null, // icon
+                new Object[] {"Yes", "Edit name", "Cancel import"}, // options
+                "Yes" // default option
+            );
+
+            if (userChoice == JOptionPane.YES_OPTION)
+            {
+                return datasetName;
+            }
+            else if (userChoice == JOptionPane.NO_OPTION)
+            {
+//                continue;
+            }
+            else if (userChoice == JOptionPane.CANCEL_OPTION)
+            {
+                Thread.interrupted();
+
+                String msg = Logging.getMessage("generic.OperationCancelled", "Import");
+                Logging.logger().info(msg);
+                throw new WWRuntimeException(msg);
+            }
+        }
+    }
+
+    /**
+     * Suggests a name for a dataset based on pathnames of the passed files.
+     * <p/>
+     * Attempts to extract all common words that files' path can share, removes all non-alpha-numeric chars
+     *
+     * @param files Array of raster files
+     *
+     * @return A suggested name
+     */
+    protected static String suggestDatasetName(File[] files)
+    {
+        if (null == files || files.length == 0)
+            return null;
+
+        // extract file and folder names that all files have in common
+        StringBuilder sb = new StringBuilder();
+        for (File file : files)
+        {
+            String name = file.getAbsolutePath();
+            if (WWUtil.isEmpty(name))
+                continue;
+
+            name = WWIO.replaceIllegalFileNameCharacters(WWIO.replaceSuffix(name, ""));
+
+            if (sb.length() == 0)
+            {
+                sb.append(name);
+                continue;
+            }
+            else
+            {
+                int size = Math.min(name.length(), sb.length());
+                for (int i = 0; i < size; i++)
+                {
+                    if (name.charAt(i) != sb.charAt(i))
+                    {
+                        sb.setLength(i);
+                        break;
+                    }
+                }
+            }
+        }
+
+        String name = sb.toString();
+        sb.setLength(0);
+
+        ArrayList<String> words = new ArrayList<String>();
+
+        StringTokenizer tokens = new StringTokenizer(name, " _:/\\-=!@#$%^&()[]{}|\".,<>;`+");
+        String lastWord = null;
+        while (tokens.hasMoreTokens())
+        {
+            String word = tokens.nextToken();
+            // discard empty, one-char long, and duplicated keys
+            if (WWUtil.isEmpty(word) || word.length() < 2 || word.equalsIgnoreCase(lastWord))
+                continue;
+
+            lastWord = word;
+
+            words.add(word);
+            if (words.size() > 4)  // let's keep only last four words
+                words.remove(0);
+        }
+
+        if (words.size() > 0)
+        {
+            sb.setLength(0);
+            for (String word : words)
+            {
+                sb.append(word).append(' ');
+            }
+            return sb.toString().trim();
+        }
+        else
+            return (WWUtil.isEmpty(name)) ? "change me" : name;
+    }
+
     protected static void createRasterServerConfigDoc(FileStore fileStore, DataStoreProducer producer)
     {
+        AVList productionParams = (null != producer) ? producer.getProductionParameters() : new AVListImpl();
+        productionParams = (null == productionParams) ? new AVListImpl() : productionParams;
+
+        if (!AVKey.SERVICE_NAME_LOCAL_RASTER_SERVER.equals(productionParams.getValue(AVKey.SERVICE_NAME)))
+        {
+            // *.RasterServer.xml is not required
+            return;
+        }
+
         File installLocation = DataInstallUtil.getDefaultInstallLocation(fileStore);
         if (installLocation == null)
         {
@@ -489,48 +676,28 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         Element root = WWXML.setDocumentElement(doc, "RasterServer");
         WWXML.setTextAttribute(root, "version", "1.0");
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(installLocation.getAbsolutePath()).append(File.separator);
 
-        AVList rasterServerParams = new AVListImpl();
-
-        rasterServerParams.setValue(AVKey.BANDS_ORDER, "Auto");
-        rasterServerParams.setValue(AVKey.BLACK_GAPS_DETECTION, "enable");
-
-        AVList productionParams = producer.getProductionParameters();
-        productionParams = (null == productionParams) ? new AVListImpl() : productionParams;
-
-        if (productionParams.hasKey(AVKey.DATA_CACHE_NAME))
-        {
-            String value = productionParams.getStringValue(AVKey.DATA_CACHE_NAME);
-            rasterServerParams.setValue(AVKey.DATA_CACHE_NAME, value);
-            sb.append(value).append(File.separator);
-        }
-        else
+        if (!productionParams.hasKey(AVKey.DATA_CACHE_NAME))
         {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.DATA_CACHE_NAME);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
+        sb.append(productionParams.getValue(AVKey.DATA_CACHE_NAME)).append(File.separator);
 
-        if (productionParams.hasKey(AVKey.DATASET_NAME))
-        {
-            String value = productionParams.getStringValue(AVKey.DATASET_NAME);
-            rasterServerParams.setValue(AVKey.DATASET_NAME, value);
-            sb.append(value).append(".RasterServer.xml");
-        }
-        else
+        if (!productionParams.hasKey(AVKey.DATASET_NAME))
         {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.DATASET_NAME);
             Logging.logger().severe(message);
             throw new WWRuntimeException(message);
         }
+        sb.append(productionParams.getValue(AVKey.DATASET_NAME)).append(".RasterServer.xml");
 
         Object o = productionParams.getValue(AVKey.DISPLAY_NAME);
         if (WWUtil.isEmpty(o))
-            o = productionParams.getValue(AVKey.DATASET_NAME);
-
-        rasterServerParams.setValue(AVKey.DISPLAY_NAME, o);
+            productionParams.setValue(AVKey.DISPLAY_NAME, productionParams.getValue(AVKey.DATASET_NAME));
 
         String rasterServerConfigFilePath = sb.toString();
 
@@ -554,56 +721,21 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
         Element sources = doc.createElementNS(null, "Sources");
         if (producer instanceof TiledRasterProducer)
         {
-            TiledRasterProducer tiledRasterProducer = (TiledRasterProducer) producer;
-
-            for (DataRaster raster : tiledRasterProducer.getDataRasters())
+            for (DataRaster raster : ((TiledRasterProducer)producer).getDataRasters())
             {
                 if (raster instanceof CachedDataRaster)
                 {
-                    CachedDataRaster readRaster = (CachedDataRaster) raster;
-                    o = readRaster.getDataSource();
-                    if (WWUtil.isEmpty(o))
+                    try
                     {
-                        Logging.logger().finest(Logging.getMessage("nullValue.DataSourceIsNull"));
-                        continue;
+                        appendSource( sources, (CachedDataRaster)raster);
                     }
-
-                    File f = WWIO.getFileForLocalAddress(o);
-                    if (WWUtil.isEmpty(f))
+                    catch(Throwable t)
                     {
-                        String message = Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", o);
-                        Logging.logger().finest(message);
-                        continue;
+                        String reason = WWUtil.extractExceptionReason(t);
+                        Logging.logger().warning(reason);
+//                        Logging.logger().severe(reason);
+//                        throw new WWRuntimeException(reason);
                     }
-
-                    Element source = WWXML.appendElement(sources, "Source");
-                    WWXML.setTextAttribute(source, "type", "file");
-                    WWXML.setTextAttribute(source, "path", f.getAbsolutePath());
-
-                    AVList params = readRaster.getParams();
-                    if (null == params)
-                    {
-                        Logging.logger().warning(Logging.getMessage("nullValue.ParamsIsNull"));
-                        continue;
-                    }
-
-                    Sector sector = raster.getSector();
-                    if (null == sector && params.hasKey(AVKey.SECTOR))
-                    {
-                        o = params.getValue(AVKey.SECTOR);
-                        if (null != o && o instanceof Sector)
-                            sector = (Sector) o;
-                    }
-                    if (null != sector)
-                        WWXML.appendSector(source, "Sector", sector);
-
-                    String[] keysToCopy = new String[] {
-                        AVKey.PIXEL_FORMAT, AVKey.DATA_TYPE,
-                        AVKey.PIXEL_WIDTH, AVKey.PIXEL_HEIGHT,
-                        AVKey.COORDINATE_SYSTEM, AVKey.PROJECTION_NAME
-                    };
-
-                    WWUtil.copyValues(params, rasterServerParams, keysToCopy, false);
                 }
                 else
                 {
@@ -615,35 +747,180 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
             }
         }
 
+        AVList rasterServerProperties = new AVListImpl();
+
+        String[] keysToCopy = new String[] {AVKey.DATA_CACHE_NAME, AVKey.DATASET_NAME, AVKey.DISPLAY_NAME};
+        WWUtil.copyValues(productionParams, rasterServerProperties, keysToCopy, false);
+
+        appendProperties(root, rasterServerProperties);
+
         // add sources
         root.appendChild(sources);
 
         WWXML.saveDocumentToFile(doc, rasterServerConfigFilePath);
     }
 
+    /**
+     * Append Property elements to a context element.
+     *
+     * @param context    the context on which to append new element(s)
+     * @param properties AVList with properties to append.
+     */
+    protected static void appendProperties(Element context, AVList properties)
+    {
+        if (null == context || properties == null)
+            return;
+
+        StringBuilder sb = new StringBuilder();
+
+        // add properties
+        for (Map.Entry<String, Object> entry : properties.getEntries())
+        {
+            sb.setLength(0);
+            String key = entry.getKey();
+            sb.append(properties.getValue(key));
+            String value = sb.toString();
+            if (WWUtil.isEmpty(key) || WWUtil.isEmpty(value))
+                continue;
+
+            Element property = WWXML.appendElement(context, "Property");
+            WWXML.setTextAttribute(property, "name", key);
+            WWXML.setTextAttribute(property, "value", value);
+        }
+    }
+
+    /**
+     * Append Source element to a Sources element.
+     *
+     * @param sources the Sources element on which to append the new Source element
+     * @param raster  instance of the CachedDataRaster
+     * @throws WWRuntimeException if cannot retrieve or understand the data source
+     *
+     */
+    protected static void appendSource(Element sources, CachedDataRaster raster) throws WWRuntimeException
+    {
+        Object o = raster.getDataSource();
+        if (WWUtil.isEmpty(o))
+        {
+            String message = Logging.getMessage("nullValue.DataSourceIsNull");
+            Logging.logger().fine(message);
+            throw new WWRuntimeException(message);
+        }
+
+        File f = WWIO.getFileForLocalAddress(o);
+        if (WWUtil.isEmpty(f))
+        {
+            String message = Logging.getMessage("TiledRasterProducer.UnrecognizedDataSource", o);
+            Logging.logger().fine(message);
+            throw new WWRuntimeException(message);
+        }
+
+        Element source = WWXML.appendElement(sources, "Source");
+        WWXML.setTextAttribute(source, "type", "file");
+        WWXML.setTextAttribute(source, "path", f.getAbsolutePath());
+
+        AVList params = raster.getParams();
+        if (null == params)
+        {
+            String message = Logging.getMessage("nullValue.ParamsIsNull");
+            Logging.logger().fine(message);
+            throw new WWRuntimeException(message);
+        }
+
+        Sector sector = raster.getSector();
+        if (null == sector && params.hasKey(AVKey.SECTOR))
+        {
+            o = params.getValue(AVKey.SECTOR);
+            if (o instanceof Sector)
+                sector = (Sector) o;
+        }
+
+        if (null != sector)
+            WWXML.appendSector(source, "Sector", sector);
+    }
+
     //**************************************************************//
     //********************  Utility Methods  ***********************//
     //**************************************************************//
 
-    protected static DataStoreProducer createDataStoreProducerFromFile(File file)
+    /**
+     * Creates an instance of the DataStoreProducer basing on raster type. Also validates that all rasters are the same
+     * types.
+     *
+     * @param files Array of raster files
+     *
+     * @return instance of the DataStoreProducer
+     *
+     * @throws IllegalArgumentException, if types of rasters do not match, or array of raster files is null or empty
+     */
+    protected static DataStoreProducer createDataStoreProducerFromFiles(File[] files) throws IllegalArgumentException
     {
-        if (file == null)
-            return null;
-
-        DataStoreProducer producer = null;
-
-        AVList params = new AVListImpl();
-        if (DataInstallUtil.isDataRaster(file, params))
+        if (files == null || files.length == 0)
         {
-            if (AVKey.ELEVATION.equals(params.getStringValue(AVKey.PIXEL_FORMAT)))
-                producer = new TiledElevationProducer();
-            else if (AVKey.IMAGE.equals(params.getStringValue(AVKey.PIXEL_FORMAT)))
-                producer = new TiledImageProducer();
+            String message = Logging.getMessage("nullValue.ArrayIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
         }
-        else if (DataInstallUtil.isWWDotNetLayerSet(file))
-            producer = new WWDotNetLayerSetConverter();
 
-        return producer;
+        String commonPixelFormat = null;
+
+        for (File file : files)
+        {
+            AVList params = new AVListImpl();
+            if (DataInstallUtil.isDataRaster(file, params))
+            {
+                String pixelFormat = params.getStringValue(AVKey.PIXEL_FORMAT);
+                if (WWUtil.isEmpty(commonPixelFormat))
+                {
+                    if (WWUtil.isEmpty(pixelFormat))
+                    {
+                        String message = Logging.getMessage("generic.UnrecognizedSourceType", file.getAbsolutePath());
+                        Logging.logger().severe(message);
+                        throw new IllegalArgumentException(message);
+                    }
+                    else
+                    {
+                        commonPixelFormat = pixelFormat;
+                    }
+                }
+                else if (commonPixelFormat != null && !commonPixelFormat.equals(pixelFormat))
+                {
+                    if (WWUtil.isEmpty(pixelFormat))
+                    {
+                        String message = Logging.getMessage("generic.UnrecognizedSourceType", file.getAbsolutePath());
+                        Logging.logger().severe(message);
+                        throw new IllegalArgumentException(message);
+                    }
+                    else
+                    {
+                        String reason = Logging.getMessage("generic.UnexpectedRasterType", pixelFormat);
+                        String details = file.getAbsolutePath() + ": " + reason;
+                        String message = Logging.getMessage("DataRaster.IncompatibleRaster", details);
+                        Logging.logger().severe(message);
+                        throw new IllegalArgumentException(message);
+                    }
+                }
+            }
+            else if (DataInstallUtil.isWWDotNetLayerSet(file))
+            {
+                // you cannot select multiple World Wind .NET Layer Sets
+                // bail out on a first raster
+                return new WWDotNetLayerSetConverter();
+            }
+        }
+
+        if (AVKey.IMAGE.equals(commonPixelFormat))
+        {
+            return new TiledImageProducer();
+        }
+        else if (AVKey.ELEVATION.equals(commonPixelFormat))
+        {
+            return new TiledElevationProducer();
+        }
+
+        String message = Logging.getMessage("generic.UnexpectedRasterType", commonPixelFormat);
+        Logging.logger().severe(message);
+        throw new IllegalArgumentException(message);
     }
 
     protected static class InstallableDataFilter extends javax.swing.filechooser.FileFilter

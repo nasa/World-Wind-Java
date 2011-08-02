@@ -26,10 +26,9 @@ import java.nio.ByteBuffer;
  */
 
 /**
- * BasicRasterServer maintains a list of data sources and their properties in the BasicRasterServerCache
- * and is used to compose (mosaic) a data raster of the given region of interest from data sources.
- *
-*/
+ * BasicRasterServer maintains a list of data sources and their properties in the BasicRasterServerCache and is used to
+ * compose (mosaic) a data raster of the given region of interest from data sources.
+ */
 public class BasicRasterServer extends WWObjectImpl implements RasterServer
 {
     protected final String XPATH_RASTER_SERVER = "/RasterServer";
@@ -37,21 +36,20 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
     protected final String XPATH_RASTER_SERVER_SOURCE = XPATH_RASTER_SERVER + "/Sources/Source";
     protected final String XPATH_RASTER_SERVER_SOURCE_SECTOR = XPATH_RASTER_SERVER_SOURCE + "/Sector";
 
-    private java.util.List<DataRaster> dataRasterList = new java.util.ArrayList<DataRaster>();
+    protected java.util.List<DataRaster> dataRasterList = new java.util.ArrayList<DataRaster>();
 
     protected DataRasterReaderFactory readerFactory;
 
     protected static final MemoryCache cache = new BasicRasterServerCache();
 
     /**
-     * BasicRasterServer constructor reads a list of data raster sources from *.RasterServer.xml (the file that accompanies layer
-     * description XML file), reads sector of each source and maintains a list of data sources, their properties,
+     * BasicRasterServer constructor reads a list of data raster sources from *.RasterServer.xml (the file that
+     * accompanies layer description XML file), reads sector of each source and maintains a list of data sources, their
+     * properties,
      *
-     * @param o  the RasterServer.xml source to read.  May by a {@link java.io.File}, a file path,
-     * a URL or an {@link org.w3c.dom.Element}
-     *
-     * @param params  optional metadata associated with the data source that might be useful to the BasicRasterServer.
-     *
+     * @param o      the RasterServer.xml source to read.  May by a {@link java.io.File}, a file path, a URL or an
+     *               {@link org.w3c.dom.Element}
+     * @param params optional metadata associated with the data source that might be useful to the BasicRasterServer.
      */
     public BasicRasterServer(Object o, AVList params)
     {
@@ -75,8 +73,9 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
         this.init(o);
     }
 
-    /**
-     * Returns an instance of the MemoryCache that contains DataRasters and their properties
+    /** Returns an instance of the MemoryCache that contains DataRasters and their properties
+     *
+     * @return  an instance of the MemoryCache that contains DataRasters and their properties
      */
     public MemoryCache getCache()
     {
@@ -140,14 +139,46 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
 
         this.extractProperties(rootElement, xpath);
 
-        this.buildRasterFilesList(rootElement, xpath);
+        if( this.readRasterSources(rootElement, xpath) )
+        {
+            // success, all raster sources are available
+            String message = Logging.getMessage("generic.DataSetAvailable", this.getDataSetName() );
+            Logging.logger().finest(message);
+        }
+        else
+        {
+            // some (or all) required source rasters are not available (either missing or unreadable)
+            // and therefore the dataset may not generate high resolution on-the-fly
+            String message = Logging.getMessage("generic.DataSetLimitedAvailability", this.getDataSetName() );
+            Logging.logger().severe(message);
+        }
+    }
+
+    protected String getDataSetName()
+    {
+        return AVListImpl.getStringValue( this, AVKey.DATASET_NAME, "" );
     }
 
     /**
-     * Extracts all <Property></Property> key and values from the given DOM element
-     * @param domElement XML object as DOM
-     * @param xpath XPath instance
+     * Returns DataSet's pixel format (AVKey.IMAGE or AVKey.ELEVATION), or empty string if not set
      *
+     * @return DataSet's pixel format (AVKey.IMAGE or AVKey.ELEVATION), or empty string if not set
+     */
+    protected String getDataSetPixelFormat()
+    {
+        return AVListImpl.getStringValue( this, AVKey.PIXEL_FORMAT, "" );
+    }
+
+    protected void setDataSetPixelFormat(String pixelFormat)
+    {
+        this.setValue(AVKey.PIXEL_FORMAT, pixelFormat);
+    }
+
+    /**
+     * Extracts all <Property/> key and values from the given DOM element
+     *
+     * @param domElement XML object as DOM
+     * @param xpath      XPath instance
      */
     protected void extractProperties(Element domElement, XPath xpath)
     {
@@ -182,9 +213,21 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
         }
     }
 
-    protected void buildRasterFilesList(Element domElement, XPath xpath)
+    /**
+     * Reads XML document and extracts raster sources
+     *
+     * @param domElement DOM element
+     *
+     * @param xpath XPath instance
+     *
+     * @return TRUE, if all raster sources are available, FALSE otherwise
+     *
+     */
+    protected boolean readRasterSources(Element domElement, XPath xpath)
     {
         long startTime = System.currentTimeMillis();
+
+        boolean hasUnavailableRasterSources = false;
 
         int numSources = 0;
         Sector extent = null;
@@ -196,7 +239,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
 
             if (nodes == null || nodes.getLength() == 0)
             {
-                return;
+                return false;
             }
 
             numSources = nodes.getLength();
@@ -214,63 +257,82 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
 
                     Element source = (Element) node;
 
-                    String path = source.getAttribute("path");
-                    if (WWUtil.isEmpty(path))
+                    String rasterSourcePath = source.getAttribute("path");
+                    if (WWUtil.isEmpty(rasterSourcePath))
                     {
                         continue;
                     }
 
                     AVList rasterMetadata = new AVListImpl();
-                    Object rasterSource = new File(path);
+                    File rasterSourceFile = new File(rasterSourcePath);
+                    // normalize
+                    rasterSourcePath = rasterSourceFile.getAbsolutePath();
 
-                    DataRasterReader rasterReader = this.findDataRasterReader(rasterSource, rasterMetadata);
+                    if( !rasterSourceFile.exists() )
+                    {
+                        hasUnavailableRasterSources = true;
+                        String reason = Logging.getMessage("generic.FileDoesNotExists", rasterSourcePath );
+                        Logging.logger().warning(reason);
+                        continue;
+                    }
+
+                    if( !rasterSourceFile.canRead() )
+                    {
+                        hasUnavailableRasterSources = true;
+                        String reason = Logging.getMessage("generic.FileNoReadPermission", rasterSourcePath );
+                        Logging.logger().warning(reason);
+                        continue;
+                    }
+
+                    DataRasterReader rasterReader = this.findDataRasterReader(rasterSourceFile, rasterMetadata);
                     if (null == rasterReader)
                     {
-//                        String message = Logging.getMessage("nullValue.ReaderIsNull") + " : " + rasterFile.getAbsolutePath();
-//                        Logging.logger().severe(message);
+                        hasUnavailableRasterSources = true;
+                        String reason = Logging.getMessage("generic.UnknownFileFormatOrMatchingReaderNotFound",
+                            rasterSourcePath );
+                        Logging.logger().warning(reason);
                         continue;
                     }
 
                     Sector sector = WWXML.getSector(source, "Sector", xpath);
                     if (null == sector)
                     {
-                        rasterReader.readMetadata(rasterSource, rasterMetadata);
+                        rasterReader.readMetadata(rasterSourceFile, rasterMetadata);
 
                         Object o = rasterMetadata.getValue(AVKey.SECTOR);
-                        if (o != null && o instanceof Sector)
-                        {
-                            sector = (Sector) o;
-                        }
+                        sector = (o instanceof Sector) ? (Sector) o : sector;
                     }
                     else
                     {
                         rasterMetadata.setValue(AVKey.SECTOR, sector);
                     }
 
-                    // validate that all data rasters are the same type - we do not allow to mix elevations and imagery
-                    if (this.getValue(AVKey.PIXEL_FORMAT) == null)
+                    Object rasterPixelFormat = rasterMetadata.getValue(AVKey.PIXEL_FORMAT);
+                    String datasetPixelFormat = this.getDataSetPixelFormat();
+
+                    if( !WWUtil.isEmpty(datasetPixelFormat) )
                     {
-                        if (AVKey.IMAGE.equals(rasterMetadata.getStringValue(AVKey.PIXEL_FORMAT)))
+                        // verify all data rasters are the same type - we do not allow to mix elevations and imagery
+                        if (!datasetPixelFormat.equals(rasterPixelFormat))
                         {
-                            this.setValue(AVKey.PIXEL_FORMAT, AVKey.IMAGE);
-                        }
-                        else if (AVKey.ELEVATION.equals(rasterMetadata.getStringValue(AVKey.PIXEL_FORMAT)))
-                        {
-                            this.setValue(AVKey.PIXEL_FORMAT, AVKey.ELEVATION);
-                        }
-                        else
-                        {
-                            String msg = Logging.getMessage("generic.UnknownFileFormat", rasterSource);
-                            Logging.logger().warning(msg);
+                            hasUnavailableRasterSources = true;
+                            String reason = Logging.getMessage("generic.UnexpectedRasterType", rasterSourcePath );
+                            Logging.logger().warning(reason);
+                            continue;
                         }
                     }
                     else
                     {
-                        String rasterType = this.getStringValue(AVKey.PIXEL_FORMAT);
-                        if (!rasterType.equals(rasterMetadata.getValue(AVKey.PIXEL_FORMAT)))
+                        if( AVKey.IMAGE.equals(rasterPixelFormat) || AVKey.ELEVATION.equals(rasterPixelFormat) )
                         {
-                            String msg = Logging.getMessage("generic.UnexpectedRasterType", rasterSource);
-                            Logging.logger().warning(msg);
+                            this.setDataSetPixelFormat( (String)rasterPixelFormat );
+                        }
+                        else
+                        {
+                            hasUnavailableRasterSources = true;
+                            String reason = Logging.getMessage("generic.UnknownFileFormat", rasterSourcePath );
+                            Logging.logger().warning(reason);
+                            continue;
                         }
                     }
 
@@ -278,8 +340,15 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
                     {
                         extent = Sector.union(extent, sector);
                         this.dataRasterList.add(
-                            new CachedDataRaster(rasterSource, rasterMetadata, rasterReader, this.getCache())
+                            new CachedDataRaster(rasterSourceFile, rasterMetadata, rasterReader, this.getCache())
                         );
+                    }
+                    else
+                    {
+                        hasUnavailableRasterSources = true;
+                        String reason = Logging.getMessage("generic.NoSectorSpecified", rasterSourcePath );
+                        Logging.logger().warning(reason);
+                        continue;
                     }
                 }
                 catch (Throwable t)
@@ -306,6 +375,8 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
             Logging.logger().finest(this.getStringValue(AVKey.DISPLAY_NAME) + ": " + numSources
                 + " files in " + (System.currentTimeMillis() - startTime) + " milli-seconds");
         }
+
+        return !hasUnavailableRasterSources;
     }
 
     protected DataRasterReader findDataRasterReader(Object source, AVList params)
@@ -352,14 +423,11 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
     /**
      * Composes a DataRaster of the given width and height for the specific geographic region of interest (ROI).
      *
-     * @param reqParams This is a required parameter, must not be null or empty;
-     * Must contain AVKey.WIDTH, AVKey.HEIGHT, and AVKey.SECTOR values.
-     *
-     * Optional keys are:
-     * AVKey.PIXEL_FORMAT (AVKey.ELEVATION | AVKey.IMAGE)
-     * AVKey.DATA_TYPE
-     * AVKey.BYTE_ORDER (AVKey.BIG_ENDIAN | AVKey.LITTLE_ENDIAN )
-     *
+     * @param reqParams This is a required parameter, must not be null or empty; Must contain AVKey.WIDTH, AVKey.HEIGHT,
+     *                  and AVKey.SECTOR values.
+     *                  <p/>
+     *                  Optional keys are: AVKey.PIXEL_FORMAT (AVKey.ELEVATION | AVKey.IMAGE) AVKey.DATA_TYPE
+     *                  AVKey.BYTE_ORDER (AVKey.BIG_ENDIAN | AVKey.LITTLE_ENDIAN )
      *
      * @return a DataRaster for the requested ROI
      *
@@ -404,7 +472,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
         if (!reqSector.intersects(rasterExtent))
         {
             String message = Logging.getMessage("generic.SectorRequestedOutsideCoverageArea", reqSector, rasterExtent);
-            Logging.logger().severe(message);
+            Logging.logger().finest(message);
             throw new WWRuntimeException(message);
         }
 
@@ -442,6 +510,7 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
                 throw new WWRuntimeException(msg);
             }
 
+            int numIntersectedRasters = 0;
             for (DataRaster raster : this.dataRasterList)
             {
                 Sector rasterSector = raster.getSector();
@@ -453,6 +522,14 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
                 }
 
                 raster.drawOnTo(reqRaster);
+                numIntersectedRasters++;
+            }
+
+            if (numIntersectedRasters == 0)
+            {
+                String message = Logging.getMessage("generic.SectorRequestedOutsideCoverageArea", reqSector, "");
+                Logging.logger().finest(message);
+                throw new WWRuntimeException(message);
             }
         }
         catch (WWRuntimeException wwe)
@@ -471,25 +548,22 @@ public class BasicRasterServer extends WWObjectImpl implements RasterServer
     }
 
     /**
-     * Composes a DataRaster of the given width and height for the specific geographic region of interest (ROI),
-     * in the requested file format (AVKey.IMAGE_FORMAT) and returns as a ByteBuffer
+     * Composes a DataRaster of the given width and height for the specific geographic region of interest (ROI), in the
+     * requested file format (AVKey.IMAGE_FORMAT) and returns as a ByteBuffer
      *
-     * @param params This is a required parameter, must not be null or empty;
-     * Must contain AVKey.WIDTH, AVKey.HEIGHT, AVKey.SECTOR, and AVKey.IMAGE_FORMAT (mime type) values.
-     * Supported mime types are: "image/png", "image/jpeg", "image/dds".
-     *
-     * Optional keys are:
-     * AVKey.PIXEL_FORMAT (AVKey.ELEVATION | AVKey.IMAGE)
-     * AVKey.DATA_TYPE
-     * AVKey.BYTE_ORDER (AVKey.BIG_ENDIAN | AVKey.LITTLE_ENDIAN )
+     * @param params This is a required parameter, must not be null or empty; Must contain AVKey.WIDTH, AVKey.HEIGHT,
+     *               AVKey.SECTOR, and AVKey.IMAGE_FORMAT (mime type) values. Supported mime types are: "image/png",
+     *               "image/jpeg", "image/dds".
+     *               <p/>
+     *               Optional keys are: AVKey.PIXEL_FORMAT (AVKey.ELEVATION | AVKey.IMAGE) AVKey.DATA_TYPE
+     *               AVKey.BYTE_ORDER (AVKey.BIG_ENDIAN | AVKey.LITTLE_ENDIAN )
      *
      * @return a DataRaster for the requested ROI
      *
-     * @throws gov.nasa.worldwind.exception.WWRuntimeException if there is no intersection of the source rasters
-     * with the requested ROI or the source format is unknown or not supported by currently loaded drivers
-     *
+     * @throws gov.nasa.worldwind.exception.WWRuntimeException
+     *                                  if there is no intersection of the source rasters with the requested ROI or the
+     *                                  source format is unknown or not supported by currently loaded drivers
      * @throws IllegalArgumentException if any of the required parameters or values are missing
-     *
      */
     public ByteBuffer getRasterAsByteBuffer(AVList params)
     {
