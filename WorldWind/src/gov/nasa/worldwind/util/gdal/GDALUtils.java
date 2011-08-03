@@ -557,6 +557,13 @@ public class GDALUtils
         int height = ds.getRasterYSize();
         int bandCount = ds.getRasterCount();
 
+        if( bandCount < 1 )
+        {
+            String message = Logging.getMessage("generic.UnexpectedBandCount", bandCount );
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
         Double[] dbls = new Double[16];
 
         ByteBuffer[] bands = new ByteBuffer[bandCount];
@@ -572,7 +579,6 @@ public class GDALUtils
         {
             /* Bands are not 0-base indexed, so we must add 1 */
             Band imageBand = ds.GetRasterBand(bandIdx + 1);
-
             if (null == imageBand)
             {
                 String message = Logging.getMessage("nullValue.RasterBandIsNull`");
