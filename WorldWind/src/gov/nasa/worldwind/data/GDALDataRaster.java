@@ -380,32 +380,29 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable
 
     protected void doDrawOnTo(DataRaster canvas)
     {
-        Sector imageSector = this.getSector();
-        Sector canvasSector = canvas.getSector();
-        Sector overlap = null;
-
-        if (null == imageSector
-            || null == canvasSector
-            || !this.intersects(canvasSector)
-            || null == (overlap = imageSector.intersection(canvasSector)))
-        {
-            String msg = Logging.getMessage("generic.SectorRequestedOutsideCoverageArea", canvasSector, imageSector);
-            Logging.logger().finest(msg);
-            return;
-        }
-
-        // Compute the region of the destination raster to be be clipped by the specified clipping sector. If no
-        // clipping sector is specified, then perform no clipping. We compute the clip region for the destination
-        // raster because this region is used by AWT to limit which pixels are rasterized to the destination.
-        java.awt.Rectangle clipRect = this.computeClipRect(overlap, canvas);
-
-        if (clipRect.width == 0 || clipRect.height == 0)
-        {
-            return;
-        }
-
         try
         {
+            Sector imageSector = this.getSector();
+            Sector canvasSector = canvas.getSector();
+            Sector overlap = null;
+
+            if ( null == imageSector || null == canvasSector || !this.intersects(canvasSector)
+                || null == (overlap = imageSector.intersection(canvasSector)))
+            {
+                String msg = Logging.getMessage("generic.SectorRequestedOutsideCoverageArea", canvasSector, imageSector);
+                Logging.logger().finest(msg);
+                return;
+            }
+
+            // Compute the region of the destination raster to be be clipped by the specified clipping sector. If no
+            // clipping sector is specified, then perform no clipping. We compute the clip region for the destination
+            // raster because this region is used by AWT to limit which pixels are rasterized to the destination.
+            java.awt.Rectangle clipRect = this.computeClipRect(overlap, canvas);
+            if (null == clipRect || clipRect.width == 0 || clipRect.height == 0 )
+            {
+                return;
+            }
+
             AVList params = canvas.copy();
 
             // copy parent raster keys/values; only those key/value will be copied that do exist in the parent raster
@@ -431,7 +428,7 @@ public class GDALDataRaster extends AbstractDataRaster implements Cacheable
 
     protected String composeExceptionReason(Throwable t)
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (null != t.getMessage())
             sb.append(t.getMessage());
