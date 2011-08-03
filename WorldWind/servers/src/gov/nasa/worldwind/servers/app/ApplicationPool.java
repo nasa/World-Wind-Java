@@ -21,18 +21,19 @@ public class ApplicationPool
 
     public ApplicationPool(int size)
     {
-        this.threadPool = Executors.newFixedThreadPool(size);
+        this.setThreadPoolSize(size);
     }
 
     public void setThreadPoolSize(int size)
     {
         try
         {
-            this.threadPool.shutdown();
+            if( this.threadPool != null )
+                this.threadPool.shutdown();
         }
         finally
         {
-            this.threadPool = Executors.newFixedThreadPool(size);
+            this.threadPool = new ThreadPoolExecutor( size, size, 0, TimeUnit.SECONDS, new LIFOBlockingDeque<Runnable>());
         }
     }
 
