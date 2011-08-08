@@ -18,6 +18,7 @@ import gov.nasa.worldwind.util.*;
 import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.*;
+import java.util.logging.Level;
 
 /**
  * @author Lado Garakanidze
@@ -28,6 +29,7 @@ public class VirtualEarthTileServer extends BasicHttpServerApplication
 {
     protected static final int WW_MAX_TILE_SIZE = 512;
     protected static final String MIME_IMAGE_JPEG = "image/jpeg";
+    protected static final String DEFAULT_VE_TILES_LOCATION = "ve-tile-cache";
 
     protected long veTileExpiryTime = VirtualEarthTileRetriever.DEFAULT_EXPIRY_TIME;
     protected String veTileBaseFolder = null;
@@ -63,67 +65,63 @@ public class VirtualEarthTileServer extends BasicHttpServerApplication
         }
 
         Object o = this.getValue(AVKey.EXPIRY_TIME);
-        if (o != null)
+        if (o instanceof Long)
+        {
+            this.veTileExpiryTime = (Long) o;
+        }
+        else if (o instanceof String)
         {
             try
             {
-                if (o instanceof String)
-                {
-                    this.veTileExpiryTime = Long.parseLong((String) o);
-                }
-                else if (o instanceof Long)
-                {
-                    this.veTileExpiryTime = (Long) o;
-                }
-                else
-                {
-                    throw new WWRuntimeException(AVKey.EXPIRY_TIME);
-                }
+                this.veTileExpiryTime = Long.parseLong((String) o);
             }
             catch (Exception e)
             {
                 String message = Logging.getMessage("generic.UnknownValueForKey", o, AVKey.EXPIRY_TIME);
-                Logging.logger().log(java.util.logging.Level.FINEST, message, e);
-                throw new IllegalArgumentException(message);
+                Logging.logger().log(Level.WARNING, message, e);
             }
         }
-
-        this.veTileBaseFolder = null;
-
-        o = this.getValue(AVKey.FILE_STORE_LOCATION);
-        if (o != null && o instanceof String)
+        else
         {
-            File baseDir = new File((String) o);
-            if (!baseDir.exists())
-            {
-                WWIO.makeParentDirs(baseDir.getAbsolutePath());
-                //noinspection ResultOfMethodCallIgnored
-                baseDir.mkdirs();
-            }
-
-            if (!baseDir.exists())
-            {
-                String message = Logging.getMessage("generic.FolderDoesNotExist", baseDir.getAbsolutePath());
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            if (!baseDir.canWrite())
-            {
-                String message = Logging.getMessage("generic.FolderNoWritePermission", baseDir.getAbsolutePath());
-                Logging.logger().severe(message);
-                throw new IllegalArgumentException(message);
-            }
-
-            this.veTileBaseFolder = baseDir.getAbsolutePath();
+            String message = Logging.getMessage("generic.UnknownValueForKey", o, AVKey.EXPIRY_TIME);
+            Logging.logger().warning(message);
         }
 
-        if (null == this.veTileBaseFolder)
+        String dir = AVListImpl.getStringValue(this,AVKey.FILE_STORE_LOCATION, "" );
+        if( WWUtil.isEmpty(dir) )
         {
             String message = Logging.getMessage("generic.MissingRequiredParameter", AVKey.FILE_STORE_LOCATION);
+            Logging.logger().warning(message);
+//            throw new IllegalArgumentException(message);
+
+            dir = DEFAULT_VE_TILES_LOCATION;
+        }
+
+        File baseDir = new File(dir);
+        if (!baseDir.exists())
+        {
+            WWIO.makeParentDirs(baseDir.getAbsolutePath());
+            //noinspection ResultOfMethodCallIgnored
+            baseDir.mkdirs();
+        }
+
+        if (!baseDir.exists())
+        {
+            String message = Logging.getMessage("generic.FolderDoesNotExist", baseDir.getAbsolutePath());
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
+
+        if (!baseDir.canWrite())
+        {
+            String message = Logging.getMessage("generic.FolderNoWritePermission", baseDir.getAbsolutePath());
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.veTileBaseFolder = baseDir.getAbsolutePath();
+
+        this.setApplicationState(ApplicationState.Started);
     }
 
     @Override
