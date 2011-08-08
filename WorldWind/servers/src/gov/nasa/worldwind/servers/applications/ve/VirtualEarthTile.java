@@ -207,7 +207,7 @@ public class VirtualEarthTile
             throw new IllegalArgumentException(message);
         }
 
-        StringBuffer urlPath = new StringBuffer();
+        StringBuilder urlPath = new StringBuilder();
         urlPath.append("http://").append( layer.getLetter() );
         urlPath.append( quadKey.charAt( quadKey.length()-1 ) );
         urlPath.append( ".ortho.tiles.virtualearth.net/tiles/" );
