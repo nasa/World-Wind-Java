@@ -146,19 +146,19 @@ public class RenderableLayerTest extends junit.framework.TestCase
         RenderableLayer layer = new RenderableLayer();
         layer.addRenderables(renderables);
 
-        Iterable<Renderable> layerRenderables = layer.getRenderables();
+        Iterable<? extends Renderable> layerRenderables = layer.getRenderables();
 
         // Test that the returned list cannot be modified.
         try
         {
             if (layerRenderables instanceof java.util.Collection)
             {
-                java.util.Collection<Renderable> collection = (java.util.Collection<Renderable>) layerRenderables;
+                java.util.Collection collection = (java.util.Collection) layerRenderables;
                 collection.clear();
             }
             else
             {
-                java.util.Iterator<Renderable> iter = layerRenderables.iterator();
+                java.util.Iterator<? extends Renderable> iter = layerRenderables.iterator();
                 while (iter.hasNext())
                 {
                     iter.next();
@@ -323,26 +323,26 @@ public class RenderableLayerTest extends junit.framework.TestCase
     /*************************************************************************************************************/
     /** Helper Methods **/
     /** ********************************************************************************************************* */
-
-    @SuppressWarnings( {"JavaDoc"})
-    private static void assertEquals(String message, Iterable<Renderable> expected, Iterable<Renderable> actual)
-    {
-        if (expected == null)
-        {
-            assertNull(message, actual);
-        }
-        else
-        {
-            java.util.Iterator<Renderable> expectedIter = expected.iterator(), actualIter = actual.iterator();
-            // Compare the elements in each iterator, as long as they both have elements.
-            while (expectedIter.hasNext() && actualIter.hasNext())
-            {
-                assertEquals(message, expectedIter.next(), actualIter.next());
-            }
-            // If either iterator has more elements, then their lengths are different.
-            assertFalse(message, expectedIter.hasNext() || actualIter.hasNext());
-        }
-    }
+//
+//    @SuppressWarnings( {"JavaDoc"})
+//    private static void assertEquals(String message, Iterable<Renderable> expected, Iterable<Renderable> actual)
+//    {
+//        if (expected == null)
+//        {
+//            assertNull(message, actual);
+//        }
+//        else
+//        {
+//            java.util.Iterator<Renderable> expectedIter = expected.iterator(), actualIter = actual.iterator();
+//            // Compare the elements in each iterator, as long as they both have elements.
+//            while (expectedIter.hasNext() && actualIter.hasNext())
+//            {
+//                assertEquals(message, expectedIter.next(), actualIter.next());
+//            }
+//            // If either iterator has more elements, then their lengths are different.
+//            assertFalse(message, expectedIter.hasNext() || actualIter.hasNext());
+//        }
+//    }
 
     private static Iterable<Renderable> createExampleIterable()
     {
