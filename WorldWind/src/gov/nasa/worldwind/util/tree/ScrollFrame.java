@@ -1056,7 +1056,7 @@ public class ScrollFrame extends DragControl implements PreRenderable, Renderabl
     public void render(DrawContext dc)
     {
         Offset screenLocation = this.getScreenLocation();
-        if (screenLocation == null)
+        if (screenLocation == null || this.frameBounds == null)
             return;
 
         if (this.mustRecomputeFrameGeometry)
