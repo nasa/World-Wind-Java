@@ -836,11 +836,11 @@ public class WorldFile
         try
         {
             Matcher csMatcher = GEOGCS_WKT_PATTERN.matcher(text);
-            if (csMatcher.matches())
+            if (csMatcher.find())
             {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
             }
-            else if ((csMatcher = PROJCS_WKT_PATTERN.matcher(text)).matches())
+            else if ((csMatcher = PROJCS_WKT_PATTERN.matcher(text)).find())
             {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
 
