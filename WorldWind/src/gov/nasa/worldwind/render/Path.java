@@ -56,6 +56,11 @@ import static gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil.kmlBoolean;
  * number of intermediate positions between specified positions is the constant value specified by the num-subsegments
  * property (see {@link #setNumSubsegments(int)}). The latter case may produce higher performance than the former.
  * <p/>
+ * The path positions may be shown by calling {@link #setShowPositions(boolean)} with an argument of <code>true</code>.
+ * This causes dots to be drawn at each originally specified path position. Dots are not drawn at tessellated path
+ * positions. The size of the dots may be specified via {@link #setShowPositionsScale(double)}. The dots are drawn only
+ * when the Path is within a threshold distance from the eye point. The threshold may be specified by calling {@link
+ * #setShowPositionsThreshold(double)}. The dots are drawn in the path's outline material color.s
  *
  * @author tag
  * @version $Id$
@@ -74,6 +79,14 @@ public class Path extends AbstractShape
      * terrain.
      */
     protected static final double SURFACE_PATH_DEPTH_OFFSET = 0.99;
+    /** The default number of tessellation points between the specified path positions. */
+    protected static final int DEFAULT_NUM_SUBSEGMENTS = 10;
+    /** The default terrain conformance target. */
+    protected static final double DEFAULT_TERRAIN_CONFORMANCE = 10;
+    /** The default distance from the eye beyond which positions dots are not drawn. */
+    protected static final double DEFAULT_DRAW_POSITIONS_THRESHOLD = 1e6;
+    /** The default scale for position dots. The scale is applied to the current outline width to produce the dot size. */
+    protected static final double DEFAULT_DRAW_POSITIONS_SCALE = 10;
 
     /**
      * Overrides the default materials specified in the base class.
@@ -92,17 +105,25 @@ public class Path extends AbstractShape
     protected static class PathData extends AbstractShapeData
     {
         /** The positions formed from applying path type and terrain conformance. */
-        protected List<Position> tessellatedPositions;
+        protected ArrayList<Position> tessellatedPositions;
         /**
          * The model coordinate vertices to render, all relative to this shape data's reference center. If the path is
          * extruded, the base vertices are interleaved: Vcap, Vbase, Vcap, Vbase, ...
          */
         protected FloatBuffer renderedPath;
         /**
-         * Indices in the <code>renderedPath</code> identifying the vertices of the originally specified boundary
-         * positions. This is used to draw vertical lines at those positions when the path is extruded.
+         * Indices to the <code>renderedPath</code> identifying the vertices of the originally specified boundary
+         * positions and their corresponding terrain point. This is used to draw vertical lines at those positions when
+         * the path is extruded.
          */
-        protected IntBuffer polePositions; // identifies original positions in rendered path
+        protected IntBuffer polePositions; // identifies original positions and corresponding ground points
+
+        /**
+         * Indices to the <code>renderedPath</code> identifying the vertices of the originally specified boundary
+         * positions. (Not their terrain points as well, as <code>polePositions</code> does.)
+         */
+        protected IntBuffer positionPoints; // identifies the original positions in the rendered path.
+
         /** Indicates whether the rendered path has extrusion points in addition to path points. */
         protected boolean hasExtrusionPoints; // true when the rendered path contains extrusion points
 
@@ -111,16 +132,28 @@ public class Path extends AbstractShape
             super(dc, shape.minExpiryTime, shape.maxExpiryTime);
         }
 
+        /**
+         * The positions resulting from tessellating this path. If the path's attributes don't cause tessellation, then
+         * the positions returned are those originally specified.
+         *
+         * @return the positions computed by path tessellation.
+         */
         public List<Position> getTessellatedPositions()
         {
             return tessellatedPositions;
         }
 
-        public void setTessellatedPositions(List<Position> tessellatedPositions)
+        public void setTessellatedPositions(ArrayList<Position> tessellatedPositions)
         {
             this.tessellatedPositions = tessellatedPositions;
         }
 
+        /**
+         * The Cartesian coordinates of the tessellated positions. If path verticals are enabled, this path also
+         * contains the ground points corresponding to the path positions.
+         *
+         * @return the Cartesian coordinates of the tessellated positions.
+         */
         public FloatBuffer getRenderedPath()
         {
             return renderedPath;
@@ -131,6 +164,29 @@ public class Path extends AbstractShape
             this.renderedPath = renderedPath;
         }
 
+        /**
+         * Returns a buffer of indices into the rendered path ({@link #renderedPath} that identify the originally
+         * specified positions that remain after tessellation. These positions are those of the position dots, if
+         * drawn.
+         *
+         * @return the path's originally specified positions that survived tessellation.
+         */
+        public IntBuffer getPositionPoints()
+        {
+            return this.positionPoints;
+        }
+
+        public void setPositionPoints(IntBuffer posPoints)
+        {
+            this.positionPoints = posPoints;
+        }
+
+        /**
+         * Returns a buffer of indices into the rendered path ({@link #renderedPath} that identify the top and bottom
+         * vertices of this path's vertical line segments.
+         *
+         * @return the path's pole positions.
+         */
         public IntBuffer getPolePositions()
         {
             return polePositions;
@@ -141,6 +197,11 @@ public class Path extends AbstractShape
             this.polePositions = polePositions;
         }
 
+        /**
+         * Indicates whether this path is extruded and the extrusion points have been computed.
+         *
+         * @return true if the path is extruded and the extrusion points are computed, otherwise false.
+         */
         public boolean isHasExtrusionPoints()
         {
             return hasExtrusionPoints;
@@ -169,9 +230,12 @@ public class Path extends AbstractShape
     protected String pathType = DEFAULT_PATH_TYPE;
     protected boolean followTerrain; // true if altitude mode indicates terrain following
     protected boolean extrude;
-    protected double terrainConformance = 10;
-    protected int numSubsegments = 10;
+    protected double terrainConformance = DEFAULT_TERRAIN_CONFORMANCE;
+    protected int numSubsegments = DEFAULT_NUM_SUBSEGMENTS;
     protected boolean drawVerticals = true;
+    protected boolean showPositions = false;
+    protected double showPositionsThreshold = DEFAULT_DRAW_POSITIONS_THRESHOLD;
+    protected double showPositionsScale = DEFAULT_DRAW_POSITIONS_SCALE;
 
     /** Creates a path with no positions. */
     public Path()
@@ -446,6 +510,72 @@ public class Path extends AbstractShape
         this.reset();
     }
 
+    /**
+     * Indicates whether dots are drawn at the Path's original positions.
+     *
+     * @return true if dots are drawn, otherwise false.
+     */
+    public boolean isShowPositions()
+    {
+        return showPositions;
+    }
+
+    /**
+     * Specifies whether to draw dots at the original positions of the Path. The dot color and size are controlled by
+     * the Path's outline material and scale attributes.
+     *
+     * @param showPositions true if dots are drawn at each original (not tessellated) position, otherwise false.
+     */
+    public void setShowPositions(boolean showPositions)
+    {
+        this.showPositions = showPositions;
+    }
+
+    /**
+     * Indicates the scale factor controlling the size of dots drawn at this path's specified positions. The scale is
+     * multiplied by the outline width given in this path's {@link ShapeAttributes} to determine the actual size of the
+     * dots, in pixels. See {@link ShapeAttributes#setOutlineWidth(double)}.
+     *
+     * @return the shape's draw-position scale. The default scale is 10.
+     */
+    public double getShowPositionsScale()
+    {
+        return showPositionsScale;
+    }
+
+    /**
+     * Specifies the scale factor controlling the size of dots drawn at this path's specified positions. The scale is
+     * multiplied by the outline width given in this path's {@link ShapeAttributes} to determine the actual size of the
+     * dots, in pixels. See {@link ShapeAttributes#setOutlineWidth(double)}.
+     *
+     * @param showPositionsScale the new draw-position scale.
+     */
+    public void setShowPositionsScale(double showPositionsScale)
+    {
+        this.showPositionsScale = showPositionsScale;
+    }
+
+    /**
+     * Indicates the eye distance from this shape's center beyond which position dots are not drawn.
+     *
+     * @return the eye distance at which to enable or disable position dot drawing. The default is 1e6 meters, which
+     *         typically causes the dots to always be drawn.
+     */
+    public double getShowPositionsThreshold()
+    {
+        return showPositionsThreshold;
+    }
+
+    /**
+     * Specifies the eye distance from this shape's center beyond which position dots are not drawn.
+     *
+     * @param showPositionsThreshold the eye distance at which to enable or disable position dot drawing.
+     */
+    public void setShowPositionsThreshold(double showPositionsThreshold)
+    {
+        this.showPositionsThreshold = showPositionsThreshold;
+    }
+
     public Sector getSector()
     {
         if (this.sector == null && this.positions != null)
@@ -663,6 +793,9 @@ public class Path extends AbstractShape
         if (pathData.hasExtrusionPoints && this.isDrawVerticals())
             this.drawVerticalOutlineVBO(dc, vboIds, pathData);
 
+        if (this.isShowPositions())
+            this.drawPointsVBO(dc, vboIds, pathData);
+
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     }
 
@@ -675,6 +808,9 @@ public class Path extends AbstractShape
 
         if (pathData.hasExtrusionPoints && this.isDrawVerticals())
             this.drawVerticalOutlineVA(dc, pathData);
+
+        if (this.isShowPositions())
+            this.drawPointsVA(dc, pathData);
     }
 
     protected void drawVerticalOutlineVBO(DrawContext dc, int[] vboIds, PathData pathData)
@@ -706,6 +842,68 @@ public class Path extends AbstractShape
 
         dc.getGL().glVertexPointer(3, GL.GL_FLOAT, 0, pathData.renderedPath.rewind());
         dc.getGL().glDrawElements(GL.GL_LINES, polePositions.limit(), GL.GL_UNSIGNED_INT, polePositions.rewind());
+    }
+
+    /**
+     * Draws vertical lines at this path's specified positions.
+     *
+     * @param dc       the current draw context.
+     * @param pathData the current globe-specific path data.
+     */
+    protected void drawPointsVA(DrawContext dc, PathData pathData)
+    {
+        double d = this.getDistanceMetric(dc, pathData);
+        if (d > this.getShowPositionsThreshold())
+            return;
+
+        IntBuffer posPoints = pathData.positionPoints;
+        if (posPoints == null || posPoints.limit() < 1)
+            return;
+
+        GL gl = dc.getGL();
+
+        gl.glPointSize((float) (this.getShowPositionsScale() * this.getActiveAttributes().getOutlineWidth()));
+        gl.glEnable(GL.GL_POINT_SMOOTH);
+        gl.glHint(GL.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
+
+        dc.getGL().glVertexPointer(3, GL.GL_FLOAT, 0, pathData.renderedPath.rewind());
+        dc.getGL().glDrawElements(GL.GL_POINTS, posPoints.limit(), GL.GL_UNSIGNED_INT, posPoints.rewind());
+
+        // Restore gl state
+        gl.glPointSize(1f);
+        gl.glDisable(GL.GL_POINT_SMOOTH);
+    }
+
+    /**
+     * Draws points at this path's specified positions.
+     *
+     * @param dc       the current draw context.
+     * @param vboIds   the ids of this shapes buffers.
+     * @param pathData the current globe-specific path data.
+     */
+    protected void drawPointsVBO(DrawContext dc, int[] vboIds, PathData pathData)
+    {
+        double d = this.getDistanceMetric(dc, pathData);
+        if (d > this.getShowPositionsThreshold())
+            return;
+
+        IntBuffer posPoints = pathData.positionPoints;
+        if (posPoints == null || posPoints.limit() < 1)
+            return;
+
+        GL gl = dc.getGL();
+
+        gl.glPointSize((float) (this.getShowPositionsScale() * this.getActiveAttributes().getOutlineWidth()));
+        gl.glEnable(GL.GL_POINT_SMOOTH);
+        gl.glHint(GL.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
+
+        gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+        gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[2]);
+        gl.glDrawElements(GL.GL_POINTS, posPoints.limit(), GL.GL_UNSIGNED_INT, 0);
+
+        // Restore gl state
+        gl.glPointSize(1f);
+        gl.glDisable(GL.GL_POINT_SMOOTH);
     }
 
     /**
@@ -904,7 +1102,7 @@ public class Path extends AbstractShape
         if (this.numPositions < 2)
             return;
 
-        if (pathData.tessellatedPositions == null)
+        if (pathData.tessellatedPositions == null || pathData.tessellatedPositions.size() < this.numPositions)
         {
             int size = (this.numSubsegments * (this.numPositions - 1) + 1) * (this.isExtrude() ? 2 : 1);
             pathData.tessellatedPositions = new ArrayList<Position>(size);
@@ -919,6 +1117,27 @@ public class Path extends AbstractShape
         else
             pathData.polePositions.clear();
 
+        if (pathData.positionPoints == null || pathData.positionPoints.capacity() < this.numPositions)
+            pathData.positionPoints = BufferUtil.newIntBuffer(this.numPositions);
+        else
+            pathData.positionPoints.clear();
+
+        this.makePositions(dc, pathData);
+
+        pathData.tessellatedPositions.trimToSize();
+        pathData.polePositions.flip();
+        pathData.positionPoints.flip();
+    }
+
+    protected double getDistanceMetric(DrawContext dc, PathData pathData)
+    {
+        return pathData.getExtent() != null
+            ? WWMath.computeDistanceFromEye(dc, pathData.getExtent())
+            : dc.getView().getEyePosition().getElevation();
+    }
+
+    protected void makePositions(DrawContext dc, PathData pathData)
+    {
         Iterator<? extends Position> iter = this.positions.iterator();
         Position posA = iter.next();
         this.addTessellatedPosition(posA, true, pathData); // add the first position of the path
@@ -926,21 +1145,25 @@ public class Path extends AbstractShape
         // Tessellate each segment of the path.
         Vec4 ptA = this.computePoint(dc.getTerrain(), posA);
 
-        for (int i = 1; i <= this.numPositions; i++)
+        while (iter.hasNext())
         {
-            Position posB;
-            if (i < this.numPositions)
-                posB = iter.next();
-            else
-                break;
+            Position posB = iter.next();
 
             Vec4 ptB = this.computePoint(dc.getTerrain(), posB);
 
-            // If the segment is very small or not visible, don't tessellate it, just add the segment's end position.
-            if (this.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB))
-                this.addTessellatedPosition(posB, true, pathData);
+            if (iter.hasNext()) // if this is not the final position
+            {
+                // If the segment is very small or not visible, don't tessellate, just add the segment's end position.
+                if (this.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB))
+                    this.addTessellatedPosition(posB, true, pathData);
+                else
+                    this.makeSegment(dc, posA, posB, ptA, ptB, pathData);
+            }
             else
-                this.makeSegment(dc, posA, posB, ptA, ptB, pathData);
+            {
+                // Add the final point.
+                this.addTessellatedPosition(posB, true, pathData);
+            }
 
             posA = posB;
             ptA = ptB;
@@ -958,8 +1181,14 @@ public class Path extends AbstractShape
     {
         if (polePosition)
         {
+            // NOTE: Assign these indices before adding the new position to the tessellatedPositions list.
             int index = pathData.tessellatedPositions.size() * 2;
             pathData.polePositions.put(index).put(index + 1);
+
+            if (pathData.hasExtrusionPoints)
+                pathData.positionPoints.put(index);
+            else
+                pathData.positionPoints.put(pathData.tessellatedPositions.size());
         }
 
         pathData.tessellatedPositions.add(pos); // be sure to do the add after the pole position is set
@@ -1162,7 +1391,7 @@ public class Path extends AbstractShape
         Box box = Box.computeBoundingBox(new BufferWrapper.FloatBufferWrapper(current.renderedPath));
 
         // The path points are relative to the reference center, so translate the extent to the reference center.
-        box = box.translate(current.getReferencePoint()); // TODO
+        box = box.translate(current.getReferencePoint());
 
         return box;
     }
@@ -1201,7 +1430,7 @@ public class Path extends AbstractShape
     protected void fillVBO(DrawContext dc)
     {
         PathData pathData = this.getCurrentPathData();
-        int numIds = pathData.hasExtrusionPoints && this.isDrawVerticals() ? 2 : 1;
+        int numIds = this.isShowPositions() ? 3 : pathData.hasExtrusionPoints && this.isDrawVerticals() ? 2 : 1;
 
         int[] vboIds = (int[]) dc.getGpuResourceCache().get(pathData.getVboCacheKey());
         if (vboIds != null && vboIds.length != numIds)
@@ -1213,7 +1442,10 @@ public class Path extends AbstractShape
         GL gl = dc.getGL();
 
         int vSize = pathData.renderedPath.limit() * 4;
-        int iSize = pathData.hasExtrusionPoints && this.isDrawVerticals() ? this.numPositions * 2 * 4 : 0;
+        int iSize = pathData.hasExtrusionPoints
+            && this.isDrawVerticals() ? pathData.tessellatedPositions.size() * 2 * 4 : 0;
+        if (this.isShowPositions())
+            iSize += pathData.tessellatedPositions.size();
 
         if (vboIds == null)
         {
@@ -1233,6 +1465,13 @@ public class Path extends AbstractShape
             {
                 IntBuffer ib = pathData.polePositions;
                 gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[1]);
+                gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, ib.limit() * 4, ib.rewind(), GL.GL_STATIC_DRAW);
+            }
+
+            if (this.isShowPositions())
+            {
+                IntBuffer ib = pathData.positionPoints;
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[2]);
                 gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, ib.limit() * 4, ib.rewind(), GL.GL_STATIC_DRAW);
             }
         }
