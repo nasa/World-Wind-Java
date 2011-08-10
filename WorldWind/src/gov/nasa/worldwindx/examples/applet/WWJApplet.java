@@ -189,7 +189,7 @@ public class WWJApplet extends JApplet
     /**
      * Set the current view heading and pitch
      *
-     * @param heading the traget heading in decimal degrees
+     * @param heading the target heading in decimal degrees
      * @param pitch   the target pitch in decimal degrees
      */
     public void setHeadingAndPitch(double heading, double pitch)
@@ -279,4 +279,3 @@ public class WWJApplet extends JApplet
         this.labelsLayer.addRenderable(ga);
     }
 }
-
