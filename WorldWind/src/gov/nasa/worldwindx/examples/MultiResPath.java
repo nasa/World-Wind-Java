@@ -11,7 +11,6 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Earth;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwindx.examples.*;
 
 import java.util.*;
 
@@ -34,8 +33,8 @@ public class MultiResPath extends ApplicationTemplate
             Position.fromDegrees(40.2377, -105.6480, 200),
             Position.fromDegrees(41.2625, -105.6503, 200),
             Position.fromDegrees(42.2285, -105.6169, 200),
-//            Position.fromDegrees(43.2019, -105.6467, 200),
-//            Position.fromDegrees(44.2414, -105.6911, 200),
+            Position.fromDegrees(43.2019, -105.6467, 200),
+            Position.fromDegrees(44.2414, -105.6911, 200),
         };
 
     public static class AppFrame extends ApplicationTemplate.AppFrame
@@ -65,14 +64,12 @@ public class MultiResPath extends ApplicationTemplate
             double distance = 60 * SPEED / 20; // seconds x radians per second
 
             // Create the Path positions.
-            int count = 0;
             List<Position> positions = new ArrayList<Position>(NUM_POSITIONS);
             for (int i = 0; i < NUM_POSITIONS; i++)
             {
                 Position position = new Position(location, altitude);
                 positions.add(position);
 
-                ++count;
                 altitude += 5;
                 angle += Math.PI / 64;
                 location = LatLon.rhumbEndPosition(location, angle, distance);
@@ -91,6 +88,9 @@ public class MultiResPath extends ApplicationTemplate
             // Indicate that the dots be drawn only when the path is less than 5 KM from the eye point.
             path.setShowPositionsThreshold(5e3);
 
+            // Override generic view-distance geometry regeneration because multi-res Paths handle that themselves.
+            path.setViewDistanceExpiration(false);
+
             path.setAltitudeMode(altitudeMode);
             path.setAttributes(attrs);
 
@@ -98,9 +98,6 @@ public class MultiResPath extends ApplicationTemplate
             rLayer.addRenderable(path);
             insertBeforeCompass(getWwd(), rLayer);
             this.getLayerPanel().update(this.getWwd());
-
-            System.out.printf("%d Placemarks, Altitude mode = %s\n", count, NUM_POSITIONS,
-                altitudeMode == WorldWind.RELATIVE_TO_GROUND ? "RELATIVE_TO_GROUND" : "ABSOLUTE");
         }
     }
 

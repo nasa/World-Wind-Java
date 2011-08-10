@@ -197,6 +197,7 @@ public abstract class AbstractShape extends WWObjectImpl
     protected Object delegateOwner; // for app use to identify an owner of this shape other than the current layer
     protected long maxExpiryTime = DEFAULT_GEOMETRY_GENERATION_INTERVAL;
     protected long minExpiryTime = Math.max(DEFAULT_GEOMETRY_GENERATION_INTERVAL - 500, 0);
+    protected boolean viewDistanceExpiration = true;
 
     // Volatile values used only during frame generation.
     protected OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
@@ -934,6 +935,31 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     /**
+     * Indicates whether this shape's terrain-dependent geometry is continually computed as its distance from the eye
+     * point changes. This is often necessary to ensure that the shape is updated as the terrain precision changes. But
+     * it's often not necessary as well, and can be disabled.
+     *
+     * @return true if the terrain dependent geometry is updated as the eye distance changes, otherwise false. The
+     *         default is true.
+     */
+    public boolean isViewDistanceExpiration()
+    {
+        return viewDistanceExpiration;
+    }
+
+    /**
+     * Specifies whether this shape's terrain-dependent geometry is continually computed as its distance from the eye
+     * point changes. This is often necessary to ensure that the shape is updated as the terrain precision changes. But
+     * it's often not necessary as well, and can be disabled.
+     *
+     * @param viewDistanceExpiration true to enable view distance expiration, otherwise false.
+     */
+    public void setViewDistanceExpiration(boolean viewDistanceExpiration)
+    {
+        this.viewDistanceExpiration = viewDistanceExpiration;
+    }
+
+    /**
      * Determines whether this shape's geometry should be invalidated because the view distance changed, and if so,
      * invalidates the geometry.
      *
@@ -943,6 +969,9 @@ public abstract class AbstractShape extends WWObjectImpl
     {
         // Determine whether the distance of this shape from the eye has changed significantly. Invalidate the previous
         // extent and expire the shape geometry if it has. "Significantly" is considered a 10% difference.
+
+        if (!this.isViewDistanceExpiration())
+            return;
 
         Vec4 refPt = this.currentData.getReferencePoint();
         if (refPt == null)

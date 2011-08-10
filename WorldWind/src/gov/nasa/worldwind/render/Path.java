@@ -1129,6 +1129,16 @@ public class Path extends AbstractShape
         pathData.positionPoints.flip();
     }
 
+    /**
+     * Computes this Path's distance from the eye point, for use in determining when to show positions points. The value
+     * returned is only an approximation because the eye distance varies along the path.
+     *
+     * @param dc       the current draw context.
+     * @param pathData this path's current shape data.
+     *
+     * @return the distance of the shape from the eye point. If the eye distance cannot be computed, the eye position's
+     *         elevation is returned instead.
+     */
     protected double getDistanceMetric(DrawContext dc, PathData pathData)
     {
         return pathData.getExtent() != null
