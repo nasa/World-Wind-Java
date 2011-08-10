@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwindx.examples;
+package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
