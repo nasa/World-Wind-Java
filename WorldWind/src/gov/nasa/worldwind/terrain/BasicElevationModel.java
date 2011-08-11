@@ -2617,23 +2617,32 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         }
     }
 
-    public double getLocalDataAvailability(Sector sector, Double targetResolution)
+    @Override
+    public double getLocalDataAvailability(Sector requestedSector, Double targetResolution)
     {
-        if (sector == null)
+        if (requestedSector == null)
         {
             String msg = Logging.getMessage("nullValue.SectorIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
+        // Compute intersection of the requested sector and the sector covered by the elevation model.
+        LevelSet levelSet = this.getLevels();
+        Sector sector = requestedSector.intersection(levelSet.getSector());
+
+        // If there is no intersection there is no data to retrieve
+        if (sector == null)
+            return 1d;
+
         Level targetLevel = targetResolution != null
-            ? this.getTargetLevel(sector, targetResolution) : this.levels.getLastLevel();
+            ? this.getTargetLevel(sector, targetResolution) : levelSet.getLastLevel();
 
         // Count all the tiles intersecting the input sector.
         long numLocalTiles = 0;
         long numMissingTiles = 0;
         LatLon delta = targetLevel.getTileDelta();
-        LatLon origin = this.getLevels().getTileOrigin();
+        LatLon origin = levelSet.getTileOrigin();
         final int nwRow = Tile.computeRow(delta.getLatitude(), sector.getMaxLatitude(), origin.getLatitude());
         final int nwCol = Tile.computeColumn(delta.getLongitude(), sector.getMinLongitude(), origin.getLongitude());
         final int seRow = Tile.computeRow(delta.getLatitude(), sector.getMinLatitude(), origin.getLatitude());
@@ -2644,7 +2653,7 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
             for (int col = nwCol; col <= seCol; col++)
             {
                 TileKey key = new TileKey(targetLevel.getLevelNumber(), row, col, targetLevel.getCacheName());
-                Sector tileSector = this.getLevels().computeSectorForKey(key);
+                Sector tileSector = levelSet.computeSectorForKey(key);
                 Tile tile = new Tile(tileSector, targetLevel, row, col);
                 if (!this.isTileLocalOrAbsent(tile))
                     ++numMissingTiles;
