@@ -54,6 +54,6 @@ public class OSMMapnikLayer extends BasicMercatorTiledImageLayer
     @Override
     public String toString()
     {
-        return "OpenStreetMap Mapnik";
+        return "OpenStreetMap";
     }
 }
