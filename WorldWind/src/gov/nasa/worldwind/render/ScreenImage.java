@@ -317,7 +317,6 @@ public class ScreenImage extends AVListImpl implements Renderable, Exportable
             {
                 this.texture = new BasicWWTexture(imageURL, true);
                 this.texture.setUseAnisotropy(false);
-                return this.texture;
             }
         }
         else if (imageSource != null)
