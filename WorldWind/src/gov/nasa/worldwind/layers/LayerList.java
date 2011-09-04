@@ -185,6 +185,30 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
         return layer;
     }
 
+    public boolean moveLower(Layer targetLayer)
+    {
+        int index = this.indexOf(targetLayer);
+        if (index <= 0)
+            return false;
+
+        this.remove(index);
+        this.add(index - 1, targetLayer);
+
+        return true;
+    }
+
+    public boolean moveHigher(Layer targetLayer)
+    {
+        int index = this.indexOf(targetLayer);
+        if (index < 0)
+            return false;
+
+        this.remove(index);
+        this.add(index + 1, targetLayer);
+
+        return true;
+    }
+
     public Layer set(int index, Layer layer)
     {
         if (layer == null)
