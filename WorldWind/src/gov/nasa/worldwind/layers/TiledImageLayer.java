@@ -71,6 +71,7 @@ public abstract class TiledImageLayer extends AbstractLayer
         }
 
         this.levels = new LevelSet(levelSet); // the caller's levelSet may change internally, so we copy it.
+        this.setValue(AVKey.SECTOR, this.levels.getSector());
 
         this.setPickEnabled(false); // textures are assumed to be terrain unless specifically indicated otherwise.
         this.tileCountName = this.getName() + " Tiles";
