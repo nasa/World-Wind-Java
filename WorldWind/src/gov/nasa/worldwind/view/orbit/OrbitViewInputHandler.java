@@ -904,8 +904,8 @@ public class OrbitViewInputHandler extends BasicViewInputHandler
         int altitudeMode = endCenterOnSurface ? WorldWind.CLAMP_TO_GROUND : WorldWind.ABSOLUTE;
 
         // TODO: scale on mid-altitude?
-        final long MIN_LENGTH_MILLIS = 4000;
-        final long MAX_LENGTH_MILLIS = 16000;
+        final long MIN_LENGTH_MILLIS = 2000;
+        final long MAX_LENGTH_MILLIS = 10000;
         long timeToMove = AnimationSupport.getScaledTimeMillisecs(
             beginCenterPos, endCenterPos,
             MIN_LENGTH_MILLIS, MAX_LENGTH_MILLIS);
