@@ -686,7 +686,7 @@ public class Box implements Extent, Renderable
 
         // Determine the effective radius of the box axis relative to the plane.
         Vec4 n = plane.getNormal();
-        return 0.5 * (Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)));
+        return 0.5 * (Math.abs(this.r.dot3(n)) + Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)));
     }
 
     protected double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints)
