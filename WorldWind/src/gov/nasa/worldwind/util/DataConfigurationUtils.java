@@ -140,7 +140,7 @@ public class DataConfigurationUtils
      *
      * @param domElement the data configuration document who's display name is returned.
      * @return a String representing the data configuration document's display name, or null if the document is
-     *         unrecongnized.
+     *         not recognized.
      * @throws IllegalArgumentException if the document is null.
      */
     public static String getDataConfigDisplayName(Element domElement)
@@ -181,7 +181,7 @@ public class DataConfigurationUtils
      * <tr><td>Other</td><td>null</td></tr> </table>
      *
      * @param domElement the data configuration document to determine a type for.
-     * @return a String representing the data configuration document's type, or null if the document is unrecongnized.
+     * @return a String representing the data configuration document's type, or null if the document is not recognized.
      * @throws IllegalArgumentException if the document is null.
      */
     public static String getDataConfigType(Element domElement)
@@ -278,7 +278,7 @@ public class DataConfigurationUtils
      * moved to an arbitrary location within the cache.
      *
      * @param dataConfigCachePath the data configuration file's cache path.
-     * @param params              the output key-value pairs which recieve the DATA_CACHE_NAME parameter. A null
+     * @param params              the output key-value pairs which receive the DATA_CACHE_NAME parameter. A null
      *                            reference is permitted.
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the data config file's cache path is null or has length zero.
@@ -321,7 +321,7 @@ public class DataConfigurationUtils
      * true, this removes the existing file.
      *
      * @param fileStore       the file store in which to look.
-     * @param fileName        the file name to look for. If a file with this nname does not exist in the store, this
+     * @param fileName        the file name to look for. If a file with this name does not exist in the store, this
      *                        looks at the file's siblings for a match.
      * @param removeIfExpired true to remove the existing file, if it exists and is expired; false otherwise.
      * @param expiryTime      the time in milliseconds, before which a file is considered to be expired.
@@ -369,10 +369,10 @@ public class DataConfigurationUtils
     /**
      * Returns the URL of an existing data configuration file under the specified file store, or null if no
      * configuration file exists. This first looks for a configuration file with the specified name. If that does not
-     * exists, this checks the siblings of the specified file for a configuration file match.
+     * exist, this checks the siblings of the specified file for a configuration file match.
      *
      * @param fileStore the file store in which to look.
-     * @param fileName  the file name to look for. If a file with this nname does not exist in the store, this looks at
+     * @param fileName  the file name to look for. If a file with this name does not exist in the store, this looks at
      *                  the file's siblings for a match.
      * @return the URL of an existing configuration file in the store, or null if none exists.
      * @throws IllegalArgumentException if either the file store or file name are null.
@@ -540,7 +540,7 @@ public class DataConfigurationUtils
      * AVKey#DATASET_NAME}</td><td>AVKey.LAYER_NAMES</td><td>String</td></tr> </table>
      *
      * @param domElement the XML document root to parse for WMS layer parameters.
-     * @param params     the output key-value pairs which recieve the WMS layer parameters. A null reference is
+     * @param params     the output key-value pairs which receive the WMS layer parameters. A null reference is
      *                   permitted.
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
@@ -744,7 +744,7 @@ public class DataConfigurationUtils
     }
 
     /**
-     * Convenience metohd to get the OGC GetCapabilities URL from a specified parameter list. If all the necessary
+     * Convenience method to get the OGC GetCapabilities URL from a specified parameter list. If all the necessary
      * parameters are available, this returns the GetCapabilities URL. Otherwise this returns null.
      *
      * @param params parameter list to get the GetCapabilities parameters from.
@@ -1087,7 +1087,7 @@ public class DataConfigurationUtils
      * milliseconds</td></tr> </table>
      *
      * @param domElement the XML document root to parse for LevelSet configuration parameters.
-     * @param params     the output key-value pairs which recieve the LevelSet configuration parameters. A null
+     * @param params     the output key-value pairs which receive the LevelSet configuration parameters. A null
      *                   reference is permitted.
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
@@ -1165,7 +1165,7 @@ public class DataConfigurationUtils
      * </table>
      *
      * @param levelSet the LevelSet reference to gather configuration parameters from.
-     * @param params   the output key-value pairs which recieve the LevelSet configuration parameters. A null reference
+     * @param params   the output key-value pairs which receive the LevelSet configuration parameters. A null reference
      *                 is permitted.
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
@@ -1384,7 +1384,7 @@ public class DataConfigurationUtils
      * depending on the contents of the {@link org.w3c.dom.Element}.
      *
      * @param domElement DataDescriptor document to transform.
-     * @return standard Layer or ElevationModel dsocument, or null if the DataDescriptor cannot be transformed to a
+     * @return standard Layer or ElevationModel document, or null if the DataDescriptor cannot be transformed to a
      *         standard document.
      * @throws IllegalArgumentException if the document is null.
      */
@@ -1676,7 +1676,7 @@ public class DataConfigurationUtils
      * (boolean constant)<td></td><td>Boolean</td></tr> </table>
      *
      * @param domElement the XML document root to parse for LayerSet configuration parameters.
-     * @param params     the output key-value pairs which recieve the LayerSet configuration parameters. A null
+     * @param params     the output key-value pairs which receive the LayerSet configuration parameters. A null
      *                   reference is permitted.
      * @return a reference to params, or a new AVList if params is null.
      * @throws IllegalArgumentException if the document is null.
