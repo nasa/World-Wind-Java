@@ -65,7 +65,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
         }
     }
 
-    // Retrieval could be occurring on serveral threads when the app adds a read location, so protect the list of read
+    // Retrieval could be occurring on several threads when the app adds a read location, so protect the list of read
     // locations from concurrent modification.
     protected final java.util.List<StoreLocation> readLocations =
         new java.util.concurrent.CopyOnWriteArrayList<StoreLocation>();

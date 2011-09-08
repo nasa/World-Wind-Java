@@ -299,7 +299,7 @@ public final class BasicRetrievalService extends WWObjectImpl
     /**
      * @param retriever the retriever to run
      * @return a future object that can be used to query the request status of cancel the request.
-     * @throws IllegalArgumentException if <code>retrieer</code> is null or has no name
+     * @throws IllegalArgumentException if <code>retriever</code> is null or has no name
      */
     public RetrievalFuture runRetriever(Retriever retriever)
     {

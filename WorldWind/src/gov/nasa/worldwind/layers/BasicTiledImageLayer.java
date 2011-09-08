@@ -436,7 +436,7 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
 
     /**
      * Start a new {@link BulkRetrievalThread} that downloads all imagery for a given sector and resolution to a
-     * specified {@link FileStore}, without downloading imagery tht is already in the file store.
+     * specified {@link FileStore}, without downloading imagery that is already in the file store.
      * <p/>
      * This method creates and starts a thread to perform the download. A reference to the thread is returned. To create
      * a downloader that has not been started, construct a {@link BasicTiledImageLayerBulkDownloader}.
