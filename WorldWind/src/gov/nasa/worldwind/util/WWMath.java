@@ -803,7 +803,28 @@ public class WWMath
             };
     }
 
-    public static Vec4[] computePrincipalAxes(BufferWrapper coordinates)
+    /**
+     * Returns an array of normalized vectors defining the three principal axes of the x-, y-, and z-coordinates from
+     * the specified buffer of points, sorted from the most prominent axis to the least prominent. This returns null if
+     * the buffer is empty. The returned array contains three normalized orthogonal vectors defining a coordinate system
+     * which best fits the distribution of the points about its arithmetic mean.
+     * <p/>
+     * The buffer must contain XYZ coordinate tuples which are either tightly packed or offset by the specified stride.
+     * The stride specifies the number of buffer elements between the first coordinate of consecutive tuples. For
+     * example, a stride of 3 specifies that each tuple is tightly packed as XYZXYZXYZ, whereas a stride of 5 specifies
+     * that there are two elements between each tuple as XYZabXYZab (the elements "a" and "b" are ignored). The stride
+     * must be at least 3. If the buffer's length is not evenly divisible into stride-sized tuples, this ignores the
+     * remaining elements that follow the last complete tuple.
+     *
+     * @param coordinates the buffer containing the point coordinates for which to compute the principal axes.
+     * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
+     *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
+     *
+     * @return the normalized principal axes of the points, sorted from the most prominent axis to the least prominent.
+     *
+     * @throws IllegalArgumentException if the buffer is null, or if the stride is less than three.
+     */
+    public static Vec4[] computePrincipalAxes(BufferWrapper coordinates, int stride)
     {
         if (coordinates == null)
         {
@@ -812,9 +833,16 @@ public class WWMath
             throw new IllegalArgumentException(message);
         }
 
+        if (stride < 3)
+        {
+            String msg = Logging.getMessage("generic.StrideIsInvalid");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         // Compute the covariance matrix of the specified points Iterable. Note that Matrix.fromCovarianceOfVertices
         // returns null if the points Iterable is empty, or if all of the points are null.
-        Matrix covariance = Matrix.fromCovarianceOfVertices(coordinates);
+        Matrix covariance = Matrix.fromCovarianceOfVertices(coordinates, stride);
         if (covariance == null)
             return null;
 
@@ -1472,9 +1500,11 @@ public class WWMath
         if (steep)
         {
             int t = x0;
+            //noinspection SuspiciousNameCombination
             x0 = y0;
             y0 = t;
             t = x1;
+            //noinspection SuspiciousNameCombination
             x1 = y1;
             y1 = t;
         }

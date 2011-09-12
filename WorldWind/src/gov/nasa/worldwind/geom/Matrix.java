@@ -1667,7 +1667,36 @@ public class Matrix
             0d, 0d, 0d, 0d);
     }
 
-    public static Matrix fromCovarianceOfVertices(BufferWrapper coordinates)
+    /**
+     * Computes a symmetric covariance Matrix from the x, y, z coordinates of the specified buffer of points. This
+     * returns null if the buffer is empty.
+     * <p/>
+     * The returned covariance matrix represents the correlation between each pair of x-, y-, and z-coordinates as
+     * they're distributed about the points arithmetic mean. Its layout is as follows:
+     * <p/>
+     * <code> C(x, x)  C(x, y)  C(x, z) <br/> C(x, y)  C(y, y)  C(y, z) <br/> C(x, z)  C(y, z)  C(z, z) </code>
+     * <p/>
+     * C(i, j) is the covariance of coordinates i and j, where i or j are a coordinate's dispersion about its mean
+     * value. If any entry is zero, then there's no correlation between the two coordinates defining that entry. If the
+     * returned matrix is diagonal, then all three coordinates are uncorrelated, and the specified points are
+     * distributed evenly about their mean point.
+     * <p/>
+     * The buffer must contain XYZ coordinate tuples which are either tightly packed or offset by the specified stride.
+     * The stride specifies the number of buffer elements between the first coordinate of consecutive tuples. For
+     * example, a stride of 3 specifies that each tuple is tightly packed as XYZXYZXYZ, whereas a stride of 5 specifies
+     * that there are two elements between each tuple as XYZabXYZab (the elements "a" and "b" are ignored). The stride
+     * must be at least 3. If the buffer's length is not evenly divisible into stride-sized tuples, this ignores the
+     * remaining elements that follow the last complete tuple.
+     *
+     * @param coordinates the buffer containing the point coordinates for which to compute a Covariance matrix.
+     * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
+     *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
+     *
+     * @return the covariance matrix for the buffer of points.
+     *
+     * @throws IllegalArgumentException if the buffer is null, or if the stride is less than three.
+     */
+    public static Matrix fromCovarianceOfVertices(BufferWrapper coordinates, int stride)
     {
         if (coordinates == null)
         {
@@ -1676,7 +1705,14 @@ public class Matrix
             throw new IllegalArgumentException(msg);
         }
 
-        Vec4 mean = Vec4.computeAveragePoint3(coordinates);
+        if (stride < 3)
+        {
+            String msg = Logging.getMessage("generic.StrideIsInvalid");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Vec4 mean = Vec4.computeAveragePoint3(coordinates, stride);
         if (mean == null)
             return null;
 
@@ -1688,7 +1724,7 @@ public class Matrix
         double c13 = 0d;
         double c23 = 0d;
 
-        for (int i = 0; i < coordinates.length(); i += 3)
+        for (int i = 0; i <= coordinates.length() - stride; i += stride)
         {
             double x = coordinates.getDouble(i);
             double y = coordinates.getDouble(i + 1);

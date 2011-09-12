@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
 import java.util.Iterator;
 
 /**
@@ -117,7 +117,9 @@ public class MultiResolutionPath extends Path
     {
         Iterator<? extends Position> iter = this.positions.iterator();
         Position posA = iter.next();
-        this.addTessellatedPosition(posA, true, pathData); // add the first position of the path
+        int ordinalA = 0;
+        Color colorA = this.getColor(posA, ordinalA);
+        this.addTessellatedPosition(posA, colorA, ordinalA, pathData); // add the first position of the path
 
         int skipCount = this.skipCountComputer.computeSkipCount(dc, pathData);
 
@@ -142,9 +144,12 @@ public class MultiResolutionPath extends Path
                     continue;
             }
 
-            this.makeSegment(dc, posA, posB, ptA, ptB, pathData);
+            Color colorB = this.getColor(posB, i);
+            this.makeSegment(dc, posA, posB, ptA, ptB, colorA, colorB, ordinalA, i, pathData);
             posA = posB;
             ptA = ptB;
+            colorA = colorB;
+            ordinalA = i;
         }
     }
 }

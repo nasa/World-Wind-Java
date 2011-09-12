@@ -491,6 +491,41 @@ public class WWUtil
     }
 
     /**
+     * Returns the component-wise linear interpolation of <code>color1</code> and <code>color2</code>. Each of the RGBA
+     * components in the colors are interpolated according to the function: <code>(1 - amount) * c1 + amount *
+     * c2</code>, where c1 and c2 are components of <code>color1</code> and <code>color2</code>, respectively. The
+     * interpolation factor <code>amount</code> defines the weight given to each value, and is clamped to the range [0,
+     * 1].
+     *
+     * @param amount the interpolation factor.
+     * @param color1 the first color.
+     * @param color2 the second color.
+     *
+     * @return this returns the linear interpolation of <code>color1</code> and <code>color2</code> if <amount> is
+     *         between 0 and 1, a color equivalent to color1 if <code>amount</code> is 0 or less, or a color equivalent
+     *         to <code>color2</code> if <code>amount</code> is 1 or more.
+     *
+     * @throws IllegalArgumentException if either <code>color1</code> or <code>color2</code> are <code>null</code>.
+     */
+    public static Color interpolateColor(double amount, Color color1, Color color2)
+    {
+        if (color1 == null || color2 == null)
+        {
+            String message = Logging.getMessage("nullValue.ColorIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        float t = (amount < 0 ? 0 : (amount > 1 ? 1 : (float) amount));
+        float r = color1.getRed() + t * (color2.getRed() - color1.getRed());
+        float g = color1.getGreen() + t * (color2.getGreen() - color1.getGreen());
+        float b = color1.getBlue() + t * (color2.getBlue() - color1.getBlue());
+        float a = color1.getAlpha() + t * (color2.getAlpha() - color1.getAlpha());
+
+        return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+    }
+
+    /**
      * Creates a hexadecimal string representation of a {@link Color} in the form 0xrrggbbaa.
      *
      * @param color Color to encode.

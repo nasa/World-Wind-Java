@@ -442,7 +442,8 @@ public class Box implements Extent, Renderable
      *
      * @param points the points for which to compute a bounding volume.
      *
-     * @return the bounding volume, with axes lengths consistent with the conventions described in the overview.
+     * @return the bounding volume, with axes lengths consistent with the conventions described in the <code>Box</code>
+     *         class overview.
      *
      * @throws IllegalArgumentException if the point list is null or empty.
      */
@@ -509,7 +510,27 @@ public class Box implements Extent, Renderable
         return new Box(axes, minDotR, maxDotR, minDotS, maxDotS, minDotT, maxDotT);
     }
 
-    public static Box computeBoundingBox(BufferWrapper coordinates)
+    /**
+     * Computes a <code>Box</code> that bounds a specified buffer of points. Principal axes are computed for the points
+     * and used to form a <code>Box</code>.
+     * <p/>
+     * The buffer must contain XYZ coordinate tuples which are either tightly packed or offset by the specified stride.
+     * The stride specifies the number of buffer elements between the first coordinate of consecutive tuples. For
+     * example, a stride of 3 specifies that each tuple is tightly packed as XYZXYZXYZ, whereas a stride of 5 specifies
+     * that there are two elements between each tuple as XYZabXYZab (the elements "a" and "b" are ignored). The stride
+     * must be at least 3. If the buffer's length is not evenly divisible into stride-sized tuples, this ignores the
+     * remaining elements that follow the last complete tuple.
+     *
+     * @param coordinates the buffer containing the point coordinates for which to compute a bounding volume.
+     * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
+     *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
+     *
+     * @return the bounding volume, with axes lengths consistent with the conventions described in the <code>Box</code>
+     *         class overview.
+     *
+     * @throws IllegalArgumentException if the buffer is null or empty, or if the stride is less than three.
+     */
+    public static Box computeBoundingBox(BufferWrapper coordinates, int stride)
     {
         if (coordinates == null)
         {
@@ -518,7 +539,14 @@ public class Box implements Extent, Renderable
             throw new IllegalArgumentException(msg);
         }
 
-        Vec4[] axes = WWMath.computePrincipalAxes(coordinates);
+        if (stride < 3)
+        {
+            String msg = Logging.getMessage("generic.StrideIsInvalid", stride);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Vec4[] axes = WWMath.computePrincipalAxes(coordinates, stride);
         if (axes == null)
         {
             String msg = Logging.getMessage("generic.ListIsEmpty");
@@ -538,7 +566,7 @@ public class Box implements Extent, Renderable
         double minDotT = Double.MAX_VALUE;
         double maxDotT = -minDotT;
 
-        for (int i = 0; i < coordinates.length(); i += 3)
+        for (int i = 0; i <= coordinates.length() - stride; i += stride)
         {
             double x = coordinates.getDouble(i);
             double y = coordinates.getDouble(i + 1);
@@ -686,7 +714,7 @@ public class Box implements Extent, Renderable
 
         // Determine the effective radius of the box axis relative to the plane.
         Vec4 n = plane.getNormal();
-        return 0.5 * (Math.abs(this.r.dot3(n)) + Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)));
+        return 0.5 * (Math.abs(this.s.dot3(n)) + Math.abs(this.t.dot3(n)));
     }
 
     protected double intersectsAt(Plane plane, double effectiveRadius, Vec4[] endpoints)

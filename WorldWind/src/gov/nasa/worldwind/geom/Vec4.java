@@ -1150,11 +1150,38 @@ public class Vec4
         return new Vec4(x / (double) count, y / (double) count, z / (double) count, w / (double) count);
     }
 
-    public static Vec4 computeAveragePoint3(BufferWrapper coordinates)
+    /**
+     * Returns the arithmetic mean of the x, y, z coordinates of the specified points buffer. This returns null if the
+     * buffer is empty.
+     * <p/>
+     * The buffer must contain XYZ coordinate tuples which are either tightly packed or offset by the specified stride.
+     * The stride specifies the number of buffer elements between the first coordinate of consecutive tuples. For
+     * example, a stride of 3 specifies that each tuple is tightly packed as XYZXYZXYZ, whereas a stride of 5 specifies
+     * that there are two elements between each tuple as XYZabXYZab (the elements "a" and "b" are ignored). The stride
+     * must be at least 3. If the buffer's length is not evenly divisible into stride-sized tuples, this ignores the
+     * remaining elements that follow the last complete tuple.
+     *
+     * @param coordinates the buffer containing the point coordinates for which to compute a bounding volume.
+     * @param stride      the number of elements between the first coordinate of consecutive points. If stride is 3,
+     *                    this interprets the buffer has having tightly packed XYZ coordinate tuples.
+     *
+     * @return the arithmetic mean point of the specified points Iterable, or null if the Iterable is empty or contains
+     *         only null points.
+     *
+     * @throws IllegalArgumentException if the buffer is null, or if the stride is less than three.
+     */
+    public static Vec4 computeAveragePoint3(BufferWrapper coordinates, int stride)
     {
         if (coordinates == null)
         {
             String msg = Logging.getMessage("nullValue.CoordinatesAreNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (stride < 3)
+        {
+            String msg = Logging.getMessage("generic.StrideIsInvalid");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -1164,7 +1191,7 @@ public class Vec4
         double y = 0d;
         double z = 0d;
 
-        for (int i = 0; i < coordinates.length(); i += 3)
+        for (int i = 0; i <= coordinates.length() - stride; i += stride)
         {
             count++;
             x += coordinates.getDouble(i);
