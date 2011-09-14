@@ -171,11 +171,11 @@ public abstract class TiledImageLayer extends AbstractLayer
      * value is 0. Values typically range between -0.5 and 0.5.
      * <p/>
      * Note: The resolution-to-height relationship is defined by a scale factor that specifies the approximate size of
-     * discernable lengths in the image relative to eye distance. The scale is specified as a power of 10. A value of 3,
+     * discernible lengths in the image relative to eye distance. The scale is specified as a power of 10. A value of 3,
      * for example, specifies that 1 meter on the surface should be distinguishable from an altitude of 10^3 meters
      * (1000 meters). The default scale is 1/10^2.8, (1 over 10 raised to the power 2.8). The detail hint specifies
      * deviations from that default. A detail hint of 0.2 specifies a scale of 1/1000, i.e., 1/10^(2.8 + .2) = 1/10^3.
-     * Scales much larger than 3 typically cause the applied resolution to be higher than discernable for the altitude.
+     * Scales much larger than 3 typically cause the applied resolution to be higher than discernible for the altitude.
      * Such scales significantly decrease performance.
      *
      * @param detailHint the degree to modify the default relationship of image resolution to screen resolution with
