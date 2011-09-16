@@ -100,6 +100,7 @@ public class RandomShapeAttributes
         attrs.setOutlineMaterial(new Material(WWUtil.makeColorBrighter(color)));
         attrs.setInteriorOpacity(0.5);
         attrs.setOutlineWidth(3);
+        attrs.setDrawInterior(false);
         return attrs;
     }
 }
