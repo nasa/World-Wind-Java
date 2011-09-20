@@ -107,7 +107,5 @@ public interface View extends WWObject
      */
     Position getEyePosition(Globe globe);
 
-    public Angle getEyeTilt(Globe globe);
-
     void apply(DrawContext dc);
 }
