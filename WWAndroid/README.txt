@@ -15,17 +15,14 @@ Key files and folders in the World Wind Android SDK:
 Links to important World Wind sites that will help you get started using the World Wind Android SDK in your
 application:
 
-World Wind Android Developer's Guide:
+World Wind Android Website:
 http://goworldwind.org/android
-
-World Wind Android Release Website:
-http://worldwindserver.net/android/
 
 World Wind Android Forum:
 http://forum.worldwindcentral.com/forumdisplay.php?f=50
 
 World Wind Android API Documentation:
-http://builds.worldwind.arc.nasa.gov/wwandroid-releases/daily/docs/api/index.html
+http://builds.worldwind.arc.nasa.gov/worldwindandroid-releases/daily/docs/api/index.html
 
 
 Running an Example Application on Android
