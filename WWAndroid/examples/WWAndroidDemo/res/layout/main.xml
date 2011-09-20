@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (C) 2011 United States Government as represented by the Administrator of the
+    National Aeronautics and Space Administration.
+    All Rights Reserved.
+-->
+
+<!--
+    $Id$
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="horizontal">
+
+    <gov.nasa.worldwind.WorldWindowGLSurfaceView android:id="@+id/wwd"
+                                                 android:layout_width="0dp"
+                                                 android:layout_height="match_parent"
+                                                 android:layout_weight="3"/>
+
+    <gov.nasa.worldwind.util.dashboard.DashboardView android:id="@+id/dashboard"
+                                                     android:layout_width="0dp"
+                                                     android:layout_height="match_parent"
+                                                     android:layout_weight="1"
+                                                     android:orientation="vertical"
+                                                     android:padding="10dp"/>
+</LinearLayout>

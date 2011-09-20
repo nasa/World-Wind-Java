@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--$Id$-->
+<!--This document specifies the initial layers to load in World Wind-->
+<!--This list can be overridden by specifying an alternate list in worldwind.xml, or by specifying an-->
+<!--alternate configuration document-->
+<!--See the javadoc for the Configuration class for details-->
+<LayerList>
+    <Layer className="gov.nasa.worldwind.layers.Earth.BMNGOneImage">
+        <!--Individual properties can be specified within Layer entries, like this:-->
+        <Property name="MinActiveAltitude" value="3e6"/>
+    </Layer>
+    <Layer href="config/Earth/BMNGWMSLayer.xml" actuate="onLoad"/>
+    <Layer href="config/Earth/LandsatI3WMSLayer.xml" actuate="onLoad"/>
+</LayerList>

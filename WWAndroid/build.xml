@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    Copyright (C) 2011 United States Government as represented by the Administrator of the
+    National Aeronautics and Space Administration.
+    All Rights Reserved.
+
+    Build script for the World Wind Android SDK. Compiles the World Wind source, creates World Wind API documentation,
+    and builds World Wind JAR files. The default target 'worldwind.jarfile' builds the World Wind core JAR file.
+
+    $Id$
+-->
+<project name="worldwind" default="worldwind.jarfile" basedir=".">
+    <description>
+        Build script for the World Wind Android SDK. Compiles the World Wind source, creates World Wind API
+        documentation, and builds World Wind JAR files. The default target 'worldwind.jarfile' builds the World Wind
+        core JAR file.
+    </description>
+
+    <!-- Import the World Wind Android SDK properties. -->
+    <property file="build/android.properties"/>
+    <!-- Import the World Wind build properties. -->
+    <property file="build/build.properties"/>
+    <!-- Import the World Wind examples targets. -->
+    <import file="build/examples.xml"/>
+    <!-- Import the World Wind release targets. -->
+    <import file="build/release.xml"/>
+    <!-- Import the World Wind general utility targets. -->
+    <import file="build/util.xml"/>
+
+    <!-- Main build target for the World Wind Android SDK. Compiles the World Wind source, creates the World Wind API
+         documentation, and builds the World Wind JAR files. -->
+    <target name="build" depends="check.requirements,
+                                  compile,
+                                  javadocs,
+                                  worldwind.jarfile"
+            description="Main build target for the World Wind Android SDK. Compiles the World Wind source, creates the World Wind API documentation, and builds the World Wind JAR files."/>
+
+    <!-- Compiles all World Wind Android sources under the 'src' folder into Java class files under the 'classes'folder.
+         We configure the javac task parameters 'source' and 'target' in order to explicitly control the Java compiler
+         version used to build World Wind classes. Without these parameters, the javac task would use the mostrecent
+         compiler available on the current machine, and the Java compiler version used to build WorldWind classes would
+         be unpredictable. For this reason, the Apache ANT manual strongly recommends specifying the 'source' and
+         'target' parameters. See the following link for more detail: http://ant.apache.org/manual/CoreTasks/javac.html
+
+         The Java compiler version used by the javac task is defined by the build parameter 'worldwind.jdk.version'.
+         This parameter is defined in the file 'build/build.properties', and must be set to "1.5" to be compatible with
+         Android 3.1. -->
+    <target name="compile" depends="check.requirements"
+            description="Compiles all World Wind Android sources under the 'src' folder into Java class files under the 'classes' folder.">
+        <mkdir dir="${worldwind.classes.dir}"/>
+        <javac srcdir="${worldwind.src.dir}"
+               destdir="${worldwind.classes.dir}"
+               source="${worldwind.jdk.version}"
+               target="${worldwind.jdk.version}"
+               fork="true"
+               includeantruntime="false"
+               memoryMaximumSize="512m">
+            <classpath>
+                <pathelement location="${android.platform.jarfile}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Builds the World Wind API documentation for the core package into the 'doc' folder. Includes all World Wind
+         core classes under the packages 'gov.nasa.worldwind'. -->
+    <target name="javadocs" depends="check.requirements, clean.javadocs"
+            description="Builds the World Wind API documentation for the core package into the 'doc' folder.">
+        <javadoc destdir="${worldwind.doc.dir}"
+                 overview="${worldwind.src.dir}/overview.html"
+                 windowtitle="NASA World Wind" doctitle="NASA World Wind API" header="NASA World Wind"
+                 splitindex="true" protected="true" nodeprecated="true" version="false" author="false" use="true"
+                 maxmemory="512m">
+            <packageset dir="${worldwind.src.dir}" defaultexcludes="yes">
+                <include name="gov/nasa/worldwind/**"/>
+            </packageset>
+            <classpath>
+                <pathelement location="${android.platform.jarfile}"/>
+            </classpath>
+            <link href="http://download.oracle.com/javase/1.5.0/docs/api/"/>
+        </javadoc>
+    </target>
+
+    <!-- Builds the World Wind core JAR file 'worldwind.jar'. Includes all classes in the World Wind core package
+         gov.nasa.worldwind. Excludes files added by Subversion, and files added by the operating system. The resultant
+         JAR file is dependent on android.jar, but since that dependency is implied we do not include android.jar on the
+         class path. -->
+    <target name="worldwind.jarfile" depends="check.requirements, compile"
+            description="Builds the World Wind core JAR file 'worldwind.jar'.">
+        <jar jarfile="${basedir}/${worldwind.jarfile}">
+            <!-- Include the World Wind core package gov.nasa.worldwind. -->
+            <fileset dir="${worldwind.classes.dir}">
+                <include name="gov/nasa/worldwind/**/*.class"/>
+                <type type="file"/>
+            </fileset>
+            <!-- Include the MessageStrings properties files, and all resource files under the config, images, and
+                 shaders packages. We include the entire config, images, and shaders packages rather than defining
+                 patterns for resource file extensions for two reasons: (a) this avoids packaging unnecessary resources
+                 in the Jar file, and (b) this ensures that anything added to these packages is included without
+                 requiring changes to this build target. -->
+            <fileset dir="${worldwind.src.dir}">
+                <include name="gov/nasa/worldwind/util/**/*.properties"/>
+                <include name="config/**"/>
+                <include name="images/**"/>
+                <include name="shaders/**"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!-- Individual clean targets corresponding to each build target above. -->
+    <target name="clean.classes">
+        <delete dir="${worldwind.classes.dir}"/>
+    </target>
+    <target name="clean.javadocs">
+        <delete dir="${worldwind.doc.dir}"/>
+    </target>
+    <target name="clean.worldwind.jarfile">
+        <delete file="${basedir}/${worldwind.jarfile}"/>
+    </target>
+    <target name="clean.build" depends="clean.classes,
+                                        clean.javadocs,
+                                        clean.worldwind.jarfile"/>
+    <!-- Main clean target for the World Wind Java SDK. Removes all files and directories created by all World Wind
+         build targets. -->
+    <target name="clean.all" depends="check.requirements,
+                                      clean.build,
+                                      clean.worldwind.examples,
+                                      clean.worldwind.release"
+            description="Main clean target for the World Wind Android SDK. Removes all files and directories created by all World Wind build targets."/>
+
+</project>

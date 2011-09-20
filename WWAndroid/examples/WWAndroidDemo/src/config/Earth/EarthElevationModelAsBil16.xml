@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    $Id$
+-->
+<ElevationModel version="1" modelType="TiledModel">
+    <DisplayName>Earth Elevation Model (USA 10m, WordWide 30m, Ocean 900m)</DisplayName>
+    <Sector>
+        <SouthWest>
+            <LatLon units="degrees" latitude="-90" longitude="-180"/>
+        </SouthWest>
+        <NorthEast>
+            <LatLon units="degrees" latitude="90" longitude="180"/>
+        </NorthEast>
+    </Sector>
+    <LevelZeroTileDelta>
+        <LatLon units="degrees" latitude="60" longitude="60"/>
+    </LevelZeroTileDelta>
+    <TileSize>
+        <Dimension width="128" height="128"/>
+    </TileSize>
+    <NumLevels count="14"/>
+    <DataCacheName>Earth/EarthElevationModel.bil16</DataCacheName>
+    <ExtremeElevations min="-11000" max="8850"/>
+    <ImageFormat>application/bil16</ImageFormat>
+</ElevationModel>

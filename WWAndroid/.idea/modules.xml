@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/examples/SimplestPossibleExample/SimplestPossibleExample.iml" filepath="$PROJECT_DIR$/examples/SimplestPossibleExample/SimplestPossibleExample.iml" />
+      <module fileurl="file://$PROJECT_DIR$/WWAndroid.iml" filepath="$PROJECT_DIR$/WWAndroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/examples/WWAndroidDemo/WWAndroidDemo.iml" filepath="$PROJECT_DIR$/examples/WWAndroidDemo/WWAndroidDemo.iml" />
+    </modules>
+  </component>
+</project>
+

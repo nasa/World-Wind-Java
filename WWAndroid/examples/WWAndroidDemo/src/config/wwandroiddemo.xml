@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    WWAndroid Demo configuration values.
+
+    $Id$
+-->
+<WorldWindConfiguration version="1">
+    <Property name="gov.nasa.worldwind.avkey.EarthElevationModelConfigFile"
+              value="config/Earth/EarthElevationModelAsBil16.xml"/>
+</WorldWindConfiguration>
