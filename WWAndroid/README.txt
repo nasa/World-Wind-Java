@@ -19,7 +19,7 @@ World Wind Android Developer's Guide:
 http://goworldwind.org/android
 
 World Wind Android Release Website:
-http://worldwind.arc.nasa.gov/android/
+http://worldwindserver.net/android/
 
 World Wind Android Forum:
 http://forum.worldwindcentral.com/forumdisplay.php?f=50
