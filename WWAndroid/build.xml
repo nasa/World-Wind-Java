@@ -67,7 +67,9 @@
             description="Builds the World Wind API documentation for the core package into the 'doc' folder.">
         <javadoc destdir="${worldwind.doc.dir}"
                  overview="${worldwind.src.dir}/overview.html"
-                 windowtitle="NASA World Wind" doctitle="NASA World Wind API" header="NASA World Wind"
+                 windowtitle="NASA World Wind Android"
+                 doctitle="NASA World Wind Android API"
+                 header="NASA World Wind Android"
                  splitindex="true" protected="true" nodeprecated="true" version="false" author="false" use="true"
                  maxmemory="512m">
             <packageset dir="${worldwind.src.dir}" defaultexcludes="yes">
