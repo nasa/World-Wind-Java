@@ -28,17 +28,23 @@ http://builds.worldwind.arc.nasa.gov/worldwindandroid-releases/daily/docs/api/in
 Running an Example Application on Android
 ------------------------------------------------------------
 
-Start by configuring your Android development environment by following the instructions at:
-http://goworldwind.org/android/getting-started-with-android-and-java. Then, connect your Android device to your
-computer. Note that as of September 20, 2011, World Wind Android has been tested on the Samsung Galaxy TAB 10.1.
+Setup instructions:
+    1) Set up an Android development environment by following the instructions at:
+       http://goworldwind.org/android/android-development-environment/
+    2) Set up your device for deployment by following the instructions at:
+       http://developer.android.com/guide/developing/device.html#setting-up
+    3) Connect your Android device to your development machine.
 
-To run an example using IntelliJ IDEA:
+Using IntelliJ IDEA:
     1) Open the WWAndroid project in IntelliJ IDEA.
     2) In the toolbar, select the SimplestPossibleExample run configuration.
     3) Click the run button.
 
-To run an example from the command line:
+From the command line:
     1) Open a terminal.
     2) Add the Android SDK folders "platform-tools" and "tools" to your PATH environment variable.
     3) cd to the WWAndroid project root folder.
     4) adb -d install examples/SimplestPossibleExample/SimplestPossibleExample.apk
+    5) Press the SimplestPossibleExample application icon.
+
+Note: World Wind Android has been tested on the Samsung Galaxy Tab 10.1.
