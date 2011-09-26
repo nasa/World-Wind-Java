@@ -13,5 +13,5 @@ import java.net.*;
  */
 public interface TileUrlBuilder
 {
-    URL getURL(Tile tile, String imageFormat);
+    URL getURL(Tile tile, String imageFormat) throws MalformedURLException;
 }

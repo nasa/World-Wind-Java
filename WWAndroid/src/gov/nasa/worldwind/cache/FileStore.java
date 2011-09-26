@@ -104,4 +104,51 @@ public interface FileStore
      * @throws IllegalArgumentException if the specified URL is null.
      */
     void removeFile(java.net.URL url);
+
+    /**
+     * Returns an array of strings naming the files discovered directly under a specified file store path name. If the
+     * path name is null, files under the store root are searched. This returns null if the path does not exist in the
+     * store. Returned names are relative pointers to a file in the store; they are not necessarily a file system path.
+     *
+     * @param pathName relative path in the file store to search, or null to search the entire file store.
+     * @param filter   a file filter.
+     *
+     * @return an array of file store names. Returns null if the path does not exist in the file store.
+     *
+     * @throws IllegalArgumentException if the filter is null.
+     */
+    String[] listFileNames(String pathName, FileStoreFilter filter);
+
+    /**
+     * Returns an array of strings naming the files discovered under a specified file store path name. If the path name
+     * is null, the entire file store will be searched. Otherwise the file store is recursively searched under the
+     * specified path name for files accepted by the specified filter, until the entire path tree is exhausted. This
+     * returns null if the path does not exist in the store. Returned names are relative pointers to a file in the
+     * store; they are not necessarily a file system path.
+     *
+     * @param pathName relative path in the file store to search, or null to search the entire file store.
+     * @param filter   a file filter.
+     *
+     * @return an array of file store names. Returns null if the path does not exist in the file store.
+     *
+     * @throws IllegalArgumentException if the filter is null.
+     */
+    String[] listAllFileNames(String pathName, FileStoreFilter filter);
+
+    /**
+     * Returns an array of strings naming the files discovered under a specified file store path name. If the path name
+     * is null, the entire file store will be searched. Otherwise the file store is recursively searched under each
+     * branch of the the specified path name until a matching file is found, or that branch is exhausted. Unlike {@link
+     * #listAllFileNames(String, FileStoreFilter)}, This has the effect of locating the top file name under each branch.
+     * This returns null if the path does not exist in the store. Returned names are relative pointers to a file in the
+     * store; they are not necessarily a file system path.
+     *
+     * @param pathName relative path in the file store to search, or null to search the entire file store.
+     * @param filter   a file filter.
+     *
+     * @return an array of file store names. Returns null if the path does not exist in the file store.
+     *
+     * @throws IllegalArgumentException if the filter is null.
+     */
+    String[] listTopFileNames(String pathName, FileStoreFilter filter);
 }

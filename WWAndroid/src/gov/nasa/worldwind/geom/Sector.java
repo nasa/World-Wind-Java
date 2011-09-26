@@ -313,6 +313,16 @@ public class Sector implements Iterable<LatLon>
         return this;
     }
 
+    public Angle getDeltaLat()
+    {
+        return Angle.fromDegrees(this.maxLatitude.degrees - this.minLatitude.degrees);
+    }
+
+    public Angle getDeltaLon()
+    {
+        return Angle.fromDegrees(this.maxLongitude.degrees - this.minLongitude.degrees);
+    }
+
     public double getDeltaLatDegrees()
     {
         return this.maxLatitude.degrees - this.minLatitude.degrees;
@@ -505,6 +515,28 @@ public class Sector implements Iterable<LatLon>
             return false;
 
         return true;
+    }
+
+    public Sector[] subdivide(int div)
+    {
+        double dLat = this.getDeltaLatDegrees() / div;
+        double dLon = this.getDeltaLonDegrees() / div;
+
+        Sector[] sectors = new Sector[div * div];
+        int idx = 0;
+        for (int row = 0; row < div; row++)
+        {
+            for (int col = 0; col < div; col++)
+            {
+                sectors[idx++] = Sector.fromDegrees(
+                    this.minLatitude.degrees + dLat * row,
+                    this.minLatitude.degrees + dLat * row + dLat,
+                    this.minLongitude.degrees + dLon * col,
+                    this.minLongitude.degrees + dLon * col + dLon);
+            }
+        }
+
+        return sectors;
     }
 
     /**
@@ -754,6 +786,33 @@ public class Sector implements Iterable<LatLon>
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    /**
+     * Returns a list of the Lat/Lon coordinates of a Sector's corners.
+     *
+     * @return an array of the four corner locations, in the order SW, SE, NE, NW
+     */
+    public LatLon[] getCorners()
+    {
+        LatLon[] corners = new LatLon[4];
+
+        corners[0] = new LatLon(this.minLatitude, this.minLongitude);
+        corners[1] = new LatLon(this.minLatitude, this.maxLongitude);
+        corners[2] = new LatLon(this.maxLatitude, this.maxLongitude);
+        corners[3] = new LatLon(this.maxLatitude, this.minLongitude);
+
+        return corners;
+    }
+
+    /**
+     * Retrieve the size of this object in bytes. This implementation returns an exact value of the object's size.
+     *
+     * @return the size of this object in bytes
+     */
+    public long getSizeInBytes()
+    {
+        return 4 * minLatitude.getSizeInBytes();  // 4 angles
     }
 
     /**

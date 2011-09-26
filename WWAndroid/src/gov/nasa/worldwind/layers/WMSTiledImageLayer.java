@@ -66,17 +66,9 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer implements TileUrlB
         this.urlBuilder = this;
     }
 
-    public URL getURL(Tile tile, String altImageFormat)
+    public URL getURL(Tile tile, String altImageFormat) throws MalformedURLException
     {
-        try
-        {
-            return buildURL(tile, altImageFormat);
-        }
-        catch (MalformedURLException e)
-        {
-            Logging.error(Logging.getMessage("layers.TextureLayer.ExceptionCreatingTextureUrl", tile), e);
-        }
-        return null;
+        return buildURL(tile, altImageFormat);
     }
 
     // TODO consider rewriting using android.net.URI.Builder

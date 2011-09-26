@@ -17,6 +17,47 @@ import java.util.*;
  */
 public class WWMath
 {
+    public static final double SECOND_TO_MILLIS = 1000.0;
+    public static final double MINUTE_TO_MILLIS = 60.0 * SECOND_TO_MILLIS;
+    public static final double HOUR_TO_MILLIS = 60.0 * MINUTE_TO_MILLIS;
+    public static final double DAY_TO_MILLIS = 24.0 * HOUR_TO_MILLIS;
+
+    /**
+     * Converts time in seconds to time in milliseconds.
+     *
+     * @param seconds time in seconds.
+     *
+     * @return time in milliseconds.
+     */
+    public static double convertSecondsToMillis(double seconds)
+    {
+        return (seconds * SECOND_TO_MILLIS);
+    }
+
+    /**
+     * Converts time in minutes to time in milliseconds.
+     *
+     * @param minutes time in minutes.
+     *
+     * @return time in milliseconds.
+     */
+    public static double convertMinutesToMillis(double minutes)
+    {
+        return (minutes * MINUTE_TO_MILLIS);
+    }
+
+    /**
+     * Converts time in hours to time in milliseconds.
+     *
+     * @param hours time in hours.
+     *
+     * @return time in milliseconds.
+     */
+    public static double convertHoursToMillis(double hours)
+    {
+        return (hours * HOUR_TO_MILLIS);
+    }
+
     /**
      * Returns an array of normalized vectors defining the three principal axes of the x-, y-, and z-coordinates from
      * the specified points Iterable, sorted from the most prominent axis to the least prominent. This returns null if

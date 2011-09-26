@@ -11,15 +11,22 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.retrieve.RetrievalService;
 import gov.nasa.worldwind.util.*;
 
+import java.beans.PropertyChangeListener;
+
 /**
  * @author dcollins
  * @version $Id$
  */
 public class WorldWind
 {
+    public static final String SHUTDOWN_EVENT = "gov.nasa.worldwind.ShutDown";
+
     protected static WorldWind instance = new WorldWind();
+
+    private WWObjectImpl wwo;
     protected MemoryCacheSet memoryCacheSet;
-    protected RetrievalService retrievalService;
+    protected RetrievalService remoteRetrievalService;
+    protected RetrievalService localRetrievalService;
     protected NetworkStatus networkStatus;
     protected FileStore dataFileStore;
     protected TaskService taskService;
@@ -32,7 +39,10 @@ public class WorldWind
 
     protected void initialize()
     {
-        this.retrievalService = (RetrievalService) createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
+        this.wwo = new WWObjectImpl();
+        this.remoteRetrievalService = (RetrievalService) createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
+        this.localRetrievalService = (RetrievalService) createConfigurationComponent(AVKey.RETRIEVAL_SERVICE_CLASS_NAME);
+
         this.dataFileStore = (FileStore) createConfigurationComponent(AVKey.DATA_FILE_STORE_CLASS_NAME);
         this.memoryCacheSet = (MemoryCacheSet) createConfigurationComponent(AVKey.MEMORY_CACHE_SET_CLASS_NAME);
         this.networkStatus = (NetworkStatus) createConfigurationComponent(AVKey.NETWORK_STATUS_CLASS_NAME);
@@ -41,12 +51,27 @@ public class WorldWind
 
     public static RetrievalService getRetrievalService()
     {
-        return instance.retrievalService;
+        return instance.remoteRetrievalService;
+    }
+
+    public static RetrievalService getLocalRetrievalService()
+    {
+        return instance.remoteRetrievalService;
+    }
+
+    public static RetrievalService getRemoteRetrievalService()
+    {
+        return getRetrievalService();
     }
 
     public static MemoryCacheSet getMemoryCacheSet()
     {
         return instance.memoryCacheSet;
+    }
+
+    public static MemoryCache getMemoryCache(String key)
+    {
+        return instance.memoryCacheSet.get(key);
     }
 
     public static NetworkStatus getNetworkStatus()
@@ -122,5 +147,15 @@ public class WorldWind
         }
 
         return WorldWind.createComponent(name);
+    }
+
+    public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+    {
+        instance.wwo.addPropertyChangeListener(propertyName, listener);
+    }
+
+    public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
+    {
+        instance.wwo.removePropertyChangeListener(propertyName, listener);
     }
 }

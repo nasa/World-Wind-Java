@@ -221,7 +221,7 @@ public class GpuTextureTile extends Tile implements SurfaceTile
 
         int twoN = 2 << (deltaLevel - 1);
         double sxy = 1d / (double) twoN;
-        double tx = sxy * (this.col % twoN);
+        double tx = sxy * (this.column % twoN);
         double ty = sxy * (this.row % twoN);
 
         // Apply a transform to the matrix that maps texture coordinates for this tile to texture coordinates for this

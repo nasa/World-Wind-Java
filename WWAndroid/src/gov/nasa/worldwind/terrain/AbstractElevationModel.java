@@ -5,13 +5,15 @@
  */
 package gov.nasa.worldwind.terrain;
 
-import gov.nasa.worldwind.WWObjectImpl;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.cache.FileStore;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.XPath;
+import java.util.List;
 
 /**
  * @author dcollins
@@ -19,155 +21,310 @@ import javax.xml.xpath.XPath;
  */
 public abstract class AbstractElevationModel extends WWObjectImpl implements ElevationModel
 {
-    protected double[] minAndMaxElevations = new double[2];
+    protected FileStore dataFileStore = WorldWind.getDataFileStore();
+    protected double missingDataFlag = -Double.MAX_VALUE;
+    protected double missingDataValue = 0;
 
-    public AbstractElevationModel()
+    protected boolean networkRetrievalEnabled = true;
+    protected long expiryTime = 0;
+
+    public void dispose()
     {
     }
 
-    protected AbstractElevationModel(AVList params)
-    {
-        if (params == null)
-        {
-            String msg = Logging.getMessage("nullValue.ParamsIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        this.validateParams(params, sb);
-        if (sb.length() > 0)
-        {
-            String msg = Logging.getMessage("generic.ParamsAreInvalid", sb.toString());
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.initWithParams(params);
-    }
-
-    protected AbstractElevationModel(Element element)
-    {
-        if (element == null)
-        {
-            String msg = Logging.getMessage("nullValue.ElementIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        StringBuilder sb = new StringBuilder();
-        this.validateConfigDoc(element, sb);
-        if (sb.length() > 0)
-        {
-            String msg = Logging.getMessage("generic.ConfigDocIsInvalid", sb.toString());
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.initWithConfigDoc(element);
-    }
-
-    protected void initWithParams(AVList params)
-    {
-        Object o = params.getValue(AVKey.DISPLAY_NAME);
-        if (o != null && o instanceof String && !WWUtil.isEmpty(o))
-            this.setName((String) params.getValue(AVKey.DISPLAY_NAME));
-
-        o = params.getValue(AVKey.ELEVATION_MIN);
-        if (o != null && o instanceof Number)
-            this.minAndMaxElevations[0] = ((Number) o).doubleValue();
-
-        o = params.getValue(AVKey.ELEVATION_MAX);
-        if (o != null && o instanceof Number)
-            this.minAndMaxElevations[1] = ((Number) o).doubleValue();
-
-        this.init();
-    }
-
-    protected void initWithConfigDoc(Element element)
-    {
-        XPath xpath = WWXML.makeXPath();
-
-        String s = WWXML.getText(element, "DisplayName", xpath);
-        if (s != null && !WWUtil.isEmpty(s))
-            this.setName(s);
-
-        Double d = WWXML.getDouble(element, "ExtremeElevations/@min", xpath);
-        if (d != null)
-            this.minAndMaxElevations[0] = d;
-
-        d = WWXML.getDouble(element, "ExtremeElevations/@max", xpath);
-        if (d != null)
-            this.minAndMaxElevations[1] = d;
-
-        this.init();
-    }
-
-    protected void init()
-    {
-    }
-
-    /**
-     * Determines whether the constructor arguments are valid.
-     *
-     * @param params the list of parameters to validate.
-     * @param sb     the StringBuilder to append a description of why it's invalid.
-     */
-    protected void validateParams(AVList params, StringBuilder sb)
-    {
-    }
-
-    /**
-     * Determines whether the constructor configuration document is valid.
-     *
-     * @param element the configuration document element.
-     * @param sb      the StringBuilder to append a description of why it's invalid.
-     */
-    protected void validateConfigDoc(Element element, StringBuilder sb)
-    {
-    }
-
-    /** {@inheritDoc} */
     public String getName()
     {
         Object n = this.getValue(AVKey.DISPLAY_NAME);
-        return n != null ? n.toString() : null;
+
+        return n != null ? n.toString() : this.toString();
     }
 
-    /** {@inheritDoc} */
     public void setName(String name)
     {
         this.setValue(AVKey.DISPLAY_NAME, name);
     }
 
-    /** {@inheritDoc} */
-    public double getMinElevation()
-    {
-        return this.minAndMaxElevations[0];
-    }
-
-    /** {@inheritDoc} */
-    public double getMaxElevation()
-    {
-        return this.minAndMaxElevations[1];
-    }
-
-    /** {@inheritDoc} */
-    public double[] getMinAndMaxElevations(Angle latitude, Angle longitude)
-    {
-        return this.minAndMaxElevations;
-    }
-
-    /** {@inheritDoc} */
-    public double[] getMinAndMaxElevations(Sector sector)
-    {
-        return this.minAndMaxElevations;
-    }
-
-    @Override
     public String toString()
     {
-        String n = this.getName();
-        return n != null ? n : super.toString();
+        Object n = this.getValue(AVKey.DISPLAY_NAME);
+
+        return n != null ? n.toString() : super.toString();
+    }
+
+    public boolean isNetworkRetrievalEnabled()
+    {
+        return this.networkRetrievalEnabled;
+    }
+
+    public void setNetworkRetrievalEnabled(boolean enabled)
+    {
+        this.networkRetrievalEnabled = enabled;
+    }
+
+    public long getExpiryTime()
+    {
+        return this.expiryTime;
+    }
+
+    public void setExpiryTime(long expiryTime)
+    {
+        this.expiryTime = expiryTime;
+    }
+
+    public double getMissingDataSignal()
+    {
+        return missingDataFlag;
+    }
+
+    public void setMissingDataSignal(double missingDataFlag)
+    {
+        this.missingDataFlag = missingDataFlag;
+    }
+
+    public double getMissingDataReplacement()
+    {
+        return missingDataValue;
+    }
+
+    public void setMissingDataReplacement(double missingDataValue)
+    {
+        this.missingDataValue = missingDataValue;
+    }
+
+    public double getDetailHint(Sector sector)
+    {
+        if (sector == null)
+        {
+            String msg = Logging.getMessage("nullValue.SectorIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return 0.0;
+    }
+
+    public FileStore getDataFileStore()
+    {
+        return dataFileStore;
+    }
+
+    public void setDataFileStore(FileStore dataFileStore)
+    {
+        this.dataFileStore = dataFileStore;
+    }
+
+    public double getElevation(Angle latitude, Angle longitude)
+    {
+        if (latitude == null || longitude == null)
+        {
+            String msg = Logging.getMessage("nullValue.LatitudeOrLongitudeIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        double e = this.getUnmappedElevation(latitude, longitude);
+        return e == this.missingDataFlag ? this.missingDataValue : e;
+    }
+
+    public String getRestorableState()
+    {
+        return null;
+    }
+
+    public void restoreState(String stateInXml)
+    {
+        String message = Logging.getMessage("RestorableSupport.RestoreNotSupported");
+        Logging.error(message);
+        throw new UnsupportedOperationException(message);
+    }
+
+    public void composeElevations(Sector sector, List<? extends LatLon> latlons, int tileWidth, double[] buffer)
+        throws Exception
+    {
+        if (sector == null)
+        {
+            String msg = Logging.getMessage("nullValue.SectorIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (latlons == null)
+        {
+            String msg = Logging.getMessage("nullValue.LatLonListIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (buffer == null)
+        {
+            String msg = Logging.getMessage("nullValue.ElevationsBufferIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (tileWidth < 1)
+        {
+            String msg = Logging.getMessage("generic.SizeOutOfRange", tileWidth);
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (buffer.length < latlons.size() || tileWidth > latlons.size())
+        {
+            String msg = Logging.getMessage("ElevationModel.ElevationsBufferTooSmall", latlons.size());
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        for (int i = 0; i < latlons.size(); i++)
+        {
+            LatLon ll = latlons.get(i);
+            double e = this.getUnmappedElevation(ll.latitude, ll.longitude);
+            if (e != this.getMissingDataSignal() && !this.isTransparentValue(e))
+                buffer[i] = e;
+        }
+    }
+
+    protected boolean isTransparentValue(Double value)
+    {
+        return ((value == null || value.equals(this.getMissingDataSignal()))
+            && this.getMissingDataReplacement() == this.getMissingDataSignal());
+    }
+
+    //**************************************************************//
+    //********************  Configuration  *************************//
+    //**************************************************************//
+
+    /**
+     * Returns true if a specified DOM document is an ElevationModel configuration document, and false otherwise.
+     *
+     * @param domElement the DOM document in question.
+     *
+     * @return true if the document is an ElevationModel configuration document; false otherwise.
+     *
+     * @throws IllegalArgumentException if document is null.
+     */
+    public static boolean isElevationModelConfigDocument(Element domElement)
+    {
+        if (domElement == null)
+        {
+            String message = Logging.getMessage("nullValue.DocumentIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        XPath xpath = WWXML.makeXPath();
+        List<Element> elements = WWXML.getElements(domElement, "//ElevationModel", xpath);
+
+        return elements != null && elements.size() > 0;
+    }
+
+    /**
+     * Appends elevation model configuration parameters as elements to the specified context. This appends elements for
+     * the following parameters: <table> <th><td>Parameter</td><td>Element Path</td><td>Type</td></th> <tr><td>{@link
+     * AVKey#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
+     * AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr> <tr><td>{@link
+     * AVKey#MISSING_DATA_SIGNAL}</td><td>MissingData/@signal</td><td>Double</td></tr> <tr><td>{@link
+     * AVKey#MISSING_DATA_REPLACEMENT}</td><td>MissingData/@replacement</td><td>Double</td></tr> <tr><td>{@link
+     * AVKey#DETAIL_HINT}</td><td>DataDetailHint</td><td>Double</td></tr> </table>
+     *
+     * @param params  the key-value pairs which define the elevation model configuration parameters.
+     * @param context the XML document root on which to append elevation model configuration elements.
+     *
+     * @return a reference to context.
+     *
+     * @throws IllegalArgumentException if either the parameters or the context are null.
+     */
+    public static Element createElevationModelConfigElements(AVList params, Element context)
+    {
+        if (params == null)
+        {
+            String message = Logging.getMessage("nullValue.ParametersIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (context == null)
+        {
+            String message = Logging.getMessage("nullValue.ContextIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        WWXML.checkAndAppendTextElement(params, AVKey.DISPLAY_NAME, context, "DisplayName");
+        WWXML.checkAndAppendBooleanElement(params, AVKey.NETWORK_RETRIEVAL_ENABLED, context, "NetworkRetrievalEnabled");
+
+        if (params.getValue(AVKey.MISSING_DATA_SIGNAL) != null ||
+            params.getValue(AVKey.MISSING_DATA_REPLACEMENT) != null)
+        {
+            Element el = WWXML.getElement(context, "MissingData", null);
+            if (el == null)
+                el = WWXML.appendElementPath(context, "MissingData");
+
+            Double d = AVListImpl.getDoubleValue(params, AVKey.MISSING_DATA_SIGNAL);
+            if (d != null)
+                WWXML.setDoubleAttribute(el, "signal", d);
+
+            d = AVListImpl.getDoubleValue(params, AVKey.MISSING_DATA_REPLACEMENT);
+            if (d != null)
+                WWXML.setDoubleAttribute(el, "replacement", d);
+        }
+
+        WWXML.checkAndAppendDoubleElement(params, AVKey.DETAIL_HINT, context, "DataDetailHint");
+
+        return context;
+    }
+
+    /**
+     * Parses elevation model configuration parameters from the specified DOM document. This writes output as key-value
+     * pairs to params. If a parameter from the XML document already exists in params, that parameter is ignored.
+     * Supported parameters are: <table> <th><td>Parameter</td><td>Element Path</td><td>Type</td></th> <tr><td>{@link
+     * gov.nasa.worldwind.avlist.AVKey#DISPLAY_NAME}</td><td>DisplayName</td><td>String</td></tr> <tr><td>{@link
+     * gov.nasa.worldwind.avlist.AVKey#NETWORK_RETRIEVAL_ENABLED}</td><td>NetworkRetrievalEnabled</td><td>Boolean</td></tr>
+     * <tr><td>{@link gov.nasa.worldwind.avlist.AVKey#MISSING_DATA_SIGNAL}</td><td>MissingData/@signal</td><td>Double</td></tr>
+     * <tr><td>{@link gov.nasa.worldwind.avlist.AVKey#MISSING_DATA_REPLACEMENT}</td><td>MissingData/@replacement</td><td>Double</td></tr>
+     * <tr><td>{@link gov.nasa.worldwind.avlist.AVKey#DETAIL_HINT}</td><td>DataDetailHint</td><td>Double</td></tr>
+     * </table>
+     *
+     * @param domElement the XML document root to parse for elevation model configuration elements.
+     * @param params     the output key-value pairs which recieve the elevation model configuration parameters. A null
+     *                   reference is permitted.
+     *
+     * @return a reference to params, or a new AVList if params is null.
+     *
+     * @throws IllegalArgumentException if the document is null.
+     */
+    public static AVList getElevationModelConfigParams(Element domElement, AVList params)
+    {
+        if (domElement == null)
+        {
+            String message = Logging.getMessage("nullValue.DocumentIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (params == null)
+            params = new AVListImpl();
+
+        XPath xpath = WWXML.makeXPath();
+
+        WWXML.checkAndSetStringParam(domElement, params, AVKey.DISPLAY_NAME, "DisplayName", xpath);
+        WWXML.checkAndSetBooleanParam(domElement, params, AVKey.NETWORK_RETRIEVAL_ENABLED, "NetworkRetrievalEnabled",
+            xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.MISSING_DATA_SIGNAL, "MissingData/@signal", xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.MISSING_DATA_REPLACEMENT, "MissingData/@replacement",
+            xpath);
+        WWXML.checkAndSetDoubleParam(domElement, params, AVKey.DETAIL_HINT, "DataDetailHint", xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MAX_ABSENT_TILE_ATTEMPTS, "MaxAbsentTileAttempts",
+            xpath);
+        WWXML.checkAndSetIntegerParam(domElement, params, AVKey.MIN_ABSENT_TILE_CHECK_INTERVAL,
+            "MinAbsentTileCheckInterval", xpath);
+
+        return params;
+    }
+
+    public double getLocalDataAvailability(Sector sector, Double targetResolution)
+    {
+        return 1d;
     }
 }

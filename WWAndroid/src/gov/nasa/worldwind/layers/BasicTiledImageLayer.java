@@ -15,7 +15,7 @@ import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
 
 import java.io.*;
-import java.net.URL;
+import java.net.*;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -109,7 +109,7 @@ public class BasicTiledImageLayer extends TiledImageLayer
         @Override
         protected void markResourceAbsent()
         {
-            this.layer.getLevels().markTileAbsent(this.tile.getTileKey());
+            this.layer.getLevels().markResourceAbsent(this.tile);
         }
 
         @Override
@@ -294,7 +294,7 @@ public class BasicTiledImageLayer extends TiledImageLayer
 
             // Mark the tile as not absent to ensure that it is used, and cause any World Windows containing this layer
             // to repaint themselves.
-            this.levels.unmarkTileAbsent(tile.getTileKey());
+            this.levels.unmarkResourceAbsent(tile);
             this.firePropertyChange(AVKey.LAYER, null, this);
         }
         else
@@ -322,20 +322,27 @@ public class BasicTiledImageLayer extends TiledImageLayer
     {
         if (!this.isNetworkRetrievalEnabled())
         {
-            this.getLevels().markTileAbsent(tile.getTileKey());
+            this.getLevels().markResourceAbsent(tile);
             return;
         }
 
         if (!WorldWind.getRetrievalService().isAvailable())
             return;
 
-        URL url = this.urlBuilder.getURL(tile, null);
-        if (url == null)
+        URL url = null;
+        try
+        {
+            url = this.urlBuilder.getURL(tile, null);
+        }
+        catch (MalformedURLException e)
+        {
+            Logging.error(Logging.getMessage("layers.TextureLayer.UnknownRetrievalProtocol", url));
             return;
+        }
 
         if (WorldWind.getNetworkStatus().isHostUnavailable(url))
         {
-            this.getLevels().markTileAbsent(tile.getTileKey());
+            this.getLevels().markResourceAbsent(tile);
             return;
         }
 

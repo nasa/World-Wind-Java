@@ -147,7 +147,7 @@ public abstract class AbstractGlobe extends WWObjectImpl implements Globe
         // specified sector. If the elevation model does intersect the sector, we must return 0 to ensure that this
         // sector is consistently reported as having elevation 0.
         return (this.elevationModel != null && this.elevationModel.intersects(sector) != -1)
-            ? this.elevationModel.getMinAndMaxElevations(sector) : new double[] {0, 0};
+            ? this.elevationModel.getExtremeElevations(sector) : new double[] {0, 0};
     }
 
     /** {@inheritDoc} */

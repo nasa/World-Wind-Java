@@ -20,6 +20,7 @@ import javax.xml.xpath.XPath;
 import java.beans.PropertyChangeEvent;
 import java.nio.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author dcollins
@@ -40,7 +41,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
         public double getResolution()
         {
-            return this.level.getTexelHeightInRadians();
+            return this.level.getTexelSize();
         }
 
         /** {@inheritDoc} */
@@ -1073,6 +1074,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         program.loadUniformMatrix("mvpMatrix", this.mvpMatrix);
     }
 
+    @SuppressWarnings({"UnusedParameters"})
     protected void endRendering(DrawContext dc, TerrainTile tile)
     {
         // Intentionally left blank. All GL state is restored in endRendering(DrawContext).

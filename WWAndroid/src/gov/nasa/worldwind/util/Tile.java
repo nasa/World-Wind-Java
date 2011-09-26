@@ -10,7 +10,7 @@ import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * Large images and most imagery and elevation-data sets are subdivided in order to display visible portions quickly and
@@ -34,13 +34,14 @@ public class Tile implements Cacheable
     protected Sector sector;
     protected Level level;
     protected int row;
-    protected int col;
+    protected int column;
+    /** An optional cache name. Overrides the Level's cache name when non-null. */
+    protected String cacheName;
     protected TileKey tileKey;
     protected Vec4[] referencePoints;
+    protected double priority = Double.MAX_VALUE; // Default is minimum priority
     // The following is late bound because it's only selectively needed and costly to create
     protected String path;
-    // Temporary properties used to avoid constant reallocation of data used during tile subdivision.
-    protected static MutableTileKey mutableTileKey = new MutableTileKey();
 
     /**
      * Constructs a tile for a given sector, level, row and column of the tile's containing tile set.
@@ -68,16 +69,40 @@ public class Tile implements Cacheable
             throw new IllegalArgumentException(msg);
         }
 
-        if (row < 0)
+        this.sector = sector;
+        this.level = level;
+        this.row = row;
+        this.column = column;
+        this.cacheName = null;
+        this.tileKey = new TileKey(this);
+        this.path = null;
+    }
+
+    /**
+     * Constructs a tile for a given sector, level, row and column of the tile's containing tile set. If the cache name
+     * is non-null, it overrides the level's cache name and is returned by {@link #getCacheName()}. Otherwise, the
+     * level's cache name is used.
+     *
+     * @param sector    the sector corresponding with the tile.
+     * @param level     the tile's level within a containing level set.
+     * @param row       the row index (0 origin) of the tile within the indicated level.
+     * @param column    the column index (0 origin) of the tile within the indicated level.
+     * @param cacheName optional cache name to override the Level's cache name. May be null.
+     *
+     * @throws IllegalArgumentException if <code>sector</code> or <code>level</code> is null.
+     */
+    public Tile(Sector sector, Level level, int row, int column, String cacheName)
+    {
+        if (sector == null)
         {
-            String msg = Logging.getMessage("generic.RowIndexOutOfRange", row);
+            String msg = Logging.getMessage("nullValue.SectorIsNull");
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (column < 0)
+        if (level == null)
         {
-            String msg = Logging.getMessage("generic.ColumnIndexOutOfRange", column);
+            String msg = Logging.getMessage("nullValue.LevelIsNull");
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -85,38 +110,180 @@ public class Tile implements Cacheable
         this.sector = sector;
         this.level = level;
         this.row = row;
-        this.col = column;
-        this.tileKey = this.createTileKey();
+        this.column = column;
+        this.cacheName = cacheName;
+        this.tileKey = new TileKey(this);
+        this.path = null;
     }
 
-    protected TileKey createTileKey()
+    /**
+     * Constructs a texture tile for a given sector and level, and with a default row and column.
+     *
+     * @param sector the sector to create the tile for.
+     * @param level  the level to associate the tile with
+     *
+     * @throws IllegalArgumentException if sector or level are null.
+     */
+    public Tile(Sector sector, Level level)
     {
-        return new TileKey(this.level, this.row, this.col);
+        if (sector == null)
+        {
+            String msg = Logging.getMessage("nullValue.SectorIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (level == null)
+        {
+            String msg = Logging.getMessage("nullValue.LevelIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.sector = sector;
+        this.level = level;
+        this.row = Tile.computeRow(sector.getDeltaLat(), sector.minLatitude, Angle.fromDegrees(-90));
+        this.column = Tile.computeColumn(sector.getDeltaLon(), sector.minLongitude, Angle.fromDegrees(-180));
+        this.cacheName = null;
+        this.tileKey = new TileKey(this);
+        this.path = null;
     }
 
-    public Sector getSector()
+    /**
+     * Constructs a texture tile for a given sector with a default level, row and column.
+     *
+     * @param sector the sector to create the tile for.
+     */
+    public Tile(Sector sector)
     {
-        return this.sector;
+        if (sector == null)
+        {
+            String msg = Logging.getMessage("nullValue.SectorIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Random random = new Random();
+
+        this.sector = sector;
+        this.level = null;
+        this.row = random.nextInt();
+        this.column = random.nextInt();
+        this.cacheName = null;
+        this.tileKey = new TileKey(this);
+        this.path = null;
+    }
+
+    public long getSizeInBytes()
+    {
+        // Return just an approximate size
+        long size = 0;
+
+        if (this.sector != null)
+            size += this.sector.getSizeInBytes();
+
+        if (this.path != null)
+            size += this.getPath().length();
+
+        size += 32; // to account for the references and the TileKey size
+
+        return size;
+    }
+
+    public String getPath()
+    {
+        if (this.path == null)
+        {
+            this.path = this.level.getPath() + "/" + this.row + "/" + this.row + "_" + this.column;
+            if (!this.level.isEmpty())
+                path += this.level.getFormatSuffix();
+        }
+
+        return this.path;
+    }
+
+    public String getPathBase()
+    {
+        String path = this.getPath();
+
+        return path.contains(".") ? path.substring(0, path.lastIndexOf(".")) : path;
+    }
+
+    public final Sector getSector()
+    {
+        return sector;
     }
 
     public Level getLevel()
     {
-        return this.level;
+        return level;
     }
 
-    public int getLevelNumber()
+    public final int getLevelNumber()
     {
-        return this.level.getLevelNumber();
+        return this.level != null ? this.level.getLevelNumber() : 0;
     }
 
-    public int getRow()
+    public final String getLevelName()
     {
-        return this.row;
+        return this.level != null ? this.level.getLevelName() : "";
     }
 
-    public int getColumn()
+    public final int getRow()
     {
-        return this.col;
+        return row;
+    }
+
+    public final int getColumn()
+    {
+        return column;
+    }
+
+    /**
+     * Returns the tile's cache name. If a non-null cache name was specified at construction, that name is returned.
+     * Otherwise this returns the level's cache name.
+     *
+     * @return the tile's cache name.
+     */
+    public final String getCacheName()
+    {
+        if (this.cacheName != null)
+            return this.cacheName;
+
+        return this.level != null ? this.level.getCacheName() : null;
+    }
+
+    public final String getFormatSuffix()
+    {
+        return this.level != null ? this.level.getFormatSuffix() : null;
+    }
+
+    public final TileKey getTileKey()
+    {
+        return this.tileKey;
+    }
+
+    public java.net.URL getResourceURL() throws java.net.MalformedURLException
+    {
+        return this.level != null ? this.level.getTileResourceURL(this, null) : null;
+    }
+
+    public java.net.URL getResourceURL(String imageFormat) throws java.net.MalformedURLException
+    {
+        return this.level != null ? this.level.getTileResourceURL(this, imageFormat) : null;
+    }
+
+    public String getLabel()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(this.getLevelNumber());
+        sb.append("(");
+        sb.append(this.getLevelName());
+        sb.append(")");
+        sb.append(", ").append(this.getRow());
+        sb.append(", ").append(this.getColumn());
+
+        return sb.toString();
     }
 
     public int getWidth()
@@ -129,30 +296,59 @@ public class Tile implements Cacheable
         return this.getLevel().getTileHeight();
     }
 
-    public TileKey getTileKey()
+    public int compareTo(Tile tile)
     {
-        return this.tileKey;
+        if (tile == null)
+        {
+            String msg = Logging.getMessage("nullValue.TileIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // No need to compare Sectors or path because they are redundant with row and column
+        if (tile.getLevelNumber() == this.getLevelNumber() && tile.row == this.row && tile.column == this.column)
+            return 0;
+
+        if (this.getLevelNumber() < tile.getLevelNumber()) // Lower-res levels compare lower than higher-res
+            return -1;
+        if (this.getLevelNumber() > tile.getLevelNumber())
+            return 1;
+
+        if (this.row < tile.row)
+            return -1;
+        if (this.row > tile.row)
+            return 1;
+
+        if (this.column < tile.column)
+            return -1;
+
+        return 1; // tile.column must be > this.column because equality was tested above
     }
 
-    public long getSizeInBytes()
+    @Override
+    public boolean equals(Object o)
     {
-        // This tile's size in bytes is computed as follows:
-        // self: 4 bytes (1 32-bit reference)
-        // sector: 84 bytes (8 64-bit doubles + 4 32-bit internal references + 1 32-bit reference)
-        // level: 4 bytes (1 32-bit reference)
-        // row, col: 8 bytes (2 32-bit integers)
-        // tileKey: 24 bytes + variable (4 32-bit integers + 2 32-bit references + variable num of 16-bit characters)
-        // points 180 bytes (5 32-bit references + 20 64-bit floats)
-        // total: 304 bytes + variable num of 16-bit characters
+        // Equality based only on the tile key
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-        long size = 304;
+        final Tile tile = (Tile) o;
 
-        if (this.tileKey.getLevelCacheKey() != null)
-            size += 2 * this.tileKey.getLevelCacheKey().length();
-        if (this.tileKey.getTileCacheKey() != null)
-            size += 2 * this.tileKey.getTileCacheKey().length();
+        return !(tileKey != null ? !tileKey.equals(tile.tileKey) : tile.tileKey != null);
+    }
 
-        return size;
+    @Override
+    public int hashCode()
+    {
+        return (tileKey != null ? tileKey.hashCode() : 0);
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.getPath();
     }
 
     public Vec4[] getReferencePoints()
@@ -163,25 +359,6 @@ public class Tile implements Cacheable
     public void setReferencePoints(Vec4[] points)
     {
         this.referencePoints = points;
-    }
-
-    public String getPath()
-    {
-        if (this.path == null)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.append(this.level.getCacheKey()).append("/")
-                .append(this.row).append("/")
-                .append(this.row).append("_").append(this.col);
-
-            if (!this.level.isEmpty())
-                sb.append(this.level.getFormatSuffix());
-
-            this.path = sb.toString();
-        }
-
-        return this.path;
     }
 
     public boolean mustSubdivide(DrawContext dc, double detailFactor)
@@ -214,8 +391,8 @@ public class Tile implements Cacheable
         // Find the minimum eye distance squared. Compute cell height at the corresponding point. Cell height is
         // radius * radian texel size.
         double minDistanceSq = d1;
-        double cellHeight = points[0].getLength3() * this.level.getTexelHeightInRadians();
-        double texelSize = level.getTexelHeightInRadians();
+        double cellHeight = points[0].getLength3() * this.level.getTexelSize();
+        double texelSize = level.getTexelSize();
 
         if (d2 < minDistanceSq)
         {
@@ -292,36 +469,36 @@ public class Tile implements Cacheable
         double t1 = 0.5 * (t0 + t2);
 
         int subRow = 2 * this.row;
-        int subCol = 2 * this.col;
-        mutableTileKey.set(nextLevel, subRow, subCol);
-        Tile subTile = (Tile) cache.get(mutableTileKey);
+        int subCol = 2 * this.column;
+        TileKey newTileKey = new TileKey(nextLevel.getLevelNumber(), subRow, subCol, nextLevel.getCacheName());
+        Tile subTile = (Tile) cache.get(newTileKey);
         if (subTile != null)
             result[0] = subTile;
         else
             result[0] = factory.createTile(Sector.fromDegrees(p0, p1, t0, t1), nextLevel, subRow, subCol);
 
         subRow = 2 * this.row;
-        subCol = 2 * this.col + 1;
-        mutableTileKey.set(nextLevel, subRow, subCol);
-        subTile = (Tile) cache.get(mutableTileKey);
+        subCol = 2 * this.column + 1;
+        newTileKey = new TileKey(nextLevel.getLevelNumber(), subRow, subCol, nextLevel.getCacheName());
+        subTile = (Tile) cache.get(newTileKey);
         if (subTile != null)
             result[1] = subTile;
         else
             result[1] = factory.createTile(Sector.fromDegrees(p0, p1, t1, t2), nextLevel, subRow, subCol);
 
         subRow = 2 * this.row + 1;
-        subCol = 2 * this.col;
-        mutableTileKey.set(nextLevel, subRow, subCol);
-        subTile = (Tile) cache.get(mutableTileKey);
+        subCol = 2 * this.column;
+        newTileKey = new TileKey(nextLevel.getLevelNumber(), subRow, subCol, nextLevel.getCacheName());
+        subTile = (Tile) cache.get(newTileKey);
         if (subTile != null)
             result[2] = subTile;
         else
             result[2] = factory.createTile(Sector.fromDegrees(p1, p2, t0, t1), nextLevel, subRow, subCol);
 
         subRow = 2 * this.row + 1;
-        subCol = 2 * this.col + 1;
-        mutableTileKey.set(nextLevel, subRow, subCol);
-        subTile = (Tile) cache.get(mutableTileKey);
+        subCol = 2 * this.column + 1;
+        newTileKey = new TileKey(nextLevel.getLevelNumber(), subRow, subCol, nextLevel.getCacheName());
+        subTile = (Tile) cache.get(newTileKey);
         if (subTile != null)
             result[3] = subTile;
         else
@@ -363,15 +540,13 @@ public class Tile implements Cacheable
         Angle deltaLat = level.tileDelta.latitude;
         Angle deltaLon = level.tileDelta.longitude;
 
-        int firstRow = computeRow(deltaLat, sector.minLatitude);
-        int lastRow = computeRow(deltaLat, sector.maxLatitude);
-        int firstCol = computeColumn(deltaLon, sector.minLongitude);
-        int lastCol = computeColumn(deltaLon, sector.maxLongitude);
+        int firstRow = computeRow(deltaLat, sector.minLatitude, Angle.fromDegrees(-90));
+        int lastRow = computeRow(deltaLat, sector.maxLatitude, Angle.fromDegrees(-90));
+        int firstCol = computeColumn(deltaLon, sector.minLongitude, Angle.fromDegrees(-180));
+        int lastCol = computeColumn(deltaLon, sector.maxLongitude, Angle.fromDegrees(-180));
 
-        Angle firstRowLat = new Angle();
-        Angle firstRowLon = new Angle();
-        computeRowLatitude(deltaLat, firstRow, firstRowLat);
-        computeColumnLongitude(deltaLon, firstCol, firstRowLon);
+        Angle firstRowLat = computeRowLatitude(firstRow, deltaLat, Angle.fromDegrees(-90));
+        Angle firstRowLon = computeColumnLongitude(firstCol, deltaLon, Angle.fromDegrees(-180));
 
         double minLat = firstRowLat.degrees;
         double minLon;
@@ -399,41 +574,41 @@ public class Tile implements Cacheable
     /**
      * Computes the row index of a latitude in the global tile grid corresponding to a specified grid interval.
      *
-     * @param tileDelta the grid interval
-     * @param latitude  the latitude for which to compute the row index
+     * @param delta    the grid interval
+     * @param latitude the latitude for which to compute the row index
+     * @param origin   the origin of the grid
      *
      * @return the row index of the row containing the specified latitude
      *
      * @throws IllegalArgumentException if <code>delta</code> is null or non-positive, or <code>latitude</code> is null,
      *                                  greater than positive 90 degrees, or less than  negative 90 degrees
      */
-    public static int computeRow(Angle tileDelta, Angle latitude)
+    public static int computeRow(Angle delta, Angle latitude, Angle origin)
     {
-        if (tileDelta == null)
+        if (delta == null || latitude == null || origin == null)
         {
-            String msg = Logging.getMessage("nullValue.TileDeltaIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("nullValue.AngleIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
-        if (latitude == null)
+        if (delta.degrees <= 0d)
         {
-            String msg = Logging.getMessage("nullValue.LatitudeIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("generic.DeltaAngleOutOfRange", delta);
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
         if (latitude.degrees < -90d || latitude.degrees > 90d)
         {
-            String msg = Logging.getMessage("generic.LatitudeOutOfRange", latitude);
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("generic.AngleOutOfRange", latitude);
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
-        int row = (int) ((latitude.degrees + 90d) / tileDelta.degrees);
-
+        int row = (int) ((latitude.degrees - origin.degrees) / delta.degrees);
         // Latitude is at the end of the grid. Subtract 1 from the computed row to return the last row.
-        if (latitude.degrees == 90d)
+        if ((latitude.degrees - origin.degrees) == 180d)
             row = row - 1;
 
         return row;
@@ -442,41 +617,47 @@ public class Tile implements Cacheable
     /**
      * Computes the column index of a longitude in the global tile grid corresponding to a specified grid interval.
      *
-     * @param tileDelta the grid interval
+     * @param delta     the grid interval
      * @param longitude the longitude for which to compute the column index
+     * @param origin    the origin of the grid
      *
      * @return the column index of the column containing the specified latitude
      *
      * @throws IllegalArgumentException if <code>delta</code> is null or non-positive, or <code>longitude</code> is
      *                                  null, greater than positive 180 degrees, or less than  negative 180 degrees
      */
-    public static int computeColumn(Angle tileDelta, Angle longitude)
+    public static int computeColumn(Angle delta, Angle longitude, Angle origin)
     {
-        if (tileDelta == null)
+        if (delta == null || longitude == null || origin == null)
         {
-            String msg = Logging.getMessage("nullValue.TileDeltaIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("nullValue.AngleIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
-        if (longitude == null)
+        if (delta.degrees <= 0d)
         {
-            String msg = Logging.getMessage("nullValue.LongitudeIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("generic.DeltaAngleOutOfRange", delta);
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
         if (longitude.degrees < -180d || longitude.degrees > 180d)
         {
-            String msg = Logging.getMessage("generic.LongitudeOutOfRange", longitude);
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("generic.AngleOutOfRange", longitude);
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
-        int col = (int) ((longitude.degrees + 180d) / tileDelta.degrees);
+        // Compute the longitude relative to the grid. The grid provides 360 degrees of longitude from the grid origin.
+        // We wrap grid longitude values so that the grid begins and ends at the origin.
+        double gridLongitude = longitude.degrees - origin.degrees;
+        if (gridLongitude < 0.0)
+            gridLongitude = 360d + gridLongitude;
 
+        int col = (int) (gridLongitude / delta.degrees);
         // Longitude is at the end of the grid. Subtract 1 from the computed column to return the last column.
-        if (longitude.degrees == 180d)
+        if ((longitude.degrees - origin.degrees) == 360d)
             col = col - 1;
 
         return col;
@@ -485,23 +666,23 @@ public class Tile implements Cacheable
     /**
      * Determines the minimum latitude of a row in the global tile grid corresponding to a specified grid interval.
      *
-     * @param tileDelta the grid interval
-     * @param row       the row index of the row in question
-     * @param result    contains the minimum latitude of the tile corresponding to the specified row after this method
-     *                  returns.
+     * @param row    the row index of the row in question
+     * @param delta  the grid interval
+     * @param origin the origin of the grid
+     *
+     * @return the minimum latitude of the tile corresponding to the specified row
      *
      * @throws IllegalArgumentException if the grid interval (<code>delta</code>) is null or zero or the row index is
      *                                  negative.
      */
-    public static void computeRowLatitude(Angle tileDelta, int row, Angle result)
+    public static Angle computeRowLatitude(int row, Angle delta, Angle origin)
     {
-        if (tileDelta == null)
+        if (delta == null || origin == null)
         {
-            String msg = Logging.getMessage("nullValue.TileDeltaIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("nullValue.AngleIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
-
         if (row < 0)
         {
             String msg = Logging.getMessage("generic.RowIndexOutOfRange", row);
@@ -509,36 +690,37 @@ public class Tile implements Cacheable
             throw new IllegalArgumentException(msg);
         }
 
-        if (result == null)
+        if (delta.degrees <= 0d)
         {
-            String msg = Logging.getMessage("nullValue.ResultIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("generic.DeltaAngleOutOfRange", delta);
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
-        result.setDegrees(row * tileDelta.degrees - 90d);
+        double latDegrees = origin.degrees + (row * delta.degrees);
+        return Angle.fromDegrees(latDegrees);
     }
 
     /**
      * Determines the minimum longitude of a column in the global tile grid corresponding to a specified grid interval.
      *
-     * @param tileDelta the grid interval
-     * @param column    the row index of the row in question
-     * @param result    contains the minimum longitude of the tile corresponding to the specified column after this
-     *                  method returns.
+     * @param column the row index of the row in question
+     * @param delta  the grid interval
+     * @param origin the origin of the grid
+     *
+     * @return the minimum longitude of the tile corresponding to the specified column
      *
      * @throws IllegalArgumentException if the grid interval (<code>delta</code>) is null or zero or the column index is
      *                                  negative.
      */
-    public static void computeColumnLongitude(Angle tileDelta, int column, Angle result)
+    public static Angle computeColumnLongitude(int column, Angle delta, Angle origin)
     {
-        if (tileDelta == null)
+        if (delta == null || origin == null)
         {
-            String msg = Logging.getMessage("nullValue.TileDeltaIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("nullValue.AngleIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
-
         if (column < 0)
         {
             String msg = Logging.getMessage("generic.ColumnIndexOutOfRange", column);
@@ -546,38 +728,24 @@ public class Tile implements Cacheable
             throw new IllegalArgumentException(msg);
         }
 
-        if (result == null)
+        if (delta.degrees <= 0d)
         {
-            String msg = Logging.getMessage("nullValue.ResultIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
+            String message = Logging.getMessage("generic.DeltaAngleOutOfRange", delta);
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
         }
 
-        result.setDegrees(column * tileDelta.degrees - 180d);
+        double lonDegrees = origin.degrees + (column * delta.degrees);
+        return Angle.fromDegrees(lonDegrees);
     }
 
-    @Override
-    public boolean equals(Object o)
+    public double getPriority()
     {
-        // Equality based only on the tile key
-        if (this == o)
-            return true;
-        if (o == null || this.getClass() != o.getClass())
-            return false;
-
-        Tile that = (Tile) o;
-        return this.tileKey.equals(that.tileKey);
+        return this.priority;
     }
 
-    @Override
-    public int hashCode()
+    public void setPriority(double priority)
     {
-        return this.tileKey.hashCode();
-    }
-
-    @Override
-    public String toString()
-    {
-        return this.tileKey.getTileCacheKey();
+        this.priority = priority;
     }
 }

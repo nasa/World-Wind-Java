@@ -52,6 +52,16 @@ public class Color
         return value;
     }
 
+    public int getRGBA()
+    {
+        int value = (((int) r & 0xFF) << 24) |
+            (((int) g & 0xFF) << 16) |
+            (((int) b & 0xFF) << 8) |
+            (((int) a & 0xFF) << 0);
+
+        return value;
+    }
+
     public static Color fromRGBAInt(int r, int g, int b, int a)
     {
         return new Color(r / 255f, g / 255f, b / 255f, a / 255f);

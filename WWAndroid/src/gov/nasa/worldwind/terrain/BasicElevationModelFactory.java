@@ -7,6 +7,7 @@ package gov.nasa.worldwind.terrain;
 
 import gov.nasa.worldwind.BasicFactory;
 import gov.nasa.worldwind.exception.WWUnrecognizedException;
+import gov.nasa.worldwind.ogc.OGCConstants;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
 
@@ -30,7 +31,7 @@ public class BasicElevationModelFactory extends BasicFactory
      * Creates an elevation model from a general configuration source. The source can be one of the following: <ul>
      * <li>a {@link java.net.URL}</li> <li>a {@link java.io.File}</li> <li>a {@link java.io.InputStream}</li> <li> an
      * {@link org.w3c.dom.Element}</li> <li>a {@link String} holding a file name, a name of a resource on the classpath,
-     * or a string represenation of a URL</li> </ul>
+     * or a string representation of a URL</li> </ul>
      * <p/>
      * For non-compound models, this method maps the <code>serviceName</code> attribute of the
      * <code>ElevationModel/Service</code> element of the XML configuration document to the appropriate elevation-model
@@ -118,28 +119,27 @@ public class BasicElevationModelFactory extends BasicFactory
      */
     protected ElevationModel createCompoundModel(List<Element> elements)
     {
-        return null; // TODO: implement CompoundElevationModel
-        //ElevationModel compoundModel = new CompoundElevationModel();
-        //
-        //if (elements == null || elements.length == 0)
-        //    return compoundModel;
-        //
-        //for (Element element : elements)
-        //{
-        //    try
-        //    {
-        //        ElevationModel em = this.doCreateFromElement(element, params);
-        //        if (em != null)
-        //            compoundModel.addElevationModel(em);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        String msg = Logging.getMessage("ElevationModel.ExceptionCreatingElevationModel");
-        //        Logging.logger().log(java.util.logging.Level.WARNING, msg, e);
-        //    }
-        //}
-        //
-        //return compoundModel;
+        CompoundElevationModel compoundModel = new CompoundElevationModel();
+
+        if (elements == null || elements.size() == 0)
+            return compoundModel;
+
+        for (Element element : elements)
+        {
+            try
+            {
+                ElevationModel em = this.doCreateFromElement(element);
+                if (em != null)
+                    compoundModel.addElevationModel(em);
+            }
+            catch (Exception e)
+            {
+                String msg = Logging.getMessage("ElevationModel.ExceptionCreatingElevationModel");
+                Logging.warning(msg, e);
+            }
+        }
+
+        return compoundModel;
     }
 
     /**
@@ -153,12 +153,28 @@ public class BasicElevationModelFactory extends BasicFactory
      */
     protected ElevationModel createNonCompoundModel(Element domElement)
     {
-        XPath xpath = WWXML.makeXPath();
+        ElevationModel em;
 
-        String modelType = WWXML.getText(domElement, "@modelType", xpath);
-        if (modelType != null && modelType.equalsIgnoreCase("TiledModel"))
-            return new LocalTiledElevationModel(domElement);
+        String serviceName = WWXML.getText(domElement, "Service/@serviceName");
 
-        return null;
+        if (serviceName.equals("Offline"))
+        {
+            em = new BasicElevationModel(domElement, null);
+        }
+        else if (serviceName.equals("WWTileService"))
+        {
+            em = new BasicElevationModel(domElement, null);
+        }
+        else if (serviceName.equals(OGCConstants.WMS_SERVICE_NAME))
+        {
+            em = new WMSBasicElevationModel(domElement, null);
+        }
+        else
+        {
+            String msg = Logging.getMessage("generic.UnrecognizedServiceName", serviceName);
+            throw new WWUnrecognizedException(msg);
+        }
+
+        return em;
     }
 }

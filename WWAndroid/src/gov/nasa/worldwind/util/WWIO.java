@@ -22,7 +22,9 @@ import java.util.*;
  */
 public class WWIO
 {
+    public static final String DELETE_ON_EXIT_PREFIX = "WWJDeleteOnExit";
     protected static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
+    public static final String ILLEGAL_FILE_PATH_PART_CHARACTERS = "[" + "?/\\\\=+<>:;\\,\"\\|^\\[\\]" + "]";
     protected static final int DEFAULT_PAGE_SIZE = 2 << 15;
     protected static final Map<String, String> mimeTypeToSuffixMap = new HashMap<String, String>();
     protected static final Map<String, String> suffixToMimeTypeMap = new HashMap<String, String>();
@@ -121,6 +123,50 @@ public class WWIO
         suffixToMimeTypeMap.put("wrl", "world/x-vrml");
         suffixToMimeTypeMap.put("xml", "application/xml");
         suffixToMimeTypeMap.put("zip", "application/zip");
+    }
+
+    public static String formPath(String... pathParts)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        for (String pathPart : pathParts)
+        {
+            if (pathPart == null)
+                continue;
+
+            if (sb.length() > 0)
+                sb.append(File.separator);
+            sb.append(pathPart.replaceAll(ILLEGAL_FILE_PATH_PART_CHARACTERS, "_"));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Returns the file path's parent directory path, or null if the file path does not have a parent.
+     *
+     * @param filePath a file path String.
+     *
+     * @return the file path's parent directory, or null if the path does not have a parent.
+     *
+     * @throws IllegalArgumentException if the file path is null.
+     */
+    public static String getParentFilePath(String filePath)
+    {
+        if (filePath == null)
+        {
+            String message = Logging.getMessage("nullValue.FilePathIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        filePath = stripTrailingSeparator(filePath);
+
+        int len = filePath.length();
+        int p = filePath.lastIndexOf("/");
+        if (p < 0)
+            p = filePath.lastIndexOf("\\");
+        return (p > 0 && p < len) ? filePath.substring(0, p) : null;
     }
 
     public static Object getFileOrResourceAsStream(String path, Class c)
@@ -450,6 +496,11 @@ public class WWIO
 
     public static ByteBuffer readStreamToBuffer(InputStream stream) throws IOException
     {
+        return readStreamToBuffer(stream, false);
+    }
+
+    public static ByteBuffer readStreamToBuffer(InputStream stream, boolean allocateDirect) throws IOException
+    {
         if (stream == null)
         {
             String msg = Logging.getMessage("nullValue.InputStreamIsNull");
@@ -468,7 +519,8 @@ public class WWIO
             count = channel.read(buffer);
             if (count > 0 && !buffer.hasRemaining())
             {
-                ByteBuffer biggerBuffer = ByteBuffer.allocate(buffer.limit() + DEFAULT_PAGE_SIZE);
+                ByteBuffer biggerBuffer = allocateDirect ? ByteBuffer.allocateDirect(buffer.limit() + DEFAULT_PAGE_SIZE)
+                    : ByteBuffer.allocate(buffer.limit() + DEFAULT_PAGE_SIZE);
                 biggerBuffer.put((ByteBuffer) buffer.rewind());
                 buffer = biggerBuffer;
             }
@@ -509,6 +561,100 @@ public class WWIO
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Reads all the bytes from the specified {@link URL}, returning the bytes as a non-direct {@link ByteBuffer} with
+     * the current JVM byte order. Non-direct buffers are backed by JVM heap memory.
+     *
+     * @param url the URL to read.
+     *
+     * @return the bytes from the specified URL, with the current JVM byte order.
+     *
+     * @throws IllegalArgumentException if the URL is null.
+     * @throws IOException              if an I/O error occurs.
+     */
+    public static ByteBuffer readURLContentToBuffer(URL url) throws IOException
+    {
+        if (url == null)
+        {
+            String message = Logging.getMessage("nullValue.URLIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        return readURLContentToBuffer(url, false);
+    }
+
+    /**
+     * Reads all the bytes from the specified {@link URL}, returning the bytes as a {@link ByteBuffer} with the current
+     * JVM byte order. This returns a direct ByteBuffer if allocateDirect is true, and returns a non-direct ByteBuffer
+     * otherwise. Direct buffers are backed by native memory, and may resite outside of the normal garbage-collected
+     * heap. Non-direct buffers are backed by JVM heap memory.
+     *
+     * @param url            the URL to read.
+     * @param allocateDirect true to allocate and return a direct buffer, false to allocate and return a non-direct
+     *                       buffer.
+     *
+     * @return the bytes from the specified URL, with the current JVM byte order.
+     *
+     * @throws IllegalArgumentException if the URL is null.
+     * @throws IOException              if an I/O error occurs.
+     */
+    public static ByteBuffer readURLContentToBuffer(URL url, boolean allocateDirect) throws IOException
+    {
+        if (url == null)
+        {
+            String message = Logging.getMessage("nullValue.URLIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        InputStream is = null;
+        try
+        {
+            is = url.openStream();
+            return readStreamToBuffer(is, allocateDirect);
+        }
+        finally
+        {
+            WWIO.closeStream(is, url.toString());
+        }
+    }
+
+    /**
+     * Converts a specified URL as to a path in the local file system. If the URL cannot be converted to a file path for
+     * any reason, this returns null.
+     *
+     * @param url the URL to convert to a local file path.
+     *
+     * @return a local File path, or null if the URL could not be converted.
+     *
+     * @throws IllegalArgumentException if the url is null.
+     */
+    public static File convertURLToFile(URL url)
+    {
+        if (url == null)
+        {
+            String message = Logging.getMessage("nullValue.URLIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        try
+        {
+            return new File(url.toURI());
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Thrown if the URI cannot be interpreted as a path on the local filesystem.
+            return null;
+        }
+        catch (URISyntaxException e)
+        {
+            // Thrown if the URL cannot be converted to a URI.
+            return null;
+        }
     }
 
     @SuppressWarnings( {"ResultOfMethodCallIgnored"})
@@ -631,6 +777,33 @@ public class WWIO
         return charBuffer.toString();
     }
 
+    public static boolean isFileOutOfDate(URL url, long expiryTime)
+    {
+        if (url == null)
+        {
+            String message = Logging.getMessage("nullValue.URLIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        try
+        {
+            // Determine whether the file can be treated like a File, e.g., a jar entry.
+            URI uri = url.toURI();
+            if (uri.isOpaque())
+                return false; // TODO: Determine how to check the date of non-Files
+
+            File file = new File(uri);
+
+            return file.exists() && file.lastModified() < expiryTime;
+        }
+        catch (URISyntaxException e)
+        {
+            Logging.error(Logging.getMessage("WWIO.ExceptionValidatingFileExpiration", url));
+            return false;
+        }
+    }
+
     public static Proxy configureProxy()
     {
         String proxyHost = Configuration.getStringValue(AVKey.URL_PROXY_HOST);
@@ -701,5 +874,26 @@ public class WWIO
             return s.substring(1, s.length());
         else
             return s;
+    }
+
+    /**
+     * Replaces any illegal filename characters in a specified string with an underscore, "_".
+     *
+     * @param s the string to examine.
+     *
+     * @return a new string with illegal filename characters replaced.
+     *
+     * @throws IllegalArgumentException if the specified string is null.
+     */
+    public static String replaceIllegalFileNameCharacters(String s)
+    {
+        if (s == null)
+        {
+            String message = Logging.getMessage("nullValue.StringIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        return s.replaceAll(ILLEGAL_FILE_PATH_PART_CHARACTERS, "_");
     }
 }

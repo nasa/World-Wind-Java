@@ -167,6 +167,19 @@ public class Angle
         return Angle.fromDegrees(this.degrees + angle.degrees);
     }
 
+    /**
+     * Divides this angle by <code>divisor</code>. This angle remains unchanged. The result is returned as a new angle.
+     * Behaviour is undefined if <code>divisor</code> equals zero.
+     *
+     * @param divisor the number to be divided by.
+     *
+     * @return a new angle equivalent to this angle divided by <code>divisor</code>.
+     */
+    public Angle divide(double divisor)
+    {
+        return Angle.fromDegrees(this.degrees / divisor);
+    }
+
     public Angle addDegrees(double degrees)
     {
         return Angle.fromDegrees(this.degrees + degrees);
@@ -375,6 +388,16 @@ public class Angle
     {
         long temp = this.degrees != +0.0d ? Double.doubleToLongBits(this.degrees) : 0L;
         return (int) (temp ^ (temp >>> 32));
+    }
+
+    /**
+     * Obtains the amount of memory this {@link Angle} consumes.
+     *
+     * @return the memory footprint of this angle in bytes.
+     */
+    public long getSizeInBytes()
+    {
+        return Double.SIZE / 8;
     }
 
     /**

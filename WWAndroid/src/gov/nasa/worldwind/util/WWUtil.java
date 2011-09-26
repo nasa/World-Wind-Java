@@ -26,6 +26,17 @@ public class WWUtil
     }
 
     /**
+     * Creates a two-element array of default min and max values, typically used to initialize extreme values searches.
+     *
+     * @return a two-element array of extreme values. Entry 0 is the maximum double value; entry 1 is the negative of
+     *         the maximum double value;
+     */
+    public static double[] defaultMinMix()
+    {
+        return new double[] {Double.MAX_VALUE, -Double.MAX_VALUE};
+    }
+
+    /**
      * Parses a string to an integer value if the string can be parsed as a integer. Does not log a message if the
      * string can not be parsed as an integer.
      *

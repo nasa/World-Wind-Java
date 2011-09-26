@@ -67,7 +67,7 @@ public abstract class TiledImageLayer extends AbstractLayer implements Tile.Tile
         if (d != null)
             this.detailHint = d;
 
-        this.levels = new LevelSet(LevelSet.paramsFromConfigDoc(element));
+        this.levels = new LevelSet(DataConfigurationUtils.getLevelSetConfigParams(element, null));
     }
 
     @Override
@@ -288,7 +288,7 @@ public abstract class TiledImageLayer extends AbstractLayer implements Tile.Tile
         // The tile's texture is not in memory. Issue a request for the texture data if the tile is not already marked
         // as an absent resource. We ignore absent resources to avoid flooding the system with requests for resources
         // that are never resolved.
-        if (!this.levels.isTileAbsent(tile.getTileKey()))
+        if (!this.levels.isResourceAbsent(tile))
             this.requestTile(dc, tile);
 
         if (this.currentAncestorTile != null)
@@ -307,7 +307,7 @@ public abstract class TiledImageLayer extends AbstractLayer implements Tile.Tile
             }
             else if (this.currentAncestorTile.getLevelNumber() == 0)
             {
-                if (!this.levels.isTileAbsent(this.currentAncestorTile.getTileKey()))
+                if (!this.levels.isResourceAbsent(this.currentAncestorTile))
                     this.requestTile(dc, this.currentAncestorTile);
             }
         }

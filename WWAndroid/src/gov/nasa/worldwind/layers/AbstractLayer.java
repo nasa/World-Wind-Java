@@ -15,6 +15,7 @@ import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
 
 import javax.xml.xpath.XPath;
+import java.util.List;
 
 /**
  * @author dcollins
@@ -328,5 +329,29 @@ public abstract class AbstractLayer extends WWObjectImpl implements Layer
     {
         String n = this.getName();
         return n != null ? n : super.toString();
+    }
+
+    /**
+     * Returns true if a specified DOM document is a Layer configuration document, and false otherwise.
+     *
+     * @param domElement the DOM document in question.
+     *
+     * @return true if the document is a Layer configuration document; false otherwise.
+     *
+     * @throws IllegalArgumentException if document is null.
+     */
+    public static boolean isLayerConfigDocument(Element domElement)
+    {
+        if (domElement == null)
+        {
+            String message = Logging.getMessage("nullValue.DocumentIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        XPath xpath = WWXML.makeXPath();
+        List<Element> elements = WWXML.getElements(domElement, "//Layer", xpath);
+
+        return elements != null && elements.size() > 0;
     }
 }

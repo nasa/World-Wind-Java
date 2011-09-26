@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.avlist;
 
 import gov.nasa.worldwind.exception.WWRuntimeException;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
 import java.beans.*;
 import java.util.*;
@@ -292,6 +292,23 @@ public class AVListImpl implements AVList
     // Static AVList utilities.
     ///////////////////////////////////////
 
+    public static String getStringValue(AVList avList, String key, String defaultValue)
+    {
+        String v = getStringValue(avList, key);
+        return v != null ? v : defaultValue;
+    }
+
+    public static String getStringValue(AVList avList, String key)
+    {
+        try
+        {
+            return avList.getStringValue(key);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
 
     public static Integer getIntegerValue(AVList avList, String key)
     {
@@ -314,5 +331,84 @@ public class AVListImpl implements AVList
             Logging.error(Logging.getMessage("generic.ConversionError", o));
             return null;
         }
+    }
+
+    public static Integer getIntegerValue(AVList avList, String key, Integer defaultValue)
+    {
+        Integer v = getIntegerValue(avList, key);
+        return v != null ? v : defaultValue;
+    }
+
+    public static Long getLongValue(AVList avList, String key, Long defaultValue)
+    {
+        Long v = getLongValue(avList, key);
+        return v != null ? v : defaultValue;
+    }
+
+    public static Long getLongValue(AVList avList, String key)
+    {
+        Object o = avList.getValue(key);
+        if (o == null)
+            return null;
+
+        if (o instanceof Long)
+            return (Long) o;
+
+        String v = getStringValue(avList, key);
+        if (v == null)
+            return null;
+
+        try
+        {
+            return Long.parseLong(v);
+        }
+        catch (NumberFormatException e)
+        {
+            Logging.error("Configuration.ConversionError", v);
+            return null;
+        }
+    }
+
+    public static Double getDoubleValue(AVList avList, String key)
+    {
+        Object o = avList.getValue(key);
+        if (o == null)
+            return null;
+
+        if (o instanceof Double)
+            return (Double) o;
+
+        String v = getStringValue(avList, key);
+        if (v == null)
+            return null;
+
+        try
+        {
+            return Double.parseDouble(v);
+        }
+        catch (NumberFormatException e)
+        {
+            Logging.error(Logging.getMessage("Configuration.ConversionError", v));
+            return null;
+        }
+    }
+
+    public void getRestorableStateForAVPair(String key, Object value, RestorableSupport rs,
+        RestorableSupport.StateObject context)
+    {
+        if (value == null)
+            return;
+
+        if (key.equals(PROPERTY_CHANGE_SUPPORT))
+            return;
+
+        if (rs == null)
+        {
+            String message = Logging.getMessage("nullValue.RestorableStateIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        rs.addStateValueAsString(context, key, value.toString());
     }
 }

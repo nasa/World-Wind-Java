@@ -242,6 +242,18 @@ public class AbsentResourceList
      *
      * @return true if the resource is considered absent, otherwise false.
      */
+    public final boolean isResourceAbsent(long resourceID)
+    {
+        return this.isResourceAbsent(Long.toString(resourceID));
+    }
+
+    /**
+     * Indicates whether a resource is considered absent.
+     *
+     * @param resourceID the resource in question.
+     *
+     * @return true if the resource is considered absent, otherwise false.
+     */
     synchronized public boolean isResourceAbsent(String resourceID)
     {
         if (WWUtil.isEmpty(resourceID))
@@ -271,6 +283,17 @@ public class AbsentResourceList
      *
      * @param resourceID the resource to mark as absent.
      */
+    public void markResourceAbsent(long resourceID)
+    {
+        this.markResourceAbsent(Long.toString(resourceID));
+    }
+
+    /**
+     * Mark a specified resource as absent. If the resource is already marked as absent, its max-tries value is
+     * incremented.
+     *
+     * @param resourceID the resource to mark as absent.
+     */
     synchronized public void markResourceAbsent(String resourceID)
     {
         if (WWUtil.isEmpty(resourceID))
@@ -285,6 +308,16 @@ public class AbsentResourceList
 
         ++entry.numTries;
         entry.timeOfLastMark = System.currentTimeMillis();
+    }
+
+    /**
+     * Mark the resource as not-absent, effectively removing it from this absent-resource list.
+     *
+     * @param resourceID the resource to mark as not absent.
+     */
+    public void unmarkResourceAbsent(long resourceID)
+    {
+        this.unmarkResourceAbsent(Long.toString(resourceID));
     }
 
     /**
