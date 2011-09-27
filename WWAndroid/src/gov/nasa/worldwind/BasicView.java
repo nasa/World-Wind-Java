@@ -132,12 +132,6 @@ public class BasicView extends WWObjectImpl implements View
     }
 
     /** {@inheritDoc} */
-    public Vec4 getEyePoint(Vec4 result)
-    {
-        return result.transformBy4AndSet(this.modelviewInv);
-    }
-
-    /** {@inheritDoc} */
     public Position getEyePosition(Globe globe)
     {
         if (globe == null)

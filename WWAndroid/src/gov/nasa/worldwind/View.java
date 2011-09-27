@@ -100,15 +100,6 @@ public interface View extends WWObject
     Vec4 getEyePoint();
 
     /**
-     * Gets the current eye point in world coordinates and populates an existing vector object.
-     *
-     * @param result vector to receive the current eye point.
-     *
-     * @return the result vector.
-     */
-    public Vec4 getEyePoint(Vec4 result);
-
-    /**
      * Returns the current geographic coordinates of this view's eye position, corresponding to this view's most recent
      * state.
      *
