@@ -285,7 +285,7 @@ public class BasicLayerFactory extends BasicFactory
 
         if (OGCConstants.WMS_SERVICE_NAME.equals(serviceName))
         {
-            layer = new WMSTiledImageLayer(domElement);
+            layer = new WMSTiledImageLayer(domElement, null);
         }
         else
         {

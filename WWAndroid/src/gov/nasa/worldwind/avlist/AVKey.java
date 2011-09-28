@@ -47,6 +47,7 @@ public interface AVKey
     final String FILE_NAME = "gov.nasa.worldwind.avkey.FileName";
     final String FILE_STORE_LOCATION = "gov.nasa.worldwind.avkey.FileStoreLocation";
     final String FLOAT32 = "gov.nasa.worldwind.avkey.Float32";
+    final String FORCE_LEVEL_ZERO_LOADS = "gov.nasa.worldwind.avkey.ForceLevelZeroLoads";
     final String FORMAT_SUFFIX = "gov.nasa.worldwind.avkey.FormatSuffixKey";
 
     final String GET_CAPABILITIES_URL = "gov.nasa.worldwind.avkey.GetCapabilitiesURL";
@@ -82,6 +83,7 @@ public interface AVKey
     final String LITTLE_ENDIAN = "gov.nasa.worldwind.avkey.LittleEndian";
     final String LOGCAT_TAG = "gov.nasa.worldwind.avkey.LogcatTag";
 
+    final String MAP_SCALE = "gov.nasa.worldwind.avkey.MapScale";
     /**
      * Describes the maximum number of attempts to make when downloading a resource before attempts are suspended.
      * Attempts are restarted after the interval specified by {@link #MIN_ABSENT_TILE_CHECK_INTERVAL}.
@@ -121,6 +123,7 @@ public interface AVKey
     final String PICKED_OBJECT_PARENT_LAYER = "gov.nasa.worldwind.avkey.PickedObject.ParentLayer";
     final String POSITION = "gov.nasa.worldwind.avkey.Position";
 
+    final String RETAIN_LEVEL_ZERO_TILES = "gov.nasa.worldwind.avkey.RetainLevelZeroTiles";
     final String RETRIEVE_PROPERTIES_FROM_SERVICE = "gov.nasa.worldwind.avkey.RetrievePropertiesFromService";
     final String RETRIEVAL_POOL_SIZE = "gov.nasa.worldwind.avkey.RetrievalPoolSize";
     final String RETRIEVAL_QUEUE_SIZE = "gov.nasa.worldwind.avkey.RetrievalQueueSize";
@@ -152,6 +155,7 @@ public interface AVKey
     final String TILE_URL_BUILDER = "gov.nasa.worldwind.avkey.TileURLBuilder";
     final String TILE_WIDTH = "gov.nasa.worldwind.avkey.TileWidth";
     final String TITLE = "gov.nasa.worldwind.avkey.Title";
+    final String TRANSPARENCY_COLORS = "gov.nasa.worldwind.avkey.TransparencyColors";
 
     final String URL_CONNECT_TIMEOUT = "gov.nasa.worldwind.avkey.URLConnectTimeout";
     final String URL_PROXY_HOST = "gov.nasa.worldwind.avkey.UrlProxyHost";
@@ -167,4 +171,5 @@ public interface AVKey
 
     final String WIDTH = "gov.nasa.worldwind.avkey.Width";
     final String WMS_VERSION = "gov.nasa.worldwind.avkey.WMSVersion";
+    final String WMS_BACKGROUND_COLOR = "gov.nasa.worldwind.avkey.BackgroundColor";
 }

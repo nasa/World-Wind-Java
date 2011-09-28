@@ -8,6 +8,7 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Color;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -21,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * A collection of static methods use for opening, reading and otherwise working with XML files.
@@ -736,6 +738,50 @@ public class WWXML
         catch (NumberFormatException e)
         {
             Logging.warning(Logging.getMessage("generic.ConversionError", path));
+            return null;
+        }
+    }
+
+    /**
+     * Returns the {@link gov.nasa.worldwind.geom.Color} value of an element identified by an XPath expression.
+     *
+     * @param context the context from which to start the XPath search.
+     * @param path    the XPath expression. If null, indicates that the context is the Color element itself. If
+     *                non-null, the context is searched for a Color element using the expression.
+     * @param xpath   an {@link XPath} object to use for the search. This allows the caller to re-use XPath objects when
+     *                performing multiple searches. May be null.
+     *
+     * @return the value of an element matching the XPath expression, or null if no match is found or the match does not
+     *         contain a {@link gov.nasa.worldwind.geom.Color}.
+     *
+     * @throws IllegalArgumentException if the context is null.
+     */
+    public static Color getColor(Element context, String path, XPath xpath)
+    {
+        if (context == null)
+        {
+            String message = Logging.getMessage("nullValue.ContextIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        try
+        {
+            Element el = path == null ? context : getElement(context, path, xpath);
+            if (el == null)
+                return null;
+
+            Integer r = getInteger(el, "@red", xpath);
+            Integer g = getInteger(el, "@green", xpath);
+            Integer b = getInteger(el, "@blue", xpath);
+            Integer a = getInteger(el, "@alpha", xpath);
+
+            return Color.fromRGBAInt(r != null ? r : 0, g != null ? g : 0, b != null ? b : 0, a != null ? a : 255);
+        }
+        catch (NumberFormatException e)
+        {
+            String message = Logging.getMessage("generic.ConversionError", path);
+            Logging.error(message, e);
             return null;
         }
     }
@@ -2050,6 +2096,58 @@ public class WWXML
             Long d = getDateTimeInMillis(context, paramName, pattern, xpath);
             if (d != null)
                 params.setValue(paramKey, d);
+        }
+    }
+
+    public static void checkAndSetColorArrayParam(Element context, AVList params, String paramKey, String paramName,
+        XPath xpath)
+    {
+        if (context == null)
+        {
+            String message = Logging.getMessage("nullValue.ElementIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (params == null)
+        {
+            String message = Logging.getMessage("nullValue.ParametersIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (paramKey == null)
+        {
+            String message = Logging.getMessage("nullValue.ParameterKeyIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (paramName == null)
+        {
+            String message = Logging.getMessage("nullValue.ParameterNameIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        Object o = params.getValue(paramKey);
+        if (o == null)
+        {
+            List<Element> els = getElements(context, paramName, xpath);
+            if (els == null || els.size() == 0)
+                return;
+
+            int size = els.size();
+            int[] colors = new int[size];
+
+            for (int i = 0; i < size; i++)
+            {
+                Color color = getColor(context, paramName, xpath);
+                if (color != null)
+                    colors[i] = color.getRGB();
+            }
+
+            params.setValue(paramKey, colors);
         }
     }
 

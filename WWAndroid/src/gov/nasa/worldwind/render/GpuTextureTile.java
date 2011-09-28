@@ -20,6 +20,7 @@ public class GpuTextureTile extends Tile implements SurfaceTile
     protected GpuTextureTile fallbackTile;
     protected GpuTextureFactory textureFactory;
     protected MemoryCache memoryCache;
+    protected long updateTime = 0;
 
     public GpuTextureTile(Sector sector, Level level, int row, int column, MemoryCache cache, GpuTextureFactory factory)
     {
@@ -90,6 +91,7 @@ public class GpuTextureTile extends Tile implements SurfaceTile
         // texture data is critical to displaying large amounts of tiled imagery without running out of heap memory.
 
         cache.put(this.tileKey, texture);
+        this.updateTime = System.currentTimeMillis();
         this.textureData = null;
 
         if (this.memoryCache.contains(this.tileKey))
@@ -106,6 +108,16 @@ public class GpuTextureTile extends Tile implements SurfaceTile
         }
 
         return this.textureData != null || cache.contains(this.tileKey);
+    }
+
+    public boolean isTextureExpired()
+    {
+        return this.isTextureExpired(this.getLevel().getExpiryTime());
+    }
+
+    public boolean isTextureExpired(long expiryTime)
+    {
+        return this.updateTime > 0 && this.updateTime < expiryTime;
     }
 
     public GpuTextureTile getFallbackTile()
