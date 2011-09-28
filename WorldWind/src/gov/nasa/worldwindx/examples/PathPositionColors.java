@@ -87,10 +87,10 @@ public class PathPositionColors extends ApplicationTemplate
     }
 
     /**
-     * Example implementation of {@link Path.PositionColors} that evenly distributes the specified colors along a path
-     * with the specified length. For example, if the Colors array contains red, green, blue (in that order) and the
-     * pathLength is 6, this assigns the following colors to each path ordinal: 0:red, 1:red, 2:green, 3:green, 4:blue,
-     * 5:blue.
+     * Example implementation of {@link gov.nasa.worldwind.render.Path.PositionColors} that evenly distributes the
+     * specified colors along a path with the specified length. For example, if the Colors array contains red, green,
+     * blue (in that order) and the pathLength is 6, this assigns the following colors to each path ordinal: 0:red,
+     * 1:red, 2:green, 3:green, 4:blue, 5:blue.
      */
     public static class ExamplePositionColors implements Path.PositionColors
     {

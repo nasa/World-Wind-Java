@@ -20,14 +20,14 @@ public interface Layer extends WWObject, Disposable, Restorable
      *
      * @return true if the layer is enabled, else false.
      */
-    public boolean isEnabled();
+    boolean isEnabled();
 
     /**
      * Controls whether the layer is enabled for rendering and selection.
      *
      * @param enabled <code>true</code> if the layer is enabled, else <code>false</code>.
      */
-    public void setEnabled(boolean enabled);
+    void setEnabled(boolean enabled);
 
     /**
      * Returns the layer's name, as specified in the most recent call to {@link #setName}.
@@ -68,10 +68,11 @@ public interface Layer extends WWObject, Disposable, Restorable
     /**
      * Indicates whether the layer performs selection during picking.
      * <p/>
-     * Most layers enable picking by default. However, this becomes inconvenient for @{link SurfaceImage} and {@link
-     * gov.nasa.worldwind.layers.SurfaceImageLayer}} when the image covers a large area because the view input handlers
-     * detect the surface image rather than the terrain as the top picked object, and will not respond to the user's
-     * attempts at navigation. The solution is to disable picking for the layer.
+     * Most layers enable picking by default. However, this becomes inconvenient for {@link
+     * gov.nasa.worldwind.render.SurfaceImage} and {@link gov.nasa.worldwind.layers.SurfaceImageLayer}} when the image
+     * covers a large area because the view input handlers detect the surface image rather than the terrain as the top
+     * picked object, and will not respond to the user's attempts at navigation. The solution is to disable picking for
+     * the layer.
      *
      * @return <code>true</code> if picking is enabled, else <code>false</code>.
      */
@@ -99,7 +100,7 @@ public interface Layer extends WWObject, Disposable, Restorable
      *
      * @param dc the current draw context for rendering.
      */
-    public void render(DrawContext dc);
+    void render(DrawContext dc);
 
     /**
      * Cause the layer to perform picking, which determines whether the object or its components intersect a given point
@@ -111,7 +112,7 @@ public interface Layer extends WWObject, Disposable, Restorable
      *
      * @see SelectEvent
      */
-    public void pick(DrawContext dc, java.awt.Point pickPoint);
+    void pick(DrawContext dc, java.awt.Point pickPoint);
 
     /**
      * Indicates whether the most recent rendering of the layer rendered the highest resolution imagery or other data
@@ -154,7 +155,7 @@ public interface Layer extends WWObject, Disposable, Restorable
 
     /**
      * Specifies the time of the layer's most recent dataset update. If greater than zero, the layer ignores and
-     * eliminates any previously cached data older than the time specfied, and requests new information from the data
+     * eliminates any previously cached data older than the time specified, and requests new information from the data
      * source. If zero, the layer uses any expiry times intrinsic to the layer, typically initialized at layer
      * construction. The default expiry time is 0, thereby enabling a layer's intrinsic expiration criteria.
      *
