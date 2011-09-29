@@ -242,4 +242,21 @@ public class WWUtil
 
         throw new NoSuchMethodException();
     }
+
+    /**
+     * Eliminates all white space in a specified string. (Applies the regular expression "\\s+".)
+     *
+     * @param inputString the string to remove white space from.
+     *
+     * @return the string with white space eliminated, or null if the input string is null.
+     */
+    public static String removeWhiteSpace(String inputString)
+    {
+        if (WWUtil.isEmpty(inputString))
+        {
+            return inputString;
+        }
+
+        return inputString.replaceAll("\\s+", "");
+    }
 }

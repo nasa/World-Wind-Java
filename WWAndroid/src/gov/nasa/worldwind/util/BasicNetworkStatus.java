@@ -19,10 +19,14 @@ import java.util.concurrent.atomic.*;
  * @author pabercrombie
  * @version $Id$
  */
+// TODO: Android provides a way to test for network connectivity. We could use this to implement isNetworkUnavailable.
 public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
 {
     protected static final long DEFAULT_TRY_AGAIN_INTERVAL = (long) 60e3; // seconds
+    protected static final long NETWORK_STATUS_REPORT_INTERVAL = (long) 120e3;
     protected static final int DEFAULT_ATTEMPT_LIMIT = 7; // number of unavailable events to declare host unavailable
+    protected static final String[] DEFAULT_NETWORK_TEST_SITES = new String[]
+        {"www.nasa.gov", "worldwind.arc.nasa.gov", "google.com", "microsoft.com", "yahoo.com"};
 
     protected static class HostInfo
     {
@@ -51,9 +55,11 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
     }
 
     // Values exposed to the application.
-    private AtomicLong tryAgainInterval = new AtomicLong(DEFAULT_TRY_AGAIN_INTERVAL);
-    private AtomicInteger attemptLimit = new AtomicInteger(DEFAULT_ATTEMPT_LIMIT);
-    private boolean offlineMode;
+    // Values exposed to the application.
+    protected CopyOnWriteArrayList<String> networkTestSites = new CopyOnWriteArrayList<String>();
+    protected AtomicLong tryAgainInterval = new AtomicLong(DEFAULT_TRY_AGAIN_INTERVAL);
+    protected AtomicInteger attemptLimit = new AtomicInteger(DEFAULT_ATTEMPT_LIMIT);
+    protected boolean offlineMode;
 
     // Fields for determining and remembering overall network status.
     protected ConcurrentHashMap<String, HostInfo> hostMap = new ConcurrentHashMap<String, HostInfo>();
@@ -67,6 +73,43 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
     {
         String oms = Configuration.getStringValue(AVKey.OFFLINE_MODE, "false");
         this.offlineMode = oms.startsWith("t") || oms.startsWith("T");
+
+        this.establishNetworkTestSites();
+    }
+
+    /**
+     * Determines and stores the network sites to test for public network connectivity. The sites are drawn from the
+     * JVM's gov.nasa.worldwind.avkey.NetworkStatusTestSites property ({@link AVKey#NETWORK_STATUS_TEST_SITES}). If that
+     * property is not defined, the sites are drawn from the same property in the World Wind or application
+     * configuration file. If the sites are not specified there, the set of sites specified in {@link
+     * #DEFAULT_NETWORK_TEST_SITES} are used. To indicate an empty list in the JVM property or configuration file
+     * property, specify an empty site list, "".
+     */
+    protected void establishNetworkTestSites()
+    {
+        String testSites = System.getProperty(AVKey.NETWORK_STATUS_TEST_SITES);
+
+        if (testSites == null)
+            testSites = Configuration.getStringValue(AVKey.NETWORK_STATUS_TEST_SITES);
+
+        if (testSites == null)
+        {
+            this.networkTestSites.addAll(Arrays.asList(DEFAULT_NETWORK_TEST_SITES));
+        }
+        else
+        {
+            String[] sites = testSites.split(",");
+            List<String> actualSites = new ArrayList<String>(sites.length);
+
+            for (String site : sites)
+            {
+                site = WWUtil.removeWhiteSpace(site);
+                if (!WWUtil.isEmpty(site))
+                    actualSites.add(site);
+            }
+
+            this.setNetworkTestSites(actualSites);
+        }
     }
 
     public int getAttemptLimit()
@@ -115,12 +158,15 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
 
     public List<String> getNetworkTestSites()
     {
-        return null;  // TODO: Stub method
+        return new ArrayList<String>(networkTestSites);
     }
 
     public void setNetworkTestSites(List<String> networkTestSites)
     {
-        // TODO: Stub method
+        this.networkTestSites.clear();
+
+        if (networkTestSites != null)
+            this.networkTestSites.addAll(networkTestSites);
     }
 
     public synchronized void logUnavailableHost(URL url)
@@ -213,12 +259,61 @@ public class BasicNetworkStatus extends AVListImpl implements NetworkStatus
         return this.offlineMode || this.isNetworkUnavailable(10000L);
     }
 
+    // TODO: Consider implementing this method using Android's ConnectivityManager
     public synchronized boolean isNetworkUnavailable(long checkInterval)
     {
         if (this.offlineMode)
             return true;
 
-        return false; // TODO implement network check using Android ConnectivityManager
+        // If there's been success since failure, network assumed to be reachable.
+        if (this.lastAvailableLogTime.get() > this.lastUnavailableLogTime.get())
+        {
+            this.lastNetworkUnavailableResult.set(false);
+            return this.lastNetworkUnavailableResult.get();
+        }
+
+        long now = System.currentTimeMillis();
+
+        // If there's been success recently, network assumed to be reachable.
+        if (!this.lastNetworkUnavailableResult.get() && now - this.lastAvailableLogTime.get() < checkInterval)
+        {
+            return this.lastNetworkUnavailableResult.get();
+        }
+
+        // If query comes too soon after an earlier one that addressed the network, return the earlier result.
+        if (now - this.lastNetworkCheckTime.get() < checkInterval)
+        {
+            return this.lastNetworkUnavailableResult.get();
+        }
+
+        this.lastNetworkCheckTime.set(now);
+
+        if (!this.isWorldWindServerUnavailable())
+        {
+            this.lastNetworkUnavailableResult.set(false); // network not unreachable
+            return this.lastNetworkUnavailableResult.get();
+        }
+
+        for (String testHost : networkTestSites)
+        {
+            if (isHostReachable(testHost))
+            {
+                {
+                    this.lastNetworkUnavailableResult.set(false); // network not unreachable
+                    return this.lastNetworkUnavailableResult.get();
+                }
+            }
+        }
+
+        if (now - this.lastNetworkStatusReportTime.get() > NETWORK_STATUS_REPORT_INTERVAL)
+        {
+            this.lastNetworkStatusReportTime.set(now);
+            String message = Logging.getMessage("NetworkStatus.NetworkUnreachable");
+            Logging.info(message);
+        }
+
+        this.lastNetworkUnavailableResult.set(true); // if no successful contact then network is unreachable
+        return this.lastNetworkUnavailableResult.get();
     }
 
     public boolean isWorldWindServerUnavailable()
