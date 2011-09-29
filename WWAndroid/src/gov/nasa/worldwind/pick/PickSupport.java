@@ -7,12 +7,10 @@ package gov.nasa.worldwind.pick;
 
 import android.graphics.Point;
 import android.opengl.GLES20;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.Logging;
 
-import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
@@ -22,6 +20,10 @@ import java.util.*;
 public class PickSupport
 {
     protected Map<Integer, PickedObject> pickableObjects = new HashMap<Integer, PickedObject>();
+
+    public PickSupport()
+    {
+    }
 
     public void clearPickList()
     {
@@ -53,8 +55,8 @@ public class PickSupport
         if (this.getPickableObjects().isEmpty())
             return null;
 
-        int colorCode = this.getTopColor(dc, pickPoint);
-        if (colorCode == dc.getClearColor().getRGB())
+        int colorCode = dc.getPickColor(pickPoint);
+        if (colorCode == dc.getClearColor())
             return null;
 
         PickedObject pickedObject = getPickableObjects().get(colorCode);
@@ -78,50 +80,6 @@ public class PickSupport
         this.clearPickList();
 
         return pickedObject;
-    }
-
-    public int getTopColor(DrawContext dc, Point pickPoint)
-    {
-        if (pickPoint == null)
-            return 0;
-
-        java.nio.ByteBuffer pixel = ByteBuffer.allocate(3);
-        int yInGLCoords = dc.getView().getViewport().top - pickPoint.y - 1;
-        GLES20.glReadPixels(pickPoint.x, yInGLCoords, 1, 1,
-            GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE, pixel);
-
-        Color topColor = null;
-        try
-        {
-            topColor = new Color(pixel.get(0) & 0xff, pixel.get(1) & 0xff, pixel.get(2) & 0xff, 0);
-        }
-        catch (Exception e)
-        {
-            Logging.error("layers.InvalidPickColorRead");
-        }
-
-        return topColor != null ? topColor.getRGB() : 0;
-    }
-
-    public void beginPicking(DrawContext dc)
-    {
-        // TODO: is this necessary?
-        //gl.glPushAttrib(GL.GL_ENABLE_BIT | GL.GL_CURRENT_BIT);
-
-        GLES20.glDisable(GLES20.GL_DITHER);
-        //GLES20.glDisable(GL.GL_LIGHTING);
-        //GLES20.glDisable(GL.GL_FOG);
-        GLES20.glDisable(GLES20.GL_BLEND);
-        GLES20.glDisable(GLES20.GL_TEXTURE_2D);
-
-        if (dc.isDeepPickingEnabled())
-            GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-    }
-
-    public void endPicking(DrawContext dc)
-    {
-        // TODO: GLES20 equivalent?
-        //dc.getGL().glPopAttrib();
     }
 
     protected Map<Integer, PickedObject> getPickableObjects()

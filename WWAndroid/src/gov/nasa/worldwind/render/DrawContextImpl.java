@@ -6,15 +6,17 @@
 package gov.nasa.worldwind.render;
 
 import android.graphics.Point;
+import android.opengl.GLES20;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
 
+import java.nio.ByteBuffer;
 import java.util.Collection;
 
 /**
@@ -27,7 +29,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
 
     protected int viewportWidth;
     protected int viewportHeight;
-    protected Color clearColor = new Color(0, 0, 0, 0);
+    protected int clearColor;
     protected Model model;
     protected View view;
     protected double verticalExaggeration = DEFAULT_VERTICAL_EXAGGERATION;
@@ -41,6 +43,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     protected boolean pickingMode;
     protected boolean deepPickingMode;
     protected int uniquePickNumber;
+    protected ByteBuffer pickColor = ByteBuffer.allocateDirect(4);
     protected Point pickPoint;
     protected PickedObjectList pickedObjects = new PickedObjectList();
     protected Collection<PerformanceStatistic> perFrameStatistics;
@@ -77,11 +80,12 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         this.currentLayer = null;
         this.currentProgram = null;
         this.frameTimestamp = 0;
-        this.perFrameStatistics = null;
         this.pickingMode = false;
         this.deepPickingMode = false;
+        this.uniquePickNumber = 0;
         this.pickPoint = null;
         this.pickedObjects.clear();
+        this.perFrameStatistics = null;
     }
 
     /** {@inheritDoc} */
@@ -97,7 +101,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     }
 
     /** {@inheritDoc} */
-    public Color getClearColor()
+    public int getClearColor()
     {
         return this.clearColor;
     }
@@ -260,22 +264,43 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     }
 
     /** {@inheritDoc} */
-    public Color getUniquePickColor()
+    public int getUniquePickColor()
     {
         this.uniquePickNumber++;
 
-        int clearColorCode = this.getClearColor().getRGB();
-        if (clearColorCode == this.uniquePickNumber)
+        if (this.uniquePickNumber == this.clearColor)
             this.uniquePickNumber++;
 
         if (this.uniquePickNumber >= 0x00FFFFFF)
         {
             this.uniquePickNumber = 1;  // no black, no white
-            if (clearColorCode == this.uniquePickNumber)
+            if (this.uniquePickNumber == this.clearColor)
                 this.uniquePickNumber++;
         }
 
-        return new Color(this.uniquePickNumber, true); // has alpha
+        return this.uniquePickNumber;
+    }
+
+    public int getPickColor(Point point)
+    {
+        if (point == null)
+        {
+            String msg = Logging.getMessage("nullValue.PointIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Read the RGBA color at the specified point as a 4-component tuple of unsigned bytes. OpenGL ES does not
+        // support reading only the RGB values, so we read the RGBA value and ignore the alpha component. We convert the
+        // y coordinate from Android UI coordinates to GL coordinates.
+        int yInGLCoords = this.viewportHeight - point.y - 1;
+        GLES20.glReadPixels(point.x, yInGLCoords, 1, 1, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, this.pickColor);
+
+        // GL places the value RGBA in the first 4 bytes of the buffer, in that order. We ignore the alpha component and
+        // compose an integer equivalent to those returned by getUniquePickColor.
+        return ((0xFF & this.pickColor.get(0)) << 16)
+            | ((0xFF & this.pickColor.get(1)) << 8)
+            | (0xFF & this.pickColor.get(2));
     }
 
     /** {@inheritDoc} */

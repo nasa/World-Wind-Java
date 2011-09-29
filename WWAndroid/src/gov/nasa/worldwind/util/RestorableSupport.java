@@ -10,7 +10,6 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.OffsetsList;
 
 import java.util.*;
-import java.util.List;
 
 /**
  * RestorableSupport provides convenient read and write access to restorable state located in a simple XML document
@@ -1572,23 +1571,23 @@ public class RestorableSupport
         return getStateObjectAsSector(stateObject);
     }
 
-    public Color getStateObjectAsColor(StateObject stateObject)
-    {
-        String stringValue = getStateObjectAsString(stateObject);
-        if (stringValue == null)
-            return null;
+    //public Color getStateObjectAsColor(StateObject stateObject)
+    //{
+    //    String stringValue = getStateObjectAsString(stateObject);
+    //    if (stringValue == null)
+    //        return null;
+    //
+    //    return decodeColor(stringValue);
+    //}
 
-        return decodeColor(stringValue);
-    }
-
-    public Color getStateValueAsColor(StateObject context, String name)
-    {
-        StateObject stateObject = getStateObject(context, name);
-        if (stateObject == null)
-            return null;
-
-        return getStateObjectAsColor(stateObject);
-    }
+    //public Color getStateValueAsColor(StateObject context, String name)
+    //{
+    //    StateObject stateObject = getStateObject(context, name);
+    //    if (stateObject == null)
+    //        return null;
+    //
+    //    return getStateObjectAsColor(stateObject);
+    //}
 
     /**
      * Adds a new StateObject with the specified <code>name</code> and String <code>value</code>. The new StateObject is
@@ -2081,109 +2080,108 @@ public class RestorableSupport
         }
     }
 
-    public void addStateValueAsColor(String name, Color color)
-    {
-        addStateValueAsColor(null, name, color);
-    }
+    //public void addStateValueAsColor(String name, Color color)
+    //{
+    //    addStateValueAsColor(null, name, color);
+    //}
 
-    public void addStateValueAsColor(StateObject context, String name, Color color)
-    {
-        if (context != null && !containsElement(context.elem))
-        {
-            String message = Logging.getMessage("RestorableSupport.InvalidStateObject");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (name == null)
-        {
-            String message = Logging.getMessage("nullValue.NameIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (color == null)
-        {
-            String message = Logging.getMessage("nullValue.ColorIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        String value = encodeColor(color);
-        addStateValueAsString(context, name, value);
-    }
+    //public void addStateValueAsColor(StateObject context, String name, Color color)
+    //{
+    //    if (context != null && !containsElement(context.elem))
+    //    {
+    //        String message = Logging.getMessage("RestorableSupport.InvalidStateObject");
+    //        Logging.error(message);
+    //        throw new IllegalArgumentException(message);
+    //    }
+    //    if (name == null)
+    //    {
+    //        String message = Logging.getMessage("nullValue.NameIsNull");
+    //        Logging.error(message);
+    //        throw new IllegalArgumentException(message);
+    //    }
+    //    if (color == null)
+    //    {
+    //        String message = Logging.getMessage("nullValue.ColorIsNull");
+    //        Logging.error(message);
+    //        throw new IllegalArgumentException(message);
+    //    }
+    //
+    //    String value = encodeColor(color);
+    //    addStateValueAsString(context, name, value);
+    //}
 
     /*************************************************************************************************************/
     /** Convenience methods for adding and querying state values. **/
-    /*************************************************************************************************************/
+    /** ********************************************************************************************************* */
 
-    /**
-     * Returns a String encoding of the specified <code>color</code>. The Color can be restored with a call to {@link
-     * #decodeColor(String)}.
-     *
-     * @param color Color to encode.
-     *
-     * @return String encoding of the specified <code>color</code>.
-     *
-     * @throws IllegalArgumentException If <code>color</code> is null.
-     */
-    public static String encodeColor(Color color)
-    {
-        if (color == null)
-        {
-            String message = Logging.getMessage("nullValue.ColorIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
+    ///**
+    // * Returns a String encoding of the specified <code>color</code>. The Color can be restored with a call to {@link
+    // * #decodeColor(String)}.
+    // *
+    // * @param color Color to encode.
+    // *
+    // * @return String encoding of the specified <code>color</code>.
+    // *
+    // * @throws IllegalArgumentException If <code>color</code> is null.
+    // */
+    //public static String encodeColor(Color color)
+    //{
+    //    if (color == null)
+    //    {
+    //        String message = Logging.getMessage("nullValue.ColorIsNull");
+    //        Logging.error(message);
+    //        throw new IllegalArgumentException(message);
+    //    }
+    //
+    //    // Encode the red, green, blue, and alpha components
+    //    return String.format("%#08X", color.getRGBA());
+    //}
 
-        // Encode the red, green, blue, and alpha components
-        return String.format("%#08X", color.getRGBA());
-    }
-
-    /**
-     * Returns the Color described by the String <code>encodedString</code>. This understands Colors encoded with a call
-     * to {@link #encodeColor(Color)}. If <code>encodedString</code> cannot be decoded, this method returns
-     * null.
-     *
-     * @param encodedString String to decode.
-     *
-     * @return Color decoded from the specified <code>encodedString</code>, or null if the String cannot be decoded.
-     *
-     * @throws IllegalArgumentException If <code>encodedString</code> is null.
-     */
-    public static Color decodeColor(String encodedString)
-    {
-        if (encodedString == null)
-        {
-            String message = Logging.getMessage("nullValue.StringIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X"))
-            return null;
-
-        // The hexadecimal representation for an RGBA color can result in a value larger than
-        // Integer.MAX_VALUE (for example, 0XFFFF). Therefore we decode the string as a long,
-        // then keep only the lower four bytes.
-        Long longValue;
-        try
-        {
-            longValue = Long.parseLong(encodedString.substring(2), 16);
-        }
-        catch (NumberFormatException e)
-        {
-            String message = Logging.getMessage("generic.ConversionError", encodedString);
-            Logging.error(message, e);
-            return null;
-        }
-
-        int i = (int) (longValue & 0xFFFFFFFFL);
-        return new Color(
-            (i >> 24) & 0xFF,
-            (i >> 16) & 0xFF,
-            (i >> 8) & 0xFF,
-            i & 0xFF);
-    }
-
+    ///**
+    // * Returns the Color described by the String <code>encodedString</code>. This understands Colors encoded with a call
+    // * to {@link #encodeColor(Color)}. If <code>encodedString</code> cannot be decoded, this method returns
+    // * null.
+    // *
+    // * @param encodedString String to decode.
+    // *
+    // * @return Color decoded from the specified <code>encodedString</code>, or null if the String cannot be decoded.
+    // *
+    // * @throws IllegalArgumentException If <code>encodedString</code> is null.
+    // */
+    //public static Color decodeColor(String encodedString)
+    //{
+    //    if (encodedString == null)
+    //    {
+    //        String message = Logging.getMessage("nullValue.StringIsNull");
+    //        Logging.error(message);
+    //        throw new IllegalArgumentException(message);
+    //    }
+    //
+    //    if (!encodedString.startsWith("0x") && !encodedString.startsWith("0X"))
+    //        return null;
+    //
+    //    // The hexadecimal representation for an RGBA color can result in a value larger than
+    //    // Integer.MAX_VALUE (for example, 0XFFFF). Therefore we decode the string as a long,
+    //    // then keep only the lower four bytes.
+    //    Long longValue;
+    //    try
+    //    {
+    //        longValue = Long.parseLong(encodedString.substring(2), 16);
+    //    }
+    //    catch (NumberFormatException e)
+    //    {
+    //        String message = Logging.getMessage("generic.ConversionError", encodedString);
+    //        Logging.error(message, e);
+    //        return null;
+    //    }
+    //
+    //    int i = (int) (longValue & 0xFFFFFFFFL);
+    //    return new Color(
+    //        (i >> 24) & 0xFF,
+    //        (i >> 16) & 0xFF,
+    //        (i >> 8) & 0xFF,
+    //        i & 0xFF);
+    //}
     public static void adjustTitleAndDisplayName(AVList params)
     {
         String displayName = params.getStringValue(AVKey.DISPLAY_NAME);

@@ -1057,10 +1057,10 @@ public class BasicTiledImageLayer extends TiledImageLayer implements BulkRetriev
         {
             rs.addStateValueAsSector(context, key, (Sector) value);
         }
-        else if (value instanceof gov.nasa.worldwind.geom.Color)
-        {
-            rs.addStateValueAsColor(context, key, (gov.nasa.worldwind.geom.Color) value);
-        }
+        //else if (value instanceof gov.nasa.worldwind.geom.Color)
+        //{
+        //    rs.addStateValueAsColor(context, key, (gov.nasa.worldwind.geom.Color) value);
+        //}
         else
         {
             super.getRestorableStateForAVPair(key, value, rs, context);

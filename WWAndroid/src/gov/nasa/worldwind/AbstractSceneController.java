@@ -5,18 +5,16 @@
  */
 package gov.nasa.worldwind;
 
-import android.graphics.Point;
+import android.graphics.*;
 import android.opengl.GLES20;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.geom.Color;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
 
-import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
@@ -35,7 +33,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected boolean deepPick;
     protected Point pickPoint;
     protected PickedObjectList pickedObjects;
-    protected ByteBuffer pickColor = ByteBuffer.allocateDirect(3);
     protected Collection<PerformanceStatistic> perFrameStatistics = new ArrayList<PerformanceStatistic>();
 
     protected AbstractSceneController()
@@ -121,12 +118,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     /** {@inheritDoc} */
-    public Point getPickPoint()
-    {
-        return this.pickPoint;
-    }
-
-    /** {@inheritDoc} */
     public boolean isDeepPickEnabled()
     {
         return this.deepPick;
@@ -136,6 +127,12 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     public void setDeepPickEnabled(boolean tf)
     {
         this.deepPick = tf;
+    }
+
+    /** {@inheritDoc} */
+    public Point getPickPoint()
+    {
+        return this.pickPoint;
     }
 
     /** {@inheritDoc} */
@@ -211,13 +208,6 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         // We do not specify glCullFace, because the default cull face state GL_BACK is appropriate for our needs.
     }
 
-    protected void clearFrame(DrawContext dc)
-    {
-        Color cc = dc.getClearColor();
-        GLES20.glClearColor(cc.r, cc.g, cc.b, cc.a);
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
-    }
-
     protected void finalizeFrame(DrawContext dc)
     {
         // Restore the default GL state values we modified in initializeFrame.
@@ -227,6 +217,13 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ZERO);
         GLES20.glDepthFunc(GLES20.GL_LESS);
         GLES20.glClearColor(0f, 0f, 0f, 0f);
+    }
+
+    protected void clearFrame(DrawContext dc)
+    {
+        int c = dc.getClearColor();
+        GLES20.glClearColor(Color.red(c) / 255f, Color.green(c) / 255f, Color.blue(c) / 255f, Color.alpha(c) / 255f);
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
     }
 
     protected void applyView(DrawContext dc)
@@ -299,23 +296,74 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     protected void pick(DrawContext dc)
     {
-        this.pickedObjects = null;
-
-        dc.setPickingMode(true);
+        this.beginPicking(dc);
         try
         {
-            //this.pickTerrain();
-            //this.doNonTerrainPick(dc);
-            this.resolveTopPick(dc);
-            this.pickedObjects = new PickedObjectList(dc.getPickedObjects());
-
-            if (this.isDeepPickEnabled() && this.pickedObjects.hasNonTerrainObjects())
-                this.doDeepPick(dc);
+            this.doPick(dc);
         }
         finally
         {
-            dc.setPickingMode(false);
+            this.endPicking(dc);
         }
+    }
+
+    /**
+     * Configures the draw context and GL state for picking. This ensures that pick colors are drawn into the
+     * framebuffer as specified, and are not modified by any GL state. This makes the following GL state changes: <ul>
+     * <li>Disable blending</li> <li>Disable dithering</li> </ul>
+     *
+     * @param dc the draw context to configure.
+     */
+    protected void beginPicking(DrawContext dc)
+    {
+        dc.setPickingMode(true);
+        GLES20.glDisable(GLES20.GL_BLEND); // Blending is disabled by default, but is enabled in initializeFrame.
+        GLES20.glDisable(GLES20.GL_DITHER); // Dithering is enabled by default.
+    }
+
+    /**
+     * Restores the draw context and GL state modified in beginPicking. This makes the following GL state changes: <ul>
+     * <li>Enable blending</li> <li>Enable dithering</li> </ul>
+     *
+     * @param dc the draw context on which to restore state.
+     */
+    protected void endPicking(DrawContext dc)
+    {
+        dc.setPickingMode(false);
+        GLES20.glEnable(GLES20.GL_BLEND); // Blending is disabled by default, but is enabled in initializeFrame.
+        GLES20.glEnable(GLES20.GL_DITHER); // Dithering is enabled by default.
+    }
+
+    protected void doPick(DrawContext dc)
+    {
+        this.doPickTerrain(dc);
+        this.doPickNonTerrain(dc);
+        this.resolveTopPick(dc);
+        this.pickedObjects = new PickedObjectList(dc.getPickedObjects());
+
+        if (this.isDeepPickEnabled() && this.pickedObjects.hasNonTerrainObjects())
+            this.doDeepPick(dc);
+    }
+
+    protected void doPickTerrain(DrawContext dc)
+    {
+        if (dc.getSurfaceGeometry() == null || dc.getPickPoint() == null)
+            return;
+
+        long beginTime = System.currentTimeMillis();
+
+        dc.getSurfaceGeometry().pick(dc, dc.getPickPoint());
+
+        long endTime = System.currentTimeMillis();
+        dc.addPerFrameStatistic(PerformanceStatistic.TERRAIN_PICK_TIME, "Pick Time (ms): Terrain", endTime - beginTime);
+    }
+
+    protected void doPickNonTerrain(DrawContext dc)
+    {
+        if (dc.getPickPoint() == null) // Don't do the pick if there's no current pick point.
+            return;
+
+        this.pickLayers(dc);
     }
 
     protected void pickLayers(DrawContext dc)
@@ -347,7 +395,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     protected void resolveTopPick(DrawContext dc)
     {
-        // Make a last reading to find out which is a top (resultant) color
+        // Make a last reading to find out which is the top (resultant) color.
         PickedObjectList pickedObjects = dc.getPickedObjects();
         if (pickedObjects != null && pickedObjects.size() == 1)
         {
@@ -355,12 +403,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         }
         else if (pickedObjects != null && pickedObjects.size() > 1)
         {
-            int yInGLCoords = dc.getViewportHeight() - dc.getPickPoint().y - 1;
-            GLES20.glReadPixels(dc.getPickPoint().x, yInGLCoords, 1, 1, GLES20.GL_RGB, GLES20.GL_UNSIGNED_BYTE,
-                this.pickColor);
-
-            int colorCode = (0xff & this.pickColor.get(0) << 16) | (0xff & this.pickColor.get(1) << 8)
-                | (0xff & this.pickColor.get(2));
+            int colorCode = dc.getPickColor(dc.getPickPoint());
             if (colorCode != 0)
             {
                 // Find the picked object in the list and set the "onTop" flag.
@@ -378,18 +421,43 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     protected void doDeepPick(DrawContext dc)
     {
-        dc.setDeepPickingEnabled(true);
+        this.beginDeepPicking(dc);
         try
         {
-            //this.doNonTerrainPick(dc);
+            this.doPickNonTerrain(dc);
         }
         finally
         {
-            dc.setDeepPickingEnabled(false);
+            this.endDeepPicking(dc);
         }
 
         PickedObjectList currentPickedObjects = this.pickedObjects;
         this.pickedObjects = this.mergePickedObjectLists(currentPickedObjects, dc.getPickedObjects());
+    }
+
+    /**
+     * Configures the draw context and GL state for deep picking. This ensures that an object can be picked regardless
+     * its depth relative to other objects. This makes the following GL state changes: <ul> <li>Disable depth test</li>
+     * </ul>
+     *
+     * @param dc the draw context to configure.
+     */
+    protected void beginDeepPicking(DrawContext dc)
+    {
+        dc.setDeepPickingEnabled(true);
+        GLES20.glDisable(GLES20.GL_DEPTH_TEST); // Depth test is disabled by default, but enabled in initializeFrame.
+    }
+
+    /**
+     * Restores the draw context and the GL state modified in beginDeepPicking. This makes the following GL state
+     * changes: <ul> <li>Enable depth test</li> </ul>
+     *
+     * @param dc the draw context on which to restore state.
+     */
+    protected void endDeepPicking(DrawContext dc)
+    {
+        dc.setDeepPickingEnabled(false);
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST); // Depth test is disabled by default, but enabled in initializeFrame.
     }
 
     protected PickedObjectList mergePickedObjectLists(PickedObjectList listA, PickedObjectList listB)

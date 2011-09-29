@@ -27,6 +27,8 @@ public class BasicSceneController extends AbstractSceneController
             this.applyView(dc);
             this.createTerrain(dc);
             this.clearFrame(dc);
+            this.pick(dc);
+            this.clearFrame(dc);
             this.draw(dc);
         }
         finally

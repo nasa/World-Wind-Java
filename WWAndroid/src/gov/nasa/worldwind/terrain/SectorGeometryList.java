@@ -5,20 +5,23 @@
  */
 package gov.nasa.worldwind.terrain;
 
+import android.graphics.Point;
 import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.DrawContext;
+
+import java.util.List;
 
 /**
  * @author dcollins
  * @version $Id$
  */
-public interface SectorGeometryList extends Iterable<SectorGeometry>
+public interface SectorGeometryList extends List<SectorGeometry>
 {
-    int size();
-
     Sector getSector();
 
     void beginRendering(DrawContext dc);
 
     void endRendering(DrawContext dc);
+
+    void pick(DrawContext dc, Point pickPoint);
 }

@@ -5,12 +5,14 @@
  */
 package gov.nasa.worldwind.terrain;
 
+import android.graphics.*;
 import android.opengl.GLES20;
 import android.util.Pair;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Matrix;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
@@ -20,7 +22,6 @@ import javax.xml.xpath.XPath;
 import java.beans.PropertyChangeEvent;
 import java.nio.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * @author dcollins
@@ -141,48 +142,25 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
             this.tessellator.endRendering(dc, this);
         }
-    }
 
-    protected static class TerrainGeometry implements Cacheable
-    {
-        protected Vec4 referenceCenter = new Vec4();
-        protected Matrix transformMatrix = Matrix.fromIdentity();
-        protected FloatBuffer points;
-        protected final Object vboCacheKey = new Object();
-        protected boolean mustRegnerateVbos;
-        protected TerrainSharedGeometry sharedGeom;
-
-        public TerrainGeometry()
+        /** {@inheritDoc} */
+        public void pick(DrawContext dc, Point pickPoint)
         {
-        }
+            if (dc == null)
+            {
+                String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+                Logging.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
 
-        public long getSizeInBytes()
-        {
-            // This tile's size in bytes is computed as follows:
-            // self: 4 bytes (1 32-bit reference)
-            // referenceCenter: 36 bytes (1 32-bit reference + 4 64-bit floats)
-            // transformMatrix: 132 bytes (1 32-bit reference + 16 64-bit floats)
-            // points: 4 bytes + variable (1 32-bit reference + variable num of 32-bit floats)
-            // vboCacheKey: 4 bytes (1 32-bit reference)
-            // sharedGeom: 4 bytes (1 32-bit reference)
-            // total: 184 bytes
+            if (pickPoint == null)
+            {
+                String msg = Logging.getMessage("nullValue.PointIsNull");
+                Logging.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
 
-            long size = 184;
-            size += this.points != null ? 4 * this.points.capacity() : 0;
-            return size;
-        }
-    }
-
-    protected static class TerrainSharedGeometry
-    {
-        protected FloatBuffer texCoords;
-        protected ShortBuffer indices;
-        protected ShortBuffer wireframeIndices;
-        protected ShortBuffer outlineIndices;
-        protected final Object vboCacheKey = new Object();
-
-        public TerrainSharedGeometry()
-        {
+            this.tessellator.pick(dc, this, pickPoint);
         }
     }
 
@@ -232,10 +210,92 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
             this.tessellator.endRendering(dc);
         }
+
+        /** {@inheritDoc} */
+        public void pick(DrawContext dc, Point pickPoint)
+        {
+            if (dc == null)
+            {
+                String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+                Logging.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            if (pickPoint == null)
+            {
+                String msg = Logging.getMessage("nullValue.PointIsNull");
+                Logging.error(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            this.tessellator.pick(dc, this, pickPoint);
+        }
+    }
+
+    protected static class TerrainGeometry implements Cacheable
+    {
+        protected Vec4 referenceCenter = new Vec4();
+        protected Matrix transformMatrix = Matrix.fromIdentity();
+        protected FloatBuffer points;
+        protected final Object vboCacheKey = new Object();
+        protected boolean mustRegnerateVbos;
+        protected TerrainSharedGeometry sharedGeom;
+
+        public TerrainGeometry()
+        {
+        }
+
+        public long getSizeInBytes()
+        {
+            // This tile's size in bytes is computed as follows:
+            // self: 4 bytes (1 32-bit reference)
+            // referenceCenter: 36 bytes (1 32-bit reference + 4 64-bit floats)
+            // transformMatrix: 132 bytes (1 32-bit reference + 16 64-bit floats)
+            // points: 4 bytes + variable (1 32-bit reference + variable num of 32-bit floats)
+            // vboCacheKey: 4 bytes (1 32-bit reference)
+            // sharedGeom: 4 bytes (1 32-bit reference)
+            // total: 184 bytes
+
+            long size = 184;
+            size += this.points != null ? 4 * this.points.capacity() : 0;
+            return size;
+        }
+    }
+
+    protected static class TerrainSharedGeometry
+    {
+        protected FloatBuffer texCoords;
+        protected ShortBuffer indices;
+        protected ShortBuffer wireframeIndices;
+        protected ShortBuffer outlineIndices;
+        protected final Object vboCacheKey = new Object();
+
+        public TerrainSharedGeometry()
+        {
+        }
+    }
+
+    protected static class TerrainPickGeometry
+    {
+        protected Vec4 referenceCenter = new Vec4();
+        protected Matrix transformMatrix = Matrix.fromIdentity();
+        protected ByteBuffer buffer;
+        protected int vertexCount;
+        protected int vertexStride;
+        protected int colorOffset;
+        protected int minColorCode;
+        protected int maxColorCode;
+
+        public TerrainPickGeometry()
+        {
+        }
     }
 
     protected static final double DEFAULT_DETAIL_HINT_ORIGIN = 1.4;
     protected static Map<Object, TerrainSharedGeometry> sharedGeometry = new HashMap<Object, TerrainSharedGeometry>();
+    protected static Map<Object, TerrainPickGeometry> pickGeometry = new HashMap<Object, TerrainPickGeometry>();
+    protected static final String PICK_VERTEX_SHADER_PATH = "shaders/TiledTessellatorPick.vert";
+    protected static final String PICK_FRAGMENT_SHADER_PATH = "shaders/TiledTessellatorPick.frag";
 
     protected double detailHintOrigin = DEFAULT_DETAIL_HINT_ORIGIN;
     protected double detailHint;
@@ -253,6 +313,10 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
     protected double[] tileRowElevations;
     protected Vec4[] tilePoints;
     protected float[] tileCoords;
+    // Properties used for picking.
+    protected final Object pickProgramKey = new Object();
+    protected boolean pickProgramCreationFailed;
+    protected Triangle pickedTriangle = new Triangle();
 
     public TiledTessellator(AVList params)
     {
@@ -561,6 +625,42 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         tile.setGeometry(cache, geom);
     }
 
+    /**
+     * Returns the memory cache used to cache terrain tiles, initializing the cache if it doesn't yet exist.
+     *
+     * @return the memory cache associated with terrain tiles.
+     */
+    protected MemoryCache getTerrainTileCache()
+    {
+        if (!WorldWind.getMemoryCacheSet().contains(TerrainTile.class.getName()))
+        {
+            long size = Configuration.getLongValue(AVKey.SECTOR_GEOMETRY_TILE_CACHE_SIZE);
+            MemoryCache cache = new BasicMemoryCache((long) (0.8 * size), size);
+            cache.setName("Tessellator Tiles");
+            WorldWind.getMemoryCacheSet().put(TerrainTile.class.getName(), cache);
+        }
+
+        return WorldWind.getMemoryCacheSet().get(TerrainTile.class.getName());
+    }
+
+    /**
+     * Returns the memory cache used to cache terrain geometry, initializing the cache if it doesn't yet exist.
+     *
+     * @return the memory cache associated with terrain geometry.
+     */
+    protected MemoryCache getTerrainGeometryCache()
+    {
+        if (!WorldWind.getMemoryCacheSet().contains(TerrainGeometry.class.getName()))
+        {
+            long size = Configuration.getLongValue(AVKey.SECTOR_GEOMETRY_CACHE_SIZE);
+            MemoryCache cache = new BasicMemoryCache((long) (0.8 * size), size);
+            cache.setName("Tessellator Geometry");
+            WorldWind.getMemoryCacheSet().put(TerrainGeometry.class.getName(), cache);
+        }
+
+        return WorldWind.getMemoryCacheSet().get(TerrainGeometry.class.getName());
+    }
+
     protected void buildTileVertices(DrawContext dc, TerrainTile tile, TerrainGeometry geom)
     {
         // The WWAndroid terrain tessellator attempts to improves upon the WWJ tessellator's vertex construction
@@ -763,42 +863,6 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         geom.sharedGeom = sharedGeom;
     }
 
-    /**
-     * Returns the memory cache used to cache terrain tiles, initializing the cache if it doesn't yet exist.
-     *
-     * @return the memory cache associated with terrain tiles.
-     */
-    protected MemoryCache getTerrainTileCache()
-    {
-        if (!WorldWind.getMemoryCacheSet().contains(TerrainTile.class.getName()))
-        {
-            long size = Configuration.getLongValue(AVKey.SECTOR_GEOMETRY_TILE_CACHE_SIZE);
-            MemoryCache cache = new BasicMemoryCache((long) (0.8 * size), size);
-            cache.setName("Tessellator Tiles");
-            WorldWind.getMemoryCacheSet().put(TerrainTile.class.getName(), cache);
-        }
-
-        return WorldWind.getMemoryCacheSet().get(TerrainTile.class.getName());
-    }
-
-    /**
-     * Returns the memory cache used to cache terrain geometry, initializing the cache if it doesn't yet exist.
-     *
-     * @return the memory cache associated with terrain geometry.
-     */
-    protected MemoryCache getTerrainGeometryCache()
-    {
-        if (!WorldWind.getMemoryCacheSet().contains(TerrainGeometry.class.getName()))
-        {
-            long size = Configuration.getLongValue(AVKey.SECTOR_GEOMETRY_CACHE_SIZE);
-            MemoryCache cache = new BasicMemoryCache((long) (0.8 * size), size);
-            cache.setName("Tessellator Geometry");
-            WorldWind.getMemoryCacheSet().put(TerrainGeometry.class.getName(), cache);
-        }
-
-        return WorldWind.getMemoryCacheSet().get(TerrainGeometry.class.getName());
-    }
-
     protected FloatBuffer buildTexCoords(int tileWidth, int tileHeight)
     {
         // The tile width and height indicates the number of cell rows and columns in the tile. We add one row and
@@ -855,7 +919,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
         // Allocate a native short buffer to hold the indices used to draw a tile of the specified width and height as
         // a triangle strip. Shorts are the largest primitive that OpenGL ES allows for an index buffer. The largest
-        // tileWidth and tileHeight that can be indexed by a short is 2565x255 (excluding the extra rows and columns to
+        // tileWidth and tileHeight that can be indexed by a short is 256x256 (excluding the extra rows and columns to
         // convert between cell count and vertex count, and the extra rows and columns for the tile skirt).
         int numIndices = 2 * (numLat - 1) * numLon + 2 * (numLat - 2);
         ShortBuffer indices = ByteBuffer.allocateDirect(2 * numIndices).order(ByteOrder.nativeOrder()).asShortBuffer();
@@ -999,11 +1063,17 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
             return;
         }
 
-        int point = program.getAttribLocation("vertexPoint"); // TODO: handle -1 return.
-        GLES20.glEnableVertexAttribArray(point);
+        // Enable the program's vertexPoint attribute, if one exists. The data for this attribute is specified when
+        // beginRendering is called for each tile.
+        int location = program.getAttribLocation("vertexPoint");
+        if (location >= 0)
+            GLES20.glEnableVertexAttribArray(location);
 
-        int texCoord = program.getAttribLocation("vertexTexCoord"); // TODO: handle -1 return.
-        GLES20.glEnableVertexAttribArray(texCoord);
+        // Enable the program's vertexTexCoord attribute, if one exists. The data for this attribute is specified when
+        // beginRendering is called for each tile.
+        location = program.getAttribLocation("vertexTexCoord");
+        if (location >= 0)
+            GLES20.glEnableVertexAttribArray(location);
     }
 
     protected void endRendering(DrawContext dc)
@@ -1016,11 +1086,17 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         if (program == null)
             return; // Message logged in beginRendering(DrawContext).
 
-        int point = program.getAttribLocation("vertexPoint"); // TODO: handle -1 return.
-        GLES20.glDisableVertexAttribArray(point);
+        // Disable the program's vertexPoint attribute, if one exists. This restores the program state modified in
+        // beginRendering.
+        int location = program.getAttribLocation("vertexPoint");
+        if (location >= 0)
+            GLES20.glDisableVertexAttribArray(location);
 
-        int texCoord = program.getAttribLocation("vertexTexCoord"); // TODO: handle -1 return.
-        GLES20.glDisableVertexAttribArray(texCoord);
+        // Disable the program's vertexTexCoord attribute, if one exists. This restores the program state modified in
+        // beginRendering.
+        location = program.getAttribLocation("vertexTexCoord");
+        if (location >= 0)
+            GLES20.glDisableVertexAttribArray(location);
     }
 
     protected void beginRendering(DrawContext dc, TerrainTile tile)
@@ -1030,6 +1106,8 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
             return;// Message logged in beginRendering(DrawContext).
 
         MemoryCache memCache = this.getTerrainGeometryCache();
+        GpuResourceCache gpuCache = dc.getGpuResourceCache();
+
         TerrainGeometry geom = tile.getGeometry(memCache);
         if (geom == null)
         {
@@ -1038,33 +1116,49 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
             return;
         }
 
+        // TODO: 1) Separate texcoord vbo loading from index vbo.
+        // TODO: 2) Put only the fill indices in vbo.
+        // TODO: 3) Enable texcoord and fill index vbo in beginRendering.
         this.loadGeometryVbos(dc, geom);
         this.loadSharedGeometryVBOs(dc, geom.sharedGeom);
 
-        GpuResourceCache gpuCache = dc.getGpuResourceCache();
-        int[] vboIds = (int[]) gpuCache.get(geom.vboCacheKey);
-        if (vboIds == null)
+        // Specify the data for the program's vertexPoint attribute, if one exists. This attribute is enabled in
+        // beginRendering.
+        int location = program.getAttribLocation("vertexPoint");
+        if (location >= 0)
         {
-            Logging.warning(
-                Logging.getMessage("Tessellator.SurfaceGeometryVBONotInGpuCache", tile, gpuCache.getUsedCapacity()));
-            return;
+            int[] vboIds = (int[]) gpuCache.get(geom.vboCacheKey);
+            if (vboIds != null)
+            {
+                GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboIds[0]);
+                GLES20.glVertexAttribPointer(location, 3, GLES20.GL_FLOAT, false, 0, 0);
+            }
+            else
+            {
+                String msg = Logging.getMessage("Tessellator.SurfaceGeometryVBONotInGpuCache", tile,
+                    gpuCache.getUsedCapacity());
+                Logging.warning(msg);
+            }
         }
 
-        int[] sharedVboIds = (int[]) gpuCache.get(geom.sharedGeom.vboCacheKey);
-        if (sharedVboIds == null)
+        // Specify the data for the program's vertexTexCoord attribute, if one exists. This attribute is enabled in
+        // beginRendering.
+        location = program.getAttribLocation("vertexTexCoord");
+        if (location >= 0)
         {
-            Logging.warning(
-                Logging.getMessage("Tessellator.SharedGeometryVBONotInGpuCache", tile, gpuCache.getUsedCapacity()));
-            return;
+            int[] sharedVboIds = (int[]) gpuCache.get(geom.sharedGeom.vboCacheKey);
+            if (sharedVboIds != null)
+            {
+                GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, sharedVboIds[0]);
+                GLES20.glVertexAttribPointer(location, 2, GLES20.GL_FLOAT, false, 0, 0);
+            }
+            else
+            {
+                String msg = Logging.getMessage("Tessellator.SharedGeometryVBONotInGpuCache", tile,
+                    gpuCache.getUsedCapacity());
+                Logging.warning(msg);
+            }
         }
-
-        int point = program.getAttribLocation("vertexPoint"); // TODO: handle -1 return.
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboIds[0]);
-        GLES20.glVertexAttribPointer(point, 3, GLES20.GL_FLOAT, false, 0, 0);
-
-        int texCoord = program.getAttribLocation("vertexTexCoord"); // TODO: handle -1 return.
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, sharedVboIds[0]);
-        GLES20.glVertexAttribPointer(texCoord, 2, GLES20.GL_FLOAT, false, 0, 0);
 
         // Multiply the View's modelview-projection matrix by the tile's transform matrix to correctly transform tile
         // points into eye coordinates. This achieves the resolution we need on Gpus with limited floating point
@@ -1074,7 +1168,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         program.loadUniformMatrix("mvpMatrix", this.mvpMatrix);
     }
 
-    @SuppressWarnings({"UnusedParameters"})
+    @SuppressWarnings( {"UnusedParameters"})
     protected void endRendering(DrawContext dc, TerrainTile tile)
     {
         // Intentionally left blank. All GL state is restored in endRendering(DrawContext).
@@ -1230,5 +1324,352 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0);
             GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0);
         }
+    }
+
+    protected void pick(DrawContext dc, SectorGeometryList sgList, Point pickPoint)
+    {
+        // Load the program used to draw the tiles in unique colors.
+        GpuProgram program = this.getGpuPickProgram(dc.getGpuResourceCache());
+        if (program == null)
+            return; // Message already logged in getGpuPickProgram.
+
+        program.bind();
+        dc.setCurrentProgram(program);
+        try
+        {
+            SectorGeometry sg = this.getPickedGeometry(dc, sgList, pickPoint);
+            if (sg != null)
+                sg.pick(dc, pickPoint);
+        }
+        finally
+        {
+            GLES20.glUseProgram(0);
+            dc.setCurrentProgram(null);
+        }
+    }
+
+    protected SectorGeometry getPickedGeometry(DrawContext dc, SectorGeometryList sgList, Point pickPoint)
+    {
+        GpuProgram program = dc.getCurrentProgram();
+        if (program == null)
+            return null;
+
+        int location = program.getAttribLocation("vertexColor");
+        if (location < 0)
+            return null;
+
+        if (sgList.isEmpty())
+            return null;
+
+        // Assign the minimum color code to the color used to draw the first SectorGeometry.
+        int color = dc.getUniquePickColor();
+        int minColorCode = color;
+        int maxColorCode;
+
+        // Draw the terrain tiles in unique colors. The unique colors for each tile are sequential, such that the the
+        // color used to draw the i'th SectorGeometry is equal to minColorCode + i.
+        sgList.beginRendering(dc);
+        try
+        {
+            for (int i = 0; i < sgList.size(); i++)
+            {
+                // Get a unique pick color for every SectorGeometry except the first. The color for the first tile is
+                // allocated before this loop. We must perform this step even if a tile is outside the pick frustum to
+                // ensure that the pick colors can be used to compute an index into the SectorGeometryList.
+                if (i > 0)
+                    color = dc.getUniquePickColor();
+
+                // TODO: Cull SectorGeometry against the pick frustum.
+                SectorGeometry sg = sgList.get(i);
+                sg.beginRendering(dc);
+                try
+                {
+                    // Specify the generic vertex attribute value for "vertexColor" to be used for all vertices. Since
+                    // the "vertexColor" attrib array is not enabled, this constant value is used instead. This
+                    // 3-component RGB color is expanded to a 4-component RGBA color, where the alpha component is 1.0.
+                    GLES20.glVertexAttrib3f(location, Color.red(color) / 255f, Color.green(color) / 255f,
+                        Color.blue(color) / 255f);
+                    sg.render(dc);
+                }
+                finally
+                {
+                    sg.endRendering(dc);
+                }
+            }
+        }
+        finally
+        {
+            sgList.endRendering(dc);
+        }
+
+        // Assign the maximum color code to the color used to draw the last SectorGeometry. If only one SectorGeometry
+        // is in the list, this is equal to minColorCode.
+        maxColorCode = color;
+
+        // Determine which terrain tile was picked by reading the color at the pick point. Nothing is picked if the
+        // color code is outside the range of unique pick colors used for the tiles.
+        int colorCode = dc.getPickColor(pickPoint);
+        if (colorCode < minColorCode || colorCode > maxColorCode)
+            return null;
+
+        // If the picked color corresponds to one of the SectorGeometry tiles, we compute the index by subtracting the
+        // first color code from the picked color code. Since the color codes are sequential, this results in an index
+        // into the list we traversed above.
+        return sgList.get(colorCode - minColorCode);
+    }
+
+    protected void pick(DrawContext dc, TerrainTile tile, Point pickPoint)
+    {
+        GpuProgram program = dc.getCurrentProgram();
+        if (program == null)
+        {
+            Logging.warning(Logging.getMessage("generic.NoCurrentProgram"));
+            return;
+        }
+
+        // Create a vertex buffer for the terrain tile that displays each triangle in a unique pick color. Colors are
+        // assigned sequentially for each triangle.
+        TerrainPickGeometry geom = this.buildPickGeometry(dc, tile);
+
+        // Enable and specify the data for the program's vertexPoint attribute, if one exists.
+        int pointLocation = program.getAttribLocation("vertexPoint");
+        if (pointLocation >= 0)
+        {
+            GLES20.glEnableVertexAttribArray(pointLocation);
+            GLES20.glVertexAttribPointer(pointLocation, 3, GLES20.GL_FLOAT, false, geom.vertexStride, geom.buffer);
+        }
+
+        // Enable and specify the data for the program's vertexPoint attribute, if one exists. We specify a 3-element
+        // tuple of unsigned bytes per which are normalized to the range [0, 1] and expanded to a 4-element tuple. The
+        // resultant tuple stored in the GPU is equivalent to (r/255, g/255, b/255, 255).
+        int colorLocation = program.getAttribLocation("vertexColor");
+        if (colorLocation >= 0)
+        {
+            GLES20.glEnableVertexAttribArray(colorLocation);
+            GLES20.glVertexAttribPointer(colorLocation, 3, GLES20.GL_UNSIGNED_BYTE, true, geom.vertexStride,
+                geom.buffer.position(geom.colorOffset));
+            geom.buffer.rewind();
+        }
+
+        // Multiply the View's modelview-projection matrix by the tile's transform matrix to correctly transform tile
+        // points into eye coordinates. This achieves the resolution we need on Gpus with limited floating point
+        // precision keeping both the modelview-projection matrix and the point coordinates the Gpu uses as small as
+        // possible when the eye point is near the tile.
+        this.mvpMatrix.multiplyAndSet(dc.getView().getModelviewProjectionMatrix(), geom.transformMatrix);
+        program.loadUniformMatrix("mvpMatrix", this.mvpMatrix);
+
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, geom.vertexCount);
+
+        if (pointLocation >= 0)
+            GLES20.glDisableVertexAttribArray(pointLocation);
+        if (colorLocation >= 0)
+            GLES20.glDisableVertexAttribArray(colorLocation);
+
+        // Determine which triangle was picked by reading the color at the pick point. Nothing is picked if the
+        // color code is outside the range of unique pick colors used for the tiles.
+        int colorCode = dc.getPickColor(pickPoint);
+        if (colorCode < geom.minColorCode && colorCode <= geom.maxColorCode)
+            return;
+
+        // If the picked color corresponds to one of the tile's triangles, we compute the triangle index by subtracting
+        // the first color code from the picked color code. Since the color codes are sequential, this results in an
+        // index into the list of triangles we rendered.
+
+        // place the triangle's three vertices, attach them to the picked object.
+        this.getPickedTriangle(colorCode - geom.minColorCode, geom, this.pickedTriangle);
+
+        // TODO: Resolve the picked point within the triangle.
+        // TODO: See RectangularTessellator in the WWJ codebase for the type of PickedObject to return.
+    }
+
+    protected TerrainPickGeometry buildPickGeometry(DrawContext dc, TerrainTile tile)
+    {
+        MemoryCache cache = this.getTerrainGeometryCache();
+
+        TerrainGeometry geom = tile.getGeometry(cache);
+        if (geom == null)
+        {
+            Logging.warning(
+                Logging.getMessage("Tessellator.SurfaceGeometryNotInCache", tile, cache.getUsedCapacity()));
+            return null;
+        }
+
+        int tileWidth = tile.getWidth();
+        int tileHeight = tile.getHeight();
+        Object key = Pair.create(tileWidth, tileHeight);
+
+        TerrainPickGeometry pickGeom = pickGeometry.get(key);
+        if (pickGeom == null)
+        {
+            pickGeom = new TerrainPickGeometry();
+            pickGeometry.put(key, pickGeom);
+        }
+
+        this.buildPickGeometry(dc, tileWidth, tileHeight, geom, pickGeom);
+
+        return pickGeom;
+    }
+
+    protected void buildPickGeometry(DrawContext dc, int tileWidth, int tileHeight, TerrainGeometry geom,
+        TerrainPickGeometry pickGeom)
+    {
+        // The tile width and height indicates the number of cell rows and columns in the tile. We add one row and
+        // column of vertices because there is a row/column of vertices in between each cell. We add two rows and
+        // columns of vertices to provide an outer row/column for the tile skirt.
+        int numLat = tileHeight + 3;
+        int numLon = tileWidth + 3;
+
+        // Allocate a native byte buffer to hold the tile's pick points and colors. This buffer specifies the tile's
+        // vertices as a collection of discrete triangles with a unique color for each triangle. There are two triangles
+        // (6 points) for each tile cell, and the number of cells in each dimension is one less than the number of
+        // vertices. Re-use the existing buffer whenever possible. Create a new buffer if one has not been set or if the
+        // tile density has changed. We clear the buffer if it is non-null and has enough capacity to ensure that the
+        // previous limit does not interfere with what the new limit should be after filling the buffer.
+        int numPoints = 6 * (numLat - 1) * (numLon - 1);
+        if (pickGeom.buffer == null || pickGeom.buffer.capacity() < 16 * numPoints)
+            pickGeom.buffer = ByteBuffer.allocateDirect(16 * numPoints).order(ByteOrder.nativeOrder());
+        pickGeom.buffer.clear();
+
+        // Assign the minimum color code to the color used to draw the triangle.
+        int color = dc.getUniquePickColor();
+        pickGeom.minColorCode = color;
+
+        // Allocate a buffer to hold the XYZ coordinates of the four vertices defining each tile cell.
+        float[] corners = new float[12];
+
+        for (int j = 0; j < numLat - 1; j++)
+        {
+            for (int i = 0; i < numLon - 1; i++)
+            {
+                // Get the four vertices defining this cell. Store the lower-left coordinate at index 0, the lower-right
+                // coordinate at index 3, the upper-left coordinate at index 6, and the upper-right coordinate at index
+                // 9.
+                geom.points.position(3 * (i + j * numLon));
+                geom.points.get(corners, 0, 6);
+                geom.points.position(3 * (i + (j + 1) * numLon));
+                geom.points.get(corners, 6, 6);
+
+                // Add the vertices and colors for the two triangles in each tile cell. The vertices for both triangles
+                // are arranged in counter-clockwise order. Each triangle is composed of three vertices from the cell's
+                // four corner vertices, and are composed to exactly match the triangles created by the triangle-strip
+                // tessellation of buildIndices.
+
+                // First triangle. The first triangle is composed of the upper-left, lower-left, and upper-right
+                // vertices from this cell. This triangulation is consistent with the triangle-strip defined by
+                // buildIndices.
+                if (i != 0 || j != 0) // The first triangle's color is allocated before this loop.
+                    color = dc.getUniquePickColor();
+                int r = Color.red(color);
+                int g = Color.green(color);
+                int b = Color.blue(color);
+                // Upper-left vertex.
+                pickGeom.buffer.putFloat(corners[6]).putFloat(corners[7]).putFloat(corners[8]);
+                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+                // Lower-left vertex.
+                pickGeom.buffer.putFloat(corners[0]).putFloat(corners[1]).putFloat(corners[2]);
+                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+                // Upper-right vertex.
+                pickGeom.buffer.putFloat(corners[9]).putFloat(corners[10]).putFloat(corners[11]);
+                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+
+                // Second triangle. The second triangle is composed of the upper-right, lower-left, and lower-right
+                // vertices from this cell. This triangulation is consistent with the triangle-strip defined by
+                // buildIndices.
+                color = dc.getUniquePickColor();
+                r = Color.red(color);
+                g = Color.green(color);
+                b = Color.blue(color);
+                // Upper-right vertex.
+                pickGeom.buffer.putFloat(corners[9]).putFloat(corners[10]).putFloat(corners[11]);
+                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+                // Lower-left vertex.
+                pickGeom.buffer.putFloat(corners[0]).putFloat(corners[1]).putFloat(corners[2]);
+                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+                // Lower-right vertex.
+                pickGeom.buffer.putFloat(corners[3]).putFloat(corners[4]).putFloat(corners[5]);
+                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+            }
+        }
+
+        // Restore the position of the tile point buffer.
+        geom.points.rewind();
+        // Set the limit to the current position then set the position to zero. We flip the buffer because its capacity
+        // may be greater than the space needed, and the GL commands that ready this buffer rely on the limit to
+        // determine how many buffer elements to read.
+        pickGeom.buffer.flip();
+
+        // Assign the vertex count to the number of triangle vertices computed above. Assign the vertex stride to the
+        // number of bytes between consecutive vertices. Assign the color offset to the number of bytes between the
+        // buffer's beginning and the first color component. Assign the maximum color code to the color used to draw
+        // the last triangle.
+        pickGeom.vertexCount = numPoints;
+        pickGeom.vertexStride = 16;
+        pickGeom.colorOffset = 12;
+        pickGeom.maxColorCode = color;
+
+        // Set the pick geometry's reference center and transform matrix to be equivalent to the terrain geometry's
+        // properties of the same names. Since we're using the same local coordinates for pick geometry points, we need
+        // to use the same reference center and transform matrix.
+        pickGeom.referenceCenter.set(geom.referenceCenter);
+        pickGeom.transformMatrix.set(geom.transformMatrix);
+    }
+
+    protected void getPickedTriangle(int index, TerrainPickGeometry geom, Triangle result)
+    {
+        // Set the triangle's three vertices a, b, c to the three vertices associated with the triangle at the specified
+        // index. The pick geometry's triangles are assumed to have a counter-clockwise ordering. We add the pick
+        // geometry's reference center to each vertex in order to transform it from local coordinates to model
+        // coordinates.
+
+        // Compute the position of the first vertex within the geometry buffer. We multiply the index by 3 to convert
+        // between triangle count and vertex count, then multiply by the vertex stride to get a byte offset within the
+        // buffer.
+        int offset = 3 * index * geom.vertexStride;
+
+        // First vertex.
+        geom.buffer.position(offset);
+        result.getA().set(geom.buffer.getFloat(), geom.buffer.getFloat(), geom.buffer.getFloat());
+        result.getA().add3AndSet(geom.referenceCenter);
+
+        // Second vertex.
+        geom.buffer.position(offset + geom.vertexStride);
+        result.getB().set(geom.buffer.getFloat(), geom.buffer.getFloat(), geom.buffer.getFloat());
+        result.getB().add3AndSet(geom.referenceCenter);
+
+        // Second vertex.
+        geom.buffer.position(offset + 2 * geom.vertexStride);
+        result.getC().set(geom.buffer.getFloat(), geom.buffer.getFloat(), geom.buffer.getFloat());
+        result.getC().add3AndSet(geom.referenceCenter);
+
+        //Restore the position of the pick geometry buffer.
+        geom.buffer.rewind();
+    }
+
+    protected GpuProgram getGpuPickProgram(GpuResourceCache cache)
+    {
+        if (this.pickProgramCreationFailed)
+            return null;
+
+        GpuProgram program = cache.getProgram(this.pickProgramKey);
+
+        if (program == null)
+        {
+            try
+            {
+                GpuProgram.GpuProgramSource source = GpuProgram.readProgramSource(PICK_VERTEX_SHADER_PATH,
+                    PICK_FRAGMENT_SHADER_PATH);
+                program = new GpuProgram(source);
+                cache.put(this.pickProgramKey, program);
+            }
+            catch (Exception e)
+            {
+                String msg = Logging.getMessage("GL.ExceptionLoadingProgram", PICK_VERTEX_SHADER_PATH,
+                    PICK_FRAGMENT_SHADER_PATH);
+                Logging.error(msg);
+                this.pickProgramCreationFailed = true;
+            }
+        }
+
+        return program;
     }
 }

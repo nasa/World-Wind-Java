@@ -66,7 +66,7 @@ public class SurfaceTileRenderer
 
         GpuProgram program = this.getGpuProgram(dc.getGpuResourceCache());
         if (program == null)
-            return; // Exception logged in loadGpuProgram.
+            return; // Message already logged in getGpuProgram.
 
         this.beginRendering(dc, program);
         sgList.beginRendering(dc);
@@ -252,29 +252,21 @@ public class SurfaceTileRenderer
 
         if (program == null)
         {
-            program = this.loadGpuProgram();
-            if (program != null) // Don't add the program to the cache if program creation failed.
+            try
+            {
+                GpuProgram.GpuProgramSource source = GpuProgram.readProgramSource(VERTEX_SHADER_PATH,
+                    FRAGMENT_SHADER_PATH);
+                program = new GpuProgram(source);
                 cache.put(this.programKey, program);
+            }
+            catch (Exception e)
+            {
+                String msg = Logging.getMessage("GL.ExceptionLoadingProgram", VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
+                Logging.error(msg);
+                this.programCreationFailed = true;
+            }
         }
 
-        return program;
-    }
-
-    protected GpuProgram loadGpuProgram()
-    {
-        GpuProgram program = null;
-        try
-        {
-            GpuProgram.GpuProgramSource source = GpuProgram.readProgramSource(VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
-            program = new GpuProgram(source);
-        }
-        catch (Exception e)
-        {
-            String msg = Logging.getMessage("GL.ExceptionLoadingProgram", VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
-            Logging.error(msg);
-        }
-
-        this.programCreationFailed = (program == null);
         return program;
     }
 }

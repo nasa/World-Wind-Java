@@ -5,11 +5,13 @@
  */
 package gov.nasa.worldwind.pick;
 
+import java.util.ArrayList;
+
 /**
  * @author tag
  * @version $Id$
  */
-public class PickedObjectList extends java.util.ArrayList<PickedObject>
+public class PickedObjectList extends ArrayList<PickedObject>
 {
     public PickedObjectList()
     {
@@ -18,6 +20,17 @@ public class PickedObjectList extends java.util.ArrayList<PickedObject>
     public PickedObjectList(PickedObjectList list) // clone a shallow copy
     {
         super(list);
+    }
+
+    public boolean hasNonTerrainObjects()
+    {
+        return this.size() > 1 || (this.size() == 1 && this.getTerrainObject() == null);
+    }
+
+    public Object getTopObject()
+    {
+        PickedObject po = this.getTopPickedObject();
+        return po != null ? po.getObject() : null;
     }
 
     public PickedObject getTopPickedObject()
@@ -41,12 +54,6 @@ public class PickedObjectList extends java.util.ArrayList<PickedObject>
         return null;
     }
 
-    public Object getTopObject()
-    {
-        PickedObject po = this.getTopPickedObject();
-        return po != null ? po.getObject() : null;
-    }
-
     public PickedObject getTerrainObject()
     {
         for (PickedObject po : this)
@@ -61,10 +68,5 @@ public class PickedObjectList extends java.util.ArrayList<PickedObject>
     public PickedObject getMostRecentPickedObject()
     {
         return this.size() > 0 ? this.get(this.size() - 1) : null;
-    }
-
-    public boolean hasNonTerrainObjects()
-    {
-        return this.size() > 1 || (this.size() == 1 && this.getTerrainObject() == null);
     }
 }

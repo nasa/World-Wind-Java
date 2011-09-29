@@ -38,7 +38,7 @@ public interface DrawContext extends WWObject
      *
      * @return the WorldWindow's background color.
      */
-    Color getClearColor();
+    int getClearColor();
 
     /**
      * Retrieves the current <code>Model</code>, which may be null.
@@ -224,7 +224,9 @@ public interface DrawContext extends WWObject
      *
      * @return a unique pick color.
      */
-    Color getUniquePickColor();
+    int getUniquePickColor();
+
+    int getPickColor(Point point);
 
     /**
      * Returns the current pick point.

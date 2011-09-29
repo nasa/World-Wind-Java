@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.terrain;
 
+import android.graphics.Point;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 
@@ -27,4 +28,6 @@ public interface SectorGeometry
     void beginRendering(DrawContext dc);
 
     void endRendering(DrawContext dc);
+
+    void pick(DrawContext dc, Point pickPoint);
 }
