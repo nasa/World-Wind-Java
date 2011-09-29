@@ -38,7 +38,7 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
     protected static final int DOUBLE_TAP_INTERVAL = 300;
     protected static final int JUMP_THRESHOLD = 100;
     protected static final double PINCH_WIDTH_DELTA_THRESHOLD = 5;
-    protected static final Angle PINCH_ROTATE_DELTA_THRESHOLD = Angle.fromDegrees(5);
+    protected static final Angle PINCH_ROTATE_DELTA_THRESHOLD = Angle.fromDegrees(1);
 
     protected ToneGenerator tg;
 
@@ -209,9 +209,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
 
                         final double deltaPinchWidth = pinchWidth - mPrevPinchWidth;
 
-                        Angle deltaPinchAngle = null;
-                        if (mPrevPinchAngle != null)
-                            deltaPinchAngle = pinchAngle.subtract(mPrevPinchAngle);
+                        final Angle deltaPinchAngle = computeRotationAngle(x, y, x2, y2,
+                            mPreviousX, mPreviousY, mPreviousX2, mPreviousY2);
 
                         if (mPrevPinchWidth > 0 && Math.abs(deltaPinchWidth) > PINCH_WIDTH_DELTA_THRESHOLD)
                         {
@@ -223,21 +222,10 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                                 }
                             });
                         }
-                        /*
-                        if (mPrevPinchAngle != null
-                            && Math.abs(deltaPinchAngle.degrees) > PINCH_ROTATE_DELTA_THRESHOLD.degrees)
-                        {
-                            eventSource.invokeInRenderingThread(new Runnable()
-                            {
-                                public void run()
-                                {
-                                    handlePinchRotate(deltaPinchAngle, pinchCenterX, pinchCenterY);
-                                }
-                            });
-                        }
-                        */
 
-                        else if ((upMove || downMove) && Math.abs(slope) > 1)
+                        // TODO: prevent this from confusion with pinch-rotate
+                        else if ((upMove || downMove) && Math.abs(slope) > 1
+                            && (yVelocity > 0 && yVelocity2 > 0) || (yVelocity < 0 && yVelocity2 < 0))
                         {
                             eventSource.invokeInRenderingThread(new Runnable()
                             {
@@ -248,6 +236,19 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                                 }
                             });
                         }
+
+                        else if (deltaPinchAngle != null
+                            && deltaPinchAngle.degrees > PINCH_ROTATE_DELTA_THRESHOLD.degrees)
+                        {
+                            eventSource.invokeInRenderingThread(new Runnable()
+                            {
+                                public void run()
+                                {
+                                    handlePinchRotate(deltaPinchAngle, pinchCenterX, pinchCenterY);
+                                }
+                            });
+                        }
+
                         /*
                         else if ((rightMove || leftMove) && Math.abs(slope) < 1)
                         {
@@ -268,7 +269,7 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                         mPrevPinchAngle = pinchAngle;
                     }
                     else if (pointerCount == 3)
-                    {
+                    {   /*
                         if ((upMove || downMove) && Math.abs(slope) > 1)
                         {
                             eventSource.invokeInRenderingThread(new Runnable()
@@ -289,10 +290,19 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                                 }
                             });
                         }
+                        */
+
+                        eventSource.invokeInRenderingThread(new Runnable()
+                        {
+                            public void run()
+                            {
+                                handleRestoreNorth(xVelocity, yVelocity);
+                            }
+                        });
                     }
 
                     else if (pointerCount > 3)
-                    {
+                    {   /*
                         if (mPrevPointerCount == 4 && (upMove || downMove) && Math.abs(slope) > 1)
                         {
                             eventSource.invokeInRenderingThread(new Runnable()
@@ -313,7 +323,7 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                                 }
                             });
                         }
-                        else if (mPrevPointerCount == 5)
+                        if (mPrevPointerCount == 5)
                         {
                             eventSource.invokeInRenderingThread(new Runnable()
                             {
@@ -323,6 +333,15 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                                 }
                             });
                         }
+                        */
+
+                        eventSource.invokeInRenderingThread(new Runnable()
+                        {
+                            public void run()
+                            {
+                                handleRestoreNorth(xVelocity, yVelocity);
+                            }
+                        });
                     }
                 }
                 ((WorldWindowGLSurfaceView) view).redraw();
@@ -335,6 +354,75 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
         }
 
         return true;
+    }
+
+    // given the current and previous locations of two points, compute the angle of the
+    // rotation they trace out
+    protected Angle computeRotationAngle(float x, float y, float x2, float y2,
+        float xPrev, float yPrev, float xPrev2, float yPrev2)
+    {
+        // can't compute if no previous points
+        if (xPrev < 0 || yPrev < 0 || xPrev2 < 0 || yPrev2 < 0)
+            return null;
+
+        if ((x - x2) == 0 || (xPrev - xPrev2) == 0)
+            return null;
+
+        // 1. compute lines connecting pt1 to pt2, and pt1' to pt2'
+        float slope = (y - y2) / (x - x2);
+        float slopePrev = (yPrev - yPrev2) / (xPrev - xPrev2);
+
+        // b = y - mx
+        float b = y - slope * x;
+        float bPrev = yPrev - slopePrev * xPrev;
+
+        // 2. use Cramer's Rule to find the intersection of the two lines
+        float det1 = -slope * 1 + slopePrev * 1;
+        float det2 = b * 1 - bPrev * 1;
+        float det3 = (-slope * bPrev) - (-slopePrev * b);
+
+        // check for case where lines are parallel
+        if (det1 == 0)
+            return null;
+
+        // compute the intersection point
+        float isectX = det2 / det1;
+        float isectY = det3 / det1;
+
+        // 3. use the law of Cosines to determine the angle covered
+
+        // compute lengths of sides of triangle created by pt1, pt1Prev and the intersection pt
+        double BC = Math.sqrt(Math.pow(x - isectX, 2) + Math.pow(y - isectY, 2));
+        double AC = Math.sqrt(Math.pow(xPrev - isectX, 2) + Math.pow(yPrev - isectY, 2));
+        double AB = Math.sqrt(Math.pow(x - xPrev, 2) + Math.pow(y - yPrev, 2));
+
+        Vec4 CA = new Vec4(xPrev - isectX, yPrev - isectY, 0);
+        Vec4 CB = new Vec4(x - isectX, y - isectY, 0);
+
+        // if one finger stayed fixed, may have degenerate triangle, so use other triangle instead
+        if (BC == 0 || AC == 0 || AB == 0)
+        {
+            BC = Math.sqrt(Math.pow(x2 - isectX, 2) + Math.pow(y2 - isectY, 2));
+            AC = Math.sqrt(Math.pow(xPrev2 - isectX, 2) + Math.pow(yPrev2 - isectY, 2));
+            AB = Math.sqrt(Math.pow(x2 - xPrev2, 2) + Math.pow(y2 - yPrev2, 2));
+
+            CA.set(xPrev2 - isectX, yPrev2 - isectY, 0);
+            CB.set(x2 - isectX, y2 - isectY, 0);
+
+            if (BC == 0 || AC == 0 || AB == 0)
+                return null;
+        }
+
+        // Law of Cosines
+        double num = (Math.pow(BC, 2) + Math.pow(AC, 2) - Math.pow(AB, 2));
+        double denom = (2 * BC * AC);
+        double BCA = Math.acos(num / denom);
+
+        // use cross product to determine if rotation is positive or negative
+        if (CA.cross3(CB).z < 0)
+            BCA = 2 * Math.PI - BCA;
+
+        return Angle.fromRadians(BCA);
     }
 
     /*
@@ -475,6 +563,30 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
         // TODO: iterate through all zoom listeners
     }
 
+    protected void handlePinchRotate(Angle rotAngle, float centerX, float centerY)
+    {
+        BasicView view = (BasicView) this.eventSource.getView();
+        Globe globe = this.eventSource.getModel().getGlobe();
+
+        float headingScalingFactor = 200;
+        Angle heading = view.getLookAtHeading(globe);
+
+        // don't handle case where no lookAt intersection with globe
+        if (heading == null)
+            return;
+
+        heading.setDegrees(heading.degrees + rotAngle.degrees);
+
+        Position lookAt = view.getLookAtPosition(globe);
+        Angle tilt = view.getLookAtTilt(globe);
+        double range = view.getLookAtDistance(globe);
+
+        //view.setLookAtHeading(heading, globe);
+        view.setLookAtPosition(lookAt, heading, tilt, range, globe);
+
+        // TODO: iterate through all heading listeners
+    }
+
     protected void handleLookAtTilt(double xVelocity, double yVelocity)
     {
         BasicView view = (BasicView) this.eventSource.getView();
@@ -567,8 +679,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
             Angle lookAtHeading = view.getLookAtHeading(globe);
             Angle lookAtTilt = view.getLookAtTilt(globe);
             double range = view.getLookAtDistance(globe);
-            float headingScalingFactor = 10;
-            double tiltScalingFactor = 5;
+            float headingScalingFactor = 5;
+            double tiltScalingFactor = 3;
 
             // interpolate to zero heading and tilt
             lookAtHeading.addAndSet(Angle.fromDegrees(-lookAtHeading.degrees * delta * headingScalingFactor));
