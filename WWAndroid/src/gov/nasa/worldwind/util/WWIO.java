@@ -169,6 +169,33 @@ public class WWIO
         return (p > 0 && p < len) ? filePath.substring(0, p) : null;
     }
 
+    /**
+     * Creates an {@link InputStream} for the contents of a {@link ByteBuffer}. The method creates a copy of the
+     * buffer's contents and passes a steam reference to that copy.
+     *
+     * @param buffer the buffer to create a stream for.
+     *
+     * @return an {@link InputStream} for the buffer's contents.
+     *
+     * @throws IllegalArgumentException if <code>buffer</code> is null.
+     */
+    public static InputStream getInputStreamFromByteBuffer(ByteBuffer buffer)
+    {
+        if (buffer == null)
+        {
+            String message = Logging.getMessage("nullValue.ByteBufferIsNull");
+            Logging.error(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (buffer.hasArray() && buffer.limit() == buffer.capacity()) // otherwise bytes beyond the limit are included
+            return new ByteArrayInputStream(buffer.array());
+
+        byte[] byteArray = new byte[buffer.limit()];
+        buffer.get(byteArray);
+        return new ByteArrayInputStream(byteArray);
+    }
+
     public static Object getFileOrResourceAsStream(String path, Class c)
     {
         if (path == null)

@@ -114,4 +114,41 @@ public class WWMath
                 eigenVectors[indexArray[0]].normalize3()
             };
     }
+
+    /**
+     * Convenience method to compute the log base 2 of a value.
+     *
+     * @param value the value to take the log of.
+     *
+     * @return the log base 2 of the specified value.
+     */
+    public static double logBase2(double value)
+    {
+        return Math.log(value) / Math.log(2d);
+    }
+
+    /**
+     * Convenience method for testing whether a value is a power of two.
+     *
+     * @param value the value to test for power of 2
+     *
+     * @return true if power of 2, else false
+     */
+    public static boolean isPowerOfTwo(int value)
+    {
+        return (value == powerOfTwoCeiling(value));
+    }
+
+    /**
+     * Returns the value that is the nearest power of 2 greater than or equal to the given value.
+     *
+     * @param reference the reference value. The power of 2 returned is greater than or equal to this value.
+     *
+     * @return the value that is the nearest power of 2 greater than or equal to the reference value
+     */
+    public static int powerOfTwoCeiling(int reference)
+    {
+        int power = (int) Math.ceil(Math.log(reference) / Math.log(2d));
+        return (int) Math.pow(2d, power);
+    }
 }

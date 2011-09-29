@@ -6,8 +6,10 @@
 
 package gov.nasa.worldwind.retrieve;
 
+import android.graphics.Bitmap;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.dds.DDSCompressor;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -130,8 +132,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     /**
      * Checks the retrieval response code.
      *
-     * @return true if the response code is the OK value for the protocol, e.g., ({@link java.net.HttpURLConnection#HTTP_OK} for
-     *         HTTP protocol), otherwise false.
+     * @return true if the response code is the OK value for the protocol, e.g., ({@link
+     *         java.net.HttpURLConnection#HTTP_OK} for HTTP protocol), otherwise false.
      */
     protected boolean validateResponseCode()
     {
@@ -317,7 +319,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * #handleZipContent()} for content types containing "zip", {@link #handleTextContent()} for content types starting
      * with "text", and {@link #handleImageContent()} for contents types starting with "image".
      *
-     * @return a buffer containing the retrieved data, which may have been transformed during conent handling.
+     * @return a buffer containing the retrieved data, which may have been transformed during content handling.
      *
      * @throws IOException if an IO error occurs while processing the data.
      */
@@ -523,8 +525,121 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (outFile == null || (outFile.exists() && !this.overwriteExistingFile()))
             return this.getRetriever().getBuffer();
 
+        if (outFile.getPath().endsWith("dds"))
+            return this.saveDDS();
+
+        Bitmap image = this.transformPixels();
+
+        if (image != null)
+        {
+            synchronized (this.getFileLock()) // synchronize with read of file in another class
+            {
+                String format = this.getRetriever().getContentType().split("/")[1];
+                writeImage(image, format, outFile);
+            }
+        }
+        else
+        {
+            this.saveBuffer();
+        }
+
+        return this.getRetriever().getBuffer();
+    }
+
+    /**
+     * Write an image a file in JPEG or PNG format.
+     *
+     * @param image  image to save.
+     * @param format format. May be "jpeg" or "png".
+     * @param dest   destination file.
+     *
+     * @throws IOException if an exception is encountered while writing the file, or if the image format is not
+     *                     supported.
+     */
+    protected void writeImage(Bitmap image, String format, File dest) throws IOException
+    {
+        Bitmap.CompressFormat compressFormat;
+
+        if ("jpeg".equalsIgnoreCase(format) || "jpg".equalsIgnoreCase(format))
+        {
+            compressFormat = Bitmap.CompressFormat.JPEG;
+        }
+        else if ("png".equalsIgnoreCase(format))
+        {
+            compressFormat = Bitmap.CompressFormat.PNG;
+        }
+        else
+        {
+            throw new IOException(Logging.getMessage("generic.ImageFormatUnsupported", format));
+        }
+
+        OutputStream outStream = new FileOutputStream(dest);
+        try
+        {
+            image.compress(compressFormat, 100, outStream);
+        }
+        finally
+        {
+            WWIO.closeStream(outStream, dest.getAbsolutePath());
+        }
+    }
+
+    /**
+     * Transform the retrieved data in some purpose-specific way. May be overridden by subclasses to perform special
+     * transformations. The default implementation calls {@link ImageUtil#mapTransparencyColors(Bitmap, int[])} if the
+     * attribute-value list specified at construction contains transparency colors (includes the {@link
+     * AVKey#TRANSPARENCY_COLORS} key).
+     *
+     * @return returns the transformed data if a transform is performed, otherwise returns the original data.
+     */
+    protected Bitmap transformPixels()
+    {
+        if (this.avList != null)
+        {
+            int[] colors = (int[]) this.avList.getValue(AVKey.TRANSPARENCY_COLORS);
+            if (colors != null)
+                return ImageUtil.mapTransparencyColors(this.getRetriever().getBuffer(), colors);
+        }
+
+        return null;
+    }
+
+    /**
+     * Saves a DDS image file after first converting any other image format to DDS.
+     *
+     * @return the converted image data if a conversion is performed, otherwise the original image data.
+     *
+     * @throws IOException if an IO error occurs while converting or saving the image.
+     */
+    protected ByteBuffer saveDDS() throws IOException
+    {
         ByteBuffer buffer = this.getRetriever().getBuffer();
+
+        if (!this.getRetriever().getContentType().contains("dds"))
+            buffer = this.convertToDDS();
+
         this.saveBuffer(buffer);
+
+        return buffer;
+    }
+
+    /**
+     * Converts an image to DDS. If the image format is not originally DDS, calls {@link #transformPixels()} to perform
+     * any defined image transform.
+     *
+     * @return the converted image data if a conversion is performed, otherwise the original image data.
+     *
+     * @throws IOException if an IO error occurs while converting the image.
+     */
+    protected ByteBuffer convertToDDS() throws IOException
+    {
+        ByteBuffer buffer;
+
+        Bitmap image = this.transformPixels();
+        if (image != null)
+            buffer = DDSCompressor.compressImage(image);
+        else
+            buffer = DDSCompressor.compressImageBuffer(this.getRetriever().getBuffer());
 
         return buffer;
     }
