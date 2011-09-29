@@ -123,6 +123,7 @@ public interface AVKey
 
     final String PICKED_OBJECT_PARENT_LAYER = "gov.nasa.worldwind.avkey.PickedObject.ParentLayer";
     final String POSITION = "gov.nasa.worldwind.avkey.Position";
+    final String PROGRESS = "gov.nasa.worldwind.avkey.Progress";
 
     final String RETAIN_LEVEL_ZERO_TILES = "gov.nasa.worldwind.avkey.RetainLevelZeroTiles";
     final String RETRIEVE_PROPERTIES_FROM_SERVICE = "gov.nasa.worldwind.avkey.RetrievePropertiesFromService";
