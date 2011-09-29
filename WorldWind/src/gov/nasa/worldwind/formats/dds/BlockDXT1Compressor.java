@@ -9,7 +9,7 @@ import gov.nasa.worldwind.util.Logging;
 
 /**
  * Compressor for DXT1 color blocks. This class is not thread safe. Unsynchronized access will result in unpredictable
- * behavior. Acces to methods of this class must be synchronized by the caller.
+ * behavior. Access to methods of this class must be synchronized by the caller.
  * <p>
  * Documentation on the DXT1 format is available at http://msdn.microsoft.com/en-us/library/bb694531.aspx under
  * the name "BC1".
@@ -47,7 +47,7 @@ public class BlockDXT1Compressor
      * Compress the 4x4 color block into a DXT1 block using four colors. This method ignores transparency and
      * guarantees that the DXT1 block will use four colors.
      * <p>
-     * Access to this method must be synchronized by the caller. This method is frequenty invoked by the DXT
+     * Access to this method must be synchronized by the caller. This method is frequently invoked by the DXT
      * compressor, so in order to reduce garbage each instance of this class has unsynchronized properties that are
      * reused during each call.
      *
@@ -101,7 +101,7 @@ public class BlockDXT1Compressor
      * Compress the 4x4 color block into a DXT1 block with three colors. This method will consider a color transparent
      * if its alpha value is less than <code>alphaThreshold</code>.
      * <p>
-     * This method is frequenty invoked by the DXT compressor. In order to reduce garbage each instance of this class
+     * This method is frequently invoked by the DXT compressor. In order to reduce garbage each instance of this class
      * has buffer that is used during each call. Access to this method must be synchronized by the caller.
      *
      * @param colorBlock the 4x4 color block to compress.
@@ -182,7 +182,7 @@ public class BlockDXT1Compressor
         // Assign 16 bit 565 values to the color palette. We want to find the closest match to the hardware computed
         // colors, and the hardware will be computing the colors using 16 bit 565 values. The second color is 1/2 on
         // the line between max and min. The third color is considered to be transparent black. Computations of the
-        // second colors is based on the current hardware algorithms, and the Direct3D SDK docuemntation at
+        // second colors is based on the current hardware algorithms, and the Direct3D SDK documentation at
         // http://msdn.microsoft.com/en-us/library/bb694531(VS.85).aspx
 
         short565ToColor32(color0, palette[0]);
@@ -205,7 +205,7 @@ public class BlockDXT1Compressor
         // Assign 16 bit 565 values to the color palette. We want to find the closest match to the hardware computed
         // colors, and the hardware will be computing the colors using 16 bit 565 values. The second color is 1/3 on
         // the line between max and min. The third color is 2/3 on the line between max and min. Computations of the
-        // second and third colors are based on the current hardware algorithms, and the Direct3D SDK docuemntation at
+        // second and third colors are based on the current hardware algorithms, and the Direct3D SDK documentation at
         // http://msdn.microsoft.com/en-us/library/bb694531(VS.85).aspx
 
         short565ToColor32(color0, palette[0]);
@@ -520,7 +520,7 @@ public class BlockDXT1Compressor
         // the case of negative zero.
         //
         // Note: We use Java's "unsigned" right shift operator here, which places zeroes in the rightmost incoming bits.
-        // This makes it unecessary to mask off bits 2-32, since they will all be zero.
+        // This makes it unnecessary to mask off bits 2-32, since they will all be zero.
 
         return (b - a) >>> 31;
     }

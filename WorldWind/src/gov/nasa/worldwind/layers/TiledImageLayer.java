@@ -197,11 +197,13 @@ public abstract class TiledImageLayer extends AbstractLayer
         return requestQ;
     }
 
+    @Override
     public boolean isMultiResolution()
     {
         return this.getLevels() != null && this.getLevels().getNumLevels() > 1;
     }
 
+    @Override
     public boolean isAtMaxResolution()
     {
         return this.atMaxResolution;
@@ -221,7 +223,7 @@ public abstract class TiledImageLayer extends AbstractLayer
 
     /**
      * Specifies the format used to store images in texture memory, or null to store images in their native format.
-     * Suppported texture formats are as follows: <ul> <li><code>image/dds</code> - Stores images in the compressed DDS
+     * Supported texture formats are as follows: <ul> <li><code>image/dds</code> - Stores images in the compressed DDS
      * format. If the image is already in DDS format it's stored as-is.</li> </ul>
      *
      * @param textureFormat the texture image format; null to store images in their native format.

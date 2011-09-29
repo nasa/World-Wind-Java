@@ -10,7 +10,7 @@ package gov.nasa.worldwind.formats.dds;
  * The DXT1 block contains two explicit 16 bit colors (quantized as RGB 565), which define one or two additional
  * implicit colors. If the first color is greater than the second, then two additional colors are defined for a total
  * of four. The two colors are defined as color2=(2*color0 + 1*color1)/3, and color3=(1*color0 + 2*color1)/3. If the
- * first color is less than the second color, then one additional color is define for a total of three colors, and the
+ * first color is less than the second color, then one additional color is defined for a total of three colors, and the
  * fourth color is interpreted as transparent black. Finally, the block contains 4x4 2 bit indices into the array of
  * four colors (one of which may be transparent black).
  * <p/>

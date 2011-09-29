@@ -37,11 +37,11 @@ public class ImageUtil
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     /**
-     * Draws the specified <code>image</code> onto the <code>canvas</code>, scaling or streching the image to fit the
-     * canvas. This will apply a bilinear filter to the image if any scaling or streching is necessary.
+     * Draws the specified <code>image</code> onto the <code>canvas</code>, scaling or stretching the image to fit the
+     * canvas. This will apply a bilinear filter to the image if any scaling or stretching is necessary.
      *
-     * @param image  the BufferedImage to draw, potentially scaling or streching to fit the <code>canvas</code>.
-     * @param canvas the BufferedImage to receive the scaled or streched <code>image</code>.
+     * @param image  the BufferedImage to draw, potentially scaling or stretching to fit the <code>canvas</code>.
+     * @param canvas the BufferedImage to receive the scaled or stretched <code>image</code>.
      *
      * @throws IllegalArgumentException if either <code>image</code> or <code>canvas</code> is null.
      */
@@ -374,7 +374,7 @@ public class ImageUtil
      * @param imagePoints    four control points in the image.
      * @param geoPoints      four geographic locations corresponding to the four <code>imagePoints</code>.
      * @param outImagePoints three control points that best estimate the image's location.
-     * @param outGeoPoints   three geographic locations correstponding to the three <code>outImagePoints</code>.
+     * @param outGeoPoints   three geographic locations corresponding to the three <code>outImagePoints</code>.
      *
      * @throws IllegalArgumentException if any of <code>imagePoints</code>, <code>geoPoints</code>,
      *                                  <code>outImagePoints</code> or <code>outGeoPoints</code> is null, or if
@@ -698,7 +698,7 @@ public class ImageUtil
      * Builds a sequence of mipmaps for the specified image. The number of mipmap levels created will be equal to
      * <code>maxLevel + 1</code>, including level 0. The level 0 image will be a reference to the original image, not a
      * copy. Each mipmap level will be created with the specified BufferedImage type <code>mipmapImageType</code>. Each
-     * level will have dimensions equal to 1/2 the previous level's dimensions, rownding down, to a minimum width or
+     * level will have dimensions equal to 1/2 the previous level's dimensions, rounding down, to a minimum width or
      * height of 1.
      *
      * @param image           the BufferedImage to build mipmaps for.

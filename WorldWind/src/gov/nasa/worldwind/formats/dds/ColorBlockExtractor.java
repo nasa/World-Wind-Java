@@ -24,7 +24,7 @@ public interface ColorBlockExtractor
      *
      * @param attributes the DXT compression attributes which may affect how colors are accessed.
      * @param x horizontal coordinate origin to extract pixel data from.
-     * @param y vertical coordainte origin to extract pixel data from.
+     * @param y vertical coordinate origin to extract pixel data from.
      * @param colorBlock 4x4 block of pixel data that will receive the data.
      *
      * @throws IllegalArgumentException if either <code>attributes</code> or <code>colorBlock</code> is null.

@@ -322,7 +322,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
      * #handleZipContent()} for content types containing "zip", {@link #handleTextContent()} for content types starting
      * with "text", and {@link #handleImageContent()} for contents types starting with "image".
      *
-     * @return a buffer containing the retrieved data, which may have been transformed during conent handling.
+     * @return a buffer containing the retrieved data, which may have been transformed during content handling.
      *
      * @throws IOException if an IO error occurs while processing the data.
      */
@@ -537,7 +537,7 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
 
         if (image != null)
         {
-            synchronized (this.getFileLock()) // sychronize with read of file in another class
+            synchronized (this.getFileLock()) // synchronize with read of file in another class
             {
                 ImageIO.write(image, this.getRetriever().getContentType().split("/")[1], outFile);
             }
