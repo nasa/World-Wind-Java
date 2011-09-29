@@ -31,8 +31,8 @@ public class DDSCompressor
     /**
      * Convenience method to convert the specified image <code>stream</code> to DDS according to the specified
      * compression <code>attributes</code>. The <code>stream</code> must be readable by {@link
-     * BitmapFactory#decodeStream}. Once the <code>stream</code> is read, this is equivalent to calling
-     * {#compressImage(Bitmap, DXTCompressionAttributes)} with the Bitmap created with the specified
+     * BitmapFactory#decodeStream BitmapFactory.decodeStream}. Once the <code>stream</code> is read, this is equivalent
+     * to calling {@link #compressImage(Bitmap, DXTCompressionAttributes)} with the Bitmap created with the specified
      * <code>attributes</code>. This returns null if the <code>stream</code> is not in a format understood by
      * BitmapFactory.
      *
@@ -74,8 +74,8 @@ public class DDSCompressor
     /**
      * Convenience method to convert the specified <code>imageBuffer</code> to DDS according to the specified
      * compression <code>attributes</code>. The bytes in <code>imageBuffer</code> must be readable by {@link
-     * BitmapFactory#decodeStream(java.io.InputStream)}. Once the image data is read, this is equivalent to calling
-     * {#compressImage(Bitmap, DXTCompressionAttributes)} with the Bitmap created with the specified
+     * BitmapFactory#decodeStream BitmapFactory.decodeStream}. Once the image data is read, this is equivalent to
+     * calling {@link #compressImage(Bitmap, DXTCompressionAttributes)} with the Bitmap created with the specified
      * <code>attributes</code>. This returns null if the bytes in <code>imageBuffer</code> are not in a format
      * understood by BitmapFactory.
      *
@@ -110,10 +110,10 @@ public class DDSCompressor
 
     /**
      * Convenience method to convert the specified <code>imageBuffer</code> to DDS according to the default attributes.
-     * The bytes in <code>imageBuffer</code> must be readable by {@link BitmapFactory#decodeStream(java.io.InputStream)}.
-     * Once the image data is read, this is equivalent to calling {#compressImage(Bitmap)} with the Bitmap created by
-     * BitmapFactory. This returns null if the bytes in<code>imageBuffer</code> are not in a format understood by
-     * BitmapFactory.
+     * The bytes in <code>imageBuffer</code> must be readable by {@link BitmapFactory#decodeStream
+     * BitmapFactory.decodeStream}. Once the image data is read, this is equivalent to calling {@link
+     * #compressImage(Bitmap)} with the Bitmap created by BitmapFactory. This returns null if the bytes
+     * in<code>imageBuffer</code> are not in a format understood by BitmapFactory.
      *
      * @param imageBuffer image file data to convert to the DDS file format.
      *
@@ -427,7 +427,7 @@ public class DDSCompressor
     }
 
     /**
-     * Documentation on the DDS header format is available at http://msdn.microsoft.com/en-us/library/bb943982(VS.85).aspx
+     * Documentation on the DDS header format is available at <a href="http://msdn.microsoft.com/en-us/library/bb943982(VS.85).aspx">http://msdn.microsoft.com/en-us/library/bb943982(VS.85).aspx</a>.
      *
      * @param header header structure to write.
      * @param buffer buffer that receives the header structure bytes.
@@ -455,7 +455,7 @@ public class DDSCompressor
     }
 
     /**
-     * Documentation on the DDS pixel format is available at http://msdn.microsoft.com/en-us/library/bb943984(VS.85).aspx
+     * Documentation on the DDS pixel format is available at <a href="http://msdn.microsoft.com/en-us/library/bb943984(VS.85).aspx">http://msdn.microsoft.com/en-us/library/bb943984(VS.85).aspx</a>.
      *
      * @param pixelFormat pixel format structure to write.
      * @param buffer      buffer that receives the pixel format structure bytes.
