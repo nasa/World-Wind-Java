@@ -15,6 +15,7 @@ import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil;
+import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.Terrain;
 import gov.nasa.worldwind.util.*;
 
@@ -347,6 +348,156 @@ public class Path extends AbstractShape
         }
     }
 
+    /**
+     * PickablePositions associates a range of pick color codes with a Path. The color codes represent the range of pick
+     * colors that the Path's position points are drawn in. The color codes represent ARGB colors packed into a 32-bit
+     * integer.
+     */
+    protected static class PickablePositions
+    {
+        /** The minimum color code, inclusive. */
+        public final int minColorCode;
+        /** The maximum color code, inclusive. */
+        public final int maxColorCode;
+        /** The Path who's position points are associated with the specified color code range. */
+        public final Path path;
+
+        /**
+         * Creates a new PickablePositions with the specified color code range and Path. See the PickablePositions
+         * class-level documentation for more information.
+         *
+         * @param minColorCode the minimum color code, inclusive.
+         * @param maxColorCode the maximum color code, inclusive.
+         * @param path         the Path who's position points are associated with the specified color code range.
+         */
+        public PickablePositions(int minColorCode, int maxColorCode, Path path)
+        {
+            this.minColorCode = minColorCode;
+            this.maxColorCode = maxColorCode;
+            this.path = path;
+        }
+    }
+
+    /**
+     * Subclass of PickSupport that adds the capability to resolve a Path's picked position point. Path position points
+     * are registered with PathPickSupport by calling {@link #addPickablePositions(int, int, Path)} with the minimum and
+     * maximum color codes that the Path's position points are drawn in.
+     * <p/>
+     * The resolution of the picked position point is integrated with the resolution of the picked Path. Either an
+     * entire Path or one of its position points may be picked. In either case, resolvePick and getTopObject return a
+     * PickedObject that specifies the picked Path. If a position point is picked, the PickedObject's AVList contains
+     * the position and ordinal number of the picked position.
+     */
+    protected static class PathPickSupport extends PickSupport
+    {
+        /**
+         * The list of Path pickable positions that this PathPickSupport is currently tracking. This list maps a range
+         * of color codes to a Path, where the color codes represent the range of pick colors that the Path's position
+         * points are drawn in.
+         */
+        protected List<PickablePositions> pickablePositions = new ArrayList<PickablePositions>();
+
+        /**
+         * {@inheritDoc}
+         * <p/>
+         * Overridden to clear the list of pickable positions.
+         */
+        @Override
+        public void clearPickList()
+        {
+            super.clearPickList();
+            this.pickablePositions.clear();
+        }
+
+        /**
+         * Indicates the list of Path pickable positions that this PathPickSupport is currently tracking. This list maps
+         * a range of color codes to a Path, where the color codes represent the range of pick colors that the Path's
+         * position points are drawn in. The returned list is empty if addPickablePositions has not been called since
+         * the last call to clearPickList.
+         *
+         * @return the list of Path pickable positions.
+         */
+        public List<PickablePositions> getPickablePositions()
+        {
+            return this.pickablePositions;
+        }
+
+        /**
+         * Registers a range of unique pick color codes with a Path, representing the range of pick colors that the
+         * Path's position points are drawn in. The color codes represent ARGB colors packed into a 32-bit integer.
+         *
+         * @param minColorCode the minimum color code, inclusive.
+         * @param maxColorCode the maximum color code, inclusive.
+         * @param path         the Path who's position points are associated with the specified color code range.
+         *
+         * @throws IllegalArgumentException if the path is null.
+         */
+        public void addPickablePositions(int minColorCode, int maxColorCode, Path path)
+        {
+            if (path == null)
+            {
+                String message = Logging.getMessage("nullValue.PathIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            this.pickablePositions.add(new PickablePositions(minColorCode, maxColorCode, path));
+        }
+
+        /**
+         * Computes and returns the top object at the specified pick point. This either resolves a pick of an entire
+         * Path or one of its position points. In either case, this returns a PickedObject that specifies the picked
+         * Path. If a position point is picked, the PickedObject's AVList contains the picked position's geographic
+         * position in the key AVKey.POSITION and its ordinal number in the key AVKey.ORDINAL.
+         * <p/>
+         * This returns null if the pickPoint is null, or if there is no Path or Path position point at the specified
+         * pick point.
+         *
+         * @param dc        the current draw context.
+         * @param pickPoint the screen-coordinate point in question.
+         *
+         * @return a new picked object instances indicating the Path or Path position point at the specified pick point,
+         *         or null if no Path is at the specified pick point.
+         *
+         * @throws IllegalArgumentException if the draw context is null.
+         */
+        @Override
+        public PickedObject getTopObject(DrawContext dc, Point pickPoint)
+        {
+            if (dc == null)
+            {
+                String message = Logging.getMessage("nullValue.DrawContextIsNull");
+                Logging.logger().severe(message);
+                throw new IllegalArgumentException(message);
+            }
+
+            if (this.getPickableObjects().isEmpty() && this.getPickablePositions().isEmpty())
+                return null;
+
+            int colorCode = this.getTopColor(dc, pickPoint);
+            if (colorCode == dc.getClearColor().getRGB())
+                return null;
+
+            PickedObject pickedObject = this.getPickableObjects().get(colorCode);
+            if (pickedObject != null)
+                return pickedObject;
+
+            for (PickablePositions positions : this.getPickablePositions())
+            {
+                if (colorCode >= positions.minColorCode && colorCode <= positions.maxColorCode)
+                {
+                    // If the top color code matches a Path's position color, convert the color code to a position
+                    // ordinal and delegate to the Path to resolve the ordinal to a PickedObject. minColorCode
+                    // corresponds to ordinal number 0, and minColorCode+i corresponds to ordinal number i.
+                    int ordinal = colorCode - positions.minColorCode;
+                    return positions.path.resolvePickedPosition(colorCode, ordinal);
+                }
+            }
+
+            return null;
+        }
+    }
+
     @Override
     protected AbstractShapeData createCacheEntry(DrawContext dc)
     {
@@ -361,6 +512,7 @@ public class Path extends AbstractShape
     protected Iterable<? extends Position> positions; // the positions as provided by the application
     protected int numPositions; // the number of positions in the positions field.
     protected PositionColors positionColors; // defines a color at each application-provided position.
+    protected static ByteBuffer pickPositionColors; // defines the colors used to resolve position point picking.
 
     protected String pathType = DEFAULT_PATH_TYPE;
     protected boolean followTerrain; // true if altitude mode indicates terrain following
@@ -439,10 +591,15 @@ public class Path extends AbstractShape
         this.setPositions(endPoints);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * Overridden to assign this Path's pickSupport property to a new PathPickSupport instance.
+     */
     @Override
     protected void initialize()
     {
-        // Nothing to initialize in this class.
+        this.pickSupport = new PathPickSupport();
     }
 
     @Override
@@ -889,6 +1046,25 @@ public class Path extends AbstractShape
     /**
      * {@inheritDoc}
      * <p/>
+     * Overridden to add this Path's pickable positions to the pick candidates.
+     */
+    @Override
+    protected void doDrawOrderedRenderable(DrawContext dc, PickSupport pickCandidates)
+    {
+        if (dc.isPickingMode())
+        {
+            // Add the pickable objects used to resolve picks against individual position points. This must be done
+            // before we call super.doDrawOrderedRenderable in order to populate the pickPositionColors buffer before
+            // outline rendering.
+            this.addPickablePositions(dc, pickCandidates);
+        }
+
+        super.doDrawOrderedRenderable(dc, pickCandidates);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
      * Overridden to place this Path behind other ordered renderables when this Path is entirely located on the
      * underlying terrain. In this case this Path must be drawn first to ensure that other ordered renderables are
      * correctly drawn on top of it and are not affected by this Path's depth offset. If two paths are both located on
@@ -1078,39 +1254,43 @@ public class Path extends AbstractShape
             return;
 
         GL gl = dc.getGL();
-        boolean useVertexColors = !dc.isPickingMode() && pathData.tessellatedColors != null;
-
-        gl.glPointSize((float) (this.getShowPositionsScale() * this.getActiveAttributes().getOutlineWidth()));
-        gl.glEnable(GL.GL_POINT_SMOOTH);
-        gl.glHint(GL.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
 
         // Convert stride from number of elements to number of bytes.
         gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, pathData.renderedPath.rewind());
 
-        // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
-        // positionColors is non-null.
-        if (useVertexColors)
+        if (dc.isPickingMode())
         {
-            // Convert stride from number of elements to number of bytes, and position the vertex buffer at the first
-            // color.
+            gl.glEnableClientState(GL.GL_COLOR_ARRAY);
+            gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, pickPositionColors);
+        }
+        else if (pathData.tessellatedColors != null)
+        {
+            // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
+            // positionColors is non-null. Convert stride from number of elements to number of bytes, and position the
+            // vertex buffer at the first color.
             gl.glEnableClientState(GL.GL_COLOR_ARRAY);
             gl.glColorPointer(4, GL.GL_FLOAT, 4 * pathData.vertexStride,
                 pathData.renderedPath.position(pathData.colorOffset));
-            pathData.renderedPath.rewind();
         }
 
+        this.prepareToDrawPoints(dc);
         gl.glDrawElements(GL.GL_POINTS, posPoints.limit(), GL.GL_UNSIGNED_INT, posPoints.rewind());
 
         // Restore gl state
         gl.glPointSize(1f);
         gl.glDisable(GL.GL_POINT_SMOOTH);
 
-        if (useVertexColors)
+        if (dc.isPickingMode() || pathData.tessellatedColors != null)
             gl.glDisableClientState(GL.GL_COLOR_ARRAY);
     }
 
     /**
      * Draws points at this path's specified positions.
+     * <p/>
+     * Note: when the draw context is in picking mode, this binds the current GL_ARRAY_BUFFER to 0 after using the
+     * currently bound GL_ARRAY_BUFFER to specify the vertex pointer. This does not restore GL_ARRAY_BUFFER to the its
+     * previous state. If the caller intends to use that buffer after this method returns, the caller must bind the
+     * buffer again.
      *
      * @param dc       the current draw context.
      * @param vboIds   the ids of this shapes buffers.
@@ -1127,34 +1307,71 @@ public class Path extends AbstractShape
             return;
 
         GL gl = dc.getGL();
-        boolean useVertexColors = !dc.isPickingMode() && pathData.tessellatedColors != null;
-
-        gl.glPointSize((float) (this.getShowPositionsScale() * this.getActiveAttributes().getOutlineWidth()));
-        gl.glEnable(GL.GL_POINT_SMOOTH);
-        gl.glHint(GL.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
 
         // Convert stride from number of elements to number of bytes.
         gl.glVertexPointer(3, GL.GL_FLOAT, 4 * pathData.vertexStride, 0);
 
-        // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
-        // positionColors is non-null.
-        if (useVertexColors)
+        if (dc.isPickingMode())
         {
-            // Convert the stride and offset from number of elements to number of bytes.
+            gl.glEnableClientState(GL.GL_COLOR_ARRAY);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            gl.glColorPointer(3, GL.GL_UNSIGNED_BYTE, 0, pickPositionColors);
+        }
+        else if (pathData.tessellatedColors != null)
+        {
+            // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
+            // positionColors is non-null. Convert the stride and offset from number of elements to number of bytes.
             gl.glEnableClientState(GL.GL_COLOR_ARRAY);
             gl.glColorPointer(4, GL.GL_FLOAT, 4 * pathData.vertexStride, 4 * pathData.colorOffset);
-            pathData.renderedPath.rewind();
         }
 
+        this.prepareToDrawPoints(dc);
         gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vboIds[2]);
         gl.glDrawElements(GL.GL_POINTS, posPoints.limit(), GL.GL_UNSIGNED_INT, 0);
 
-        // Restore gl state
+        // Restore the previous GL point state.
         gl.glPointSize(1f);
         gl.glDisable(GL.GL_POINT_SMOOTH);
 
-        if (useVertexColors)
+        // Restore the previous GL color array state.
+        if (dc.isPickingMode() || pathData.tessellatedColors != null)
             gl.glDisableClientState(GL.GL_COLOR_ARRAY);
+    }
+
+    protected void prepareToDrawPoints(DrawContext dc)
+    {
+        GL gl = dc.getGL();
+
+        if (dc.isPickingMode())
+        {
+            // During picking, compute the GL point size as the product of the active outline width and the show
+            // positions scale, plus the positive difference (if any) between the outline pick width and the outline
+            // width. During picking, the outline width is set to the larger of the outline width and the outline pick
+            // width. We need to adjust the point size accordingly to ensure that the points are not covered by the
+            // larger outline width. We add the difference between the normal and pick widths rather than scaling the
+            // pick width by the show positions scale, because the latter produces point sizes that are too large, and
+            // obscure the other nearby points.
+            ShapeAttributes activeAttrs = this.getActiveAttributes();
+            double deltaWidth = activeAttrs.getOutlineWidth() < this.getOutlinePickWidth()
+                ? this.getOutlinePickWidth() - activeAttrs.getOutlineWidth() : 0;
+            gl.glPointSize((float) (this.getShowPositionsScale() * activeAttrs.getOutlineWidth() + deltaWidth));
+        }
+        else
+        {
+            // During normal rendering mode, compute the GL point size as the product of the active outline width and
+            // the show positions scale. This computation is consistent with the documentation for the methods
+            // setShowPositionsScale and getShowPositionsScale.
+            gl.glPointSize((float) (this.getShowPositionsScale() * this.getActiveAttributes().getOutlineWidth()));
+        }
+
+        // Enable point smoothing both in picking mode and normal rendering mode. Normally, we do not enable smoothing
+        // during picking, because GL uses semi-transparent fragments to give the point a round and anti-aliased
+        // appearance, and semi-transparent pixels do not correspond to this Path's pickable color. Since blending is
+        // not enabled during picking but the alpha test is, this has the effect of producing a rounded point in the
+        // pick buffer that has a sharp transition between the Path's pick color and the other fragment colors. Without
+        // this state enabled, position points display as squares in the pick buffer.
+        gl.glEnable(GL.GL_POINT_SMOOTH);
+        gl.glHint(GL.GL_POINT_SMOOTH_HINT, GL.GL_NICEST);
     }
 
     /**
@@ -1381,6 +1598,83 @@ public class Path extends AbstractShape
     }
 
     /**
+     * Registers this Path's pickable position color codes with the specified pickCandidates. The pickCandidates must be
+     * an instance of PathPickSupport. This does nothing if this Path's position points are not drawn.
+     *
+     * @param dc             the current draw context.
+     * @param pickCandidates the PickSupport to register with. Must be an instance of PathPickSupport.
+     */
+    protected void addPickablePositions(DrawContext dc, PickSupport pickCandidates)
+    {
+        if (!this.isShowPositions())
+            return;
+
+        PathData pathData = this.getCurrentPathData();
+        double d = this.getDistanceMetric(dc, pathData);
+        if (d > this.getShowPositionsThreshold())
+            return;
+
+        IntBuffer posPoints = pathData.positionPoints;
+        if (posPoints == null || posPoints.limit() < 1)
+            return;
+
+        if (pickPositionColors == null || pickPositionColors.capacity() < 3 * pathData.vertexCount)
+            pickPositionColors = ByteBuffer.allocateDirect(3 * pathData.vertexCount);
+        pickPositionColors.clear();
+
+        posPoints.rewind(); // Rewind the position points buffer before use to ensure it starts at position 0.
+        posPoints.get(); // Skip the first position index; this is always 0.
+        int nextPosition = posPoints.get();
+        Color pickColor = dc.getUniquePickColor();
+        int minColorCode = pickColor.getRGB();
+        int maxColorCode = minColorCode;
+
+        for (int i = 0; i < pathData.vertexCount; i++)
+        {
+            if (i == nextPosition)
+            {
+                if (posPoints.remaining() > 0) // Don't advance beyond the last position index.
+                    nextPosition = posPoints.get();
+                pickColor = dc.getUniquePickColor();
+                maxColorCode = pickColor.getRGB();
+            }
+
+            pickPositionColors.put((byte) pickColor.getRed()).put((byte) pickColor.getGreen()).put(
+                (byte) pickColor.getBlue());
+        }
+
+        pickPositionColors.flip(); // Since this buffer is shared, the limit will likely be different each use.
+        posPoints.rewind(); // Rewind the position points buffer after use.
+
+        ((PathPickSupport) pickCandidates).addPickablePositions(minColorCode, maxColorCode, this);
+    }
+
+    /**
+     * Returns a new PickedObject corresponding to this Path's position point at the specified index. The returned
+     * PickedObject's AVList contains the picked position's geographic position in the key AVKey.POSITION and its
+     * ordinal number in the key AVKey.ORDINAL.
+     *
+     * @param colorCode     the color code corresponding to the picked position point.
+     * @param positionIndex the position point's index.
+     *
+     * @return a PickedObject corresponding to the position point at the specified index.
+     */
+    protected PickedObject resolvePickedPosition(int colorCode, int positionIndex)
+    {
+        PickedObject po = new PickedObject(colorCode, this.getDelegateOwner() != null ? this.getDelegateOwner() : this);
+
+        Position pos = this.getPosition(positionIndex);
+        if (pos != null)
+            po.setPosition(pos);
+
+        Integer ordinal = this.getOrdinal(positionIndex);
+        if (ordinal != null)
+            po.setValue(AVKey.ORDINAL, ordinal);
+
+        return po;
+    }
+
+    /**
      * Generates positions defining this path with path type and terrain-conforming properties applied. Builds the
      * path's <code>tessellatedPositions</code> and <code>polePositions</code> fields.
      *
@@ -1515,6 +1809,37 @@ public class Path extends AbstractShape
 
         if (color != null)
             pathData.tessellatedColors.add(color);
+    }
+
+    /**
+     * Returns the Path position corresponding index. This returns null if the index does not correspond to an original
+     * position.
+     *
+     * @param positionIndex the position's index.
+     *
+     * @return the Position corresponding to the specified index.
+     */
+    protected Position getPosition(int positionIndex)
+    {
+        PathData pathData = this.getCurrentPathData();
+        // Get an index into the tessellatedPositions list.
+        int index = pathData.positionPoints.get(positionIndex);
+        // Return the originally specified position, which is stored in the tessellatedPositions list.
+        return (index >= 0 && index < pathData.tessellatedPositions.size()) ?
+            pathData.tessellatedPositions.get(index) : null;
+    }
+
+    /**
+     * Returns the ordinal number corresponding to the position. This returns null if the position index does not
+     * correspond to an original position.
+     *
+     * @param positionIndex the position's index.
+     *
+     * @return the ordinal number corresponding to the specified position index.
+     */
+    protected Integer getOrdinal(int positionIndex)
+    {
+        return positionIndex;
     }
 
     /**

@@ -6,10 +6,12 @@
 
 package gov.nasa.worldwind.render;
 
+import com.sun.opengl.util.BufferUtil;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
+import java.nio.IntBuffer;
 import java.util.Iterator;
 
 /**
@@ -38,16 +40,42 @@ public class MultiResolutionPath extends Path
         public int computeSkipCount(DrawContext dc, PathData pathData);
     }
 
-    public void setSkipCountComputer(SkipCountComputer computer)
+    /** Subclass of PathData that adds the capability to map which ordinal number corresponds to each rendered position. */
+    protected static class MultiResolutionPathData extends PathData
     {
-        if (computer == null)
+        /** Maps indices of rendered positions to their corresponding ordinal numbers. */
+        protected IntBuffer positionOrdinals;
+
+        /**
+         * Creates a new MultiResolutionPathData with the specified draw context and path.
+         *
+         * @param dc    the draw context associated with this path data.
+         * @param shape the shape associated with this path data.
+         */
+        public MultiResolutionPathData(DrawContext dc, Path shape)
         {
-            String message = Logging.getMessage("nullValue.CallbackIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
+            super(dc, shape);
         }
 
-        this.skipCountComputer = computer;
+        /**
+         * Returns a buffer mapping indices of rendered positions to their corresponding ordinal numbers.
+         *
+         * @return a buffer mapping positions to ordinal numbers.
+         */
+        public IntBuffer getPositionOrdinals()
+        {
+            return this.positionOrdinals;
+        }
+
+        /**
+         * Specifies a buffer that maps indices of rendered positions to their corresponding ordinal numbers.
+         *
+         * @param posOrdinals a buffer that maps positions to ordinal numbers.
+         */
+        public void setPositionOrdinals(IntBuffer posOrdinals)
+        {
+            this.positionOrdinals = posOrdinals;
+        }
     }
 
     /**
@@ -84,17 +112,6 @@ public class MultiResolutionPath extends Path
     }
 
     /**
-     * Creates a path with positions specified via a generic list.
-     * <p/>
-     * Note: If fewer than two positions is specified, the path is not drawn.
-     *
-     * @param positions the path positions. This reference is retained by this shape; the positions are not copied. If
-     *                  any positions in the set change, {@link #setPositions(Iterable)} must be called to inform this
-     *                  shape of the change.
-     *
-     * @throws IllegalArgumentException if positions is null.
-     */
-    /**
      * Creates a path with specified positions specified via a generic list. When the path is rendered, only path
      * positions that are visually distinct for the current viewing state are considered. The path adjusts the positions
      * it uses as the view state changes, using more of the specified positions as the eye point comes closer to the
@@ -113,6 +130,79 @@ public class MultiResolutionPath extends Path
         super(positions);
     }
 
+    /**
+     * Indicates the SkipCountComputer that is used to determine the number of specified positions skipped during path
+     * tessellation.
+     *
+     * @return the SkipCountComputer used during path tessellation.
+     */
+    public SkipCountComputer getSkipCountComputer()
+    {
+        return this.skipCountComputer;
+    }
+
+    /**
+     * Specifies the SkipCountComputer that determines the number of specified positions skipped during path
+     * tessellation.
+     *
+     * @param computer the SkipCountComputer to use during path tessellation.
+     *
+     * @throws IllegalArgumentException if the computer is null.
+     */
+    public void setSkipCountComputer(SkipCountComputer computer)
+    {
+        if (computer == null)
+        {
+            String message = Logging.getMessage("nullValue.CallbackIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.skipCountComputer = computer;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * Overridden to return a new instance of MultiResolutionPathData.
+     */
+    @Override
+    protected AbstractShapeData createCacheEntry(DrawContext dc)
+    {
+        return new MultiResolutionPathData(dc, this);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * Overridden to initialize and build the PathData's positionOrdinals buffer.
+     */
+    @Override
+    protected void makeTessellatedPositions(DrawContext dc, PathData pathData)
+    {
+        if (this.numPositions < 2)
+            return;
+
+        MultiResolutionPathData mrpd = (MultiResolutionPathData) pathData;
+        if (mrpd.positionOrdinals == null || mrpd.positionOrdinals.capacity() < this.numPositions)
+            mrpd.positionOrdinals = BufferUtil.newIntBuffer(this.numPositions);
+        else
+            mrpd.positionOrdinals.clear();
+
+        super.makeTessellatedPositions(dc, pathData);
+
+        mrpd.positionOrdinals.flip();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * Overridden to skip positions from this Path's original positions list. Positions are skipped first according to
+     * this Path's skipCountComputer. The skipCountComputer determines how many positions this path skips between
+     * tessellated positions. Any positions remaining after this step are skipped if the segment they are part of is
+     * either very small or not visible.
+     */
+    @Override
     protected void makePositions(DrawContext dc, PathData pathData)
     {
         Iterator<? extends Position> iter = this.positions.iterator();
@@ -151,5 +241,37 @@ public class MultiResolutionPath extends Path
             colorA = colorB;
             ordinalA = i;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * Overridden to create a mapping between the current tessellated position and the specified ordinal, if the ordinal
+     * is not null.
+     */
+    @Override
+    protected void addTessellatedPosition(Position pos, Color color, Integer ordinal, PathData pathData)
+    {
+        if (ordinal != null)
+        {
+            // NOTE: Assign these indices before adding the new position to the tessellatedPositions list.
+            MultiResolutionPathData mrpd = (MultiResolutionPathData) pathData;
+            mrpd.positionOrdinals.put(ordinal);
+        }
+
+        super.addTessellatedPosition(pos, color, ordinal, pathData);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * Overridden to use the MultiResolutionPathData's positionOrdinals buffer to map the specified position index to
+     * its corresponding ordinal number.
+     */
+    @Override
+    protected Integer getOrdinal(int positionIndex)
+    {
+        MultiResolutionPathData mrpd = (MultiResolutionPathData) this.getCurrentPathData();
+        return mrpd.positionOrdinals.get(positionIndex);
     }
 }

@@ -260,6 +260,11 @@ public interface AVKey // TODO: Eliminate unused constants, if any
 
     final String OFFLINE_MODE = "gov.nasa.worldwind.avkey.OfflineMode";
     final String OPACITY = "gov.nasa.worldwind.avkey.Opacity";
+    /**
+     * Indicates an object's position in a series. When used as a key, the corresponding value must be an {@link
+     * Integer} indicating the ordinal.
+     */
+    final String ORDINAL = "gov.nasa.worldwind.avkey.Ordinal";
     final String ORIGIN = "gov.nasa.worldwind.avkey.Origin";
 
     final String OVERVIEW_FILE_NAME = "gov.nasa.worldwind.avkey.Overview.FileName";
