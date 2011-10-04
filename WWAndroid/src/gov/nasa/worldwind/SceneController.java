@@ -115,11 +115,13 @@ public interface SceneController extends WWObject
     void setPickPoint(Point pickPoint);
 
     /**
-     * Returns the current list of picked objects.
+     * Returns the World Wind objects at the current pick point. The list of objects at the pick point is determined
+     * during each call to drawFrame. This method returns the list of objects determined from the most recent call to
+     * drawFrame.
      *
      * @return the list of currently picked objects, or null if no objects are currently picked.
      */
-    PickedObjectList getPickedObjectList();
+    PickedObjectList getObjectsAtPickPoint();
 
     /**
      * Returns the performance statistics computed during the most recent frame.

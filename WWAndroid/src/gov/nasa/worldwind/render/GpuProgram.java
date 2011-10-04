@@ -405,25 +405,25 @@ public class GpuProgram implements Cacheable, Disposable
         float[] m = this.uniformArray;
 
         // Column 1
-        m[0] = (float) matrix.m11;
-        m[1] = (float) matrix.m21;
-        m[2] = (float) matrix.m31;
-        m[3] = (float) matrix.m41;
+        m[0] = (float) matrix.m[0];
+        m[1] = (float) matrix.m[4];
+        m[2] = (float) matrix.m[8];
+        m[3] = (float) matrix.m[12];
         // Column 2
-        m[4] = (float) matrix.m12;
-        m[5] = (float) matrix.m22;
-        m[6] = (float) matrix.m32;
-        m[7] = (float) matrix.m42;
+        m[4] = (float) matrix.m[1];
+        m[5] = (float) matrix.m[5];
+        m[6] = (float) matrix.m[9];
+        m[7] = (float) matrix.m[13];
         // Column 3
-        m[8] = (float) matrix.m13;
-        m[9] = (float) matrix.m23;
-        m[10] = (float) matrix.m33;
-        m[11] = (float) matrix.m43;
+        m[8] = (float) matrix.m[2];
+        m[9] = (float) matrix.m[6];
+        m[10] = (float) matrix.m[10];
+        m[11] = (float) matrix.m[14];
         // Column 4
-        m[12] = (float) matrix.m14;
-        m[13] = (float) matrix.m24;
-        m[14] = (float) matrix.m34;
-        m[15] = (float) matrix.m44;
+        m[12] = (float) matrix.m[3];
+        m[13] = (float) matrix.m[7];
+        m[14] = (float) matrix.m[11];
+        m[15] = (float) matrix.m[15];
 
         GLES20.glUniformMatrix4fv(location, 1, false, m, 0);
     }

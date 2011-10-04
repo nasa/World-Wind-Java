@@ -8,7 +8,7 @@ package gov.nasa.worldwind.render;
 import android.graphics.Point;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
@@ -189,7 +189,7 @@ public interface DrawContext extends WWObject
     void setFrameTimeStamp(long timeStamp);
 
     /**
-     * Indicates whether the drawing is occuring in picking picking mode. In picking mode, each unique object is drawn
+     * Indicates whether the drawing is occurring in picking picking mode. In picking mode, each unique object is drawn
      * in a unique RGB color by calling {@link #getUniquePickColor()} prior to rendering. Any OpenGL state that could
      * cause an object to draw a color other than the unique RGB pick color must be disabled. This includes
      * antialiasing, blending, and dithering.
@@ -243,11 +243,12 @@ public interface DrawContext extends WWObject
     void setPickPoint(Point point);
 
     /**
-     * Returns the list of objects picked during the most recent pick traversal.
+     * Returns the World Wind objects at the current pick point. The list of objects is determined while drawing in
+     * picking mode, and is cleared each time this draw context is initialized.
      *
-     * @return the list of picked objects.
+     * @return the list of currently picked objects.
      */
-    PickedObjectList getPickedObjects();
+    PickedObjectList getObjectsAtPickPoint();
 
     /**
      * Adds a single picked object to the current picked-object list.

@@ -49,19 +49,42 @@ public class EllipsoidalGlobe extends AbstractGlobe
         return this.equatorialRadius;
     }
 
-    public double getMaximumRadius()
-    {
-        return this.equatorialRadius;
-    }
-
+    /** {@inheritDoc} */
     public Intersection[] intersect(Line line)
     {
+        if (line == null)
+        {
+            String msg = Logging.getMessage("nullValue.LineIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         return this.intersect(line, this.equatorialRadius, this.polarRadius);
     }
 
-    public Intersection[] intersect(Line line, double altitude)
+    /** {@inheritDoc} */
+    public boolean getIntersectionPosition(Line line, Position result)
     {
-        return this.intersect(line, this.equatorialRadius + altitude, this.polarRadius + altitude);
+        if (line == null)
+        {
+            String msg = Logging.getMessage("nullValue.LineIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (result == null)
+        {
+            String msg = Logging.getMessage("nullValue.ResultIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Intersection[] intersection = this.intersect(line);
+        if (intersection == null || intersection.length == 0)
+            return false;
+
+        this.computePositionFromPoint(intersection[0].getIntersectionPoint(), result);
+        return true;
     }
 
     protected Intersection[] intersect(Line line, double equRadius, double polRadius)
@@ -95,13 +118,16 @@ public class EllipsoidalGlobe extends AbstractGlobe
         double discriminantRoot = Math.sqrt(discriminant);
         if (discriminant == 0)
         {
-            Vec4 p = line.getPointAt((-b - discriminantRoot) / (2 * a));
+            Vec4 p = new Vec4();
+            line.getPointAt((-b - discriminantRoot) / (2 * a), p);
             return new Intersection[] {new Intersection(p, true)};
         }
         else // (discriminant > 0)
         {
-            Vec4 near = line.getPointAt((-b - discriminantRoot) / (2 * a));
-            Vec4 far = line.getPointAt((-b + discriminantRoot) / (2 * a));
+            Vec4 near = new Vec4();
+            Vec4 far = new Vec4();
+            line.getPointAt((-b - discriminantRoot) / (2 * a), near);
+            line.getPointAt((-b + discriminantRoot) / (2 * a), far);
             if (c >= 0) // Line originates outside the Globe.
                 return new Intersection[] {new Intersection(near, false), new Intersection(far, false)};
             else // Line originates inside the Globe.
@@ -109,7 +135,7 @@ public class EllipsoidalGlobe extends AbstractGlobe
         }
     }
 
-    static private double discriminant(double a, double b, double c)
+    protected static double discriminant(double a, double b, double c)
     {
         return b * b - 4 * a * c;
     }
@@ -762,21 +788,5 @@ public class EllipsoidalGlobe extends AbstractGlobe
         transform = transform.multiply(Matrix.fromTranslation(point));
 
         return transform;
-    }
-
-    public Position getIntersectionPosition(Line line)
-    {
-        if (line == null)
-        {
-            String msg = Logging.getMessage("nullValue.LineIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Intersection[] intersections = this.intersect(line);
-        if (intersections == null)
-            return null;
-
-        return this.computePositionFromPoint(intersections[0].getIntersectionPoint());
     }
 }

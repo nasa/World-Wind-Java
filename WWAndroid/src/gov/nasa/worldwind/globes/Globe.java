@@ -59,7 +59,9 @@ public interface Globe extends WWObject
 
     double getRadius();
 
-    double getMaximumRadius();
+    Intersection[] intersect(Line line);
+
+    boolean getIntersectionPosition(Line line, Position result);
 
     /**
      * Indicates the best elevation resolution attainable for a specified sector.
@@ -159,6 +161,4 @@ public interface Globe extends WWObject
     void computeNorthPointingTangentAtLocation(Angle latitude, Angle longitude, Vec4 result);
 
     Matrix computeViewOrientationAtPosition(Angle latitude, Angle longitude, double metersElevation);
-
-    Position getIntersectionPosition(Line line);
 }

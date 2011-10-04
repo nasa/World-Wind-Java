@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.event;
 
+import android.graphics.Point;
 import android.media.*;
 import android.opengl.GLES20;
 import android.view.*;
@@ -701,30 +702,25 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
         BasicView view = (BasicView) this.eventSource.getView();
         Globe globe = this.eventSource.getModel().getGlobe();
 
-        // get screen proportions
-        int[] viewportArray = new int[4];
-        GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, viewportArray, 0);
-        Position newLookAtPos = view.computePositionFromScreenPoint(globe, x, y, viewportArray[2], viewportArray[3]);
+        Position newLookAtPos = new Position();
+        if (!view.computePositionFromScreenPoint(new Point((int) x, (int) y), globe, newLookAtPos))
+            return;
 
-        if (newLookAtPos != null)
+        Position lookAtPos = view.getLookAtPosition(globe);
+        if (lookAtPos != null)
         {
-            Position lookAtPosition = view.getLookAtPosition(globe);
+            Angle lookAtHeading = view.getLookAtHeading(globe);
+            Angle lookAtTilt = view.getLookAtTilt(globe);
+            double range = view.getLookAtDistance(globe);
 
-            if (lookAtPosition != null)
-            {
-                Angle lookAtHeading = view.getLookAtHeading(globe);
-                Angle lookAtTilt = view.getLookAtTilt(globe);
-                double range = view.getLookAtDistance(globe);
+            view.setLookAtPosition(newLookAtPos, lookAtHeading, lookAtTilt, range, globe);
+        }
+        else
+        {
+            Position eyePos = view.getEyePosition(globe);
+            Angle zero = Angle.fromDegrees(0);
 
-                view.setLookAtPosition(newLookAtPos, lookAtHeading, lookAtTilt, range, globe);
-            }
-            else
-            {
-                Position eyePos = view.getEyePosition(globe);
-
-                Angle zero = Angle.fromDegrees(0);
-                view.setLookAtPosition(newLookAtPos, zero, zero, eyePos.elevation, globe);
-            }
+            view.setLookAtPosition(newLookAtPos, zero, zero, eyePos.elevation, globe);
         }
     }
 }

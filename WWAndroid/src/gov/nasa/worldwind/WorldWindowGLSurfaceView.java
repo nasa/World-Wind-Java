@@ -13,6 +13,8 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -329,7 +331,30 @@ public class WorldWindowGLSurfaceView extends GLSurfaceView implements GLSurface
     }
 
     /** {@inheritDoc} */
+    public Position getCurrentPosition()
+    {
+        PickedObjectList pol = this.getObjectsAtCurrentPosition();
+        if (pol == null || pol.isEmpty())
+            return null;
 
+        PickedObject po = pol.getTopPickedObject();
+        if (po != null && po.hasPosition())
+            return po.getPosition();
+
+        po = pol.getTerrainObject();
+        if (po != null)
+            return po.getPosition();
+
+        return null;
+    }
+
+    /** {@inheritDoc} */
+    public PickedObjectList getObjectsAtCurrentPosition()
+    {
+        return this.sceneController != null ? this.sceneController.getObjectsAtPickPoint() : null;
+    }
+
+    /** {@inheritDoc} */
     public void redraw()
     {
         this.requestRender();

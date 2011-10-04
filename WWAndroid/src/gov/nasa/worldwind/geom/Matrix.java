@@ -7,32 +7,50 @@ package gov.nasa.worldwind.geom;
 
 import gov.nasa.worldwind.util.Logging;
 
+import java.util.Arrays;
+
 /**
+ * 4x4 matrix represented as a 16-value array in row-major order. The array indices correspond to matrix components as
+ * follows:
+ * <pre>
+ *     m[0]  m[1]  m[2]  m[3]
+ *     m[4]  m[5]  m[6]  m[7]
+ *     m[8]  m[9]  m[10] m[11]
+ *     m[12] m[13] m[14] m[15]
+ * </pre>
+ *
  * @author dcollins
  * @version $Id$
  */
 public class Matrix
 {
-    // Row 1
-    public double m11;
-    public double m12;
-    public double m13;
-    public double m14;
-    // Row 2
-    public double m21;
-    public double m22;
-    public double m23;
-    public double m24;
-    // Row 3
-    public double m31;
-    public double m32;
-    public double m33;
-    public double m34;
-    // Row 4
-    public double m41;
-    public double m42;
-    public double m43;
-    public double m44;
+    public final double[] m = new double[16];
+
+    public Matrix(double[] array, int offset)
+    {
+        if (array == null)
+        {
+            String msg = Logging.getMessage("nullValue.ArrayIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (array.length < 16)
+        {
+            String msg = Logging.getMessage("generic.ArrayInvalidLength", array.length);
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (offset < 0 || offset + 16 > array.length)
+        {
+            String msg = Logging.getMessage("generic.OffsetIsInvalid", offset);
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        System.arraycopy(array, offset, m, 0, 16);
+    }
 
     public Matrix(
         double m11, double m12, double m13, double m14,
@@ -41,25 +59,25 @@ public class Matrix
         double m41, double m42, double m43, double m44)
     {
         // Row 1
-        this.m11 = m11;
-        this.m12 = m12;
-        this.m13 = m13;
-        this.m14 = m14;
+        this.m[0] = m11;
+        this.m[1] = m12;
+        this.m[2] = m13;
+        this.m[3] = m14;
         // Row 2
-        this.m21 = m21;
-        this.m22 = m22;
-        this.m23 = m23;
-        this.m24 = m24;
+        this.m[4] = m21;
+        this.m[5] = m22;
+        this.m[6] = m23;
+        this.m[7] = m24;
         // Row 3
-        this.m31 = m31;
-        this.m32 = m32;
-        this.m33 = m33;
-        this.m34 = m34;
+        this.m[8] = m31;
+        this.m[9] = m32;
+        this.m[10] = m33;
+        this.m[11] = m34;
         // Row 4
-        this.m41 = m41;
-        this.m42 = m42;
-        this.m43 = m43;
-        this.m44 = m44;
+        this.m[12] = m41;
+        this.m[13] = m42;
+        this.m[14] = m43;
+        this.m[15] = m44;
     }
 
     public static Matrix fromIdentity()
@@ -239,14 +257,14 @@ public class Matrix
 
         if (viewportWidth < 0)
         {
-            String msg = Logging.getMessage("generic.WidthIsInvalid", viewportWidth);
+            String msg = Logging.getMessage("generic.ViewportWidthIsInvalid", viewportWidth);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
         if (viewportHeight < 0)
         {
-            String msg = Logging.getMessage("generic.HeightIsInvalid", viewportHeight);
+            String msg = Logging.getMessage("generic.ViewportHeightIsInvalid", viewportHeight);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -287,23 +305,30 @@ public class Matrix
         return Matrix.fromIdentity().setPerspective(left, right, bottom, top, near, far);
     }
 
-    public static Matrix fromOrthographic2D(double viewportWidth, double viewportHeight)
+    public static Matrix fromOrthographic(double left, double right, double bottom, double top, double near, double far)
     {
-        if (viewportWidth < 0)
+        if (left > right)
         {
-            String msg = Logging.getMessage("generic.WidthIsInvalid", viewportWidth);
+            String msg = Logging.getMessage("generic.WidthIsInvalid", right - left);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (viewportHeight < 0)
+        if (bottom > top)
         {
-            String msg = Logging.getMessage("generic.HeightIsInvalid", viewportHeight);
+            String msg = Logging.getMessage("generic.HeightIsInvalid", top - bottom);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        return Matrix.fromIdentity().setOrthographic2D(viewportWidth, viewportHeight);
+        if (near <= 0 || near > far)
+        {
+            String msg = Logging.getMessage("generic.ClipDistancesAreInvalid", near, far);
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return Matrix.fromIdentity().setOrthographic(left, right, bottom, top, near, far);
     }
 
     /**
@@ -363,7 +388,7 @@ public class Matrix
             throw new IllegalArgumentException(msg);
         }
 
-        if (matrix.m12 != matrix.m21 || matrix.m13 != matrix.m31 || matrix.m23 != matrix.m32)
+        if (matrix.m[1] != matrix.m[4] || matrix.m[2] != matrix.m[8] || matrix.m[6] != matrix.m[9])
         {
             String msg = Logging.getMessage("Matrix.MatrixIsNotSymmetric", matrix);
             Logging.error(msg);
@@ -406,12 +431,12 @@ public class Matrix
 
         // Since the Matrix is symmetric, m12=m21, m13=m31, and m23=m32. Therefore we can ignore the values m21, m31,
         // and m32.
-        double m11 = matrix.m11;
-        double m12 = matrix.m12;
-        double m13 = matrix.m13;
-        double m22 = matrix.m22;
-        double m23 = matrix.m23;
-        double m33 = matrix.m33;
+        double m11 = matrix.m[0];
+        double m12 = matrix.m[1];
+        double m13 = matrix.m[2];
+        double m22 = matrix.m[5];
+        double m23 = matrix.m[6];
+        double m33 = matrix.m[10];
 
         double[][] r = new double[3][3];
         r[0][0] = r[1][1] = r[2][2] = 1d;
@@ -518,11 +543,7 @@ public class Matrix
 
     public Matrix copy()
     {
-        return new Matrix(
-            this.m11, this.m12, this.m13, this.m14,  // Row 1
-            this.m21, this.m22, this.m23, this.m24,  // Row 2
-            this.m31, this.m32, this.m33, this.m34,  // Row 3
-            this.m41, this.m42, this.m43, this.m44); // Row 4
+        return new Matrix(this.m, 0);
     }
 
     public Matrix set(Matrix matrix)
@@ -534,26 +555,35 @@ public class Matrix
             throw new IllegalArgumentException(msg);
         }
 
-        // Row 1
-        this.m11 = matrix.m11;
-        this.m12 = matrix.m12;
-        this.m13 = matrix.m13;
-        this.m14 = matrix.m14;
-        // Row 2
-        this.m21 = matrix.m21;
-        this.m22 = matrix.m22;
-        this.m23 = matrix.m23;
-        this.m24 = matrix.m24;
-        // Row 3
-        this.m31 = matrix.m31;
-        this.m32 = matrix.m32;
-        this.m33 = matrix.m33;
-        this.m34 = matrix.m34;
-        // Row 4
-        this.m41 = matrix.m41;
-        this.m42 = matrix.m42;
-        this.m43 = matrix.m43;
-        this.m44 = matrix.m44;
+        System.arraycopy(matrix.m, 0, this.m, 0, 16);
+
+        return this;
+    }
+
+    public Matrix set(double[] array, int offset)
+    {
+        if (array == null)
+        {
+            String msg = Logging.getMessage("nullValue.ArrayIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (array.length < 16)
+        {
+            String msg = Logging.getMessage("generic.ArrayInvalidLength", array.length);
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (offset < 0 || offset + 16 > array.length)
+        {
+            String msg = Logging.getMessage("generic.OffsetIsInvalid", offset);
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        System.arraycopy(array, offset, m, 0, 16);
 
         return this;
     }
@@ -565,25 +595,25 @@ public class Matrix
         double m41, double m42, double m43, double m44)
     {
         // Row 1
-        this.m11 = m11;
-        this.m12 = m12;
-        this.m13 = m13;
-        this.m14 = m14;
+        this.m[0] = m11;
+        this.m[1] = m12;
+        this.m[2] = m13;
+        this.m[3] = m14;
         // Row 2
-        this.m21 = m21;
-        this.m22 = m22;
-        this.m23 = m23;
-        this.m24 = m24;
+        this.m[4] = m21;
+        this.m[5] = m22;
+        this.m[6] = m23;
+        this.m[7] = m24;
         // Row 3
-        this.m31 = m31;
-        this.m32 = m32;
-        this.m33 = m33;
-        this.m34 = m34;
+        this.m[8] = m31;
+        this.m[9] = m32;
+        this.m[10] = m33;
+        this.m[11] = m34;
         // Row 4
-        this.m41 = m41;
-        this.m42 = m42;
-        this.m43 = m43;
-        this.m44 = m44;
+        this.m[12] = m41;
+        this.m[13] = m42;
+        this.m[14] = m43;
+        this.m[15] = m44;
 
         return this;
     }
@@ -591,155 +621,25 @@ public class Matrix
     public Matrix setIdentity()
     {
         // Row 1
-        this.m11 = 1;
-        this.m12 = 0;
-        this.m13 = 0;
-        this.m14 = 0;
+        this.m[0] = 1;
+        this.m[1] = 0;
+        this.m[2] = 0;
+        this.m[3] = 0;
         // Row 2
-        this.m21 = 0;
-        this.m22 = 1;
-        this.m23 = 0;
-        this.m24 = 0;
+        this.m[4] = 0;
+        this.m[5] = 1;
+        this.m[6] = 0;
+        this.m[7] = 0;
         // Row 3
-        this.m31 = 0;
-        this.m32 = 0;
-        this.m33 = 1;
-        this.m34 = 0;
+        this.m[8] = 0;
+        this.m[9] = 0;
+        this.m[10] = 1;
+        this.m[11] = 0;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
-
-        return this;
-    }
-
-    public Matrix setInverse(Matrix matrix)
-    {
-        if (matrix == null)
-        {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        double cf_11 = matrix.m22 * (matrix.m33 * matrix.m44 - matrix.m43 * matrix.m34)
-            - matrix.m23 * (matrix.m32 * matrix.m44 - matrix.m42 * matrix.m34)
-            + matrix.m24 * (matrix.m32 * matrix.m43 - matrix.m42 * matrix.m33);
-        double cf_12 = -(matrix.m21 * (matrix.m33 * matrix.m44 - matrix.m43 * matrix.m34)
-            - matrix.m23 * (matrix.m31 * matrix.m44 - matrix.m41 * matrix.m34)
-            + matrix.m24 * (matrix.m31 * matrix.m43 - matrix.m41 * matrix.m33));
-        double cf_13 = matrix.m21 * (matrix.m32 * matrix.m44 - matrix.m42 * matrix.m34)
-            - matrix.m22 * (matrix.m31 * matrix.m44 - matrix.m41 * matrix.m34)
-            + matrix.m24 * (matrix.m31 * matrix.m42 - matrix.m41 * matrix.m32);
-        double cf_14 = -(matrix.m21 * (matrix.m32 * matrix.m43 - matrix.m42 - matrix.m33)
-            - matrix.m22 * (matrix.m31 * matrix.m43 - matrix.m41 * matrix.m33)
-            + matrix.m23 * (matrix.m31 * matrix.m42 - matrix.m41 * matrix.m32));
-        double cf_21 = matrix.m12 * (matrix.m33 * matrix.m44 - matrix.m43 - matrix.m34)
-            - matrix.m13 * (matrix.m32 * matrix.m44 - matrix.m42 * matrix.m34)
-            + matrix.m14 * (matrix.m32 * matrix.m43 - matrix.m42 * matrix.m33);
-        double cf_22 = -(matrix.m11 * (matrix.m33 * matrix.m44 - matrix.m43 * matrix.m34)
-            - matrix.m13 * (matrix.m31 * matrix.m44 - matrix.m41 * matrix.m34)
-            + matrix.m14 * (matrix.m31 * matrix.m43 - matrix.m41 * matrix.m33));
-        double cf_23 = matrix.m11 * (matrix.m32 * matrix.m44 - matrix.m42 * matrix.m34)
-            - matrix.m12 * (matrix.m31 * matrix.m44 - matrix.m41 * matrix.m34)
-            + matrix.m14 * (matrix.m31 * matrix.m42 - matrix.m41 * matrix.m32);
-        double cf_24 = -(matrix.m11 * (matrix.m32 * matrix.m43 - matrix.m42 * matrix.m33)
-            - matrix.m12 * (matrix.m31 * matrix.m43 - matrix.m41 * matrix.m33)
-            + matrix.m13 * (matrix.m31 * matrix.m42 - matrix.m41 * matrix.m32));
-        double cf_31 = matrix.m12 * (matrix.m23 * matrix.m44 - matrix.m43 * matrix.m24)
-            - matrix.m13 * (matrix.m22 * matrix.m44 - matrix.m42 * matrix.m24)
-            + matrix.m14 * (matrix.m22 * matrix.m43 - matrix.m42 * matrix.m23);
-        double cf_32 = -(matrix.m11 * (matrix.m23 * matrix.m44 - matrix.m43 * matrix.m24)
-            - matrix.m13 * (matrix.m21 * matrix.m44 - matrix.m41 * matrix.m24)
-            + matrix.m14 * (matrix.m24 * matrix.m43 - matrix.m41 * matrix.m23));
-        double cf_33 = matrix.m11 * (matrix.m22 * matrix.m44 - matrix.m42 * matrix.m24)
-            - matrix.m12 * (matrix.m21 * matrix.m44 - matrix.m41 * matrix.m24)
-            + matrix.m14 * (matrix.m21 * matrix.m42 - matrix.m41 * matrix.m22);
-        double cf_34 = -(matrix.m11 * (matrix.m22 * matrix.m33 - matrix.m32 * matrix.m23)
-            - matrix.m12 * (matrix.m21 * matrix.m33 - matrix.m31 * matrix.m23)
-            + matrix.m13 * (matrix.m21 * matrix.m32 - matrix.m31 * matrix.m22));
-        double cf_41 = matrix.m12 * (matrix.m23 * matrix.m34 - matrix.m33 * matrix.m24)
-            - matrix.m13 * (matrix.m22 * matrix.m34 - matrix.m32 * matrix.m24)
-            + matrix.m14 * (matrix.m22 * matrix.m33 - matrix.m32 * matrix.m23);
-        double cf_42 = -(matrix.m11 * (matrix.m23 * matrix.m34 - matrix.m33 * matrix.m24)
-            - matrix.m13 * (matrix.m21 * matrix.m34 - matrix.m31 * matrix.m24)
-            + matrix.m14 * (matrix.m21 * matrix.m33 - matrix.m31 * matrix.m23));
-        double cf_43 = matrix.m11 * (matrix.m22 * matrix.m34 - matrix.m32 * matrix.m24)
-            - matrix.m12 * (matrix.m21 * matrix.m34 - matrix.m31 * matrix.m24)
-            + matrix.m14 * (matrix.m21 * matrix.m32 - matrix.m31 * matrix.m22);
-        double cf_44 = -(matrix.m11 * (matrix.m22 * matrix.m33 - matrix.m32 * matrix.m23)
-            - matrix.m12 * (matrix.m21 * matrix.m33 - matrix.m31 * matrix.m23)
-            + matrix.m13 * (matrix.m21 * matrix.m32 - matrix.m31 * matrix.m22));
-
-        double det = (matrix.m11 * cf_11) + (matrix.m12 * cf_12) + (matrix.m13 * cf_13) + (matrix.m14 * cf_14);
-        if (det == 0)
-        {
-            String msg = Logging.getMessage("Matrix.DeterminantIsZero");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        // Row 1
-        this.m11 = cf_11 / det;
-        this.m12 = cf_21 / det;
-        this.m13 = cf_31 / det;
-        this.m14 = cf_41 / det;
-        // Row 2
-        this.m21 = cf_12 / det;
-        this.m22 = cf_22 / det;
-        this.m23 = cf_32 / det;
-        this.m24 = cf_42 / det;
-        // Row 3
-        this.m31 = cf_13 / det;
-        this.m32 = cf_23 / det;
-        this.m33 = cf_33 / det;
-        this.m34 = cf_43 / det;
-        // Row 4
-        this.m41 = cf_14 / det;
-        this.m42 = cf_24 / det;
-        this.m43 = cf_34 / det;
-        this.m44 = cf_44 / det;
-
-        return this;
-    }
-
-    public Matrix setInverseTransformMatrix(Matrix matrix)
-    {
-        if (matrix == null)
-        {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        // The specified matrix is assumed to represent an orthonormal transform matrix. The specified matrix's
-        // upper-3x3 is transposed, then its fourth column is transformed by its inverted-upper-3x3 and negated.
-
-        double tx = -(matrix.m11 * matrix.m14) - (matrix.m21 * matrix.m24) - (matrix.m31 * matrix.m34);
-        double ty = -(matrix.m12 * matrix.m14) - (matrix.m22 * matrix.m24) - (matrix.m32 * matrix.m34);
-        double tz = -(matrix.m13 * matrix.m14) - (matrix.m23 * matrix.m24) - (matrix.m33 * matrix.m34);
-
-        // Row 1
-        this.m11 = matrix.m11;
-        this.m12 = matrix.m21;
-        this.m13 = matrix.m31;
-        this.m14 = tx;
-        // Row 2
-        this.m21 = matrix.m12;
-        this.m22 = matrix.m22;
-        this.m23 = matrix.m32;
-        this.m24 = ty;
-        // Row 3
-        this.m31 = matrix.m13;
-        this.m32 = matrix.m23;
-        this.m33 = matrix.m33;
-        this.m34 = tz;
-        // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -759,25 +659,25 @@ public class Matrix
     public Matrix setTranslation(double x, double y, double z)
     {
         // Row 1
-        this.m11 = 1;
-        this.m12 = 0;
-        this.m13 = 0;
-        this.m14 = x;
+        this.m[0] = 1;
+        this.m[1] = 0;
+        this.m[2] = 0;
+        this.m[3] = x;
         // Row 2
-        this.m21 = 0;
-        this.m22 = 1;
-        this.m23 = 0;
-        this.m24 = y;
+        this.m[4] = 0;
+        this.m[5] = 1;
+        this.m[6] = 0;
+        this.m[7] = y;
         // Row 3
-        this.m31 = 0;
-        this.m32 = 0;
-        this.m33 = 1;
-        this.m34 = z;
+        this.m[8] = 0;
+        this.m[9] = 0;
+        this.m[10] = 1;
+        this.m[11] = z;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -797,25 +697,25 @@ public class Matrix
     public Matrix setScale(double x, double y, double z)
     {
         // Row 1
-        this.m11 = x;
-        this.m12 = 0;
-        this.m13 = 0;
-        this.m14 = 0;
+        this.m[0] = x;
+        this.m[1] = 0;
+        this.m[2] = 0;
+        this.m[3] = 0;
         // Row 2
-        this.m21 = 0;
-        this.m22 = y;
-        this.m23 = 0;
-        this.m24 = 0;
+        this.m[4] = 0;
+        this.m[5] = y;
+        this.m[6] = 0;
+        this.m[7] = 0;
         // Row 3
-        this.m31 = 0;
-        this.m32 = 0;
-        this.m33 = z;
-        this.m34 = 0;
+        this.m[8] = 0;
+        this.m[9] = 0;
+        this.m[10] = z;
+        this.m[11] = 0;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -833,25 +733,25 @@ public class Matrix
         double s = angle.sin();
 
         // Row 1
-        this.m11 = 1;
-        this.m12 = 0;
-        this.m13 = 0;
-        this.m14 = 0;
+        this.m[0] = 1;
+        this.m[1] = 0;
+        this.m[2] = 0;
+        this.m[3] = 0;
         // Row 2
-        this.m21 = 0;
-        this.m22 = c;
-        this.m23 = -s;
-        this.m24 = 0;
+        this.m[4] = 0;
+        this.m[5] = c;
+        this.m[6] = -s;
+        this.m[7] = 0;
         // Row 3
-        this.m31 = 0;
-        this.m32 = s;
-        this.m33 = c;
-        this.m34 = 0;
+        this.m[8] = 0;
+        this.m[9] = s;
+        this.m[10] = c;
+        this.m[11] = 0;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -869,25 +769,25 @@ public class Matrix
         double s = angle.sin();
 
         // Row 1
-        this.m11 = c;
-        this.m12 = 0;
-        this.m13 = s;
-        this.m14 = 0;
+        this.m[0] = c;
+        this.m[1] = 0;
+        this.m[2] = s;
+        this.m[3] = 0;
         // Row 2
-        this.m21 = 0;
-        this.m22 = 1;
-        this.m23 = 0;
-        this.m24 = 0;
+        this.m[4] = 0;
+        this.m[5] = 1;
+        this.m[6] = 0;
+        this.m[7] = 0;
         // Row 3
-        this.m31 = -s;
-        this.m32 = 0;
-        this.m33 = c;
-        this.m34 = 0;
+        this.m[8] = -s;
+        this.m[9] = 0;
+        this.m[10] = c;
+        this.m[11] = 0;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -905,25 +805,25 @@ public class Matrix
         double s = angle.sin();
 
         // Row 1
-        this.m11 = c;
-        this.m12 = -s;
-        this.m13 = 0;
-        this.m14 = 0;
+        this.m[0] = c;
+        this.m[1] = -s;
+        this.m[2] = 0;
+        this.m[3] = 0;
         // Row 2
-        this.m21 = s;
-        this.m22 = c;
-        this.m23 = 0;
-        this.m24 = 0;
+        this.m[4] = s;
+        this.m[5] = c;
+        this.m[6] = 0;
+        this.m[7] = 0;
         // Row 3
-        this.m31 = 0;
-        this.m32 = 0;
-        this.m33 = 1;
-        this.m34 = 0;
+        this.m[8] = 0;
+        this.m[9] = 0;
+        this.m[10] = 1;
+        this.m[11] = 0;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -961,25 +861,25 @@ public class Matrix
         double one_minus_c = 1.0 - c;
 
         // Row 1
-        this.m11 = c + (one_minus_c * x * x);
-        this.m12 = (one_minus_c * x * y) - (s * z);
-        this.m13 = (one_minus_c * x * z) + (s * y);
-        this.m14 = 0;
+        this.m[0] = c + (one_minus_c * x * x);
+        this.m[1] = (one_minus_c * x * y) - (s * z);
+        this.m[2] = (one_minus_c * x * z) + (s * y);
+        this.m[3] = 0;
         // Row 2
-        this.m21 = (one_minus_c * x * y) + (s * z);
-        this.m22 = c + (one_minus_c * y * y);
-        this.m23 = (one_minus_c * y * z) - (s * x);
-        this.m24 = 0;
+        this.m[4] = (one_minus_c * x * y) + (s * z);
+        this.m[5] = c + (one_minus_c * y * y);
+        this.m[6] = (one_minus_c * y * z) - (s * x);
+        this.m[7] = 0;
         // Row 3
-        this.m31 = (one_minus_c * x * z) - (s * y);
-        this.m32 = (one_minus_c * y * z) + (s * x);
-        this.m33 = c + (one_minus_c * z * z);
-        this.m34 = 0;
+        this.m[8] = (one_minus_c * x * z) - (s * y);
+        this.m[9] = (one_minus_c * y * z) + (s * x);
+        this.m[10] = c + (one_minus_c * z * z);
+        this.m[11] = 0;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -1056,25 +956,25 @@ public class Matrix
         // We use the shorthand version below to avoid two matrix allocations and one matrix multiplication.
 
         // Row 1
-        this.m11 = s.x;
-        this.m12 = s.y;
-        this.m13 = s.z;
-        this.m14 = -s.x * eye.x - s.y * eye.y - s.z * eye.z;
+        this.m[0] = s.x;
+        this.m[1] = s.y;
+        this.m[2] = s.z;
+        this.m[3] = -s.x * eye.x - s.y * eye.y - s.z * eye.z;
         // Row 2
-        this.m21 = u.x;
-        this.m22 = u.y;
-        this.m23 = u.z;
-        this.m24 = -u.x * eye.x - u.y * eye.y - u.z * eye.z;
+        this.m[4] = u.x;
+        this.m[5] = u.y;
+        this.m[6] = u.z;
+        this.m[7] = -u.x * eye.x - u.y * eye.y - u.z * eye.z;
         // Row 3
-        this.m31 = -f.x;
-        this.m32 = -f.y;
-        this.m33 = -f.z;
-        this.m34 = f.x * eye.x + f.y * eye.y + f.z * eye.z;
+        this.m[8] = -f.x;
+        this.m[9] = -f.y;
+        this.m[10] = -f.z;
+        this.m[11] = f.x * eye.x + f.y * eye.y + f.z * eye.z;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -1098,14 +998,14 @@ public class Matrix
 
         if (viewportWidth < 0)
         {
-            String msg = Logging.getMessage("generic.WidthIsInvalid", viewportWidth);
+            String msg = Logging.getMessage("generic.ViewportWidthIsInvalid", viewportWidth);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
         if (viewportHeight < 0)
         {
-            String msg = Logging.getMessage("generic.HeightIsInvalid", viewportHeight);
+            String msg = Logging.getMessage("generic.ViewportHeightIsInvalid", viewportHeight);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -1163,7 +1063,7 @@ public class Matrix
             throw new IllegalArgumentException(msg);
         }
 
-        // Taken from "Mathematics for 3D Game Programming and Computer Graphics", page 130.
+        // Taken from "Mathematics for 3D Game Programming and Computer Graphics, Second Edition", chapter 4, page 130.
 
         if (left == right)
             right = left + 1;
@@ -1175,71 +1075,83 @@ public class Matrix
             far = near + 1;
 
         // Row 1
-        this.m11 = 2 * near / (right - left);
-        this.m12 = 0;
-        this.m13 = (right + left) / (right - left);
-        this.m14 = 0;
+        this.m[0] = 2 * near / (right - left);
+        this.m[1] = 0;
+        this.m[2] = (right + left) / (right - left);
+        this.m[3] = 0;
         // Row 2
-        this.m21 = 0;
-        this.m22 = 2 * near / (top - bottom);
-        this.m23 = (top + bottom) / (top - bottom);
-        this.m24 = 0;
+        this.m[4] = 0;
+        this.m[5] = 2 * near / (top - bottom);
+        this.m[6] = (top + bottom) / (top - bottom);
+        this.m[7] = 0;
         // Row 3
-        this.m31 = 0;
-        this.m32 = 0;
-        this.m33 = -(far + near) / (far - near);
-        this.m34 = -2 * near * far / (far - near);
+        this.m[8] = 0;
+        this.m[9] = 0;
+        this.m[10] = -(far + near) / (far - near);
+        this.m[11] = -2 * near * far / (far - near);
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = -1;
-        this.m44 = 0;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = -1;
+        this.m[15] = 0;
 
         return this;
     }
 
-    public Matrix setOrthographic2D(double viewportWidth, double viewportHeight)
+    public Matrix setOrthographic(double left, double right, double bottom, double top, double near, double far)
     {
-        if (viewportWidth < 0)
+        if (left > right)
         {
-            String msg = Logging.getMessage("generic.WidthIsInvalid", viewportWidth);
+            String msg = Logging.getMessage("generic.WidthIsInvalid", right - left);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (viewportHeight < 0)
+        if (bottom > top)
         {
-            String msg = Logging.getMessage("generic.HeightIsInvalid", viewportHeight);
+            String msg = Logging.getMessage("generic.HeightIsInvalid", top - bottom);
             Logging.error(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        if (viewportWidth == 0)
-            viewportWidth = 1;
+        if (near > far)
+        {
+            String msg = Logging.getMessage("generic.ClipDistancesAreInvalid", near, far);
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
-        if (viewportHeight == 0)
-            viewportHeight = 1;
+        // Taken from "Mathematics for 3D Game Programming and Computer Graphics, Second Edition", chapter 4, page 126.
+
+        if (left == right)
+            right = left + 1;
+
+        if (bottom == top)
+            top = bottom + 1;
+
+        if (near == far)
+            far = near + 1;
 
         // Row 1
-        this.m11 = 2 / viewportWidth;
-        this.m12 = 0;
-        this.m13 = 0;
-        this.m14 = 0;
+        this.m[0] = 2 / (right - left);
+        this.m[1] = 0;
+        this.m[2] = 0;
+        this.m[3] = -(right + left) / (right - left);
         // Row 2
-        this.m21 = 0;
-        this.m22 = 2 / viewportHeight;
-        this.m23 = 0;
-        this.m24 = 0;
+        this.m[4] = 0;
+        this.m[5] = 2 / (top - bottom);
+        this.m[6] = 0;
+        this.m[7] = -(top + bottom) / (top - bottom);
         // Row 3
-        this.m31 = 0;
-        this.m32 = 0;
-        this.m33 = -1;
-        this.m34 = 0;
+        this.m[8] = 0;
+        this.m[9] = 0;
+        this.m[10] = -2 / (far - near);
+        this.m[11] = -(far + near) / (far - near);
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 1;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 1;
 
         return this;
     }
@@ -1303,25 +1215,25 @@ public class Matrix
             return null;
 
         // Row 1
-        this.m11 = c11 / (double) count;
-        this.m12 = c12 / (double) count;
-        this.m13 = c13 / (double) count;
-        this.m14 = 0;
+        this.m[0] = c11 / (double) count;
+        this.m[1] = c12 / (double) count;
+        this.m[2] = c13 / (double) count;
+        this.m[3] = 0;
         // Row 2
-        this.m21 = c12 / (double) count;
-        this.m22 = c22 / (double) count;
-        this.m23 = c23 / (double) count;
-        this.m24 = 0;
+        this.m[4] = c12 / (double) count;
+        this.m[5] = c22 / (double) count;
+        this.m[6] = c23 / (double) count;
+        this.m[7] = 0;
         // Row 3
-        this.m31 = c13 / (double) count;
-        this.m32 = c23 / (double) count;
-        this.m33 = c33 / (double) count;
-        this.m34 = 0;
+        this.m[8] = c13 / (double) count;
+        this.m[9] = c23 / (double) count;
+        this.m[10] = c33 / (double) count;
+        this.m[11] = 0;
         // Row 4
-        this.m41 = 0;
-        this.m42 = 0;
-        this.m43 = 0;
-        this.m44 = 0;
+        this.m[12] = 0;
+        this.m[13] = 0;
+        this.m[14] = 0;
+        this.m[15] = 0;
 
         return this;
     }
@@ -1330,7 +1242,7 @@ public class Matrix
 
     public final Angle getCAMRotationX()    // assumes the order of rotations is YXZ, positive CW
     {
-        double xRadians = Math.asin(-this.m23);
+        double xRadians = Math.asin(-this.m[6]);
         if (Double.isNaN(xRadians))
             return null;
 
@@ -1339,7 +1251,7 @@ public class Matrix
 
     public final Angle getCAMRotationY()    // assumes the order of rotations is YXZ, positive CW
     {
-        double xRadians = Math.asin(-this.m23);
+        double xRadians = Math.asin(-this.m[6]);
         if (Double.isNaN(xRadians))
             return null;
 
@@ -1348,16 +1260,16 @@ public class Matrix
         {
             if (xRadians > -Math.PI / 2)
             {
-                yRadians = Math.atan2(this.m13, this.m33);
+                yRadians = Math.atan2(this.m[2], this.m[10]);
             }
             else
             {
-                yRadians = -Math.atan2(-this.m12, this.m11);
+                yRadians = -Math.atan2(-this.m[1], this.m[0]);
             }
         }
         else
         {
-            yRadians = Math.atan2(-this.m12, this.m11);
+            yRadians = Math.atan2(-this.m[1], this.m[0]);
         }
 
         if (Double.isNaN(yRadians))
@@ -1368,14 +1280,14 @@ public class Matrix
 
     public final Angle getCAMRotationZ()    //  assumes the order of rotations is YXZ, positive CW
     {
-        double xRadians = Math.asin(-this.m23);
+        double xRadians = Math.asin(-this.m[6]);
         if (Double.isNaN(xRadians))
             return null;
 
         double zRadians;
         if (xRadians < Math.PI / 2 && xRadians > -Math.PI / 2)
         {
-            zRadians = Math.atan2(this.m21, this.m22);
+            zRadians = Math.atan2(this.m[4], this.m[5]);
         }
         else
         {
@@ -1388,49 +1300,236 @@ public class Matrix
         return Angle.fromRadians(-zRadians);    // negate angle to make it CW
     }
 
+    /**
+     * Inverts a generic 4x4 matrix in place. This returns <code>null</code> if this matrix is not invertible.
+     *
+     * @return a reference to this Matrix, or <code>null</code> if this matrix is not invertible.
+     */
     public Matrix invert()
     {
-        return this.copy().setInverse(this);
+        return this.invert(this);
     }
 
+    /**
+     * Inverts a generic 4x4 matrix and stores the result in this matrix. This returns <code>null</code> if the
+     * specified matrix is not invertible.
+     *
+     * @param matrix the matrix who's inverse is computed.
+     *
+     * @return a reference to this Matrix, or <code>null</code> if the matrix is not invertible.
+     *
+     * @throws IllegalArgumentException if the matrix is <code>null</code>.
+     */
+    public Matrix invert(Matrix matrix)
+    {
+        if (matrix == null)
+        {
+            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Taken from "Mathematics for 3D Game Programming and Computer Graphics, Second Edition", chapter 2,
+        // algorithm 2.12, page 45.
+
+        // Step A. Construct an augmented matrix M composed of a the specified matrix and the identity matrix placed
+        // side-by-side to form a single 4x8 matrix. The final inverse is stored in the rightmost 4x4 portion of this
+        // matrix. Rather than creating a single data structure, we store each 4x4 portion in a separate 16-value array
+        // in row-major order. The first matrix is a local copy, and the second matrix is this matrix.
+        double[] copy = new double[16];
+        System.arraycopy(matrix.m, 0, copy, 0, 16);
+        this.setIdentity();
+
+        // Temporary 4-component buffer used to swap rows.
+        double[] tmpRow = new double[4];
+
+        // Step B and G. Perform steps C-F columns 0 to 4, where j indicates the current column. Note that we use a
+        // zero-based index instead of the 1-based count used in the original text. Additionally, note that value at
+        // row i column j Mij = copy[4 * i + j].
+        for (int j = 0; j < 4; j++)
+        {
+            // Step C. Find the row i such that Mij has the largest absolute value, where i >= j. We skip row j because
+            // there's no need to test the first value against itself.
+            int i = j;
+            double max = Math.abs(copy[4 * j + j]);
+            for (int k = j + 1; k < 4; k++)
+            {
+                double d = Math.abs(copy[4 * k + j]);
+                if (d > max)
+                {
+                    i = k;
+                    max = d;
+                }
+            }
+
+            // (Step C, continued). If the row i with the largest absolute value Mij is 0, then the matrix is not
+            // invertible. We return null to indicate that the matrix is not invertible.
+            if (max == 0)
+                return null;
+
+            // Step D. Swap rows i and j if they are not the same row. Since we store each part of the augmented
+            // matrix separately, we must swap rows in both copy and this matrix. Note that the values of row i start
+            // at index 4 * i.
+            if (i != j)
+            {
+                System.arraycopy(copy, 4 * i, tmpRow, 0, 4);
+                System.arraycopy(copy, 4 * j, copy, 4 * i, 4);
+                System.arraycopy(tmpRow, 0, copy, 4 * j, 4);
+
+                System.arraycopy(this.m, 4 * i, tmpRow, 0, 4);
+                System.arraycopy(this.m, 4 * j, this.m, 4 * i, 4);
+                System.arraycopy(tmpRow, 0, this.m, 4 * j, 4);
+            }
+
+            // Step E. Multiply row j by 1/Mjj. Since we store each part of the augmented matrix separately, we must
+            // multiply the row in both copy and this matrix. Note that the values of row j start at index 4 * j.
+            double mjj = 1.0 / copy[4 * j + j];
+            for (int k = 0; k < 4; k++)
+            {
+                copy[4 * j + k] *= mjj;
+                this.m[4 * j + k] *= mjj;
+            }
+
+            // Step F. Add -Mrj * Mjk to each entry Mrk in row r (except row j). Since we store each part of the
+            // augmented matrix separately, we must multiply the row in both copy and this matrix. Note that values of
+            // row r start at index 4 * r.
+            for (int r = 0; r < 4; r++)
+            {
+                if (r == j)
+                    continue;
+
+                double mrj = copy[4 * r + j];
+                for (int k = 0; k < 4; k++)
+                {
+                    copy[4 * r + k] -= mrj * copy[4 * j + k];
+                    this.m[4 * r + k] -= mrj * this.m[4 * j + k];
+                }
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Inverts this matrix and stores the result in this matrix. This is assumed to represent an orthonormal transform
+     * matrix. This matrix's upper-3x3 is transposed, then its fourth column is transformed by the transposed upper-3x3
+     * and negated.
+     *
+     * @return a reference to this Matrix.
+     */
     public Matrix invertTransformMatrix()
     {
-        // This is assumed to represent an orthonormal transform matirx. This matrix's upper-3x3 is transposed, then its
-        // fourth column is transformed by by inverted-upper-3x3 and negated.
-        return this.copy().setInverseTransformMatrix(this);
+        // Transform the translation vector of this matrix by the transpose of its upper 3x3 portion, and store the
+        // negative of this vector in this matrix's translation component. We must perform this step first, as it
+        // assumes that this matrix's upper 3x3 portion is in its original state.
+        double tx = -(this.m[0] * this.m[3]) - (this.m[4] * this.m[7]) - (this.m[8] * this.m[11]);
+        double ty = -(this.m[1] * this.m[3]) - (this.m[5] * this.m[7]) - (this.m[9] * this.m[11]);
+        double tz = -(this.m[2] * this.m[3]) - (this.m[6] * this.m[7]) - (this.m[10] * this.m[11]);
+        this.m[3] = tx;
+        this.m[7] = ty;
+        this.m[11] = tz;
+
+        // Compute the transpose of this matrix's upper 3x3 portion, and store the result in this matrix's upper 3x3
+        // portion.
+        // Swap m[1] and m[4].
+        double tmp = this.m[1];
+        this.m[1] = this.m[4];
+        this.m[4] = tmp;
+        // Swap m[2] and m[8].
+        tmp = this.m[2];
+        this.m[2] = this.m[8];
+        this.m[8] = tmp;
+        // Swap m[6] and m[9].
+        tmp = this.m[6];
+        this.m[6] = this.m[9];
+        this.m[9] = tmp;
+
+        return this;
+    }
+
+    /**
+     * Inverts the specified matrix and stores the result in this matrix. The specified matrix is assumed to represent
+     * an orthonormal transform matrix. This matrix's upper 3x3 is transposed, then its fourth column is transformed by
+     * the transposed upper 3x3 and negated.
+     * <p/>
+     * The result of this method is undefined if this matrix is passed in as the matrix to invert. In order to invert a
+     * transform matrix in place, call {@link #invertTransformMatrix()}.
+     *
+     * @param matrix the matrix who's inverse is computed. This matrix is assumed to represent an orthonormal transform
+     *               matrix.
+     *
+     * @return a reference to this Matrix.
+     *
+     * @throws IllegalArgumentException if the matrix is <code>null</code>.
+     */
+    public Matrix invertTransformMatrix(Matrix matrix)
+    {
+        if (matrix == null)
+        {
+            String msg = Logging.getMessage("nullValue.MatrixIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Compute the transpose of the specified matrix's upper 3x3 portion, and store the result in this matrix's
+        // upper 3x3 portion.
+        this.m[0] = matrix.m[0];
+        this.m[1] = matrix.m[4];
+        this.m[2] = matrix.m[8];
+        this.m[4] = matrix.m[1];
+        this.m[5] = matrix.m[5];
+        this.m[6] = matrix.m[9];
+        this.m[8] = matrix.m[2];
+        this.m[9] = matrix.m[6];
+        this.m[10] = matrix.m[10];
+
+        // Transform the translation vector of the specified matrix by the transpose of its upper 3x3 portion, and
+        // store the negative of this vector in this matrix's translation component.
+        this.m[3] = -(matrix.m[0] * matrix.m[3]) - (matrix.m[4] * matrix.m[7]) - (matrix.m[8] * matrix.m[11]);
+        this.m[7] = -(matrix.m[1] * matrix.m[3]) - (matrix.m[5] * matrix.m[7]) - (matrix.m[9] * matrix.m[11]);
+        this.m[11] = -(matrix.m[2] * matrix.m[3]) - (matrix.m[6] * matrix.m[7]) - (matrix.m[10] * matrix.m[11]);
+
+        // Copy the specified matrix's bottom row into this matrix's bottom row. Since we're assuming the matrix
+        // represents an orthonormal transform matrix, the bottom row should always be (0, 0, 0, 1).
+        this.m[12] = matrix.m[12];
+        this.m[13] = matrix.m[13];
+        this.m[14] = matrix.m[14];
+        this.m[15] = matrix.m[15];
+
+        return this;
     }
 
     public Matrix transpose()
     {
         // Swap m12 and m21.
-        double tmp = this.m12;
-        this.m12 = this.m21;
-        this.m21 = tmp;
+        double tmp = this.m[1];
+        this.m[1] = this.m[4];
+        this.m[4] = tmp;
 
         // Swap m13 and m31.
-        tmp = this.m13;
-        this.m13 = this.m31;
-        this.m31 = tmp;
+        tmp = this.m[2];
+        this.m[2] = this.m[8];
+        this.m[8] = tmp;
 
         // Swap m14 and m41.
-        tmp = this.m14;
-        this.m14 = this.m41;
-        this.m41 = tmp;
+        tmp = this.m[3];
+        this.m[3] = this.m[12];
+        this.m[12] = tmp;
 
         // Swap m23 and m32.
-        tmp = this.m23;
-        this.m23 = this.m32;
-        this.m32 = tmp;
+        tmp = this.m[6];
+        this.m[6] = this.m[9];
+        this.m[9] = tmp;
 
         // Swap m24 and m42.
-        tmp = this.m24;
-        this.m24 = this.m42;
-        this.m42 = tmp;
+        tmp = this.m[7];
+        this.m[7] = this.m[13];
+        this.m[13] = tmp;
 
         // Swap m34 and m43.
-        tmp = this.m34;
-        this.m34 = this.m43;
-        this.m43 = tmp;
+        tmp = this.m[11];
+        this.m[11] = this.m[14];
+        this.m[14] = tmp;
 
         return this;
     }
@@ -1445,25 +1544,25 @@ public class Matrix
         }
 
         // Row 1
-        this.m11 = matrix.m11;
-        this.m12 = matrix.m21;
-        this.m13 = matrix.m31;
-        this.m14 = matrix.m41;
+        this.m[0] = matrix.m[0];
+        this.m[1] = matrix.m[4];
+        this.m[2] = matrix.m[8];
+        this.m[3] = matrix.m[12];
         // Row 1
-        this.m21 = matrix.m12;
-        this.m22 = matrix.m22;
-        this.m23 = matrix.m32;
-        this.m24 = matrix.m42;
+        this.m[4] = matrix.m[1];
+        this.m[5] = matrix.m[5];
+        this.m[6] = matrix.m[9];
+        this.m[7] = matrix.m[13];
         // Row 1
-        this.m31 = matrix.m13;
-        this.m32 = matrix.m23;
-        this.m33 = matrix.m33;
-        this.m34 = matrix.m43;
+        this.m[8] = matrix.m[2];
+        this.m[9] = matrix.m[6];
+        this.m[10] = matrix.m[10];
+        this.m[11] = matrix.m[14];
         // Row 1
-        this.m41 = matrix.m14;
-        this.m42 = matrix.m24;
-        this.m43 = matrix.m34;
-        this.m44 = matrix.m44;
+        this.m[12] = matrix.m[3];
+        this.m[13] = matrix.m[7];
+        this.m[14] = matrix.m[11];
+        this.m[15] = matrix.m[15];
 
         return this;
     }
@@ -1503,44 +1602,44 @@ public class Matrix
         }
 
         // Row 1
-        double a = this.m11;
-        double b = this.m12;
-        double c = this.m13;
-        double d = this.m14;
-        this.m11 = (a * matrix.m11) + (b * matrix.m21) + (c * matrix.m31) + (d * matrix.m41);
-        this.m12 = (a * matrix.m12) + (b * matrix.m22) + (c * matrix.m32) + (d * matrix.m42);
-        this.m13 = (a * matrix.m13) + (b * matrix.m23) + (c * matrix.m33) + (d * matrix.m43);
-        this.m14 = (a * matrix.m14) + (b * matrix.m24) + (c * matrix.m34) + (d * matrix.m44);
+        double a = this.m[0];
+        double b = this.m[1];
+        double c = this.m[2];
+        double d = this.m[3];
+        this.m[0] = (a * matrix.m[0]) + (b * matrix.m[4]) + (c * matrix.m[8]) + (d * matrix.m[12]);
+        this.m[1] = (a * matrix.m[1]) + (b * matrix.m[5]) + (c * matrix.m[9]) + (d * matrix.m[13]);
+        this.m[2] = (a * matrix.m[2]) + (b * matrix.m[6]) + (c * matrix.m[10]) + (d * matrix.m[14]);
+        this.m[3] = (a * matrix.m[3]) + (b * matrix.m[7]) + (c * matrix.m[11]) + (d * matrix.m[15]);
 
         // Row 2
-        a = this.m21;
-        b = this.m22;
-        c = this.m23;
-        d = this.m24;
-        this.m21 = (a * matrix.m11) + (b * matrix.m21) + (c * matrix.m31) + (d * matrix.m41);
-        this.m22 = (a * matrix.m12) + (b * matrix.m22) + (c * matrix.m32) + (d * matrix.m42);
-        this.m23 = (a * matrix.m13) + (b * matrix.m23) + (c * matrix.m33) + (d * matrix.m43);
-        this.m24 = (a * matrix.m14) + (b * matrix.m24) + (c * matrix.m34) + (d * matrix.m44);
+        a = this.m[4];
+        b = this.m[5];
+        c = this.m[6];
+        d = this.m[7];
+        this.m[4] = (a * matrix.m[0]) + (b * matrix.m[4]) + (c * matrix.m[8]) + (d * matrix.m[12]);
+        this.m[5] = (a * matrix.m[1]) + (b * matrix.m[5]) + (c * matrix.m[9]) + (d * matrix.m[13]);
+        this.m[6] = (a * matrix.m[2]) + (b * matrix.m[6]) + (c * matrix.m[10]) + (d * matrix.m[14]);
+        this.m[7] = (a * matrix.m[3]) + (b * matrix.m[7]) + (c * matrix.m[11]) + (d * matrix.m[15]);
 
         // Row 3
-        a = this.m31;
-        b = this.m32;
-        c = this.m33;
-        d = this.m34;
-        this.m31 = (a * matrix.m11) + (b * matrix.m21) + (c * matrix.m31) + (d * matrix.m41);
-        this.m32 = (a * matrix.m12) + (b * matrix.m22) + (c * matrix.m32) + (d * matrix.m42);
-        this.m33 = (a * matrix.m13) + (b * matrix.m23) + (c * matrix.m33) + (d * matrix.m43);
-        this.m34 = (a * matrix.m14) + (b * matrix.m24) + (c * matrix.m34) + (d * matrix.m44);
+        a = this.m[8];
+        b = this.m[9];
+        c = this.m[10];
+        d = this.m[11];
+        this.m[8] = (a * matrix.m[0]) + (b * matrix.m[4]) + (c * matrix.m[8]) + (d * matrix.m[12]);
+        this.m[9] = (a * matrix.m[1]) + (b * matrix.m[5]) + (c * matrix.m[9]) + (d * matrix.m[13]);
+        this.m[10] = (a * matrix.m[2]) + (b * matrix.m[6]) + (c * matrix.m[10]) + (d * matrix.m[14]);
+        this.m[11] = (a * matrix.m[3]) + (b * matrix.m[7]) + (c * matrix.m[11]) + (d * matrix.m[15]);
 
         // Row 4
-        a = this.m41;
-        b = this.m42;
-        c = this.m43;
-        d = this.m44;
-        this.m41 = (a * matrix.m11) + (b * matrix.m21) + (c * matrix.m31) + (d * matrix.m41);
-        this.m42 = (a * matrix.m12) + (b * matrix.m22) + (c * matrix.m32) + (d * matrix.m42);
-        this.m43 = (a * matrix.m13) + (b * matrix.m23) + (c * matrix.m33) + (d * matrix.m43);
-        this.m44 = (a * matrix.m14) + (b * matrix.m24) + (c * matrix.m34) + (d * matrix.m44);
+        a = this.m[12];
+        b = this.m[13];
+        c = this.m[14];
+        d = this.m[15];
+        this.m[12] = (a * matrix.m[0]) + (b * matrix.m[4]) + (c * matrix.m[8]) + (d * matrix.m[12]);
+        this.m[13] = (a * matrix.m[1]) + (b * matrix.m[5]) + (c * matrix.m[9]) + (d * matrix.m[13]);
+        this.m[14] = (a * matrix.m[2]) + (b * matrix.m[6]) + (c * matrix.m[10]) + (d * matrix.m[14]);
+        this.m[15] = (a * matrix.m[3]) + (b * matrix.m[7]) + (c * matrix.m[11]) + (d * matrix.m[15]);
 
         return this;
     }
@@ -1552,44 +1651,44 @@ public class Matrix
         double m41, double m42, double m43, double m44)
     {
         // Row 1
-        double a = this.m11;
-        double b = this.m12;
-        double c = this.m13;
-        double d = this.m14;
-        this.m11 = (a * m11) + (b * m21) + (c * m31) + (d * m41);
-        this.m12 = (a * m12) + (b * m22) + (c * m32) + (d * m42);
-        this.m13 = (a * m13) + (b * m23) + (c * m33) + (d * m43);
-        this.m14 = (a * m14) + (b * m24) + (c * m34) + (d * m44);
+        double a = this.m[0];
+        double b = this.m[1];
+        double c = this.m[2];
+        double d = this.m[3];
+        this.m[0] = (a * m11) + (b * m21) + (c * m31) + (d * m41);
+        this.m[1] = (a * m12) + (b * m22) + (c * m32) + (d * m42);
+        this.m[2] = (a * m13) + (b * m23) + (c * m33) + (d * m43);
+        this.m[3] = (a * m14) + (b * m24) + (c * m34) + (d * m44);
 
         // Row 2
-        a = this.m21;
-        b = this.m22;
-        c = this.m23;
-        d = this.m24;
-        this.m21 = (a * m11) + (b * m21) + (c * m31) + (d * m41);
-        this.m22 = (a * m12) + (b * m22) + (c * m32) + (d * m42);
-        this.m23 = (a * m13) + (b * m23) + (c * m33) + (d * m43);
-        this.m24 = (a * m14) + (b * m24) + (c * m34) + (d * m44);
+        a = this.m[4];
+        b = this.m[5];
+        c = this.m[6];
+        d = this.m[7];
+        this.m[4] = (a * m11) + (b * m21) + (c * m31) + (d * m41);
+        this.m[5] = (a * m12) + (b * m22) + (c * m32) + (d * m42);
+        this.m[6] = (a * m13) + (b * m23) + (c * m33) + (d * m43);
+        this.m[7] = (a * m14) + (b * m24) + (c * m34) + (d * m44);
 
         // Row 3
-        a = this.m31;
-        b = this.m32;
-        c = this.m33;
-        d = this.m34;
-        this.m31 = (a * m11) + (b * m21) + (c * m31) + (d * m41);
-        this.m32 = (a * m12) + (b * m22) + (c * m32) + (d * m42);
-        this.m33 = (a * m13) + (b * m23) + (c * m33) + (d * m43);
-        this.m34 = (a * m14) + (b * m24) + (c * m34) + (d * m44);
+        a = this.m[8];
+        b = this.m[9];
+        c = this.m[10];
+        d = this.m[11];
+        this.m[8] = (a * m11) + (b * m21) + (c * m31) + (d * m41);
+        this.m[9] = (a * m12) + (b * m22) + (c * m32) + (d * m42);
+        this.m[10] = (a * m13) + (b * m23) + (c * m33) + (d * m43);
+        this.m[11] = (a * m14) + (b * m24) + (c * m34) + (d * m44);
 
         // Row 4
-        a = this.m41;
-        b = this.m42;
-        c = this.m43;
-        d = this.m44;
-        this.m41 = (a * m11) + (b * m21) + (c * m31) + (d * m41);
-        this.m42 = (a * m12) + (b * m22) + (c * m32) + (d * m42);
-        this.m43 = (a * m13) + (b * m23) + (c * m33) + (d * m43);
-        this.m44 = (a * m14) + (b * m24) + (c * m34) + (d * m44);
+        a = this.m[12];
+        b = this.m[13];
+        c = this.m[14];
+        d = this.m[15];
+        this.m[12] = (a * m11) + (b * m21) + (c * m31) + (d * m41);
+        this.m[13] = (a * m12) + (b * m22) + (c * m32) + (d * m42);
+        this.m[14] = (a * m13) + (b * m23) + (c * m33) + (d * m43);
+        this.m[15] = (a * m14) + (b * m24) + (c * m34) + (d * m44);
 
         return this;
     }
@@ -1611,95 +1710,29 @@ public class Matrix
         }
 
         // Row 1
-        this.m11 = (lhs.m11 * rhs.m11) + (lhs.m12 * rhs.m21) + (lhs.m13 * rhs.m31) + (lhs.m14 * rhs.m41);
-        this.m12 = (lhs.m11 * rhs.m12) + (lhs.m12 * rhs.m22) + (lhs.m13 * rhs.m32) + (lhs.m14 * rhs.m42);
-        this.m13 = (lhs.m11 * rhs.m13) + (lhs.m12 * rhs.m23) + (lhs.m13 * rhs.m33) + (lhs.m14 * rhs.m43);
-        this.m14 = (lhs.m11 * rhs.m14) + (lhs.m12 * rhs.m24) + (lhs.m13 * rhs.m34) + (lhs.m14 * rhs.m44);
+        this.m[0] = (lhs.m[0] * rhs.m[0]) + (lhs.m[1] * rhs.m[4]) + (lhs.m[2] * rhs.m[8]) + (lhs.m[3] * rhs.m[12]);
+        this.m[1] = (lhs.m[0] * rhs.m[1]) + (lhs.m[1] * rhs.m[5]) + (lhs.m[2] * rhs.m[9]) + (lhs.m[3] * rhs.m[13]);
+        this.m[2] = (lhs.m[0] * rhs.m[2]) + (lhs.m[1] * rhs.m[6]) + (lhs.m[2] * rhs.m[10]) + (lhs.m[3] * rhs.m[14]);
+        this.m[3] = (lhs.m[0] * rhs.m[3]) + (lhs.m[1] * rhs.m[7]) + (lhs.m[2] * rhs.m[11]) + (lhs.m[3] * rhs.m[15]);
         // Row 2
-        this.m21 = (lhs.m21 * rhs.m11) + (lhs.m22 * rhs.m21) + (lhs.m23 * rhs.m31) + (lhs.m24 * rhs.m41);
-        this.m22 = (lhs.m21 * rhs.m12) + (lhs.m22 * rhs.m22) + (lhs.m23 * rhs.m32) + (lhs.m24 * rhs.m42);
-        this.m23 = (lhs.m21 * rhs.m13) + (lhs.m22 * rhs.m23) + (lhs.m23 * rhs.m33) + (lhs.m24 * rhs.m43);
-        this.m24 = (lhs.m21 * rhs.m14) + (lhs.m22 * rhs.m24) + (lhs.m23 * rhs.m34) + (lhs.m24 * rhs.m44);
+        this.m[4] = (lhs.m[4] * rhs.m[0]) + (lhs.m[5] * rhs.m[4]) + (lhs.m[6] * rhs.m[8]) + (lhs.m[7] * rhs.m[12]);
+        this.m[5] = (lhs.m[4] * rhs.m[1]) + (lhs.m[5] * rhs.m[5]) + (lhs.m[6] * rhs.m[9]) + (lhs.m[7] * rhs.m[13]);
+        this.m[6] = (lhs.m[4] * rhs.m[2]) + (lhs.m[5] * rhs.m[6]) + (lhs.m[6] * rhs.m[10]) + (lhs.m[7] * rhs.m[14]);
+        this.m[7] = (lhs.m[4] * rhs.m[3]) + (lhs.m[5] * rhs.m[7]) + (lhs.m[6] * rhs.m[11]) + (lhs.m[7] * rhs.m[15]);
         // Row 3
-        this.m31 = (lhs.m31 * rhs.m11) + (lhs.m32 * rhs.m21) + (lhs.m33 * rhs.m31) + (lhs.m34 * rhs.m41);
-        this.m32 = (lhs.m31 * rhs.m12) + (lhs.m32 * rhs.m22) + (lhs.m33 * rhs.m32) + (lhs.m34 * rhs.m42);
-        this.m33 = (lhs.m31 * rhs.m13) + (lhs.m32 * rhs.m23) + (lhs.m33 * rhs.m33) + (lhs.m34 * rhs.m43);
-        this.m34 = (lhs.m31 * rhs.m14) + (lhs.m32 * rhs.m24) + (lhs.m33 * rhs.m34) + (lhs.m34 * rhs.m44);
+        this.m[8] = (lhs.m[8] * rhs.m[0]) + (lhs.m[9] * rhs.m[4]) + (lhs.m[10] * rhs.m[8]) + (lhs.m[11] * rhs.m[12]);
+        this.m[9] = (lhs.m[8] * rhs.m[1]) + (lhs.m[9] * rhs.m[5]) + (lhs.m[10] * rhs.m[9]) + (lhs.m[11] * rhs.m[13]);
+        this.m[10] = (lhs.m[8] * rhs.m[2]) + (lhs.m[9] * rhs.m[6]) + (lhs.m[10] * rhs.m[10]) + (lhs.m[11] * rhs.m[14]);
+        this.m[11] = (lhs.m[8] * rhs.m[3]) + (lhs.m[9] * rhs.m[7]) + (lhs.m[10] * rhs.m[11]) + (lhs.m[11] * rhs.m[15]);
         // Row 4
-        this.m41 = (lhs.m41 * rhs.m11) + (lhs.m42 * rhs.m21) + (lhs.m43 * rhs.m31) + (lhs.m44 * rhs.m41);
-        this.m42 = (lhs.m41 * rhs.m12) + (lhs.m42 * rhs.m22) + (lhs.m43 * rhs.m32) + (lhs.m44 * rhs.m42);
-        this.m43 = (lhs.m41 * rhs.m13) + (lhs.m42 * rhs.m23) + (lhs.m43 * rhs.m33) + (lhs.m44 * rhs.m43);
-        this.m44 = (lhs.m41 * rhs.m14) + (lhs.m42 * rhs.m24) + (lhs.m43 * rhs.m34) + (lhs.m44 * rhs.m44);
+        this.m[12] = (lhs.m[12] * rhs.m[0]) + (lhs.m[13] * rhs.m[4]) + (lhs.m[14] * rhs.m[8]) + (lhs.m[15] * rhs.m[12]);
+        this.m[13] = (lhs.m[12] * rhs.m[1]) + (lhs.m[13] * rhs.m[5]) + (lhs.m[14] * rhs.m[9]) + (lhs.m[15] * rhs.m[13]);
+        this.m[14] = (lhs.m[12] * rhs.m[2]) + (lhs.m[13] * rhs.m[6]) + (lhs.m[14] * rhs.m[10]) + (lhs.m[15]
+            * rhs.m[14]);
+        this.m[15] = (lhs.m[12] * rhs.m[3]) + (lhs.m[13] * rhs.m[7]) + (lhs.m[14] * rhs.m[11]) + (lhs.m[15]
+            * rhs.m[15]);
 
         return this;
-    }
-
-    // TODO: remove this
-    public final float[] toArray(float[] compArray, int offset, boolean rowMajor)
-    {
-        if (compArray == null)
-        {
-            String msg = Logging.getMessage("nullValue.ArrayIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if ((compArray.length - offset) < 16)         // 16 elements in a 4x4 matrix
-        {
-            String msg = Logging.getMessage("generic.ArrayInvalidLength", compArray.length);
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (rowMajor)
-        {
-            // Row 1
-            //noinspection PointlessArithmeticExpression
-            compArray[0 + offset] = (float) this.m11;
-            compArray[1 + offset] = (float) this.m12;
-            compArray[2 + offset] = (float) this.m13;
-            compArray[3 + offset] = (float) this.m14;
-            // Row 2
-            compArray[4 + offset] = (float) this.m21;
-            compArray[5 + offset] = (float) this.m22;
-            compArray[6 + offset] = (float) this.m23;
-            compArray[7 + offset] = (float) this.m24;
-            // Row 3
-            compArray[8 + offset] = (float) this.m31;
-            compArray[9 + offset] = (float) this.m32;
-            compArray[10 + offset] = (float) this.m33;
-            compArray[11 + offset] = (float) this.m34;
-            // Row 4
-            compArray[12 + offset] = (float) this.m41;
-            compArray[13 + offset] = (float) this.m42;
-            compArray[14 + offset] = (float) this.m43;
-            compArray[15 + offset] = (float) this.m44;
-        }
-        else
-        {
-            // Row 1
-            //noinspection PointlessArithmeticExpression
-            compArray[0 + offset] = (float) this.m11;
-            compArray[4 + offset] = (float) this.m12;
-            compArray[8 + offset] = (float) this.m13;
-            compArray[12 + offset] = (float) this.m14;
-            // Row 2
-            compArray[1 + offset] = (float) this.m21;
-            compArray[5 + offset] = (float) this.m22;
-            compArray[9 + offset] = (float) this.m23;
-            compArray[13 + offset] = (float) this.m24;
-            // Row 3
-            compArray[2 + offset] = (float) this.m31;
-            compArray[6 + offset] = (float) this.m32;
-            compArray[10 + offset] = (float) this.m33;
-            compArray[14 + offset] = (float) this.m34;
-            // Row 4
-            compArray[3 + offset] = (float) this.m41;
-            compArray[7 + offset] = (float) this.m42;
-            compArray[11 + offset] = (float) this.m43;
-            compArray[15 + offset] = (float) this.m44;
-        }
-
-        return compArray;
     }
 
     @Override
@@ -1711,78 +1744,18 @@ public class Matrix
             return false;
 
         Matrix that = (Matrix) o;
-        return (this.m11 == that.m11) && (this.m12 == that.m12) && (this.m13 == that.m13) && (this.m14 == that.m14)
-            && (this.m21 == that.m21) && (this.m22 == that.m22) && (this.m23 == that.m23) && (this.m24 == that.m24)
-            && (this.m31 == that.m31) && (this.m32 == that.m32) && (this.m33 == that.m33) && (this.m34 == that.m34)
-            && (this.m41 == that.m41) && (this.m42 == that.m42) && (this.m43 == that.m43) && (this.m44 == that.m44);
+        return Arrays.equals(this.m, that.m);
     }
 
     @Override
     public int hashCode()
     {
-        int result;
-        long tmp;
-        tmp = Double.doubleToLongBits(this.m11);
-        result = (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m12);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m13);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m14);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m21);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m22);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m23);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m24);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m31);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m32);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m33);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m34);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m41);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m42);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m43);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        tmp = Double.doubleToLongBits(this.m44);
-        result = 29 * result + (int) (tmp ^ (tmp >>> 32));
-        return result;
+        return Arrays.hashCode(this.m);
     }
 
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(");
-        // Row 1
-        sb.append(this.m11).append(", ");
-        sb.append(this.m12).append(", ");
-        sb.append(this.m13).append(", ");
-        sb.append(this.m14).append(", ");
-        // Row 2
-        sb.append(this.m21).append(", ");
-        sb.append(this.m22).append(", ");
-        sb.append(this.m23).append(", ");
-        sb.append(this.m24).append(", ");
-        // Row 3
-        sb.append(this.m31).append(", ");
-        sb.append(this.m32).append(", ");
-        sb.append(this.m33).append(", ");
-        sb.append(this.m34).append(", ");
-        // Row 4
-        sb.append(this.m41).append(", ");
-        sb.append(this.m42).append(", ");
-        sb.append(this.m43).append(", ");
-        sb.append(this.m44);
-        sb.append(")");
-        return sb.toString();
+        return Arrays.toString(this.m);
     }
 }

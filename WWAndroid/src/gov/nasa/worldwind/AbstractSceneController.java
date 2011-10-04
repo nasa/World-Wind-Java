@@ -32,7 +32,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected GpuResourceCache gpuResourceCache;
     protected boolean deepPick;
     protected Point pickPoint;
-    protected PickedObjectList pickedObjects;
+    protected PickedObjectList objectsAtPickPoint;
     protected Collection<PerformanceStatistic> perFrameStatistics = new ArrayList<PerformanceStatistic>();
 
     protected AbstractSceneController()
@@ -142,9 +142,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     }
 
     /** {@inheritDoc} */
-    public PickedObjectList getPickedObjectList()
+    public PickedObjectList getObjectsAtPickPoint()
     {
-        return this.pickedObjects;
+        return this.objectsAtPickPoint;
     }
 
     /** {@inheritDoc} */
@@ -339,9 +339,9 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         this.doPickTerrain(dc);
         this.doPickNonTerrain(dc);
         this.resolveTopPick(dc);
-        this.pickedObjects = new PickedObjectList(dc.getPickedObjects());
+        this.objectsAtPickPoint = new PickedObjectList(dc.getObjectsAtPickPoint());
 
-        if (this.isDeepPickEnabled() && this.pickedObjects.hasNonTerrainObjects())
+        if (this.isDeepPickEnabled() && this.objectsAtPickPoint.hasNonTerrainObjects())
             this.doDeepPick(dc);
     }
 
@@ -396,7 +396,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected void resolveTopPick(DrawContext dc)
     {
         // Make a last reading to find out which is the top (resultant) color.
-        PickedObjectList pickedObjects = dc.getPickedObjects();
+        PickedObjectList pickedObjects = dc.getObjectsAtPickPoint();
         if (pickedObjects != null && pickedObjects.size() == 1)
         {
             pickedObjects.get(0).setOnTop();
@@ -431,8 +431,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
             this.endDeepPicking(dc);
         }
 
-        PickedObjectList currentPickedObjects = this.pickedObjects;
-        this.pickedObjects = this.mergePickedObjectLists(currentPickedObjects, dc.getPickedObjects());
+        PickedObjectList currentPickedObjects = this.objectsAtPickPoint;
+        this.objectsAtPickPoint = this.mergePickedObjectLists(currentPickedObjects, dc.getObjectsAtPickPoint());
     }
 
     /**

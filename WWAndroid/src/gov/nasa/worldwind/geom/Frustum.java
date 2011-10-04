@@ -102,88 +102,6 @@ public class Frustum
         this.allPlanes = new Plane[] {this.left, this.right, this.bottom, this.top, this.near, this.far};
     }
 
-    /**
-     * Creates a frustum by extracting the six frustum planes from a projection matrix.
-     *
-     * @param matrix the projection matrix to extract the frustum planes from.
-     *
-     * @return a frustum defined by the extracted planes.
-     *
-     * @throws IllegalArgumentException if the projection matrix is null.
-     */
-    public static Frustum fromProjectionMatrix(Matrix matrix)
-    {
-        if (matrix == null)
-        {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Frustum frustum = new Frustum();
-        frustum.setProjection(matrix);
-        return frustum;
-    }
-
-    /**
-     * Creates a <code>Frustum</code> from a horizontal field-of-view, viewport aspect ratio and distance to near and
-     * far depth clipping planes. The near plane must be closer than the far plane, and both near and far values must be
-     * positive.
-     *
-     * @param horizontalFieldOfView horizontal field-of-view angle in the range (0, 180)
-     * @param viewportWidth         the width of the viewport in screen pixels
-     * @param viewportHeight        the height of the viewport in screen pixels
-     * @param near                  distance to the near depth clipping plane
-     * @param far                   distance to far depth clipping plane
-     *
-     * @return Frustum configured from the specified perspective parameters.
-     *
-     * @throws IllegalArgumentException if fov is not in the range (0, 180), if either near or far are negative, or near
-     *                                  is greater than or equal to far
-     */
-    public static Frustum fromPerspective(Angle horizontalFieldOfView, double viewportWidth, double viewportHeight,
-        double near, double far)
-    {
-        if (horizontalFieldOfView == null)
-        {
-            String msg = Logging.getMessage("nullValue.FieldOfViewIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (horizontalFieldOfView.degrees <= 0 || horizontalFieldOfView.degrees > 180)
-        {
-            String msg = Logging.getMessage("generic.FieldOfViewIsInvalid", horizontalFieldOfView);
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (viewportWidth < 0)
-        {
-            String msg = Logging.getMessage("generic.WidthIsInvalid", viewportWidth);
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (viewportHeight < 0)
-        {
-            String msg = Logging.getMessage("generic.HeightIsInvalid", viewportHeight);
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        if (near <= 0 || near > far)
-        {
-            String msg = Logging.getMessage("generic.ClipDistancesAreInvalid", near, far);
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Frustum frustum = new Frustum();
-        frustum.setPerspective(horizontalFieldOfView, viewportWidth, viewportHeight, near, far);
-        return frustum;
-    }
-
     public Frustum copy()
     {
         return new Frustum(
@@ -289,12 +207,12 @@ public class Frustum
         }
 
         // Extract the six clipping planes from the projection-matrix.
-        this.left.set(m.m41 + m.m11, m.m42 + m.m12, m.m43 + m.m13, m.m44 + m.m14).normalizeAndSet();
-        this.right.set(m.m41 - m.m11, m.m42 - m.m12, m.m43 - m.m13, m.m44 - m.m14).normalizeAndSet();
-        this.bottom.set(m.m41 + m.m21, m.m42 + m.m22, m.m43 + m.m23, m.m44 + m.m24).normalizeAndSet();
-        this.top.set(m.m41 - m.m21, m.m42 - m.m22, m.m43 - m.m23, m.m44 - m.m24).normalizeAndSet();
-        this.near.set(m.m41 + m.m31, m.m42 + m.m32, m.m43 + m.m33, m.m44 + m.m34).normalizeAndSet();
-        this.far.set(m.m41 - m.m31, m.m42 - m.m32, m.m43 - m.m33, m.m44 - m.m34).normalizeAndSet();
+        this.left.set(m.m[12] + m.m[0], m.m[13] + m.m[1], m.m[14] + m.m[2], m.m[15] + m.m[3]).normalizeAndSet();
+        this.right.set(m.m[12] - m.m[0], m.m[13] - m.m[1], m.m[14] - m.m[2], m.m[15] - m.m[3]).normalizeAndSet();
+        this.bottom.set(m.m[12] + m.m[4], m.m[13] + m.m[5], m.m[14] + m.m[6], m.m[15] + m.m[7]).normalizeAndSet();
+        this.top.set(m.m[12] - m.m[4], m.m[13] - m.m[5], m.m[14] - m.m[6], m.m[15] - m.m[7]).normalizeAndSet();
+        this.near.set(m.m[12] + m.m[8], m.m[13] + m.m[9], m.m[14] + m.m[10], m.m[15] + m.m[11]).normalizeAndSet();
+        this.far.set(m.m[12] - m.m[8], m.m[13] - m.m[9], m.m[14] - m.m[10], m.m[15] - m.m[11]).normalizeAndSet();
 
         return this;
     }
@@ -468,35 +386,7 @@ public class Frustum
         return extent.intersects(this);
     }
 
-    /**
-     * Returns a copy of this frustum transformed by a specified {@link Matrix}.
-     *
-     * @param matrix the Matrix to apply to this frustum.
-     *
-     * @return a new frustum transformed by the specified matrix.
-     *
-     * @throws IllegalArgumentException if the matrix is null.
-     */
     public Frustum transformBy(Matrix matrix)
-    {
-        if (matrix == null)
-        {
-            String msg = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Plane left = new Plane(this.left.getVector().transformBy4(matrix));
-        Plane right = new Plane(this.right.getVector().transformBy4(matrix));
-        Plane bottom = new Plane(this.bottom.getVector().transformBy4(matrix));
-        Plane top = new Plane(this.top.getVector().transformBy4(matrix));
-        Plane near = new Plane(this.near.getVector().transformBy4(matrix));
-        Plane far = new Plane(this.far.getVector().transformBy4(matrix));
-
-        return new Frustum(left, right, bottom, top, near, far);
-    }
-
-    public Frustum transformByAndSet(Matrix matrix)
     {
         if (matrix == null)
         {
@@ -515,7 +405,7 @@ public class Frustum
         return this;
     }
 
-    public Frustum transformByAndSet(Frustum frustum, Matrix matrix)
+    public Frustum transformBy(Frustum frustum, Matrix matrix)
     {
         if (frustum == null)
         {

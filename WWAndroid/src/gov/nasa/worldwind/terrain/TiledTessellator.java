@@ -14,6 +14,7 @@ import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.Matrix;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 import org.w3c.dom.Element;
@@ -279,10 +280,9 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
     {
         protected Vec4 referenceCenter = new Vec4();
         protected Matrix transformMatrix = Matrix.fromIdentity();
-        protected ByteBuffer buffer;
+        protected FloatBuffer points;
+        protected ByteBuffer colors;
         protected int vertexCount;
-        protected int vertexStride;
-        protected int colorOffset;
         protected int minColorCode;
         protected int maxColorCode;
 
@@ -316,7 +316,10 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
     // Properties used for picking.
     protected final Object pickProgramKey = new Object();
     protected boolean pickProgramCreationFailed;
-    protected Triangle pickedTriangle = new Triangle();
+    protected Line pickRay = new Line();
+    protected Vec4 pickedTriPoint = new Vec4();
+    protected Position pickedTriPos = new Position();
+    protected float[] pickedTriCoords = new float[9];
 
     public TiledTessellator(AVList params)
     {
@@ -816,7 +819,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         // values as near to zero as possible. This enables us to achieve the resolution we need on the Gpu.
         globe.computePointFromPosition(rowSector.minLatitude, rowSector.minLongitude, minElevation, this.tilePoints[0]);
         this.tilePoints[0].subtract3AndSet(geom.referenceCenter);
-        this.tilePoints[0].toArray3(this.tileCoords, index);
+        this.tilePoints[0].toArray3f(this.tileCoords, index);
         index += 3;
 
         // Add points for each location in the row. We subtract the tile's reference center from the Cartesian point to
@@ -825,7 +828,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         for (int i = 0; i < width; i++)
         {
             this.tilePoints[i].subtract3AndSet(geom.referenceCenter);
-            this.tilePoints[i].toArray3(this.tileCoords, index);
+            this.tilePoints[i].toArray3f(this.tileCoords, index);
             index += 3;
         }
 
@@ -835,7 +838,7 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         // values as near to zero as possible. This enables us to achieve the resolution we need on the Gpu.
         globe.computePointFromPosition(rowSector.minLatitude, rowSector.maxLongitude, minElevation, this.tilePoints[0]);
         this.tilePoints[0].subtract3AndSet(geom.referenceCenter);
-        this.tilePoints[0].toArray3(this.tileCoords, index);
+        this.tilePoints[0].toArray3f(this.tileCoords, index);
         index += 3;
 
         // Put the row's points into the tile's point buffer in bulk. Adding an entire row of points into the
@@ -1420,66 +1423,29 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
     protected void pick(DrawContext dc, TerrainTile tile, Point pickPoint)
     {
-        GpuProgram program = dc.getCurrentProgram();
-        if (program == null)
-        {
-            Logging.warning(Logging.getMessage("generic.NoCurrentProgram"));
-            return;
-        }
-
-        // Create a vertex buffer for the terrain tile that displays each triangle in a unique pick color. Colors are
-        // assigned sequentially for each triangle.
+        // Create vertex geometry for the terrain tile that displays each triangle in a unique pick color. Colors are
+        // assigned sequentially for each triangle. The method buildPickGeometry returns null if the terrain tile's
+        // geometry is not in the cache. This should never happen, but we check anyway.
         TerrainPickGeometry geom = this.buildPickGeometry(dc, tile);
-
-        // Enable and specify the data for the program's vertexPoint attribute, if one exists.
-        int pointLocation = program.getAttribLocation("vertexPoint");
-        if (pointLocation >= 0)
-        {
-            GLES20.glEnableVertexAttribArray(pointLocation);
-            GLES20.glVertexAttribPointer(pointLocation, 3, GLES20.GL_FLOAT, false, geom.vertexStride, geom.buffer);
-        }
-
-        // Enable and specify the data for the program's vertexPoint attribute, if one exists. We specify a 3-element
-        // tuple of unsigned bytes per which are normalized to the range [0, 1] and expanded to a 4-element tuple. The
-        // resultant tuple stored in the GPU is equivalent to (r/255, g/255, b/255, 255).
-        int colorLocation = program.getAttribLocation("vertexColor");
-        if (colorLocation >= 0)
-        {
-            GLES20.glEnableVertexAttribArray(colorLocation);
-            GLES20.glVertexAttribPointer(colorLocation, 3, GLES20.GL_UNSIGNED_BYTE, true, geom.vertexStride,
-                geom.buffer.position(geom.colorOffset));
-            geom.buffer.rewind();
-        }
-
-        // Multiply the View's modelview-projection matrix by the tile's transform matrix to correctly transform tile
-        // points into eye coordinates. This achieves the resolution we need on Gpus with limited floating point
-        // precision keeping both the modelview-projection matrix and the point coordinates the Gpu uses as small as
-        // possible when the eye point is near the tile.
-        this.mvpMatrix.multiplyAndSet(dc.getView().getModelviewProjectionMatrix(), geom.transformMatrix);
-        program.loadUniformMatrix("mvpMatrix", this.mvpMatrix);
-
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, geom.vertexCount);
-
-        if (pointLocation >= 0)
-            GLES20.glDisableVertexAttribArray(pointLocation);
-        if (colorLocation >= 0)
-            GLES20.glDisableVertexAttribArray(colorLocation);
-
-        // Determine which triangle was picked by reading the color at the pick point. Nothing is picked if the
-        // color code is outside the range of unique pick colors used for the tiles.
-        int colorCode = dc.getPickColor(pickPoint);
-        if (colorCode < geom.minColorCode && colorCode <= geom.maxColorCode)
+        if (geom == null)
             return;
 
-        // If the picked color corresponds to one of the tile's triangles, we compute the triangle index by subtracting
-        // the first color code from the picked color code. Since the color codes are sequential, this results in an
-        // index into the list of triangles we rendered.
+        // Draw the tile's triangles in unique pick colors. Each triangle is drawn in a 24-bit RGB color. The colors
+        // are treated as a 24-bit integer that increases sequentially with each triangle. The first triangle's color
+        // is geom.minColorCode, the last triangle's color is geom.maxColorCode, and the i'th triangle's color is
+        // geom.minColorCode + i.
+        this.drawTrianglesInPickColors(dc, geom);
 
-        // place the triangle's three vertices, attach them to the picked object.
-        this.getPickedTriangle(colorCode - geom.minColorCode, geom, this.pickedTriangle);
-
-        // TODO: Resolve the picked point within the triangle.
-        // TODO: See RectangularTessellator in the WWJ codebase for the type of PickedObject to return.
+        // Determine which triangle in the terrain tile was picked, and create a PickedObject containing the exact
+        // geographic position of the picked point. The PickedObject returned by resolvePick is null if
+        // drawTrianglesInPickColors draws incorrect colors, if a ray through the pick point cannot be computed because
+        // either of the modelview or projection matrices are non-singular, or if we cannot compute an intersection
+        // between the ray and the picked triangle. This should never happen if this method is called to resolve the
+        // picked triangle after determining this tile is picked, but we check anyway. We don't log a message to ensure
+        // this method can be reused in a context where the picked tile is not known before this method is called.
+        PickedObject po = this.resolvePick(dc, geom, pickPoint);
+        if (po != null)
+            dc.addPickedObject(po);
     }
 
     protected TerrainPickGeometry buildPickGeometry(DrawContext dc, TerrainTile tile)
@@ -1519,16 +1485,20 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
         int numLat = tileHeight + 3;
         int numLon = tileWidth + 3;
 
-        // Allocate a native byte buffer to hold the tile's pick points and colors. This buffer specifies the tile's
-        // vertices as a collection of discrete triangles with a unique color for each triangle. There are two triangles
-        // (6 points) for each tile cell, and the number of cells in each dimension is one less than the number of
-        // vertices. Re-use the existing buffer whenever possible. Create a new buffer if one has not been set or if the
-        // tile density has changed. We clear the buffer if it is non-null and has enough capacity to ensure that the
-        // previous limit does not interfere with what the new limit should be after filling the buffer.
+        // The pick geometry's points are a collection of independent triangles. There are two triangles (6 points) for
+        // each tile cell, and the number  of cells in each dimension is one less than the number of vertices.
         int numPoints = 6 * (numLat - 1) * (numLon - 1);
-        if (pickGeom.buffer == null || pickGeom.buffer.capacity() < 16 * numPoints)
-            pickGeom.buffer = ByteBuffer.allocateDirect(16 * numPoints).order(ByteOrder.nativeOrder());
-        pickGeom.buffer.clear();
+
+        // Allocate native byte buffers to hold the tile's pick points and pick colors. Re-use the existing buffers
+        // whenever possible. Create a new buffer if one has not been set or if the tile density has changed. We clear
+        // the buffer if it is non-null and has enough capacity to ensure that the previous limit does not interfere
+        // with  what the new limit should be after filling the buffer.
+        if (pickGeom.points == null || pickGeom.points.capacity() < 3 * numPoints)
+            pickGeom.points = ByteBuffer.allocateDirect(12 * numPoints).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        if (pickGeom.colors == null || pickGeom.colors.capacity() < 3 * numPoints)
+            pickGeom.colors = ByteBuffer.allocateDirect(3 * numPoints);
+        pickGeom.points.clear();
+        pickGeom.colors.clear();
 
         // Assign the minimum color code to the color used to draw the triangle.
         int color = dc.getUniquePickColor();
@@ -1536,6 +1506,8 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
 
         // Allocate a buffer to hold the XYZ coordinates of the four vertices defining each tile cell.
         float[] corners = new float[12];
+        // Allocate a buffer to hold the RGB values of the unique pick colors.
+        byte[] colors = new byte[9];
 
         for (int j = 0; j < numLat - 1; j++)
         {
@@ -1557,92 +1529,206 @@ public class TiledTessellator extends WWObjectImpl implements Tessellator, Tile.
                 // First triangle. The first triangle is composed of the upper-left, lower-left, and upper-right
                 // vertices from this cell. This triangulation is consistent with the triangle-strip defined by
                 // buildIndices.
+                pickGeom.points.put(corners, 6, 3); // Upper-left vertex.
+                pickGeom.points.put(corners, 0, 3); // Lower-left vertex.
+                pickGeom.points.put(corners, 9, 3); // Upper-right vertex.
+
                 if (i != 0 || j != 0) // The first triangle's color is allocated before this loop.
                     color = dc.getUniquePickColor();
-                int r = Color.red(color);
-                int g = Color.green(color);
-                int b = Color.blue(color);
-                // Upper-left vertex.
-                pickGeom.buffer.putFloat(corners[6]).putFloat(corners[7]).putFloat(corners[8]);
-                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
-                // Lower-left vertex.
-                pickGeom.buffer.putFloat(corners[0]).putFloat(corners[1]).putFloat(corners[2]);
-                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
-                // Upper-right vertex.
-                pickGeom.buffer.putFloat(corners[9]).putFloat(corners[10]).putFloat(corners[11]);
-                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+                colors[0] = colors[3] = colors[6] = (byte) Color.red(color); // Red value for all three vertices.
+                colors[1] = colors[4] = colors[7] = (byte) Color.green(color); // Green value for all three vertices.
+                colors[2] = colors[5] = colors[8] = (byte) Color.blue(color); // Blue value for all three vertices.
+                pickGeom.colors.put(colors); // Colors for all three vertices of the fist triangle.
 
                 // Second triangle. The second triangle is composed of the upper-right, lower-left, and lower-right
                 // vertices from this cell. This triangulation is consistent with the triangle-strip defined by
                 // buildIndices.
-                color = dc.getUniquePickColor();
-                r = Color.red(color);
-                g = Color.green(color);
-                b = Color.blue(color);
                 // Upper-right vertex.
-                pickGeom.buffer.putFloat(corners[9]).putFloat(corners[10]).putFloat(corners[11]);
-                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
-                // Lower-left vertex.
-                pickGeom.buffer.putFloat(corners[0]).putFloat(corners[1]).putFloat(corners[2]);
-                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
-                // Lower-right vertex.
-                pickGeom.buffer.putFloat(corners[3]).putFloat(corners[4]).putFloat(corners[5]);
-                pickGeom.buffer.put((byte) r).put((byte) g).put((byte) b).put((byte) 255);
+                pickGeom.points.put(corners, 9, 3); // Upper-right vertex.
+                pickGeom.points.put(corners, 0, 3); // Lower-left vertex.
+                pickGeom.points.put(corners, 3, 3); // Lower-right vertex.
+
+                color = dc.getUniquePickColor();
+                colors[0] = colors[3] = colors[6] = (byte) Color.red(color); // Red value for all three vertices.
+                colors[1] = colors[4] = colors[7] = (byte) Color.green(color); // Green value for all three vertices.
+                colors[2] = colors[5] = colors[8] = (byte) Color.blue(color); // Blue value for all three vertices.
+                pickGeom.colors.put(colors); // Colors for all three vertices of the fist triangle.
             }
         }
 
         // Restore the position of the tile point buffer.
         geom.points.rewind();
-        // Set the limit to the current position then set the position to zero. We flip the buffer because its capacity
-        // may be greater than the space needed, and the GL commands that ready this buffer rely on the limit to
-        // determine how many buffer elements to read.
-        pickGeom.buffer.flip();
-
-        // Assign the vertex count to the number of triangle vertices computed above. Assign the vertex stride to the
-        // number of bytes between consecutive vertices. Assign the color offset to the number of bytes between the
-        // buffer's beginning and the first color component. Assign the maximum color code to the color used to draw
-        // the last triangle.
-        pickGeom.vertexCount = numPoints;
-        pickGeom.vertexStride = 16;
-        pickGeom.colorOffset = 12;
-        pickGeom.maxColorCode = color;
 
         // Set the pick geometry's reference center and transform matrix to be equivalent to the terrain geometry's
         // properties of the same names. Since we're using the same local coordinates for pick geometry points, we need
         // to use the same reference center and transform matrix.
         pickGeom.referenceCenter.set(geom.referenceCenter);
         pickGeom.transformMatrix.set(geom.transformMatrix);
+        // Set the limit to the current position then set the position to zero. We flip the buffer because its capacity
+        // may be greater than the space needed, and the GL commands that ready this buffer rely on the limit to
+        // determine how many buffer elements to read.
+        pickGeom.points.flip();
+        pickGeom.colors.flip();
+        // Assign the vertex count to the number of triangle vertices computed above. Assign the maximum color code to
+        // the color used to draw the last triangle.
+        pickGeom.vertexCount = numPoints;
+        pickGeom.maxColorCode = color;
     }
 
-    protected void getPickedTriangle(int index, TerrainPickGeometry geom, Triangle result)
+    protected void drawTrianglesInPickColors(DrawContext dc, TerrainPickGeometry geom)
     {
-        // Set the triangle's three vertices a, b, c to the three vertices associated with the triangle at the specified
-        // index. The pick geometry's triangles are assumed to have a counter-clockwise ordering. We add the pick
-        // geometry's reference center to each vertex in order to transform it from local coordinates to model
-        // coordinates.
+        GpuProgram program = dc.getCurrentProgram();
+        if (program == null)
+        {
+            Logging.warning(Logging.getMessage("generic.NoCurrentProgram"));
+            return;
+        }
 
-        // Compute the position of the first vertex within the geometry buffer. We multiply the index by 3 to convert
-        // between triangle count and vertex count, then multiply by the vertex stride to get a byte offset within the
-        // buffer.
-        int offset = 3 * index * geom.vertexStride;
+        // Enable and specify the data for the program's vertexPoint attribute, if one exists.
+        int pointLocation = program.getAttribLocation("vertexPoint");
+        if (pointLocation >= 0)
+        {
+            GLES20.glEnableVertexAttribArray(pointLocation);
+            GLES20.glVertexAttribPointer(pointLocation, 3, GLES20.GL_FLOAT, false, 0, geom.points);
+        }
 
-        // First vertex.
-        geom.buffer.position(offset);
-        result.getA().set(geom.buffer.getFloat(), geom.buffer.getFloat(), geom.buffer.getFloat());
-        result.getA().add3AndSet(geom.referenceCenter);
+        // Enable and specify the data for the program's vertexPoint attribute, if one exists. We specify a 3-element
+        // tuple of unsigned bytes per which are normalized to the range [0, 1] and expanded to a 4-element tuple. The
+        // resultant tuple stored in the GPU is equivalent to (r/255, g/255, b/255, 255).
+        int colorLocation = program.getAttribLocation("vertexColor");
+        if (colorLocation >= 0)
+        {
+            GLES20.glEnableVertexAttribArray(colorLocation);
+            GLES20.glVertexAttribPointer(colorLocation, 3, GLES20.GL_UNSIGNED_BYTE, true, 0, geom.colors);
+        }
 
-        // Second vertex.
-        geom.buffer.position(offset + geom.vertexStride);
-        result.getB().set(geom.buffer.getFloat(), geom.buffer.getFloat(), geom.buffer.getFloat());
-        result.getB().add3AndSet(geom.referenceCenter);
+        // Multiply the View's modelview-projection matrix by the tile's transform matrix to correctly transform tile
+        // points into eye coordinates. This achieves the resolution we need on Gpus with limited floating point
+        // precision keeping both the modelview-projection matrix and the point coordinates the Gpu uses as small as
+        // possible when the eye point is near the tile.
+        this.mvpMatrix.multiplyAndSet(dc.getView().getModelviewProjectionMatrix(), geom.transformMatrix);
+        program.loadUniformMatrix("mvpMatrix", this.mvpMatrix);
 
-        // Second vertex.
-        geom.buffer.position(offset + 2 * geom.vertexStride);
-        result.getC().set(geom.buffer.getFloat(), geom.buffer.getFloat(), geom.buffer.getFloat());
-        result.getC().add3AndSet(geom.referenceCenter);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, geom.vertexCount);
 
-        //Restore the position of the pick geometry buffer.
-        geom.buffer.rewind();
+        if (pointLocation >= 0)
+            GLES20.glDisableVertexAttribArray(pointLocation);
+        if (colorLocation >= 0)
+            GLES20.glDisableVertexAttribArray(colorLocation);
+    }
+
+    protected PickedObject resolvePick(DrawContext dc, TerrainPickGeometry geom, Point pickPoint)
+    {
+        // Determine which triangle was picked by reading the color at the pick point. Nothing is picked if the
+        // color code is outside the range of unique pick colors used for the tiles.
+        int colorCode = dc.getPickColor(pickPoint);
+        if (colorCode < geom.minColorCode && colorCode <= geom.maxColorCode)
+            return null;
+
+        // Compute a ray that starts at the model coordinate eye point and passes through the pick point.
+        // View.computeRayFromScreenPoint returns false if the ray cannot be computed, which indicates that the View's
+        // modelview or projection matrices are singular. This should never happen, but we check anyway.
+        if (!dc.getView().computeRayFromScreenPoint(pickPoint, this.pickRay))
+            return null;
+
+        // Compute the picked point on the triangle. computePickedPoint returns false if the line does not intersect the
+        // triangle. This should never happen, but we check anyway. We compute the triangle index by subtracting the
+        // first color code from the picked color code. Since the color codes are sequential, this results in an index
+        // into the list of triangles we rendered.
+        if (!this.computePickedPoint(this.pickRay, geom, colorCode - geom.minColorCode, this.pickedTriPoint))
+            return null;
+
+        // Compute the position that corresponds to the model coordinate point.
+        dc.getGlobe().computePositionFromPoint(this.pickedTriPoint, this.pickedTriPos);
+        // Create a new position to use both the picked object and the object's position. Draw this position's elevation
+        // from the elevation model, not the geode.
+        Position pp = this.pickedTriPos.copy();
+        pp.elevation = dc.getGlobe().getElevation(pp) * dc.getVerticalExaggeration();
+
+        Vec4 test = new Vec4();
+        dc.getView().project(this.pickedTriPoint, test);
+
+        // Create a new PickedObject representing the picked terrain position.
+        return new PickedObject(pickPoint, colorCode, pp, pp, true);
+    }
+
+    protected boolean computePickedPoint(Line line, TerrainPickGeometry geom, int index, Vec4 result)
+    {
+        // Allocate a buffer to hold the XYZ coordinates of the three vertices defining the triangle.
+        float[] points = this.pickedTriCoords;
+        Vec4 center = geom.referenceCenter;
+
+        // Get the coordinates for the three vertices defining this triangle. We multiply the index by 9 to convert
+        // between triangle count and primitive count. The pick geometry's triangles are assumed to have a
+        // counter-clockwise ordering. We add the pick geometry's reference center to each vertex in order to transform
+        // it from local coordinates to model coordinates.
+        geom.points.position(9 * index);
+        geom.points.get(points, 0, 9);
+        geom.points.rewind();
+
+        return this.intersect(line,
+            points[0] + center.x, points[1] + center.y, points[2] + center.z,
+            points[3] + center.x, points[4] + center.y, points[5] + center.z,
+            points[6] + center.x, points[7] + center.y, points[8] + center.z,
+            result);
+    }
+
+    /**
+     * Determines the intersection of a specified line with a triangle specified by individual coordinates.
+     *
+     * @param line   the line to test.
+     * @param vax    the X coordinate of the first vertex of the triangle.
+     * @param vay    the Y coordinate of the first vertex of the triangle.
+     * @param vaz    the Z coordinate of the first vertex of the triangle.
+     * @param vbx    the X coordinate of the second vertex of the triangle.
+     * @param vby    the Y coordinate of the second vertex of the triangle.
+     * @param vbz    the Z coordinate of the second vertex of the triangle.
+     * @param vcx    the X coordinate of the third vertex of the triangle.
+     * @param vcy    the Y coordinate of the third vertex of the triangle.
+     * @param vcz    the Z coordinate of the third vertex of the triangle.
+     * @param result contains the point of intersection after this method returns, if the line intersects this
+     *               triangle.
+     *
+     * @return <code>true</code> if the line intersects this triangle, and <code>false</code> otherwise.
+     *
+     * @throws IllegalArgumentException if the line or the result is <code>null</code>.
+     */
+    protected boolean intersect(Line line, double vax, double vay, double vaz, double vbx, double vby, double vbz,
+        double vcx, double vcy, double vcz, Vec4 result)
+    {
+        final double EPSILON = (double) 0.00001f;
+
+        Vec4 origin = line.getOrigin();
+        Vec4 dir = line.getDirection();
+
+        // find vectors for two edges sharing Point a: vb - va and vc - va
+        double edge1x = vbx - vax;
+        double edge1y = vby - vay;
+        double edge1z = vbz - vaz;
+
+        double edge2x = vcx - vax;
+        double edge2y = vcy - vay;
+        double edge2z = vcz - vaz;
+
+        // Compute cross product of edge1 and edge2.
+        double nx = (edge1y * edge2z) - (edge1z * edge2y);
+        double ny = (edge1z * edge2x) - (edge1x * edge2z);
+        double nz = (edge1x * edge2y) - (edge1y * edge2x);
+
+        // Distance from vertA to ray origin: origin - va
+        double tvecx = origin.x - vax;
+        double tvecy = origin.y - vay;
+        double tvecz = origin.z - vaz;
+
+        // Compute dot product of N and ray direction.
+        double b = nx * dir.x + ny * dir.y + nz * dir.z;
+        if (b > -EPSILON && b < EPSILON) // ray is parallel to triangle plane
+            return false;
+
+        double t = -(nx * tvecx + ny * tvecy + nz * tvecz) / b;
+        line.getPointAt(t, result);
+
+        return true;
     }
 
     protected GpuProgram getGpuPickProgram(GpuResourceCache cache)

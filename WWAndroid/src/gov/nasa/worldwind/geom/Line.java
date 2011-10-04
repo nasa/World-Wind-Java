@@ -11,10 +11,146 @@ import gov.nasa.worldwind.util.Logging;
  * @author Tom Gaskins
  * @version $Id$
  */
-public final class Line// Instances are immutable
+public class Line
 {
-    private final Vec4 origin;
-    private final Vec4 direction;
+    protected final Vec4 origin;
+    protected final Vec4 direction;
+
+    /** Creates a new line with its origin set to (0, 0, 0) and its direction set to (1, 0, 0). */
+    public Line()
+    {
+        this.origin = new Vec4(0, 0, 0);
+        this.direction = new Vec4(1, 0, 0);
+    }
+
+    /**
+     * Creates a new line with the specified origin and direction vectors. The direction vector must not have zero
+     * length.
+     *
+     * @param origin    the line's origin.
+     * @param direction the line's direction.
+     *
+     * @throws IllegalArgumentException if either the origin or direction are <code>null</code>, or if the direction has
+     *                                  zero length.
+     */
+    public Line(Vec4 origin, Vec4 direction)
+    {
+        if (origin == null)
+        {
+            String msg = Logging.getMessage("nullValue.OriginIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (direction == null)
+        {
+            String msg = Logging.getMessage("nullValue.DirectionIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (direction.getLength3() <= 0)
+        {
+            String msg = Logging.getMessage("generic.DirectionIsZero");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.origin = origin;
+        this.direction = direction;
+    }
+
+    /**
+     * Creates a new line with the specified origin and direction coordinates. The direction coordinates must not have
+     * zero length.
+     *
+     * @param ox the line origin's x-coordinate.
+     * @param oy the line origin's y-coordinate.
+     * @param oz the line origin's z-coordinate.
+     * @param dx the line direction's x-coordinate.
+     * @param dy the line direction's y-coordinate.
+     * @param dz the line direction's z-coordinate.
+     *
+     * @throws IllegalArgumentException if the direction coordinates have zero length.
+     */
+    public Line(double ox, double oy, double oz, double dx, double dy, double dz)
+    {
+        double len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (len <= 0)
+        {
+            String msg = Logging.getMessage("generic.DirectionIsZero");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.origin = new Vec4(ox, oy, oz);
+        this.direction = new Vec4(dx, dy, dz);
+    }
+
+    public Line copy()
+    {
+        return new Line(this.origin.copy(), this.direction.copy());
+    }
+
+    public Line set(Line line)
+    {
+        if (line == null)
+        {
+            String msg = Logging.getMessage("nullValue.LineIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.origin.set(line.origin);
+        this.direction.set(line.direction);
+
+        return this;
+    }
+
+    public Line set(Vec4 origin, Vec4 direction)
+    {
+        if (origin == null)
+        {
+            String msg = Logging.getMessage("nullValue.OriginIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (direction == null)
+        {
+            String msg = Logging.getMessage("nullValue.DirectionIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (direction.getLength3() <= 0)
+        {
+            String msg = Logging.getMessage("generic.DirectionIsZero");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.origin.set(origin);
+        this.direction.set(direction);
+
+        return this;
+    }
+
+    public Line set(double ox, double oy, double oz, double dx, double dy, double dz)
+    {
+        double len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (len <= 0)
+        {
+            String msg = Logging.getMessage("generic.DirectionIsZero");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.origin.set(ox, oy, oz);
+        this.direction.set(dx, dy, dz);
+
+        return this;
+    }
 
     /**
      * Create the line containing a line segement between two points.
@@ -26,56 +162,85 @@ public final class Line// Instances are immutable
      *
      * @throws IllegalArgumentException if either point is null or they are coincident.
      */
-    public static Line fromSegment(Vec4 pa, Vec4 pb)
+    public Line setSegment(Vec4 pa, Vec4 pb)
     {
-        return new Line(pa, new Vec4(pb.x - pa.x, pb.y - pa.y, pb.z - pa.z, 0));
+        return this.set(pa.x, pa.y, pa.z, pb.x - pa.x, pb.y - pa.y, pb.z - pa.z);
+    }
+
+    public Vec4 getOrigin()
+    {
+        return this.origin;
+    }
+
+    public Vec4 getDirection()
+    {
+        return this.direction;
+    }
+
+    public void getPointAt(double t, Vec4 result)
+    {
+        if (result == null)
+        {
+            String msg = Logging.getMessage("nullValue.ResultIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        result.setPointOnLine3(this.origin, t, this.direction);
+    }
+
+    public double selfDot()
+    {
+        return this.origin.dot3(this.direction);
     }
 
     /**
-     * @param origin    the origin of the line being constructed
-     * @param direction the direction of the line being constructed
+     * Compute the shortest distance between this line and a specified point.
      *
-     * @throws IllegalArgumentException if <code>origin</code> is null, or <code>direction</code> is null or has zero
-     *                                  length
+     * @param point the point who's distance id computed.
+     *
+     * @return the distance between this line and the specified point.
+     *
+     * @throws IllegalArgumentException if the point is <code>null</code>.
      */
-    public Line(Vec4 origin, Vec4 direction)
+    public double distanceTo(Vec4 point)
     {
-        String message = null;
-        if (origin == null)
-            message = "nullValue.OriginIsNull";
-        else if (direction == null)
-            message = "nullValue.DirectionIsNull";
-        else if (direction.getLength3() <= 0)
-            message = "Geom.Line.DirectionIsZeroVector";
-        if (message != null)
+        if (point == null)
         {
-            message = Logging.getMessage(message);
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
+            String msg = Logging.getMessage("nullValue.PointIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
         }
 
-        this.origin = origin;
-        this.direction = direction;
+        Vec4 nearestPoint = new Vec4();
+        this.nearestPointTo(point, nearestPoint);
+
+        return nearestPoint.distanceTo3(point);
     }
 
-    public final Vec4 getDirection()
+    public void nearestPointTo(Vec4 point, Vec4 result)
     {
-        return direction;
-    }
+        if (point == null)
+        {
+            String msg = Logging.getMessage("nullValue.PointIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
-    public final Vec4 getOrigin()
-    {
-        return origin;
-    }
+        if (result == null)
+        {
+            String msg = Logging.getMessage("nullValue.ResultIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
-    public final Vec4 getPointAt(double t)
-    {
-        return Vec4.fromLine3(this.origin, t, this.direction);
-    }
+        result.subtract3AndSet(point, this.origin);
 
-    public final double selfDot()
-    {
-        return this.origin.dot3(this.direction);
+        double c = result.dot3(this.direction) / this.direction.dot3(this.direction);
+
+        result.x = this.origin.x + this.direction.x * c;
+        result.y = this.origin.y + this.direction.y * c;
+        result.z = this.origin.z + this.direction.z * c;
     }
 
     /**
@@ -88,153 +253,28 @@ public final class Line// Instances are immutable
      * @return true if these two objects are equal, false otherwise
      */
     @Override
-    public final boolean equals(Object o)
+    public boolean equals(Object o)
     {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (o == null || this.getClass() != o.getClass())
             return false;
 
-        final gov.nasa.worldwind.geom.Line line = (gov.nasa.worldwind.geom.Line) o;
-
-        if (!direction.equals(line.direction))
-            return false;
-        //noinspection RedundantIfStatement
-        if (!line.origin.equals(origin))
-            return false;
-
-        return true;
+        Line that = (Line) o;
+        return this.direction.equals(that.direction) && this.origin.equals(that.origin);
     }
 
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         int result;
-        result = origin.hashCode();
-        result = 29 * result + direction.hashCode();
+        result = this.origin.hashCode();
+        result = 29 * result + this.direction.hashCode();
         return result;
     }
 
     public String toString()
     {
         return "Origin: " + this.origin + ", Direction: " + this.direction;
-    }
-//
-//    public final double distanceToOld(Vec4 p)
-//    {
-//        if (p == null)
-//        {
-//            String message = Logging.getMessage("nullValue.PointIsNull");
-//            Logging.logger().severe(message);
-//            throw new IllegalArgumentException(message);
-//        }
-//
-//        Vec4 origin = this.origin;
-//        Vec4 sideB = origin.subtract3(p); // really a vector
-//
-//        double distanceToOrigin = sideB.dot3(this.direction);
-//        double divisor = distanceToOrigin / this.direction.getLengthSquared3();
-//
-//        Vec4 sideA = this.direction.multiply3(divisor);
-//
-//        double aSquared = sideA.getLengthSquared3();
-//        double bSquared = sideB.getLengthSquared3();
-//
-//        return Math.sqrt(bSquared - aSquared);
-//    }
-
-    public final Vec4 nearestPointTo(Vec4 p)
-    {
-        Vec4 w = p.subtract3(this.origin);
-
-        double c1 = w.dot3(this.direction);
-        double c2 = this.direction.dot3(this.direction);
-
-        return this.origin.add3(this.direction.multiply3(c1 / c2));
-    }
-
-    /**
-     * Calculate the shortests distance between this line and a specified <code>Vec4</code>. This method returns a
-     * positive distance.
-     *
-     * @param p the <code>Vec4</code> whose distance from this <code>Line</code> will be calculated
-     *
-     * @return the distance between this <code>Line</code> and the specified <code>Vec4</code>
-     *
-     * @throws IllegalArgumentException if <code>p</code> is null
-     */
-    public final double distanceTo(Vec4 p)
-    {
-        return p.distanceTo3(this.nearestPointTo(p));
-    }
-
-    /**
-     * Finds the closest point to a third point of a segment defined by two points.
-     *
-     * @param p0 The first endpoint of the segment.
-     * @param p1 The second endpoint of the segment.
-     * @param p  The point outside the segment whose closest point on the segment is desired.
-     *
-     * @return The closest point on (p0, p1) to p. Note that this will be p0 or p1 themselves whenever the closest
-     *         point on the <em>line</em> defined by p0 and p1 is outside the segment (i.e., the results are bounded by
-     *         the segment endpoints).
-     */
-    public static Vec4 nearestPointOnSegment(Vec4 p0, Vec4 p1, Vec4 p)
-    {
-        Vec4 v = p1.subtract3(p0);
-        Vec4 w = p.subtract3(p0);
-
-        double c1 = w.dot3(v);
-        double c2 = v.dot3(v);
-
-        if (c1 <= 0)
-            return p0;
-        if (c2 <= c1)
-            return p1;
-
-        return p0.add3(v.multiply3(c1 / c2));
-    }
-
-    public static double distanceToSegment(Vec4 p0, Vec4 p1, Vec4 p)
-    {
-        Vec4 pb = nearestPointOnSegment(p0, p1, p);
-
-        return p.distanceTo3(pb);
-    }
-
-    /**
-     * Determine if a point is behind the <code>Line</code>'s origin.
-     *
-     * @param point The point to test.
-     *
-     * @return true if <code>point</code> is behind this <code>Line</code>'s origin, false otherwise.
-     */
-    public boolean isPointBehindLineOrigin(Vec4 point)
-    {
-        double dot = point.subtract3(this.getOrigin()).dot3(this.getDirection());
-        return dot < 0.0;
-    }
-
-    public Vec4 nearestIntersectionPoint(Intersection[] intersections)
-    {
-        Vec4 intersectionPoint = null;
-
-        // Find the nearest intersection that's in front of the ray origin.
-        double nearestDistance = Double.MAX_VALUE;
-        for (Intersection intersection : intersections)
-        {
-            // Ignore any intersections behind the line origin.
-            if (!this.isPointBehindLineOrigin(intersection.getIntersectionPoint()))
-            {
-                double d = intersection.getIntersectionPoint().distanceTo3(this.getOrigin());
-                if (d < nearestDistance)
-                {
-                    intersectionPoint = intersection.getIntersectionPoint();
-                    nearestDistance = d;
-                }
-            }
-        }
-
-        return intersectionPoint;
     }
 }

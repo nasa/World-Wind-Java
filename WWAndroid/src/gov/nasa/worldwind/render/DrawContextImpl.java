@@ -45,7 +45,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     protected int uniquePickNumber;
     protected ByteBuffer pickColor = ByteBuffer.allocateDirect(4);
     protected Point pickPoint;
-    protected PickedObjectList pickedObjects = new PickedObjectList();
+    protected PickedObjectList objectsAtPickPoint = new PickedObjectList();
     protected Collection<PerformanceStatistic> perFrameStatistics;
 
     public DrawContextImpl()
@@ -84,7 +84,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         this.deepPickingMode = false;
         this.uniquePickNumber = 0;
         this.pickPoint = null;
-        this.pickedObjects.clear();
+        this.objectsAtPickPoint.clear();
         this.perFrameStatistics = null;
     }
 
@@ -293,7 +293,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         // Read the RGBA color at the specified point as a 4-component tuple of unsigned bytes. OpenGL ES does not
         // support reading only the RGB values, so we read the RGBA value and ignore the alpha component. We convert the
         // y coordinate from Android UI coordinates to GL coordinates.
-        int yInGLCoords = this.viewportHeight - point.y - 1;
+        int yInGLCoords = this.viewportHeight - point.y;
         GLES20.glReadPixels(point.x, yInGLCoords, 1, 1, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, this.pickColor);
 
         // GL places the value RGBA in the first 4 bytes of the buffer, in that order. We ignore the alpha component and
@@ -316,9 +316,9 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     }
 
     /** {@inheritDoc} */
-    public PickedObjectList getPickedObjects()
+    public PickedObjectList getObjectsAtPickPoint()
     {
-        return this.pickedObjects;
+        return this.objectsAtPickPoint;
     }
 
     /** {@inheritDoc} */
@@ -331,7 +331,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
             throw new IllegalArgumentException(msg);
         }
 
-        this.pickedObjects.add(pickedObject);
+        this.objectsAtPickPoint.add(pickedObject);
     }
 
     /** {@inheritDoc} */

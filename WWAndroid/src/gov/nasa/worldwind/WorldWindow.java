@@ -7,6 +7,8 @@ package gov.nasa.worldwind;
 
 import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.pick.PickedObjectList;
 
 /**
  * @author dcollins
@@ -104,6 +106,26 @@ public interface WorldWindow extends WWObject
      * @throws IllegalArgumentException if the listener is <code>null</code>.
      */
     void removeRenderingListener(RenderingListener listener);
+
+    /**
+     * Returns the current latitude, longitude and altitude of the current cursor position, or <code>null</code> if the
+     * cursor is not on the globe.
+     *
+     * @return The current position of the cursor, or <code>null</code> if the cursor is not positioned on the globe.
+     */
+    Position getCurrentPosition();
+
+    /**
+     * Returns the World Wind objects at the current cursor position. The list of objects under the cursor is determined
+     * each time this world window is repainted. This method returns the list of objects determined when the most recent
+     * repaint was performed.
+     * <p/>
+     * This returns an empty list if no objects are under the cursor, and <code>null</code> if this world window does
+     * has no scene controller.
+     *
+     * @return The list of objects at the cursor position.
+     */
+    PickedObjectList getObjectsAtCurrentPosition();
 
     /**
      * Causes a repaint event to be enqued with the window system for this world window. The repaint will occur at the

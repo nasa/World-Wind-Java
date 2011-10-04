@@ -5,15 +5,11 @@
  */
 package gov.nasa.worldwind;
 
-import android.graphics.Rect;
-import android.opengl.*;
+import android.graphics.Point;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.geom.Matrix;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.Logging;
-
-import javax.microedition.khronos.opengles.GL10;
+import gov.nasa.worldwind.util.*;
 
 /**
  * @author dcollins
@@ -26,32 +22,29 @@ public class BasicView extends WWObjectImpl implements View
     //          Does this conform to expectations (KML? positive CW? range?)
     // TODO: add setLookFromLookAt(globe, eyePos, lookAtPos) method;
 
+    // TODO: make configurable
+    protected static final double MINIMUM_NEAR_DISTANCE = 2;
+    protected static final double MINIMUM_FAR_DISTANCE = 100;
+
     // View representation
     protected Matrix modelview = Matrix.fromIdentity();
-    protected Matrix projection = Matrix.fromIdentity();
-    protected Matrix modelviewProjection = Matrix.fromIdentity();
     protected Matrix modelviewInv = Matrix.fromIdentity();
     protected Matrix modelviewTranspose = Matrix.fromIdentity();
+    protected Matrix projection = Matrix.fromIdentity();
+    protected Matrix modelviewProjection = Matrix.fromIdentity();
+    protected Rect viewport = new Rect();
 
+    protected Frustum frustum = new Frustum();
+    protected Frustum frustumInModelCoords = new Frustum();
     /** The field of view in degrees. */
     protected Angle fieldOfView = Angle.fromDegrees(45);
     protected double nearClipDistance = MINIMUM_NEAR_DISTANCE;
     protected double farClipDistance = MINIMUM_FAR_DISTANCE;
-    protected Rect viewport = new Rect();
-    protected Frustum frustum = new Frustum();
-    protected Frustum frustumInModelCoords = new Frustum();
-
-    protected DrawContext dc;
-    protected Globe globe;
 
     protected Vec4 unitX = new Vec4(1, 0, 0);
     protected Vec4 unitY = new Vec4(0, 1, 0);
     protected Vec4 unitZ = new Vec4(0, 0, 1);
     protected Vec4 unitW = new Vec4(0, 0, 0);
-
-    // TODO: make configurable
-    protected static final double MINIMUM_NEAR_DISTANCE = 2;
-    protected static final double MINIMUM_FAR_DISTANCE = 100;
 
     public BasicView()
     {
@@ -80,18 +73,6 @@ public class BasicView extends WWObjectImpl implements View
     public Rect getViewport()
     {
         return this.viewport;
-    }
-
-    /** {@inheritDoc} */
-    public double getNearClipDistance()
-    {
-        return this.nearClipDistance;
-    }
-
-    /** {@inheritDoc} */
-    public double getFarClipDistance()
-    {
-        return this.farClipDistance;
     }
 
     /** {@inheritDoc} */
@@ -126,6 +107,18 @@ public class BasicView extends WWObjectImpl implements View
     }
 
     /** {@inheritDoc} */
+    public double getNearClipDistance()
+    {
+        return this.nearClipDistance;
+    }
+
+    /** {@inheritDoc} */
+    public double getFarClipDistance()
+    {
+        return this.farClipDistance;
+    }
+
+    /** {@inheritDoc} */
     public Vec4 getEyePoint()
     {
         return new Vec4().transformBy4(this.modelviewInv);
@@ -142,6 +135,124 @@ public class BasicView extends WWObjectImpl implements View
         }
 
         return computeEyePositionFromModelview(globe);
+    }
+
+    /** {@inheritDoc} */
+    public boolean project(Vec4 modelPoint, Vec4 result)
+    {
+        if (modelPoint == null)
+        {
+            String msg = Logging.getMessage("nullValue.ModelPointIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (result == null)
+        {
+            String msg = Logging.getMessage("nullValue.ResultIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return WWMath.project(modelPoint.x, modelPoint.y, modelPoint.z, this.modelviewProjection, this.viewport,
+            result);
+    }
+
+    /** {@inheritDoc} */
+    public boolean unProject(Vec4 screenPoint, Vec4 result)
+    {
+        if (screenPoint == null)
+        {
+            String msg = Logging.getMessage("nullValue.ScreenPointIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (result == null)
+        {
+            String msg = Logging.getMessage("nullValue.ResultIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        return WWMath.unProject(screenPoint.z, screenPoint.y, screenPoint.z, this.modelviewProjection, this.viewport,
+            result);
+    }
+
+    /** {@inheritDoc} */
+    public boolean computeRayFromScreenPoint(Point point, Line result)
+    {
+        if (result == null)
+        {
+            String msg = Logging.getMessage("nullValue.ResultIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        double yInGLCoords = this.viewport.y + (this.viewport.height - point.y);
+        return WWMath.computeRayFromScreenPoint(point.x, yInGLCoords, this.modelview, this.projection, this.viewport,
+            result);
+    }
+
+    /** {@inheritDoc} */
+    public boolean computePositionFromScreenPoint(Point point, Globe globe, Position result)
+    {
+        if (globe == null)
+        {
+            String msg = Logging.getMessage("nullValue.GlobeIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (result == null)
+        {
+            String msg = Logging.getMessage("nullValue.ResultIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Line line = new Line();
+
+        //noinspection SimplifiableIfStatement
+        if (!this.computeRayFromScreenPoint(point, line))
+            return false;
+
+        return globe.getIntersectionPosition(line, result);
+    }
+
+    /** {@inheritDoc} */
+    public void apply(DrawContext dc)
+    {
+        if (dc == null)
+        {
+            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (dc.getGlobe() == null)
+        {
+            String msg = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
+            Logging.error(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Compute the current viewport rectangle.
+        this.viewport.set(0, 0, dc.getViewportWidth(), dc.getViewportHeight());
+
+        // Compute the current clip plane distances. This must be done before computing the projection matrix or the
+        // frustum. Both of these properties depend on the near and far clip distances.
+        this.nearClipDistance = this.computeNearClipDistance(dc);
+        this.farClipDistance = this.computeFarClipDistance(dc);
+
+        // Compute the current projection matrix.
+        this.projection.setPerspective(this.fieldOfView, dc.getViewportWidth(), dc.getViewportHeight(),
+            this.nearClipDistance, this.farClipDistance);
+        this.modelviewProjection.multiplyAndSet(this.projection, this.modelview);
+
+        // Compute the current frustum.
+        this.frustum.setPerspective(this.fieldOfView, dc.getViewportWidth(), dc.getViewportHeight(),
+            this.nearClipDistance, this.farClipDistance);
+        this.frustumInModelCoords.transformBy(this.frustum, this.modelviewTranspose);
     }
 
     /**
@@ -162,16 +273,19 @@ public class BasicView extends WWObjectImpl implements View
             throw new IllegalArgumentException(msg);
         }
 
-        Vec4 front = new Vec4(-this.modelview.m31, -this.modelview.m32, -this.modelview.m33);
+        Vec4 front = new Vec4(-this.modelview.m[8], -this.modelview.m[9], -this.modelview.m[10]);
         Vec4 eyePoint = getEyePoint();
         Line viewRay = new Line(eyePoint, front);
 
-        return globe.getIntersectionPosition(viewRay);
+        // Compute the forward vector's intersection with the specified globe, and return the intersection position.
+        // Return null if the forward vector does not intersect the globe.
+        Position result = new Position();
+        return globe.getIntersectionPosition(viewRay, result) ? result : null;
     }
 
     public double getZoom()
     {
-        return this.modelview.m34;
+        return this.modelview.m[11];
     }
 
     /**
@@ -220,7 +334,7 @@ public class BasicView extends WWObjectImpl implements View
 
         // TODO: what to do at the poles?
 
-        Vec4 front = new Vec4(-this.modelview.m31, -this.modelview.m32, -this.modelview.m33);
+        Vec4 front = new Vec4(-this.modelview.m[8], -this.modelview.m[9], -this.modelview.m[10]);
 
         // get north pointing vector at eye position (not lookAt)
         Vec4 northTangent = globe.computeNorthPointingTangentAtLocation(getEyePosition(globe));
@@ -228,7 +342,7 @@ public class BasicView extends WWObjectImpl implements View
         Vec4 north = right.cross3(front);
 
         // take angle between up vector and north
-        Vec4 up = new Vec4(this.modelview.m21, this.modelview.m22, this.modelview.m23);
+        Vec4 up = new Vec4(this.modelview.m[4], this.modelview.m[5], this.modelview.m[6]);
         Angle delta = up.angleBetween3(north);
 
         // determine if delta is positive or negative
@@ -258,7 +372,7 @@ public class BasicView extends WWObjectImpl implements View
         }
 
         // TODO: what to do when look at at the poles?
-        Vec4 right = new Vec4(this.modelview.m11, this.modelview.m12, this.modelview.m13);
+        Vec4 right = new Vec4(this.modelview.m[0], this.modelview.m[1], this.modelview.m[2]);
 
         Position lookAtPosition = getLookAtPosition(globe);
         if (lookAtPosition == null)
@@ -297,7 +411,7 @@ public class BasicView extends WWObjectImpl implements View
         }
 
         Position eyePosition = getEyePosition(globe);
-        Vec4 back = new Vec4(this.modelview.m31, this.modelview.m32, this.modelview.m33);
+        Vec4 back = new Vec4(this.modelview.m[8], this.modelview.m[9], this.modelview.m[10]);
         Vec4 normal = new Vec4();
 
         globe.computeSurfaceNormalAtLocation(eyePosition.latitude, eyePosition.longitude, normal);
@@ -328,7 +442,7 @@ public class BasicView extends WWObjectImpl implements View
         if (lookAt == null)
             return null;   // ray did not intersect the globe, so cannot pivot around LookAt
 
-        Vec4 back = new Vec4(this.modelview.m31, this.modelview.m32, this.modelview.m33);
+        Vec4 back = new Vec4(this.modelview.m[8], this.modelview.m[9], this.modelview.m[10]);
 
         Vec4 normal = new Vec4();
         globe.computeSurfaceNormalAtLocation(lookAt.latitude, lookAt.longitude, normal);
@@ -336,49 +450,11 @@ public class BasicView extends WWObjectImpl implements View
         Angle delta = normal.angleBetween3(back);
 
         // determine if delta is positive or negative
-        Vec4 right = new Vec4(this.modelview.m11, this.modelview.m12, this.modelview.m13);
+        Vec4 right = new Vec4(this.modelview.m[0], this.modelview.m[1], this.modelview.m[2]);
         if (normal.cross3(back).dot3(right) < 0)
             delta.multiplyAndSet(-1);
 
         return delta;
-    }
-
-    /** {@inheritDoc} */
-    public void apply(DrawContext dc)
-    {
-        if (dc == null)
-        {
-            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if (dc.getGlobe() == null)
-        {
-            String msg = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
-            Logging.error(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        // Update DrawContext and Globe references.
-        this.dc = dc;
-        this.globe = this.dc.getGlobe();
-
-        // Get the current OpenGL viewport state.
-        int[] viewportArray = new int[4];
-        GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, viewportArray, 0);
-        this.viewport.set(viewportArray[0], viewportArray[3], viewportArray[2], viewportArray[1]);
-        // Compute the current clip plane distances.
-        this.nearClipDistance = computeNearClipDistance(globe);
-        this.farClipDistance = computeFarClipDistance(globe);
-        // Compute the current projection matrix.
-        this.projection.setPerspective(this.fieldOfView, dc.getViewportWidth(), dc.getViewportHeight(),
-            this.nearClipDistance, this.farClipDistance);
-        this.modelviewProjection.multiplyAndSet(this.projection, this.modelview);
-        // Compute the current frustum.
-        this.modelviewTranspose.transpose(this.modelview);
-        this.frustum.setPerspective(this.fieldOfView, dc.getViewportWidth(), dc.getViewportHeight(),
-            this.nearClipDistance, this.farClipDistance);
-        this.frustumInModelCoords.transformByAndSet(this.frustum, this.modelviewTranspose);
     }
 
     /**
@@ -620,10 +696,10 @@ public class BasicView extends WWObjectImpl implements View
     {
         Matrix newView = Matrix.fromIdentity();
         newView.set(
-            this.modelview.m11, this.modelview.m12, this.modelview.m13, this.modelview.m14,
-            this.modelview.m21, this.modelview.m22, this.modelview.m23, this.modelview.m24,
-            this.modelview.m31, this.modelview.m32, this.modelview.m33, zoom,
-            this.modelview.m41, this.modelview.m42, this.modelview.m43, this.modelview.m44);
+            this.modelview.m[0], this.modelview.m[1], this.modelview.m[2], this.modelview.m[3],
+            this.modelview.m[4], this.modelview.m[5], this.modelview.m[6], this.modelview.m[7],
+            this.modelview.m[8], this.modelview.m[9], this.modelview.m[10], zoom,
+            this.modelview.m[12], this.modelview.m[13], this.modelview.m[14], this.modelview.m[15]);
         setView(newView);
     }
 
@@ -688,302 +764,27 @@ public class BasicView extends WWObjectImpl implements View
         return new Position(); // (0,0,0)
     }
 
-    protected double computeNearClipDistance(Globe globe)
+    protected double computeNearClipDistance(DrawContext dc)
     {
-        return computeNearDistance(getEyePosition(globe));
+        Position eyePos = this.getEyePosition(dc.getGlobe());
+        double tanHalfFov = this.fieldOfView.tanHalfAngle();
+        double d = eyePos.elevation / (2 * Math.sqrt(2 * tanHalfFov * tanHalfFov + 1));
+
+        if (d < MINIMUM_FAR_DISTANCE)
+            d = MINIMUM_FAR_DISTANCE;
+
+        return d;
     }
 
-    protected double computeFarClipDistance(Globe globe)
+    protected double computeFarClipDistance(DrawContext dc)
     {
-        return computeFarDistance(globe, getEyePosition(globe));
-    }
+        Position eyePos = this.getEyePosition(dc.getGlobe());
+        double d = WWMath.computeHorizonDistance(dc.getGlobe(), eyePos.elevation);
 
-    protected double computeNearDistance(Position eyePosition)
-    {
-        double near = 0;
-        if (eyePosition != null && this.dc != null)
-        {
-            double elevation = eyePosition.elevation;
-            double tanHalfFov = this.fieldOfView.tanHalfAngle();
-            near = elevation / (2 * Math.sqrt(2 * tanHalfFov * tanHalfFov + 1));
-        }
-        return near < MINIMUM_NEAR_DISTANCE ? MINIMUM_NEAR_DISTANCE : near;
-    }
+        if (d < MINIMUM_FAR_DISTANCE)
+            d = MINIMUM_FAR_DISTANCE;
 
-    protected double computeFarDistance(Globe globe, Position eyePosition)
-    {
-        double far = 0;
-        if (eyePosition != null)
-        {
-            far = computeHorizonDistance(globe, eyePosition.elevation);
-        }
-
-        return far < MINIMUM_FAR_DISTANCE ? MINIMUM_FAR_DISTANCE : far;
-    }
-
-    /**
-     * Computes the current distance to the horizon, assuming the given elevation of the view "eye."
-     *
-     * @param globe     the current globe
-     * @param elevation the current elevation of the view eye
-     *
-     * @return the distance to the horizon
-     *
-     * @throws IllegalArgumentException if globe is null
-     */
-    public static double computeHorizonDistance(Globe globe, double elevation)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (elevation <= 0)
-            return 0;
-
-        double radius = globe.getMaximumRadius();
-        return Math.sqrt(elevation * (2 * radius + elevation));
-    }
-
-    public Position computePositionFromScreenPoint(Globe globe, float x, float y, int width, int height)
-    {
-        if (globe == null)
-        {
-            String message = Logging.getMessage("nullValue.GlobeIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        //Rect viewport = new Rect(0, 0,
-        //    width, height);
-
-        Line viewRay = computeRayFromScreenPoint(x, y, this.modelview, this.projection,
-            this.viewport);
-
-        return globe.getIntersectionPosition(viewRay);
-    }
-
-    /*
-    public static Line computeRayFromScreenPoint(float x, float y,
-        Matrix modelview, Matrix projection, Rect viewport)
-    {
-        if (modelview == null || projection == null)
-        {
-            String message = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (viewport == null)
-        {
-            String message = Logging.getMessage("nullValue.RectangleIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        // Compute a ray originating from the view, and passing through the screen point (x, y).
-        //
-        // Taken from the "OpenGL Technical FAQ & Troubleshooting Guide",
-        // section 20.010 "How can I know which primitive a user has selected with the mouse?"
-        //
-        // http://www.opengl.org/resources/faq/technical/selection.htm#sele0010
-
-        Matrix modelViewInv = Matrix.fromIdentity();
-        modelViewInv = modelViewInv.setInverseTransformMatrix(modelview);
-        if (modelViewInv == null)
-            return null;
-
-        Vec4 unitW = new Vec4(0, 0, 0);
-        Vec4 eye = unitW.transformBy4(modelViewInv);
-        if (eye == null)
-            return null;
-
-        float yInGLCoords = (viewport.top - viewport.bottom) - y - 1;
-        Vec4 a = unProject(new Vec4(x, yInGLCoords, 0, 0), modelview, projection, viewport);
-        Vec4 b = unProject(new Vec4(x, yInGLCoords, 1, 0), modelview, projection, viewport);
-        if (a == null || b == null)
-            return null;
-
-        return new Line(a, b.subtract3(a).normalize3());
-    }
-    */
-
-    public static Line computeRayFromScreenPoint(double x, double y,
-        Matrix modelview, Matrix projection, Rect viewport)
-    {
-        if (modelview == null || projection == null)
-        {
-            String message = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (viewport == null)
-        {
-            String message = Logging.getMessage("nullValue.RectangleIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        // Compute a ray originating from the view, and passing through the screen point (x, y).
-        //
-        // Taken from the "OpenGL Technical FAQ & Troubleshooting Guide",
-        // section 20.010 "How can I know which primitive a user has selected with the mouse?"
-        //
-        // http://www.opengl.org/resources/faq/technical/selection.htm#sele0010
-
-        Matrix modelViewInv = Matrix.fromIdentity();
-        modelViewInv = modelViewInv.setInverse(modelview);
-        if (modelViewInv == null)
-            return null;
-
-        Vec4 unitW = new Vec4(0, 0, 0);
-        Vec4 eye = unitW.transformBy4(modelViewInv);
-        if (eye == null)
-            return null;
-
-        double yInGLCoords = (viewport.top - viewport.bottom) - y - 1;
-        double xInGLCoords = (viewport.right - viewport.left) - x - 1;
-        Vec4 a = unProject(xInGLCoords, y, 0.0f, modelview, projection, viewport);
-        Vec4 b = unProject(xInGLCoords, y, 1.0f, modelview, projection, viewport);
-        if (a == null || b == null)
-            return null;
-
-        return new Line(eye, b.subtract3AndSet(a).normalize3());
-    }
-
-    /*
-    public static Vec4 unProject(Vec4 windowPoint, Matrix modelview, Matrix projection)
-    {
-        if (windowPoint == null)
-        {
-            String message = Logging.getMessage("nullValue.Vec4IsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        int[] viewportArray = new int[4];
-        GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, viewportArray, 0);
-        Rect viewport = new Rect(viewportArray[0], viewportArray[3],
-            viewportArray[2], viewportArray[1]);
-
-        return unProject(windowPoint, modelview, projection, viewport);
-    }
-    */
-
-    public static Vec4 unProject(float winX, float winY, float winZ, Matrix modelview, Matrix projection, Rect viewport)
-    {
-        if (modelview == null || projection == null)
-        {
-            String message = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (viewport == null)
-        {
-            String message = Logging.getMessage("nullValue.RectangleIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        // GLU expects matrices as column-major arrays.
-        float[] modelviewArray = new float[16];
-        float[] projectionArray = new float[16];
-        modelview.toArray(modelviewArray, 0, false);
-        projection.toArray(projectionArray, 0, false);
-        // GLU expects the viewport as a four-component array.
-        int[] viewportArray = new int[] {viewport.left, viewport.bottom, viewport.right, viewport.top};
-
-        float[] result = new float[3];
-        if (GLU.gluUnProject(
-            winX, winY, winZ,
-            modelviewArray, 0,
-            projectionArray, 0,
-            viewportArray, 0,
-            result, 0) == GL10.GL_FALSE)
-        {
-            return null;
-        }
-
-        return Vec4.fromFloatArray(result, 0, 3);
-    }
-
-    /*
-   /**
-    * Maps the given window coordinates into model coordinates using the given matrices and viewport.
-    *
-    * @param windowPoint the window point
-    * @param modelview   the modelview matrix
-    * @param projection  the projection matrix
-    * @param viewport    the window viewport
-    *
-    * @return the unprojected point
-    */
-    /*
-    public static Vec4 unProject(Vec4 windowPoint, Matrix modelview, Matrix projection, Rect viewport)
-    {
-        if (windowPoint == null)
-        {
-            String message = Logging.getMessage("nullValue.PointIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (modelview == null || projection == null)
-        {
-            String message = Logging.getMessage("nullValue.MatrixIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-        if (viewport == null)
-        {
-            String message = Logging.getMessage("nullValue.RectangleIsNull");
-            Logging.error(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        return unProject(
-            (float)windowPoint.x, (float)windowPoint.y, (float)windowPoint.z,
-            modelview,
-            projection,
-            viewport);
-    }
-    */
-
-    public static Vec4 unProject(double winX, double winY, double winZ, Matrix modelview,
-        Matrix projection, Rect viewport)
-    {
-        Matrix modelviewProj = Matrix.fromIdentity();
-        modelviewProj.multiplyAndSet(projection, modelview);
-        Matrix modelviewProjInv = Matrix.fromIdentity();
-        modelviewProjInv.setInverse(modelviewProj);
-
-        float[] testMVP = new float[16];
-        modelviewProj.toArray(testMVP, 0, false);
-        float[] testInv = new float[16];
-        android.opengl.Matrix.invertM(testInv, 0, testMVP, 0);
-        Matrix testMVPInv = new Matrix(testInv[0], testInv[4], testInv[8], testInv[12],
-            testInv[1], testInv[5], testInv[9], testInv[13],
-            testInv[2], testInv[6], testInv[10], testInv[14],
-            testInv[3], testInv[7], testInv[11], testInv[15]);
-
-        double a = (2 * (winX - viewport.left)) / (viewport.right - viewport.left) - 1;
-        double b = (2 * (winY - viewport.bottom)) / (viewport.top - viewport.bottom) - 1;
-        double c = 2 * winZ - 1;
-        Vec4 normDeviceCoords = new Vec4(a, b, c, 1);
-
-        //Vec4 result = normDeviceCoords.transformBy4(modelviewProjInv);
-        Vec4 result = normDeviceCoords.transformBy4(testMVPInv);
-
-        if (result.w == 0)
-            return new Vec4(0, 0, 0);
-
-        result.w = 1 / result.w;
-        result.x *= result.w;
-        result.y *= result.w;
-        result.z *= result.w;
-        result.w = 1;
-
-        return result;
+        return d;
     }
 
     /***********************************
@@ -1072,9 +873,10 @@ public class BasicView extends WWObjectImpl implements View
         setView(computeViewMatrix(globe, eyePoint, tilt, roll, heading));
     }
 
-    protected void setView(Matrix M)
+    protected void setView(Matrix matrix)
     {
-        this.modelview = M;
-        this.modelviewInv.setInverseTransformMatrix(this.modelview);
+        this.modelview = matrix;
+        this.modelviewInv.invertTransformMatrix(matrix);
+        this.modelviewTranspose.transpose(matrix);
     }
 }
