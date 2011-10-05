@@ -13,7 +13,6 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.util.ToolTipController;
 
 import java.awt.*;
@@ -32,8 +31,6 @@ public class PathPositionColors extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected ToolTipController pathToolTipController;
-
         public AppFrame()
         {
             super(true, true, false);
@@ -80,10 +77,6 @@ public class PathPositionColors extends ApplicationTemplate
                 };
             path.setPositionColors(new ExamplePositionColors(colors, pathPositions.size()));
 
-            // Create a tool tip controller that displays a popup annotation when the user rolls over one of the Path's
-            // position points.
-            this.pathToolTipController = new PathPositionToolTipController(this.getWwd());
-
             // Create a layer on which to display the path.
             RenderableLayer layer = new RenderableLayer();
             layer.addRenderable(path);
@@ -93,6 +86,27 @@ public class PathPositionColors extends ApplicationTemplate
 
             // Update layer panel
             this.getLayerPanel().update(this.getWwd());
+
+            // Establish a select listener that causes the tooltip controller to show the picked path position's
+            // ordinal.
+            this.setToolTipController(new ToolTipController(this.getWwd())
+            {
+                @Override
+                public void selected(SelectEvent event)
+                {
+                    // Intercept the selected position and assign the selected object's display name to the picked
+                    // ordinal.
+                    PickedObject po = event.getTopPickedObject();
+                    if (po != null && po.getObject() instanceof Path)
+                    {
+                        String name = (po.getValue(AVKey.ORDINAL) != null) ? "Position " + po.getValue(AVKey.ORDINAL)
+                            : null;
+                        ((Path) po.getObject()).setValue(AVKey.DISPLAY_NAME, name);
+                    }
+
+                    super.selected(event);
+                }
+            });
         }
     }
 
@@ -117,66 +131,6 @@ public class PathPositionColors extends ApplicationTemplate
         {
             int index = colors.length * ordinal / this.pathLength;
             return this.colors[index];
-        }
-    }
-
-    /**
-     * Subclass of {@link ToolTipController} that displays a tool tip when the mouse rolls over a Path's position point.
-     * Path position points are identified as any picked object that has a non-null value for the key {@link
-     * AVKey#ORDINAL}. The tool tip displays the text "Position n", where n corresponds to the position's ordinal number
-     * (starting with zero).
-     */
-    public static class PathPositionToolTipController extends ToolTipController
-    {
-        protected String lastRolloverText;
-
-        public PathPositionToolTipController(WorldWindow wwd)
-        {
-            super(wwd);
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p/>
-         * Overridden to update the tool tip whenever the position point changes. Since the picked object does not
-         * change when the picked Path position changes, the superclass' implementation does not update the tool tip.
-         * This implementation updates the tool tip whenever the picked object's value for the key {@link AVKey#ORDINAL}
-         * changes.
-         */
-        @Override
-        protected void handleRollover(SelectEvent event)
-        {
-            String text = this.getRolloverText(event);
-
-            if (this.lastRolloverText != null)
-            {
-                if (this.lastRolloverText.equals(text) && !WWUtil.isEmpty(text))
-                    return;
-
-                this.hideToolTip();
-                this.lastRolloverText = null;
-                this.wwd.redraw();
-            }
-
-            if (text != null)
-            {
-                this.lastRolloverText = text;
-                this.showToolTip(event, text);
-                this.wwd.redraw();
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         * <p/>
-         * Overridden to return text describing the top picked Path position's ordinal. This returns <code>null</code>
-         * if the picked object is null or has no ordinal.
-         */
-        @Override
-        protected String getRolloverText(SelectEvent event)
-        {
-            PickedObject po = event.getTopPickedObject();
-            return po != null && po.getValue(AVKey.ORDINAL) != null ? "Position " + po.getValue(AVKey.ORDINAL) : null;
         }
     }
 
