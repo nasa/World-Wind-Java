@@ -10,6 +10,7 @@ import android.media.*;
 import android.opengl.GLES20;
 import android.view.*;
 import android.view.View;
+import android.widget.TextView;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
@@ -73,6 +74,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                 if (pointerCount == 1)
                     mIsTap = true;
 
+                // display lat-lon under first finger down
+
                 break;
             }
 
@@ -96,7 +99,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                         {
                             public void run()
                             {
-                                //handleGoToLocation(x, y);
+                                handleGoToLocation(x, y);
+                                //updateLatLonDisplay();
                             }
                         });
 
@@ -112,6 +116,8 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
 
                         mLastTap = curTime;      // last tap is now this tap
                     }
+
+                    displayLatLonAtScreenPoint(x, y);
                     ((WorldWindowGLSurfaceView) view).redraw();
                 }
 
@@ -345,6 +351,7 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                         });
                     }
                 }
+
                 ((WorldWindowGLSurfaceView) view).redraw();
 
                 mPreviousX = x;
@@ -355,6 +362,32 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
         }
 
         return true;
+    }
+
+    protected void displayLatLonAtScreenPoint(float x, float y)
+    {
+        // update displayed lat/lon
+        BasicView basicview = (BasicView) this.eventSource.getView();
+        Globe globe = this.eventSource.getModel().getGlobe();
+
+        TextView latText = ((WorldWindowGLSurfaceView) this.eventSource).getLatitudeText();
+        TextView lonText = ((WorldWindowGLSurfaceView) this.eventSource).getLongitudeText();
+
+        if (latText != null && lonText != null)
+        {
+            Point touchPt = new Point((int) x, (int) y);
+            Position touchPosition = new Position();
+            if (basicview.computePositionFromScreenPoint(touchPt, globe, touchPosition))
+            {
+                latText.setText(touchPosition.latitude.toString());
+                lonText.setText(touchPosition.longitude.toString());
+            }
+            else
+            {
+                latText.setText(" off globe ");
+                lonText.setText(" off globe ");
+            }
+        }
     }
 
     // given the current and previous locations of two points, compute the angle of the
