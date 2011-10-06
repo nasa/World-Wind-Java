@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.*;
 import android.view.View;
+import android.widget.TextView;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
@@ -47,6 +48,7 @@ public class WorldWindowActivity extends Activity
         this.wwd = (WorldWindowGLSurfaceView) this.findViewById(R.id.wwd);
         this.wwd.setModel((Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME));
         this.setupView();
+        this.setupTextViews();
 
         // Link the Android Dashboard view to this activity's WorldWindow.
         this.dashboard = (DashboardView) this.findViewById(R.id.dashboard);
@@ -103,5 +105,13 @@ public class WorldWindowActivity extends Activity
             Configuration.getDoubleValue(AVKey.INITIAL_ALTITUDE));
         view.setEyePosition(lookFromPosition, Angle.fromDegrees(0), Angle.fromDegrees(0), globe);
         view.setEyeTilt(Angle.fromDegrees(0), globe);
+    }
+
+    protected void setupTextViews()
+    {
+        TextView latTextView = (TextView) findViewById(R.id.latvalue);
+        this.wwd.setLatitudeText(latTextView);
+        TextView lonTextView = (TextView) findViewById(R.id.lonvalue);
+        this.wwd.setLongitudeText(lonTextView);
     }
 }

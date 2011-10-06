@@ -10,4 +10,8 @@
     <string name="app_name">WWAndroid Demo</string>
     <string name="main_activity_name">WWAndroid Demo</string>
     <string name="dashboard">Dashboard</string>
+    <string name="latitude">Latitude:</string>
+    <string name="longitude">Longitude:</string>
+    <string name="offglobe">off globe</string>
+    <string name="spacer"></string>
 </resources>

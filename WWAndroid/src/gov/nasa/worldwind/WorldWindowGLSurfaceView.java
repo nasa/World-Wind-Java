@@ -9,6 +9,7 @@ import android.content.Context;
 import android.opengl.*;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.widget.TextView;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.event.*;
@@ -35,6 +36,8 @@ public class WorldWindowGLSurfaceView extends GLSurfaceView implements GLSurface
     protected Collection<RenderingListener> renderingListeners = new ArrayList<RenderingListener>();
     protected int viewportWidth;
     protected int viewportHeight;
+    protected TextView latitudeText;
+    protected TextView longitudeText;
 
     public WorldWindowGLSurfaceView(Context context)
     {
@@ -266,6 +269,26 @@ public class WorldWindowGLSurfaceView extends GLSurfaceView implements GLSurface
 
         // Configure this world window as the input handler's event source.
         this.inputHandler.setEventSource(this);
+    }
+
+    public TextView getLatitudeText()
+    {
+        return this.latitudeText;
+    }
+
+    public void setLatitudeText(TextView latView)
+    {
+        this.latitudeText = latView;
+    }
+
+    public TextView getLongitudeText()
+    {
+        return this.longitudeText;
+    }
+
+    public void setLongitudeText(TextView lonView)
+    {
+        this.longitudeText = lonView;
     }
 
     /** {@inheritDoc} */

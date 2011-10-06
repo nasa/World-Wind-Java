@@ -11,17 +11,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:orientation="horizontal">
+              android:gravity="center"
+              android:orientation="vertical">
 
-    <gov.nasa.worldwind.WorldWindowGLSurfaceView android:id="@+id/wwd"
-                                                 android:layout_width="0dp"
-                                                 android:layout_height="match_parent"
-                                                 android:layout_weight="3"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="3">
 
-    <gov.nasa.worldwind.util.dashboard.DashboardView android:id="@+id/dashboard"
+        <gov.nasa.worldwind.WorldWindowGLSurfaceView android:id="@+id/wwd"
                                                      android:layout_width="0dp"
                                                      android:layout_height="match_parent"
-                                                     android:layout_weight="1"
-                                                     android:orientation="vertical"
-                                                     android:padding="10dp"/>
+                                                     android:layout_weight="3"/>
+
+        <gov.nasa.worldwind.util.dashboard.DashboardView android:id="@+id/dashboard"
+                                                         android:layout_width="0dp"
+                                                         android:layout_height="match_parent"
+                                                         android:layout_weight="1"
+                                                         android:orientation="vertical"
+                                                         android:padding="10dp"/>
+    </LinearLayout>
+
+    <LinearLayout android:id="@+id/latlondisplay"
+                  android:orientation="horizontal"
+                  android:visibility="visible"
+                  android:background="@drawable/transparent_background"
+                  android:gravity="center"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="1">
+
+        <TextView android:id="@+id/latlabel"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/latitude"/>
+
+        <TextView android:id="@+id/latvalue"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/offglobe"/>
+
+        <TextView android:id="@+id/spacer"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:padding="15dp"
+                  android:text="@string/spacer"/>
+
+        <TextView android:id="@+id/lonlabel"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/longitude"/>
+
+        <TextView android:id="@+id/lonvalue"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/offglobe"/>
+
+    </LinearLayout>
+
 </LinearLayout>
