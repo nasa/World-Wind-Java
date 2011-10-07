@@ -78,9 +78,9 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
 
     /**
      * @param url           the URL of the resource to retrieve.
-     * @param postProcessor the retrieval post-processor to invoke when the resource is retrieved.
+     * @param postProcessor the retrieval post-processor to invoke when the resource is retrieved. May be null.
      *
-     * @throws IllegalArgumentException if <code>url</code> or <code>postProcessor</code> is null.
+     * @throws IllegalArgumentException if <code>url</code>.
      */
     public URLRetriever(URL url, RetrievalPostProcessor postProcessor)
     {
