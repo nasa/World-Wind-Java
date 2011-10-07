@@ -128,6 +128,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         setFallbacks(params);
 
         this.levels = new LevelSet(params);
+        if (this.levels.getSector() != null && this.getValue(AVKey.SECTOR) == null)
+            this.setValue(AVKey.SECTOR, this.levels.getSector());
+
         this.memoryCache = this.createMemoryCache(ElevationTile.class.getName());
 
         this.setValue(AVKey.CONSTRUCTION_PARAMETERS, params.copy());
