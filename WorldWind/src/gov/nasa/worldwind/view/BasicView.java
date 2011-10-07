@@ -966,7 +966,7 @@ public class BasicView extends WWObjectImpl implements View
     /**
      * Maps the given window coordinates into model coordinates using the given matrices and viewport.
      *
-     * @param windowPoint the winodow point
+     * @param windowPoint the window point
      * @param modelview   the modelview matrix
      * @param projection  the projection matrix
      * @param viewport    the window viewport
