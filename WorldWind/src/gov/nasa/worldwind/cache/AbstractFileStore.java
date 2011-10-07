@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.cache;
 
-import gov.nasa.worldwind.WWObjectImpl;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.util.*;
 
@@ -291,7 +291,7 @@ public abstract class AbstractFileStore extends WWObjectImpl implements FileStor
                 Logging.logger().severe("generic.AllUsersWindowsProfileNotKnown");
                 return null;
             }
-            return path + "\\Application Data";
+            return path + (Configuration.isWindows7OS() ? "" : "\\Application Data");
         }
         else if (gov.nasa.worldwind.Configuration.isLinuxOS() || gov.nasa.worldwind.Configuration.isUnixOS()
             || gov.nasa.worldwind.Configuration.isSolarisOS())

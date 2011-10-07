@@ -543,6 +543,17 @@ public class Configuration // Singleton
     }
 
     /**
+     * Determines whether the operating system is Windows 7 operating system.
+     *
+     * @return true if the operating system is a Windows Vista operating system, otherwise false.
+     */
+    public static boolean isWindows7OS()
+    {
+        String osName = System.getProperty("os.name");
+        return osName != null && osName.toLowerCase().contains("windows") && osName.contains("7");
+    }
+
+    /**
      * Determines whether the operating system is Linux operating system.
      *
      * @return true if the operating system is a Linux operating system, otherwise false.
