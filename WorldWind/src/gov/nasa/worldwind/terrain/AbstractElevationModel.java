@@ -29,6 +29,7 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
 
     protected boolean networkRetrievalEnabled = true;
     protected long expiryTime = 0;
+    protected boolean enabled = true;
 
     public void dispose()
     {
@@ -71,6 +72,16 @@ abstract public class AbstractElevationModel extends WWObjectImpl implements Ele
     public void setExpiryTime(long expiryTime)
     {
         this.expiryTime = expiryTime;
+    }
+
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
+    }
+
+    public boolean isEnabled()
+    {
+        return this.enabled;
     }
 
     public double getMissingDataSignal()

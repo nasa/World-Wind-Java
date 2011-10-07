@@ -166,6 +166,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+            
             double m = em.getMaxElevation();
             if (m > max)
                 max = m;
@@ -180,6 +183,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             double m = em.getMinElevation();
             if (m < min)
                 min = m;
@@ -201,6 +207,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             double[] minmax = em.getExtremeElevations(latitude, longitude);
             if (retVal == null)
             {
@@ -231,6 +240,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             int c = em.intersects(sector);
             if (c < 0) // no intersection
                 continue;
@@ -258,6 +270,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             if (sector != null && em.intersects(sector) < 0) // sector does not intersect elevation model
                 continue;
 
@@ -284,6 +299,9 @@ public class CompoundElevationModel extends AbstractElevationModel
         {
             ElevationModel em = this.elevationModels.get(i);
 
+            if (!em.isEnabled())
+                continue;
+
             int c = em.intersects(sector);
             if (c != -1)
                 return em.getDetailHint(sector);
@@ -306,6 +324,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             int c = em.intersects(sector);
             if (c == 0) // sector fully contained in the elevation model. no need to test further
                 return 0;
@@ -328,6 +349,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             if (em.contains(latitude, longitude))
                 return true;
         }
@@ -349,6 +373,9 @@ public class CompoundElevationModel extends AbstractElevationModel
         for (int i = this.elevationModels.size() - 1; i >= 0; i--) // iterate from highest resolution to lowest
         {
             ElevationModel em = this.elevationModels.get(i);
+
+            if (!em.isEnabled())
+                continue;
 
             if (!em.contains(latitude, longitude))
                 continue;
@@ -456,6 +483,9 @@ public class CompoundElevationModel extends AbstractElevationModel
         double resolutionAchieved = 0;
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             int c = em.intersects(sector);
             if (c < 0) // no intersection
                 continue;
@@ -508,6 +538,9 @@ public class CompoundElevationModel extends AbstractElevationModel
         // ElevationModels are expected to leave the buffer untouched when data is missing at a location.
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             int c = em.intersects(sector);
             if (c < 0) // no intersection
                 continue;
@@ -534,6 +567,9 @@ public class CompoundElevationModel extends AbstractElevationModel
 
         for (ElevationModel em : this.elevationModels)
         {
+            if (!em.isEnabled())
+                continue;
+
             if (em.intersects(sector) >= 0)
             {
                 availability += em.getLocalDataAvailability(sector, targetResolution);

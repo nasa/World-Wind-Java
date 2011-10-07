@@ -8,7 +8,7 @@ package gov.nasa.worldwind.globes;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * <p/>
@@ -320,4 +320,18 @@ public interface ElevationModel extends WWObject, Restorable, Disposable
      * @return the fraction of the data that is local. A value of 1.0 indicates that all the data is available.
      */
     double getLocalDataAvailability(Sector sector, Double targetResolution);
+
+    /**
+     * Indicates whether this elevation model is used or ignored.
+     *
+     * @param enabled true if this elevation model is used, otherwise false.
+     */
+    void setEnabled(boolean enabled);
+
+    /**
+     * Indicates whether this elevation model is used or ignored.
+     *
+     * @return true if this elevation model is used, otherwise false.
+     */
+    boolean isEnabled();
 }
