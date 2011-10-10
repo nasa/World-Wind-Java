@@ -96,7 +96,7 @@ public interface SurfaceObject extends OrderedRenderable, PreRenderable, AVList
     List<Sector> getSectors(DrawContext dc);
 
     /**
-     * Returns the surface objects's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates,
+     * Returns the surface object's enclosing volume as an {@link gov.nasa.worldwind.geom.Extent} in model coordinates,
      * given a specified {@link gov.nasa.worldwind.render.DrawContext}.
      *
      * @param dc the current draw context.
