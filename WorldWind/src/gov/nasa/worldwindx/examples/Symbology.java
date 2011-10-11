@@ -7,12 +7,14 @@
 package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 
+import java.awt.image.*;
 import java.util.ArrayList;
 
 /**
@@ -57,6 +59,18 @@ public class Symbology extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile (anticipated)");
             graphic.setText("C");
             layer.addRenderable(graphic);
+
+            // Create an Unknown, Present, Naval Construction Engineer Combat Unit
+            MilStd2525SymbolGenerator symGen = new MilStd2525SymbolGenerator();
+            String path = "C:\\WorldWind\\release\\trunk\\WorldWind\\src\\gov\\nasa\\worldwind\\symbology\\milstd2525\\icons\\";
+            AVListImpl params = new AVListImpl();
+            params.setValue(AbstractSymbolGenerator.SOURCE_TYPE, "file");
+            params.setValue(AbstractSymbolGenerator.SOURCE_PATH, path);
+            BufferedImage img = symGen.createImage("SUAPC----------", params);
+            Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
+                            Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.8));
+            SurfaceImage symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
 
             this.getWwd().getModel().getLayers().add(layer);
         }
