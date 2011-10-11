@@ -8,6 +8,7 @@ package gov.nasa.worldwind.render;
 
 import com.sun.opengl.util.j2d.TextRenderer;
 import gov.nasa.worldwind.Movable;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.util.*;
@@ -34,6 +35,8 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-24");
     /** Default text color. */
     public static final Color DEFAULT_COLOR = Color.WHITE;
+    /** Default offset. The default offset centers the text on its geographic position both horizontally and vertically. */
+    public static final Offset DEFAULT_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
     /** The text to draw. */
     protected CharSequence text;
@@ -50,6 +53,8 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     protected Color bgColor;
     /** Text priority. Can be used to implement text culling. */
     protected double priority;
+    /** Offset that specifies where to place the text in relation to it's geographic position. */
+    protected Offset offset = DEFAULT_OFFSET;
 
     // Computed each time text is rendered
     /** Bounds of the text in pixels. */
@@ -113,7 +118,14 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         return this.location;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * The offset determines how the text is placed relative to this position. The default offset centers the text on
+     * the position both horizontally and vertically.
+     *
+     * @see #setOffset(Offset)
+     */
     public void setPosition(Position position)
     {
         if (position == null)
@@ -194,6 +206,37 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     public double getPriority()
     {
         return this.priority;
+    }
+
+    /**
+     * Returns the text offset. The offset determines how to position the text relative to its geographic position.
+     *
+     * @return the text offset.
+     *
+     * @see #setOffset(Offset)
+     */
+    public Offset getOffset()
+    {
+        return this.offset;
+    }
+
+    /**
+     * Specifies a location relative to the label position at which to align the label. The label text begins at the
+     * point indicated by the offset. An offset of (0, 0) pixels aligns the left baseline of the text with the position.
+     * An offset of (-0.5, -0.5) fraction aligns the center of the text with the position.
+     *
+     * @param offset Offset that controls where to position the label relative to its geographic location.
+     */
+    public void setOffset(Offset offset)
+    {
+        if (offset == null)
+        {
+            String message = Logging.getMessage("nullValue.OffsetIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.offset = offset;
     }
 
     /** {@inheritDoc} */
@@ -277,8 +320,11 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     {
         TextRenderer tr = this.getTextRenderer(dc);
 
-        int x = (int) (-this.textBounds.getWidth() / 2d);
-        int y = 0;
+        Point2D point = this.getOffset().computeOffset(this.textBounds.getWidth(), this.textBounds.getHeight(), null,
+            null);
+
+        int x = (int) point.getX();
+        int y = (int) point.getY();
 
         try
         {
