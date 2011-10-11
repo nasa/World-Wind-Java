@@ -1373,7 +1373,15 @@ public abstract class RigidShape extends AbstractShape
      */
     protected int[] getVboIds(int index, DrawContext dc)
     {
-        return (int[]) dc.getGpuResourceCache().get(((ShapeData) this.getCurrentData()).getVboCacheKey(index));
+        ShapeData data = ((ShapeData) this.getCurrentData());
+        if (data != null)
+        {
+            Object key = data.getVboCacheKey(index);
+            if (key != null)
+                return (int[]) dc.getGpuResourceCache().get(key);
+        }
+
+        return null;
     }
 
     /**
