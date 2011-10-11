@@ -37,6 +37,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.8235, -117.7196, 0));
             TacticalGraphic graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: friendly");
+            graphic.setText("A");
             layer.addRenderable(graphic);
 
             // Create a Hostile Phase Line
@@ -45,6 +46,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7328, -117.7305, 0));
             graphic = factory.createGraphic("GHGPGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile");
+            graphic.setText("B");
             layer.addRenderable(graphic);
 
             // Create a Hostile, Anticipated, Phase Line
@@ -53,6 +55,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7445, -117.9252, 0));
             graphic = factory.createGraphic("GHGAGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile (anticipated)");
+            graphic.setText("C");
             layer.addRenderable(graphic);
 
             this.getWwd().getModel().getLayers().add(layer);

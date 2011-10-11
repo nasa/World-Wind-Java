@@ -8,17 +8,21 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
+
+import java.awt.*;
+import java.util.Iterator;
 
 /**
  * @author pabercrombie
  * @version $Id$
  */
 // TODO: text annotation at the ends of the line
-public class PhaseLine extends Path implements TacticalShape
+public class PhaseLine extends Path implements TacticalShape, PreRenderable
 {
     public final static String FUNCTION_ID = "GLP---";
 
@@ -28,11 +32,17 @@ public class PhaseLine extends Path implements TacticalShape
     protected String status;
     // TODO: add country code, etc.
 
+    protected String text;
+
+    protected SurfaceText labelStart;
+    protected SurfaceText labelEnd;
+
     public PhaseLine()
     {
         this.setFollowTerrain(true);
         this.setPathType(AVKey.GREAT_CIRCLE);
         this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        this.setText("");
     }
 
     public String getIdentifier()
@@ -107,17 +117,87 @@ public class PhaseLine extends Path implements TacticalShape
         this.status = status;
     }
 
-    @Override
-    public void render(DrawContext dc)
+    public String getText()
     {
+        return this.text;
+    }
+
+    public void setText(String text)
+    {
+        this.text = text;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("PL");
+        if (!WWUtil.isEmpty(text))
+            sb.append(" ").append(text);
+
+        String fullText = sb.toString();
+
+        this.labelStart = new SurfaceText(fullText, Position.ZERO);
+        this.labelEnd = new SurfaceText(fullText, Position.ZERO);
+    }
+
+    protected void determineLabelPositions(DrawContext dc)
+    {
+        Iterator<? extends Position> iterator = this.positions.iterator();
+
+        // Find the first two positions on the path
+        Position first = iterator.next();
+        Position second = iterator.next();
+
+        // Find the last two positions on the path
+        Position last = second;
+        Position nextToLast = first;
+        while (iterator.hasNext())
+        {
+            nextToLast = last;
+            last = iterator.next();
+        }
+
+        // Position the labels at the ends of the path
+        // TODO: figure better rules for positioning and sizing the labels
+        Angle azimuth = LatLon.greatCircleAzimuth(second, first);
+        LatLon ll = LatLon.greatCircleEndPosition(first, azimuth.radians, 500d / dc.getGlobe().getRadius());
+        this.labelStart.setPosition(new Position(ll, 0));
+
+        azimuth = LatLon.greatCircleAzimuth(nextToLast, last);
+        ll = LatLon.greatCircleEndPosition(last, azimuth.radians, 500d / dc.getGlobe().getRadius());
+        this.labelEnd.setPosition(new Position(ll, 0));
+    }
+
+    public void preRender(DrawContext dc)
+    {
+        this.determineLabelPositions(dc);
+
         // If the attributes have not been created yet, create them now.
         // The default attributes are determined by the symbol code.
         if (this.normalAttrs == null)
         {
-            this.setAttributes(this.createShapeAttributes());
+            ShapeAttributes attrs = this.createShapeAttributes();
+            this.setAttributes(attrs);
+
+            Color color = attrs.getOutlineMaterial().getDiffuse();
+            this.labelStart.setColor(color);
+            this.labelEnd.setColor(color);
         }
 
+        this.labelStart.preRender(dc);
+        this.labelEnd.preRender(dc);
+    }
+
+    @Override
+    public void render(DrawContext dc)
+    {
         super.render(dc);
+    }
+
+    @Override
+    public void pick(DrawContext dc, Point pickPoint)
+    {
+        this.labelStart.pick(dc, pickPoint);
+        this.labelEnd.pick(dc, pickPoint);
+
+        super.pick(dc, pickPoint);
     }
 
     protected ShapeAttributes createShapeAttributes()
