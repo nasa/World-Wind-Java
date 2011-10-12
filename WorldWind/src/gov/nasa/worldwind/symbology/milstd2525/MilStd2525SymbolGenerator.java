@@ -6,13 +6,10 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.symbology.AbstractSymbolGenerator;
 
-import javax.imageio.ImageIO;
 import java.awt.image.*;
-import java.io.File;
 
 /**
  * @author ccrick
@@ -24,13 +21,14 @@ public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
 
     public BufferedImage createImage(String symbolIdentifier, AVList params)
     {
-        if( symbolIdentifier.length() != 15 ) {
+        if (symbolIdentifier.length() != 15)
+        {
             return null;
         }
 
+        // retrieve desired symbol and convert to bufferedImage
         SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
 
-        // retrieve desired symbol and convert to bufferedImage
         BufferedImage img = null;
 
         if (params.getValue(AbstractSymbolGenerator.SOURCE_TYPE).equals("file"))
@@ -38,11 +36,20 @@ public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
             String path = (String) params.getValue(AbstractSymbolGenerator.SOURCE_PATH);
             String filename = getFilename(symbolCode);
 
-            img = retrieveImageFromFile(filename, path, img);
+            img = retrieveImageFromFile(path, filename, img);
         }
         else if (params.getValue(AbstractSymbolGenerator.SOURCE_TYPE).equals("url"))
         {
-            // TODO: retrieve image from URL
+            String server = (String) params.getValue(AbstractSymbolGenerator.SOURCE_SERVER);
+            String path = (String) params.getValue(AbstractSymbolGenerator.SOURCE_PATH);
+            String filename = getFilename(symbolCode);
+
+            img = retrieveImageFromURL(server, path, filename, img);
+        }
+
+        if (img == null)
+        {
+            // TODO: do something
         }
 
         // TODO: modify image with given params
@@ -50,7 +57,8 @@ public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
         return img;
     }
 
-    private static String getFilename(SymbolCode code) {
+    private static String getFilename(SymbolCode code)
+    {
 
         String standardID = (String) code.getValue(SymbolCode.STANDARD_IDENTITY);
         standardID = standardID.toLowerCase();
@@ -58,30 +66,30 @@ public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
         int prefix = 0;
         char stdid = 'u';
         // See Table I and TABLE II, p.15 of MIL-STD-2525C for standard identities that use similar shapes
-        switch(standardID.charAt(0))
+        switch (standardID.charAt(0))
         {
-            case 'p' :      // PENDING
-            case 'u' :      // UNKNOWN
-            case 'g' :      // EXERCISE PENDING
-            case 'w' :      // EXERCISE UNKNOWN
+            case 'p':      // PENDING
+            case 'u':      // UNKNOWN
+            case 'g':      // EXERCISE PENDING
+            case 'w':      // EXERCISE UNKNOWN
                 prefix = 0;
                 stdid = 'u';
                 break;
-            case 'f' :      // FRIEND
-            case 'a' :      // ASSUMED FRIEND
-            case 'd' :      // EXERCISE FRIEND
-            case 'm' :      // EXERCISE ASSUMED FRIEND
-            case 'j' :      // JOKER
-            case 'k' :      // FAKER
+            case 'f':      // FRIEND
+            case 'a':      // ASSUMED FRIEND
+            case 'd':      // EXERCISE FRIEND
+            case 'm':      // EXERCISE ASSUMED FRIEND
+            case 'j':      // JOKER
+            case 'k':      // FAKER
                 prefix = 1;
                 stdid = 'f';
-            case 'n' :      // NEUTRAL
-            case 'l' :      // EXERCISE NEUTRAL
+            case 'n':      // NEUTRAL
+            case 'l':      // EXERCISE NEUTRAL
                 prefix = 2;
                 stdid = 'n';
                 break;
-            case 'h' :      // HOSTILE
-            case 's' :      // SUSPECT
+            case 'h':      // HOSTILE
+            case 's':      // SUSPECT
                 prefix = 3;
                 stdid = 'h';
         }
@@ -89,10 +97,10 @@ public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
         String padding = "-----";
 
         String result = Integer.toString(prefix) + '.' + code.getValue(SymbolCode.SCHEME).toString().toLowerCase()
-                        + stdid + code.getValue(SymbolCode.BATTLE_DIMENSION).toString().toLowerCase()
-                        + 'p' + code.getValue(SymbolCode.FUNCTION_ID).toString().toLowerCase()
-                        //+ code.getValue(SymbolCode.SYMBOL_MODIFIER).toString().toLowerCase()
-                        + padding + ".png";
+            + stdid + code.getValue(SymbolCode.BATTLE_DIMENSION).toString().toLowerCase()
+            + 'p' + code.getValue(SymbolCode.FUNCTION_ID).toString().toLowerCase()
+            //+ code.getValue(SymbolCode.SYMBOL_MODIFIER).toString().toLowerCase()
+            + padding + ".png";
         return result;
     }
 }

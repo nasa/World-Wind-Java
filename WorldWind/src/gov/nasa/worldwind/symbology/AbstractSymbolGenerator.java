@@ -6,25 +6,45 @@
 
 package gov.nasa.worldwind.symbology;
 
+import gov.nasa.worldwind.util.Logging;
+
 import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.File;
+import java.net.URL;
 
 /**
- * Created by IntelliJ IDEA. User: Camberley Date: 10/11/11 Time: 4:01 PM To change this template use File | Settings |
- * File Templates.
+ * @author ccrick
+ * @version $Id: MilStd2525SymbolGenerator.java 90 2011-10-10 23:58:29Z ccrick $
  */
 public abstract class AbstractSymbolGenerator implements SymbolGenerator
 {
     public final static String SOURCE_TYPE = "sourceType";
     public final static String SOURCE_PATH = "sourcePath";
+    public final static String SOURCE_SERVER = "sourceServer";
 
-    public BufferedImage retrieveImageFromFile(String filename, String path, BufferedImage img)
+    public BufferedImage retrieveImageFromFile(String path, String filename, BufferedImage img)
     {
-        try {
+        if (path == null)
+        {
+            String msg = Logging.getMessage("Symbology.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (filename == null)
+        {
+            String msg = Logging.getMessage("Symbology.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        try
+        {
             File file = new File(path + filename);
             img = ImageIO.read(file);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             // TODO: error handling
             return null;
         }
@@ -32,10 +52,39 @@ public abstract class AbstractSymbolGenerator implements SymbolGenerator
         return img;
     }
 
-    public BufferedImage retrieveImageFromURL(String filename, String url, BufferedImage img)
+    public BufferedImage retrieveImageFromURL(String server, String path, String filename, BufferedImage img)
     {
-        // TODO
+        if (server == null)
+        {
+            String msg = Logging.getMessage("Symbology.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (path == null)
+        {
+            String msg = Logging.getMessage("Symbology.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (filename == null)
+        {
+            String msg = Logging.getMessage("Symbology.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
-        return null;
+        try
+        {
+
+            URL myURL = new URL("HTTP", server, path + filename);
+            img = ImageIO.read(myURL);
+        }
+        catch (Exception e)
+        {
+            // TODO: error handling
+            return null;
+        }
+
+        return img;
     }
 }

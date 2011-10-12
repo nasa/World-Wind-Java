@@ -10,7 +10,7 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
@@ -60,15 +60,23 @@ public class Symbology extends ApplicationTemplate
             graphic.setText("C");
             layer.addRenderable(graphic);
 
-            // Create an Unknown, Present, Naval Construction Engineer Combat Unit
+            // Create tactical symbol
             MilStd2525SymbolGenerator symGen = new MilStd2525SymbolGenerator();
-            String path = "C:\\WorldWind\\release\\trunk\\WorldWind\\src\\gov\\nasa\\worldwind\\symbology\\milstd2525\\icons\\";
+            String path
+                = "C:\\WorldWind\\release\\trunk\\WorldWind\\src\\gov\\nasa\\worldwind\\symbology\\milstd2525\\icons\\";
+            String url = "www.annieshavercrandell.com";
             AVListImpl params = new AVListImpl();
-            params.setValue(AbstractSymbolGenerator.SOURCE_TYPE, "file");
-            params.setValue(AbstractSymbolGenerator.SOURCE_PATH, path);
-            BufferedImage img = symGen.createImage("SUAPC----------", params);
+            //    from file
+            //params.setValue(AbstractSymbolGenerator.SOURCE_TYPE, "file");
+            //params.setValue(AbstractSymbolGenerator.SOURCE_PATH, path);
+            //BufferedImage img = symGen.createImage("SUAPC----------", params);
+            //    from URL
+            params.setValue(AbstractSymbolGenerator.SOURCE_TYPE, "url");
+            params.setValue(AbstractSymbolGenerator.SOURCE_SERVER, url);
+            params.setValue(AbstractSymbolGenerator.SOURCE_PATH, "/images/");
+            BufferedImage img = symGen.createImage("SUAPQ----------", params);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                            Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.8));
+                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.8));
             SurfaceImage symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);
 
