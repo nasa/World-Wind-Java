@@ -122,21 +122,21 @@ import java.util.regex.*;
      */
     public class MultiLineTextRenderer
     {
-        private TextRenderer textRenderer;
-        private int lineSpacing = 0;            // Inter line spacing in pixels
-        private int lineHeight = 14;            // Will be set by getBounds() or by application
-        private String textAlign = AVKey.LEFT;  // Text alignement
-        private String continuationString = "...";
-        private Color textColor = Color.DARK_GRAY;
-        private Color backColor = Color.LIGHT_GRAY;
-        private Color linkColor = Color.BLUE;
+        protected TextRenderer textRenderer;
+        protected int lineSpacing = 0;            // Inter line spacing in pixels
+        protected int lineHeight = 14;            // Will be set by getBounds() or by application
+        protected String textAlign = AVKey.LEFT;  // Text alignment
+        protected String continuationString = "...";
+        protected Color textColor = Color.DARK_GRAY;
+        protected Color backColor = Color.LIGHT_GRAY;
+        protected Color linkColor = Color.BLUE;
 
         // HTML Picking
-        private boolean isPicking = false;
-        private DrawContext drawContext;
-        private PickSupport pickSupport;
-        private Object pickObject;
-        private Position pickPosition;
+        protected boolean isPicking = false;
+        protected DrawContext drawContext;
+        protected PickSupport pickSupport;
+        protected Object pickObject;
+        protected Position pickPosition;
 
         public MultiLineTextRenderer(TextRenderer textRenderer)
         {
@@ -543,7 +543,7 @@ import java.util.regex.*;
             }
         }
 
-        private void drawLineWithUniqueColors(String text, int x, int y,
+        protected void drawLineWithUniqueColors(String text, int x, int y,
                           DrawContext dc, PickSupport pickSupport, Object refObject, Position refPosition)
         {
             //float spaceWidth = this.textRenderer.getCharWidth(' ');
@@ -649,7 +649,7 @@ import java.util.regex.*;
         }
 
         // Wrap one line to fit the given width
-        private String wrapLine(String text, int width)
+        protected String wrapLine(String text, int width)
         {
             StringBuffer wrappedText = new StringBuffer();
             // Single line - trim leading and trailing spaces
@@ -713,8 +713,8 @@ import java.util.regex.*;
         // and <font color="#ffffff"></font>.
         //****************************************************************************
 
-        private static Pattern SGMLPattern =  Pattern.compile("<[^\\s].*?>"); // Find sgml tags
-        private static Pattern SGMLOrSpacePattern =  Pattern.compile("(<[^\\s].*?>)|(\\s)"); // Find sgml tags or spaces
+        protected static Pattern SGMLPattern =  Pattern.compile("<[^\\s].*?>"); // Find sgml tags
+        protected static Pattern SGMLOrSpacePattern =  Pattern.compile("(<[^\\s].*?>)|(\\s)"); // Find sgml tags or spaces
 
         /**
          * Return true if the text contains some sgml tags.
@@ -829,7 +829,7 @@ import java.util.regex.*;
             return getTextBoundsHTML(text, ds).getBounds();
         }
 
-        private Rectangle2D getTextBoundsHTML(String text, DrawState ds)
+        protected Rectangle2D getTextBoundsHTML(String text, DrawState ds)
         {
             double width = 0;
             double height = 0;
@@ -845,7 +845,7 @@ import java.util.regex.*;
             return new Rectangle2D.Double(0, 0, width, height);
         }
 
-        private Rectangle2D getLineBoundsHTML(String line, DrawState ds)
+        protected Rectangle2D getLineBoundsHTML(String line, DrawState ds)
         {
             double width = 0;
             double height = getMaxLineHeight(ds.textRenderer);
@@ -864,7 +864,7 @@ import java.util.regex.*;
             return new Rectangle2D.Double(0, 0, width, height);
         }
 
-        private Rectangle2D getWordBoundsHTML(String word, DrawState ds)
+        protected Rectangle2D getWordBoundsHTML(String word, DrawState ds)
         {
             double width = 0;
             double height = getMaxLineHeight(ds.textRenderer);
@@ -936,7 +936,7 @@ import java.util.regex.*;
             return wrapTextHTML(text, width, height, ds);
         }
 
-        private String wrapTextHTML(String text, double width, double height, DrawState ds)
+        protected String wrapTextHTML(String text, double width, double height, DrawState ds)
         {
             // Save passed draw state in case we need to trim text later
             DrawState savedState = new DrawState(ds);
@@ -955,7 +955,7 @@ import java.util.regex.*;
             return wrappedText.toString();
         }
 
-        private String trimTextHTML(String text, double height, DrawState ds)
+        protected String trimTextHTML(String text, double height, DrawState ds)
         {
             StringBuffer wrappedText = new StringBuffer();
             double currentHeight = 0;
@@ -980,7 +980,7 @@ import java.util.regex.*;
             return wrappedText.toString();
         }
 
-        private String wrapLineHTML(String line, double width, DrawState ds)
+        protected String wrapLineHTML(String line, double width, DrawState ds)
         {
             // Save passed draw state in case we need to wrap
             DrawState savedState = new DrawState(ds);
@@ -1094,7 +1094,7 @@ import java.util.regex.*;
             drawTextHTML(text, x, y, ds);
         }
 
-        private void drawTextHTML(String text, double x, double y, DrawState ds)
+        protected void drawTextHTML(String text, double x, double y, DrawState ds)
         {
             if (!this.isPicking)
                 ds.textRenderer.begin3DRendering();
@@ -1130,7 +1130,7 @@ import java.util.regex.*;
             }
         }
 
-        private void drawLineHTML(String line, double x, double y, DrawState ds)
+        protected void drawLineHTML(String line, double x, double y, DrawState ds)
         {
             String word;
             Rectangle2D wordBounds;
@@ -1148,7 +1148,7 @@ import java.util.regex.*;
             }
         }
 
-        private void drawWordHTML(String word, double x, double y, DrawState ds)
+        protected void drawWordHTML(String word, double x, double y, DrawState ds)
         {
             double drawX = x;
             int start = 0;
@@ -1180,7 +1180,7 @@ import java.util.regex.*;
             }
          }
 
-        private void pickWordHTML(String word, double x, double y, DrawState ds)
+        protected void pickWordHTML(String word, double x, double y, DrawState ds)
         {
             double drawX = x;
             int start = 0;
@@ -1215,7 +1215,7 @@ import java.util.regex.*;
             }
          }
 
-        private void pickWordPartHTML(String word, double x, double y, Rectangle2D partBounds, DrawState ds,
+        protected void pickWordPartHTML(String word, double x, double y, Rectangle2D partBounds, DrawState ds,
             boolean expandStart)
         {
             String hyperlink = ds.getDrawAttributes().hyperlink;
@@ -1241,7 +1241,7 @@ import java.util.regex.*;
         }
 
 
-        private void pickWord(String word, String hyperlink, double drawX, double drawY, Rectangle2D wordBounds,
+        protected void pickWord(String word, String hyperlink, double drawX, double drawY, Rectangle2D wordBounds,
                               DrawContext dc, PickSupport pickSupport, Object refObject, Position refPosition)
         {
             // Add pickable object
@@ -1259,7 +1259,7 @@ import java.util.regex.*;
         }
 
         // Draw a filled rectangle
-        private void drawFilledRectangle(DrawContext dc, double x, double y, double width, double height)
+        protected void drawFilledRectangle(DrawContext dc, double x, double y, double width, double height)
         {
             GL gl = dc.getGL();
             gl.glBegin(GL.GL_POLYGON);
@@ -1279,9 +1279,9 @@ import java.util.regex.*;
          */
         public static class WordIteratorHTML implements Iterator<String>
         {
-            private ArrayList<String> words;
-            private int nextWord = -1;
-            private static Pattern SGMLOrSpacePattern = Pattern.compile("(<[^\\s].*?>)|(\\s)");
+            protected ArrayList<String> words;
+            protected int nextWord = -1;
+            protected static Pattern SGMLOrSpacePattern = Pattern.compile("(<[^\\s].*?>)|(\\s)");
 
             public WordIteratorHTML(String text)
             {
@@ -1307,7 +1307,7 @@ import java.util.regex.*;
                     this.nextWord = 0;
             }
 
-            private void addWord(String word)
+            protected void addWord(String word)
             {
                 word = word.trim();
                 if (word.length() > 0)
@@ -1331,13 +1331,13 @@ import java.util.regex.*;
 
         // -- HTML Draw state handling -----------------------------------
 
-        private class DrawState
+        protected class DrawState
         {
-            private class DrawAttributes
+            protected class DrawAttributes
             {
-                private final Font font;
-                private String hyperlink;
-                private final Color color;
+                protected final Font font;
+                protected String hyperlink;
+                protected final Color color;
 
                 public DrawAttributes(Font font, String hyperlink, Color color)
                 {
@@ -1347,10 +1347,10 @@ import java.util.regex.*;
                 }
             }
 
-            private ArrayList<DrawAttributes> stack = new ArrayList<DrawAttributes>();
-            private TextRendererCache renderers;
+            protected ArrayList<DrawAttributes> stack = new ArrayList<DrawAttributes>();
+            protected TextRendererCache renderers;
             public TextRenderer textRenderer;
-            private Pattern SGMLPattern = Pattern.compile("(<[^\\s].*?>)");
+            protected Pattern SGMLPattern = Pattern.compile("(<[^\\s].*?>)");
 
             public DrawState(TextRendererCache renderers, Font font, String hyperlink, Color color)
             {
@@ -1374,12 +1374,12 @@ import java.util.regex.*;
                 return this.stack.get(this.stack.size() - 1);
             }
 
-            private TextRenderer getTextRenderer(Font font)
+            protected TextRenderer getTextRenderer(Font font)
             {
                 return OGLTextRenderer.getOrCreateTextRenderer(this.renderers, font);
             }
 
-            private Font getFont(Font font, boolean isBold, boolean isItalic)
+            protected Font getFont(Font font, boolean isBold, boolean isItalic)
             {
                 int fontStyle = isBold ? (isItalic ? Font.BOLD | Font.ITALIC : Font.BOLD)
                         : (isItalic ? Font.ITALIC : Font.PLAIN);
@@ -1475,18 +1475,18 @@ import java.util.regex.*;
                 }
             }
 
-            private void push(DrawAttributes da)
+            protected void push(DrawAttributes da)
             {
                 this.stack.add(da);
             }
 
-            private void pop()
+            protected void pop()
             {
                 if (this.stack.size() > 1)
                     this.stack.remove(this.stack.size() - 1);
             }
 
-            private Color applyTextAlpha(Color color)
+            protected Color applyTextAlpha(Color color)
             {
                 return new Color(color.getRed(), color.getGreen(), color.getBlue(),
                     color.getAlpha() * textColor.getAlpha() / 255 );
