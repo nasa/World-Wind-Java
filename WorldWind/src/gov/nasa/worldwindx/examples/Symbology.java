@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwindx.examples;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -58,6 +58,37 @@ public class Symbology extends ApplicationTemplate
             graphic = factory.createGraphic("GHGAGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile (anticipated)");
             graphic.setText("C");
+            layer.addRenderable(graphic);
+
+            // Create a General Area
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.8193, -117.6454, 0));
+            positions.add(Position.fromDegrees(34.8043, -117.5682, 0));
+            positions.add(Position.fromDegrees(34.7800, -117.6040, 0));
+            positions.add(Position.fromDegrees(34.7819, -117.6687, 0));
+            graphic = factory.createGraphic("GHGPGAG----AUSX", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "General Area");
+            graphic.setText("Area");
+            layer.addRenderable(graphic);
+
+            // Create an Assembly Area
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.7152, -117.6526, 0));
+            positions.add(Position.fromDegrees(34.7219, -117.6089, 0));
+            positions.add(Position.fromDegrees(34.6918, -117.5904, 0));
+            positions.add(Position.fromDegrees(34.6818, -117.6665, 0));
+            graphic = factory.createGraphic("GFGPGAA----AUSX", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Assembly Area");
+            graphic.setText("Area");
+            layer.addRenderable(graphic);
+
+            // Create a Deception graphic
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.6665, -117.9306, 0));
+            positions.add(Position.fromDegrees(34.6476, -117.9601, 0));
+            positions.add(Position.fromDegrees(34.6426, -117.9020, 0));
+            graphic = factory.createGraphic("GHGPPD-----AUSX", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Dummy (Deception/Decoy)");
             layer.addRenderable(graphic);
 
             // Create tactical symbol

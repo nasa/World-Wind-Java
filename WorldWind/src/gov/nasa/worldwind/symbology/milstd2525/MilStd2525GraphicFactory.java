@@ -10,7 +10,10 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.PenetrationBox;
 import gov.nasa.worldwind.util.*;
 
 import java.lang.reflect.*;
@@ -18,25 +21,36 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 /**
+ * Graphic factory to create tactical graphics for the MIL-STD-2525 symbol set.
+ *
  * @author pabercrombie
  * @version $Id$
  */
 public class MilStd2525GraphicFactory implements TacticalGraphicFactory
 {
-    /**
-     * Each type of graphic in 2525C has a unique function code. This map associates each
-     * function code with the class that implements that type of graphic.
-     */
+    /** Map to associate MIL-STD-2525C function codes with implementation classes. */
     protected Map<String, Class> classMap = new ConcurrentHashMap<String, Class>();
 
+    /** Create a new factory. */
     public MilStd2525GraphicFactory()
     {
         this.classMap.put(PhaseLine.FUNCTION_ID, PhaseLine.class);
+        this.classMap.put(GeneralArea.FUNCTION_ID, GeneralArea.class);
+        this.classMap.put(AssemblyArea.FUNCTION_ID, AssemblyArea.class);
+        this.classMap.put(EngagementArea.FUNCTION_ID, EngagementArea.class);
+        this.classMap.put(AirfieldZone.FUNCTION_ID, AirfieldZone.class);
+        this.classMap.put(Dummy.FUNCTION_ID, Dummy.class);
+        this.classMap.put(PenetrationBox.FUNCTION_ID, PenetrationBox.class);
     }
 
-    public TacticalGraphic createGraphic(String symbolIdentifier, Iterable<Position> positions, AVList params)
+    /**
+     * {@inheritDoc}
+     *
+     * @param sidc MIL-STD-2525 symbol identification code (SIDC).
+     */
+    public TacticalGraphic createGraphic(String sidc, Iterable<Position> positions, AVList params)
     {
-        SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
+        SymbolCode symbolCode = new SymbolCode(sidc);
 
         Class clazz = this.getClassForCode(symbolCode);
         if (clazz == null)
@@ -103,7 +117,14 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         }
     }
 
-    protected Class getClassForCode(AVList symbolCode)
+    /**
+     * Get the implementation class that implements a particular graphic.
+     *
+     * @param symbolCode Parsed SIDC that identifies the graphic.
+     *
+     * @return The implementation class for the specified SIDC, or {@code null} if no implementation class is found.
+     */
+    protected Class getClassForCode(SymbolCode symbolCode)
     {
         String key = symbolCode.getStringValue(SymbolCode.FUNCTION_ID);
         return this.classMap.get(key);
