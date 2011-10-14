@@ -6,10 +6,6 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
-import gov.nasa.worldwind.render.Renderable;
-
-import java.util.*;
-
 /**
  * @author pabercrombie
  * @version $Id$
