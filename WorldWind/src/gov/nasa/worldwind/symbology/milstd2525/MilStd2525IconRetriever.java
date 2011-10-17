@@ -7,19 +7,19 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.symbology.AbstractSymbolGenerator;
+import gov.nasa.worldwind.symbology.AbstractIconRetriever;
 
 import java.awt.image.*;
 
 /**
  * @author ccrick
- * @version $Id: MilStd2525SymbolGenerator.java 90 2011-10-10 23:58:29Z ccrick $
+ * @version $Id: MilStd2525IconRetriever.java 90 2011-17-10 23:58:29Z ccrick $
  */
-public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
+public class MilStd2525IconRetriever extends AbstractIconRetriever
 {
     // TODO: add more error checking
 
-    public BufferedImage createImage(String symbolIdentifier, AVList params)
+    public BufferedImage createIcon(String symbolIdentifier, AVList params)
     {
         if (symbolIdentifier.length() != 15)
         {
@@ -31,17 +31,17 @@ public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
 
         BufferedImage img = null;
 
-        if (params.getValue(AbstractSymbolGenerator.SOURCE_TYPE).equals("file"))
+        if (params.getValue(SymbolCode.SOURCE_TYPE).equals("file"))
         {
-            String path = (String) params.getValue(AbstractSymbolGenerator.SOURCE_PATH);
+            String path = (String) params.getValue(SymbolCode.SOURCE_PATH);
             String filename = getFilename(symbolCode);
 
             img = retrieveImageFromFile(path, filename, img);
         }
-        else if (params.getValue(AbstractSymbolGenerator.SOURCE_TYPE).equals("url"))
+        else if (params.getValue(SymbolCode.SOURCE_TYPE).equals("url"))
         {
-            String server = (String) params.getValue(AbstractSymbolGenerator.SOURCE_SERVER);
-            String path = (String) params.getValue(AbstractSymbolGenerator.SOURCE_PATH);
+            String server = (String) params.getValue(SymbolCode.SOURCE_SERVER);
+            String path = (String) params.getValue(SymbolCode.SOURCE_PATH);
             String filename = getFilename(symbolCode);
 
             img = retrieveImageFromURL(server, path, filename, img);
@@ -104,3 +104,4 @@ public class MilStd2525SymbolGenerator extends AbstractSymbolGenerator
         return result;
     }
 }
+

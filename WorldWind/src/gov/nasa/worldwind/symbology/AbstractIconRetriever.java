@@ -15,14 +15,10 @@ import java.net.URL;
 
 /**
  * @author ccrick
- * @version $Id: MilStd2525SymbolGenerator.java 90 2011-10-10 23:58:29Z ccrick $
+ * @version $Id: AbstractIconRetriever.java 90 2011-17-10 23:58:29Z ccrick $
  */
-public abstract class AbstractSymbolGenerator implements SymbolGenerator
+public abstract class AbstractIconRetriever implements IconRetriever
 {
-    public final static String SOURCE_TYPE = "sourceType";
-    public final static String SOURCE_PATH = "sourcePath";
-    public final static String SOURCE_SERVER = "sourceServer";
-
     public BufferedImage retrieveImageFromFile(String path, String filename, BufferedImage img)
     {
         if (path == null)

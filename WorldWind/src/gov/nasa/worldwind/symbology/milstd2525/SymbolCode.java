@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.util.Logging;
 
 /**
@@ -57,6 +57,11 @@ public class SymbolCode extends AVListImpl
     public static final String STATUS_SUSPECTED = "S";
     public static final String STATUS_PRESENT = "P";
     public static final String STATUS_KNOWN = "K";
+
+    // modifier keys
+    public final static String SOURCE_TYPE = "sourceType";
+    public final static String SOURCE_PATH = "sourcePath";
+    public final static String SOURCE_SERVER = "sourceServer";
 
     public SymbolCode()
     {

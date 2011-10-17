@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwindx.examples;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -92,20 +92,20 @@ public class Symbology extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             // Create tactical symbol
-            MilStd2525SymbolGenerator symGen = new MilStd2525SymbolGenerator();
-            String path
-                = "C:\\WorldWind\\release\\trunk\\WorldWind\\src\\gov\\nasa\\worldwind\\symbology\\milstd2525\\icons\\";
-            String url = "www.annieshavercrandell.com";
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever();
             AVListImpl params = new AVListImpl();
             //    from file
-            //params.setValue(AbstractSymbolGenerator.SOURCE_TYPE, "file");
-            //params.setValue(AbstractSymbolGenerator.SOURCE_PATH, path);
-            //BufferedImage img = symGen.createImage("SUAPC----------", params);
+            String path
+                = "C:\\WorldWind\\release\\trunk\\WorldWind\\src\\gov\\nasa\\worldwind\\symbology\\milstd2525\\icons\\";
+            params.setValue(SymbolCode.SOURCE_TYPE, "file");
+            params.setValue(SymbolCode.SOURCE_PATH, path);
+            BufferedImage img = symGen.createIcon("SUAPC----------", params);
             //    from URL
-            params.setValue(AbstractSymbolGenerator.SOURCE_TYPE, "url");
-            params.setValue(AbstractSymbolGenerator.SOURCE_SERVER, url);
-            params.setValue(AbstractSymbolGenerator.SOURCE_PATH, "/images/");
-            BufferedImage img = symGen.createImage("SUAPQ----------", params);
+            String url = "www.annieshavercrandell.com";
+            //params.setValue(SymbolCode.SOURCE_TYPE, "url");
+            //params.setValue(SymbolCode.SOURCE_SERVER, url);
+            //params.setValue(SymbolCode.SOURCE_PATH, "/images/");
+            //BufferedImage img = symGen.createIcon("SUAPQ----------", params);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
                 Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.8));
             SurfaceImage symbol = new SurfaceImage(img, s);

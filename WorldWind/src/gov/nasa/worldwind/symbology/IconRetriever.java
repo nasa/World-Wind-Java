@@ -12,9 +12,9 @@ import java.awt.image.*;
 
 /**
  * @author ccrick
- * @version $Id: SymbolGenerator.java 90 2011-10-10 23:58:29Z ccrick $
+ * @version $Id: IconRetriever.java 90 2011-17-10 23:58:29Z ccrick $
  */
-public interface SymbolGenerator
+public interface IconRetriever
 {
-    BufferedImage createImage(String symbolIdentifier, AVList params);
+    BufferedImage createIcon(String symbolIdentifier, AVList params);
 }
