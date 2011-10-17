@@ -31,7 +31,6 @@ import gov.nasa.worldwind.render.Renderable;
  * tactical symbol is to add it to a {@link gov.nasa.worldwind.layers.RenderableLayer}. Here's an example of creating
  * and displaying a tactical symbol for a MIL-STD-2525 friendly ground unit using a RenderableLayer:
  * <p/>
- * <code>
  * <pre>
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit. Since the SIDC specifies a ground symbol, the
  * // tactical symbol's altitude mode is automatically configured as WorldWind.CLAMP_TO_GROUND.
@@ -49,7 +48,6 @@ import gov.nasa.worldwind.render.Renderable;
  * wwd.getModel().getLayers().add(symbolLayer);
  * wwd.redraw();
  * </pre>
- * </code>
  * <p/>
  * <h2>Tactical Symbol Modifiers</h2> Symbols modifiers are optional attributes that augment or change a symbol's
  * graphic. Which modifiers are recognized by a tactical symbol and how they affect the symbol's graphic is
@@ -61,7 +59,6 @@ import gov.nasa.worldwind.render.Renderable;
  * implementation defined setter method. Here's an example of setting the the direction of movement modifier at
  * construction for a MIL-STD-2525 friendly ground unit:
  * <p/>
- * <code>
  * <pre>
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit, specifying the optional direction of movement
  * // modifier by passing in a list of key-value pairs.
@@ -70,11 +67,9 @@ import gov.nasa.worldwind.render.Renderable;
  * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0),
  *     modifiers);
  * </pre>
- * </code>
  * <p/>
  * Here's an example of setting the same modifier after construction:
  * <p/>
- * <code>
  * <pre>
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit.
  * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0));
@@ -85,21 +80,18 @@ import gov.nasa.worldwind.render.Renderable;
  * // 2) Specify the modifier using an implementation defined setter method:
  * ((MilStd2525TacticalSymbol) symbol).setDirectionOfMovement(Angle.fromDegrees(45));
  * </pre>
- * </code>
  * <p/>
  * Tactical symbol implementations apply modifiers from the string identifier specified during construction. For
  * example, given a MIL-STD-2525 symbol representing units, installation, or equipment, SIDC positions 11-12 specify the
  * echelon and task force modifiers (See MIL-STD-2525C, Appendix A). Here's an example of setting the echelon and task
  * force modifiers at construction for a MIL-STD-2525 friendly ground unit:
  * <p/>
- * <code>
  * <pre>
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit. Specify the echelon modifier and task force
  * // modifiers by setting the SIDC characters 11-12 to "EA". This indicates that the ground unit is a team/crew task
  * // force (see MIL-STD-2525C, Appendix A, Table A-II).
  * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU-----EA---", Position.fromDegrees(-120, 40, 0));
  * </pre>
- * </code>
  * <p/>
  * <h2>Positioning Tactical Symbols</h2> A symbol's geographic position defines where the symbol displays its graphic.
  * Either the graphic's geometric center is displayed at the position, or a specific location within the graphic (such
