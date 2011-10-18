@@ -10,16 +10,15 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.render.Renderable;
 
 /**
- * TacticalGraphic provides a common interface for displaying a vector graphics from symbology sets. A graphic be an
- * icon that is drawn a geographic point, a vector graphic that is positioned using one or more control points, or a
+ * TacticalGraphic provides a common interface for displaying a vector graphics from symbology sets. A graphic can be an
+ * icon that is drawn a geographic position, a vector graphic that is positioned using one or more control points, or a
  * line or polygon that is styled according to the symbol set's specification.
  * <p/>
  * <h1>Creating and Displaying Tactical Graphics</h1>
  * <p/>
  * TacticalGraphics are typically created by an instance of {@link TacticalGraphicFactory}. Tactical graphics fall into
  * two basic categories: graphics that are positioned with a single point, and graphics that are positioned by multiple
- * points. createPoint creates graphics that require only one control point, and createShape creates graphics that
- * require multiple points.
+ * points.
  * <p/>
  * Each graphic within a symbol set is identified by a string identifier. The format of this identifier depends on the
  * symbol set. For example, a MIL-STD-2525 identifier is a string of 15 characters.
@@ -30,7 +29,7 @@ import gov.nasa.worldwind.render.Renderable;
  * <p/>
  * The TacticalGraphic interface, and it’s sub-interfaces TacticalShape and TacticalPoint, provide access to settings
  * common to all tactical graphics. TacticalGraphic extends the {@link Renderable} interface, so you can add a
- * TacticalGraphic directly to a {@link gov.nasa.worldwind.layers.RenderableLayer}. Here’s an example of creating a
+ * TacticalGraphic directly to a {@link gov.nasa.worldwind.layers.RenderableLayer}. Here's an example of creating a
  * graphic from the MIL-STD-2525 symbol set:
  * <p/>
  * <pre>
@@ -44,7 +43,7 @@ import gov.nasa.worldwind.render.Renderable;
  * <br/>
  * // Specify a text modifier
  * AVList params = new AVListImpl();
- * params.put(“Text”, “Alpha”);
+ * params.put("Text", "Alpha");
  * <br/>
  * // Create a graphic for a MIL-STD-2525 hostile phase line. The first argument is the symbol identification code
  * // (SIDC) that identifies the type of graphic to create.
@@ -64,7 +63,7 @@ import gov.nasa.worldwind.render.Renderable;
  * </pre>
  * <p/>
  * The symbol identifier ({@code GHGPGLP----AUSX}) tells the factory what type of graphic to create,  and how the
- * graphic should be styled. In the example above we added a text modifier of “Alpha” to identify our shape. These
+ * graphic should be styled. In the example above we added a text modifier of "Alpha" to identify our shape. These
  * parameters can be specified using a parameter list when the TacticalGraphic is created, as shown above. They can also
  * be set after creation using setters in the TacticalGraphic interface.
  * <p/>
@@ -80,7 +79,7 @@ import gov.nasa.worldwind.render.Renderable;
  * <p/>
  * <pre>
  * AVList params = new AVListImpl();
- * params.setValue(“Text”, “Boston”); // Text that identifies the area enclosed by the graphic.
+ * params.setValue("Text", "Boston"); // Text that identifies the area enclosed by the graphic.
  * <br/>
  * List<Position> positions = ...; // List of positions that define the boundary of the area.
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions, params);
