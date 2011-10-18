@@ -235,43 +235,99 @@ public interface DrawContext extends WWObject, Disposable
     SectorGeometryList getSurfaceGeometry();
 
     /**
-     * Returns the list of objects picked during the most recent pick traversal.
+     * Returns the list of objects at the pick point during the most recent pick traversal. The returned list is empty
+     * if nothing is at the pick point, or if the pick point is <code>null</code>.
      *
-     * @return the list of picked objects
+     * @return the list of picked objects.
      */
     PickedObjectList getPickedObjects();
 
     /**
-     * Adds a collection of picked objects to the current picked-object list
+     * Adds a list of picked objects to the current list of objects at the pick point. This list can be accessed by
+     * calling {@link #getPickedObjects()}.
      *
-     * @param pickedObjects the objects to add
+     * @param pickedObjects the list to add.
      *
-     * @throws IllegalArgumentException if <code>pickedObjects is null</code>
+     * @throws IllegalArgumentException if pickedObjects is <code>null</code>.
      */
     void addPickedObjects(PickedObjectList pickedObjects);
 
     /**
-     * Adds a single insatnce of the picked object to the current picked-object list
+     * Adds the specified picked object to the list of objects at the pick point. This list can be accessed by calling
+     * {@link #getPickedObjects()}.
      *
-     * @param pickedObject the object to add
+     * @param pickedObject the object to add.
      *
-     * @throws IllegalArgumentException if <code>pickedObjects is null</code>
+     * @throws IllegalArgumentException if pickedObject is <code>null</code>.
      */
     void addPickedObject(PickedObject pickedObject);
+
+    /**
+     * Returns the list of objects intersecting the pick rectangle during the most recent pick traversal. The returned
+     * list is empty if nothing intersects the pick rectangle, or if the pick rectangle is <code>null</code>.
+     *
+     * @return the list of picked objects.
+     */
+    PickedObjectList getObjectsInPickRectangle();
+
+    /**
+     * Adds the specified picked object to the current list of objects intersecting the pick rectangle. This list can be
+     * accessed by calling {@link #getObjectsInPickRectangle()}.
+     *
+     * @param pickedObject the object to add.
+     *
+     * @throws IllegalArgumentException if pickedObject is <code>null</code>.
+     */
+    void addObjectInPickRectangle(PickedObject pickedObject);
 
     /**
      * Returns a unique color to serve as a pick identifier during picking.
      *
      * @return a unique pick color
      */
-    java.awt.Color getUniquePickColor();
+    Color getUniquePickColor();
 
     /**
      * Returns the WorldWindow's background color.
      *
      * @return the WorldWindow's background color.
      */
-    java.awt.Color getClearColor();
+    Color getClearColor();
+
+    /**
+     * Returns the framebuffer RGB color for a point in AWT screen coordinates, formatted as a pick color code. The red,
+     * green, and blue components are each stored as an 8-bit unsigned integer, and packed into bits 0-23 of the
+     * returned integer as follows: bits 16-23 are red, bits 8-15 are green, and bits 0-7 are blue. This format is
+     * consistent with the RGB integers used to create the pick colors in getUniquePickColor.
+     * <p/>
+     * This returns 0 if the point contains the clear color, or is outside this draw context's drawable area.
+     *
+     * @param point the point to return a color for, in AWT screen coordinates.
+     *
+     * @return the RGB color corresponding to the specified point.
+     *
+     * @throws IllegalArgumentException if the point is <code>null</code>.
+     */
+    int getPickColorAtPoint(Point point);
+
+    /**
+     * Returns an array of the unique framebuffer RGB colors within a rectangle in AWT screen coordinates, formatted as
+     * pick color codes. The red, green, and blue components are each stored as an 8-bit unsigned integer, and packed
+     * into bits 0-23 of the returned integers as follows: bits 16-23 are red, bits 8-15 are green, and bits 0-7 are
+     * blue. This format is consistent with the RGB integers used to create the pick colors in getUniquePickColor.
+     * <p/>
+     * The returned array contains one entry for each unique color. Points in the rectangle that contain the clear color
+     * or are outside this draw context's drawable area are ignored. This returns <code>null</code> if the specified
+     * rectangle is empty, or contains only the clear color.
+     *
+     * @param rectangle the rectangle to return unique colors for, in AWT screen coordinates.
+     *
+     * @return the unique RGB colors corresponding to the specified rectangle, or <code>null</code> if the rectangle is
+     *         empty or the rectangle contains only the clear color.
+     *
+     * @throws IllegalArgumentException if the rectangle is <code>null</code>.
+     */
+    int[] getPickColorsInRectangle(Rectangle rectangle);
 
     /** Specifies that the scene controller is beginning its pick traversal. */
     void enablePickingMode();
@@ -388,18 +444,50 @@ public interface DrawContext extends WWObject, Disposable
     SurfaceTileRenderer getGeographicSurfaceTileRenderer();
 
     /**
-     * Returns the current pick point.
+     * Returns the current pick point in AWT screen coordinates.
      *
-     * @return the current pick point, or null if no pick point is available.
+     * @return the current pick point, or <code>null</code> if no pick point is available.
+     *
+     * @see #setPickPoint(java.awt.Point)
      */
     Point getPickPoint();
 
     /**
-     * Specifies the pick point.
+     * Specifies the current pick point in AWT screen coordinates, or <code>null</code> to indicate that there is no
+     * pick point. During each pick traversal, layers determine if their contents are drawn at the pick point. If so,
+     * layers add each unique picked object to a PickedObjectList on this draw context by calling {@link
+     * #addPickedObject(gov.nasa.worldwind.pick.PickedObject)}. This list can be accessed by calling {@link
+     * #getPickedObjects()}.
+     * <p/>
+     * If the pick point is <code>null</code>, the pick point is ignored during each pick traversal, and the list of
+     * objects returned by getPickedObjects is empty.
      *
-     * @param pickPoint the pick point, or null to indicate there is no pick point.
+     * @param pickPoint the current pick point, or <code>null</code> to specify that there is no pick point.
      */
     void setPickPoint(Point pickPoint);
+
+    /**
+     * Returns the current pick rectangle in AWT screen coordinates.
+     *
+     * @return the current pick rectangle, or <code>null</code> if no pick rectangle is current.
+     *
+     * @see #setPickRectangle(java.awt.Rectangle)
+     */
+    Rectangle getPickRectangle();
+
+    /**
+     * Specifies the current pick rectangle in AWT screen coordinates, or <code>null</code> to indicate that there is no
+     * pick rectangle. During each pick traversal, layers determine if their contents intersect the pick rectangle. If
+     * so, layers add each unique picked object to a PickedObjectList on this draw context by calling {@link
+     * #addObjectInPickRectangle(gov.nasa.worldwind.pick.PickedObject)}. This is list can be accessed by calling {@link
+     * #getObjectsInPickRectangle()}.
+     * <p/>
+     * If the pick rectangle is <code>null</code>, the pick rectangle is ignored during each pick traversal, and the
+     * list of objects returned by getObjectsInPickRectangle is empty.
+     *
+     * @param pickRect the current pick rectangle, or <code>null</code> to specify that there is no pick rectangle.
+     */
+    void setPickRectangle(Rectangle pickRect);
 
     /**
      * Returns the GPU resource cache for this draw context. This method returns the same value as {@link
@@ -641,10 +729,19 @@ public interface DrawContext extends WWObject, Disposable
     Dimension getPickPointFrustumDimension();
 
     /**
-     * Creates a frustum around the current pickpoint and adds it to the list of Pick Frustums The frustum size is set
-     * with setPickPointFrustumSize().
+     * Creates a frustum around the current pick point and adds it to the current list of pick frustums. The frustum's
+     * dimension is specified by calling {@link #setPickPointFrustumDimension(java.awt.Dimension)}.
+     * <p/>
+     * This does nothing if the current pick point is <code>null</code>.
      */
     void addPickPointFrustum();
+
+    /**
+     * Creates a frustum containing the current pick rectangle and adds it to the current list of pick frustums.
+     * <p/>
+     * This does nothing if the current pick rectangle is <code>null</code>.
+     */
+    void addPickRectangleFrustum();
 
     /**
      * Gets the rendering exceptions associated with this DrawContext as a {@link java.util.Collection} of {@link

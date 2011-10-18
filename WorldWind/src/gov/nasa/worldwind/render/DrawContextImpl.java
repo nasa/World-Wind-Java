@@ -5,6 +5,7 @@
  */
 package gov.nasa.worldwind.render;
 
+import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.texture.TextureCoords;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.GpuResourceCache;
@@ -18,7 +19,7 @@ import gov.nasa.worldwind.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import java.awt.*;
-import java.nio.FloatBuffer;
+import java.nio.*;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
@@ -39,12 +40,38 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     protected double verticalExaggeration = 1d;
     protected Sector visibleSector;
     protected SectorGeometryList surfaceGeometry;
+    /**
+     * The list of objects at the pick point during the most recent pick traversal. Initialized to an empty
+     * PickedObjectList.
+     */
     protected PickedObjectList pickedObjects = new PickedObjectList();
+    /**
+     * The list of objects intersecting the pick rectangle during the most recent pick traversal. Initialized to an
+     * empty PickedObjectList.
+     */
+    protected PickedObjectList objectsInPickRect = new PickedObjectList();
     protected int uniquePickNumber = 0;
     protected Color clearColor = new Color(0, 0, 0, 0);
+    /** Buffer of RGB colors used to read back the framebuffer's colors and store them in client memory. */
+    protected ByteBuffer pixelColors;
+    /**
+     * Set of ints used by {@link #getPickColorsInRectangle(java.awt.Rectangle)} to identify the unique color codes in
+     * the specified rectangle. This consolidates duplicate colors to a single entry. Initialized to a HashSet in order
+     * to achieve constant time insertion.
+     */
+    protected Set<Integer> uniquePixelColors = new HashSet<Integer>();
     protected boolean pickingMode = false;
     protected boolean deepPickingMode = false;
+    /**
+     * Indicates the current pick point in AWT screen coordinates, or <code>null</code> to indicate that there is no
+     * pick point. Initially <code>null</code>.
+     */
     protected Point pickPoint = null;
+    /**
+     * Indicates the current pick rectangle in AWT screen coordinates, or <code>null</code> to indicate that there is no
+     * pick rectangle. Initially <code>null</code>.
+     */
+    protected Rectangle pickRect = null;
     protected boolean isOrderedRenderingMode = false;
     protected boolean preRenderMode = false;
     protected Point viewportCenterScreenPoint = null;
@@ -173,6 +200,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         this.surfaceGeometry = null;
 
         this.pickedObjects.clear();
+        this.objectsInPickRect.clear();
         this.orderedRenderables.clear();
         this.orderedSurfaceRenderables.clear();
         this.uniquePickNumber = 0;
@@ -330,12 +358,22 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
 
     public Point getPickPoint()
     {
-        return pickPoint;
+        return this.pickPoint;
     }
 
     public void setPickPoint(Point pickPoint)
     {
         this.pickPoint = pickPoint;
+    }
+
+    public Rectangle getPickRectangle()
+    {
+        return this.pickRect;
+    }
+
+    public void setPickRectangle(Rectangle pickRect)
+    {
+        this.pickRect = pickRect;
     }
 
     public Point getViewportCenterScreenPoint()
@@ -399,6 +437,23 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         return this.pickedObjects;
     }
 
+    public PickedObjectList getObjectsInPickRectangle()
+    {
+        return this.objectsInPickRect;
+    }
+
+    public void addObjectInPickRectangle(PickedObject pickedObject)
+    {
+        if (pickedObject == null)
+        {
+            String msg = Logging.getMessage("nullValue.PickedObject");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.objectsInPickRect.add(pickedObject);
+    }
+
     public Color getUniquePickColor()
     {
         this.uniquePickNumber++;
@@ -420,6 +475,101 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     public Color getClearColor()
     {
         return this.clearColor;
+    }
+
+    /** {@inheritDoc} */
+    public int getPickColorAtPoint(Point point)
+    {
+        if (point == null)
+        {
+            String msg = Logging.getMessage("nullValue.PointIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        // Translate the point from AWT screen coordinates to OpenGL screen coordinates.
+        Rectangle viewport = this.getView().getViewport();
+        int x = point.x;
+        int y = viewport.height - point.y - 1;
+
+        // Read the framebuffer color at the specified point in OpenGL screen coordinates as a 24-bit RGB value.
+        if (this.pixelColors == null || this.pixelColors.capacity() < 3)
+            this.pixelColors = BufferUtil.newByteBuffer(3);
+        this.pixelColors.clear();
+        this.getGL().glReadPixels(x, y, 1, 1, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, this.pixelColors);
+
+        int colorCode = ((this.pixelColors.get(0) & 0xff) << 16) // Red, bits 16-23
+            | ((this.pixelColors.get(1) & 0xff) << 8) // Green, bits 8-16
+            | (this.pixelColors.get(2) & 0xff); // Blue, bits 0-7
+
+        return colorCode != this.clearColor.getRGB() ? colorCode : 0;
+    }
+
+    /** {@inheritDoc} */
+    public int[] getPickColorsInRectangle(Rectangle rectangle)
+    {
+        if (rectangle == null)
+        {
+            String msg = Logging.getMessage("nullValue.RectangleIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Rectangle viewport = this.getView().getViewport();
+
+        // Transform the rectangle from AWT screen coordinates to OpenGL screen coordinates and compute its intersection
+        // with the viewport. Transformation to GL coordinates must be done prior to computing the intersection, because
+        // the viewport is in GL coordinates. The resultant rectangle represents the area that's valid to read from GL.
+        Rectangle r = new Rectangle(rectangle.x, viewport.height - rectangle.y - 1, rectangle.width, rectangle.height);
+        r = r.intersection(viewport);
+
+        // TODO: Handle a rectangle where only one of the width or height are zero.
+        if (r.width == 0 || r.height == 0) // Return null if the rectangle is empty.
+            return null;
+
+        // Read the colors in the specified rectangle in OpenGL screen coordinates.
+        int numPixels = r.width * r.height;
+        if (this.pixelColors == null || this.pixelColors.capacity() < 4 * numPixels)
+            this.pixelColors = BufferUtil.newByteBuffer(4 * numPixels);
+        this.pixelColors.clear();
+
+        // Read the framebuffer colors in the specified rectangle as 32-bit RGBA values (instead of 24-bit RGB values as
+        // is done in getPickColorAtPoint). This enables us to avoid setting the GL pack alignment state, and improves
+        // performance by ~15%. We discard the alpha components when processing each framebuffer color.
+        GL gl = this.getGL();
+        gl.glReadPixels(r.x, r.y, r.width, r.height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, this.pixelColors);
+
+        // Compute the set of unique color codes in the pick rectangle, ignoring the clear color. We place each color
+        // in a set to consolidates duplicate pick colors to a single entry. This reduces the number of colors we need
+        // to return to the caller, and ensures that callers creating picked objects based on the returned colors do not
+        // create duplicates.
+        int clearColorCode = this.clearColor.getRGB();
+        for (int i = 0; i < numPixels; i++)
+        {
+            int colorCode = ((this.pixelColors.get() & 0xff) << 16) // Red, bits 16-23
+                | ((this.pixelColors.get() & 0xff) << 8) // Green, bits 8-16
+                | (this.pixelColors.get() & 0xff); // Blue, bits 0-7
+            this.pixelColors.get(); // Discard the alpha component
+
+            // Add a 24-bit integer corresponding to each unique RGB color that's not the clear color.
+            if (colorCode != clearColorCode)
+                this.uniquePixelColors.add(colorCode);
+        }
+
+        // Copy the Integer set to a primitive int array that we return to the caller. The Java collections are not
+        // capable of returning an array of primitives directly, so we loop over the collection ourselves.
+        int[] array = new int[this.uniquePixelColors.size()];
+        int index = 0;
+        for (Integer i : this.uniquePixelColors)
+        {
+            array[index++] = i;
+        }
+
+        // Clear the set of unique pick colors to ensure that the colors computed during this call do not affect the
+        // next call.
+        this.uniquePixelColors.clear();
+
+        return array;
     }
 
     public boolean isPickingMode()
@@ -839,7 +989,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
             Frustum frustum = Frustum.fromPerspectiveVecs(vTL, vTR, vBL, vBR,
                 getView().getNearClipDistance(), getView().getFarClipDistance());
 
-            //Create the screen Rectangle associtated with this frustum
+            //Create the screen rectangle associated with this frustum
             Rectangle rectScreen = new Rectangle(getPickPoint().x - offsetX,
                 (int) viewportHeight - getPickPoint().y - offsetY,
                 pickPointFrustumDimension.width,
@@ -852,6 +1002,49 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
 
             this.pickFrustumList.add(new PickPointFrustum(frustum, rectScreen));
         }
+    }
+
+    public void addPickRectangleFrustum()
+    {
+        // Do nothing if the pick rectangle is either null or has zero dimension.
+        if (this.getPickRectangle() == null || this.getPickRectangle().isEmpty())
+            return;
+
+        View view = this.getView();
+
+        Rectangle viewport = view.getViewport();
+        double viewportWidth = viewport.getWidth() <= 0.0 ? 1.0 : viewport.getWidth();
+        double viewportHeight = viewport.getHeight() <= 0.0 ? 1.0 : viewport.getHeight();
+
+        // Get the pick rectangle, transform it from AWT screen coordinates to OpenGL screen coordinates, then translate
+        // it such that the screen's center is at the origin.
+        Rectangle pr = new Rectangle(this.getPickRectangle());
+        pr.y = (int) viewportHeight - pr.y;
+        pr.translate((int) (-viewportWidth / 2), (int) (-viewportHeight / 2));
+
+        // Create the four vectors that define the top-left, top-right, bottom-left, and bottom-right corners of the
+        // pick rectangle in screen coordinates.
+        double screenDist = viewportWidth / (2 * view.getFieldOfView().tanHalfAngle());
+        Vec4 vTL = new Vec4(pr.getMinX(), pr.getMaxY(), -screenDist);
+        Vec4 vTR = new Vec4(pr.getMaxX(), pr.getMaxY(), -screenDist);
+        Vec4 vBL = new Vec4(pr.getMinX(), pr.getMinY(), -screenDist);
+        Vec4 vBR = new Vec4(pr.getMaxX(), pr.getMinY(), -screenDist);
+
+        // Compute the frustum from these four vectors.
+        Frustum frustum = Frustum.fromPerspectiveVecs(vTL, vTR, vBL, vBR, view.getNearClipDistance(),
+            view.getFarClipDistance());
+
+        // Transform the frustum from eye coordinates to model coordinates.
+        Matrix modelviewTranspose = view.getModelviewMatrix().getTranspose();
+        if (modelviewTranspose != null)
+            frustum = frustum.transformBy(modelviewTranspose);
+
+        // Create the screen rectangle in OpenGL screen coordinates associated with this frustum. We translate the
+        // specified pick rectangle from AWT coordinates to GL coordinates by inverting the y axis.
+        Rectangle screenRect = new Rectangle(this.getPickRectangle());
+        screenRect.y = (int) viewportHeight - screenRect.y;
+
+        this.pickFrustumList.add(new PickPointFrustum(frustum, screenRect));
     }
 
     public Collection<Throwable> getRenderingExceptions()

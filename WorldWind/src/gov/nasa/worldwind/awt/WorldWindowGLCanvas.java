@@ -363,6 +363,11 @@ public class WorldWindowGLCanvas extends GLCanvas implements WorldWindow, Proper
         return this.wwd.getSceneController() != null ? this.wwd.getSceneController().getPickedObjectList() : null;
     }
 
+    public PickedObjectList getObjectsInSelectionBox()
+    {
+        return this.wwd.getSceneController() != null ? this.wwd.getSceneController().getObjectsInPickRectangle() : null;
+    }
+
     public Object setValue(String key, Object value)
     {
         return this.wwd.setValue(key, value);

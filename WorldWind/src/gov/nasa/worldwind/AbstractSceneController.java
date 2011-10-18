@@ -31,13 +31,37 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected View view;
     protected double verticalExaggeration = 1d;
     protected DrawContext dc = new DrawContextImpl();
-    protected PickedObjectList lastPickedObjects;// These are for tracking performance
+    /**
+     * The list of picked objects at the current pick point. This list is computed during each call to repaint.
+     * Initially <code>null</code>.
+     */
+    protected PickedObjectList lastPickedObjects;
+    /**
+     * The list of picked objects that intersect the current pick rectangle. This list is computed during each call to
+     * repaint. Initially <code>null</code>.
+     */
+    protected PickedObjectList lastObjectsInPickRect;
+    /**
+     * Map of integer color codes to picked objects used to quickly resolve the top picked objects in {@link
+     * #doResolveTopPick(gov.nasa.worldwind.render.DrawContext, java.awt.Rectangle)}. This map is used only when a pick
+     * rectangle is specified. Initialized to a new HashMap.
+     */
+    protected Map<Integer, PickedObject> pickableObjects = new HashMap<Integer, PickedObject>();
     protected long frame = 0;
     protected long timebase = System.currentTimeMillis();
     protected double framesPerSecond;
     protected double frameTime;
     protected double pickTime;
+    /**
+     * The pick point in AWT screen coordinates, or <code>null</code> if the pick point is disabled. Initially
+     * <code>null</code>.
+     */
     protected Point pickPoint = null;
+    /**
+     * The pick rectangle in AWT screen coordinates, or <code>null</code> if the pick rectangle is disabled. Initially
+     * <code>null</code>.
+     */
+    protected Rectangle pickRect = null;
     protected boolean deepPick = false;
     protected GpuResourceCache gpuResourceCache;
     protected TextRendererCache textRendererCache = new TextRendererCache();
@@ -72,6 +96,10 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         if (this.lastPickedObjects != null)
             this.lastPickedObjects.clear();
         this.lastPickedObjects = null;
+
+        if (this.lastObjectsInPickRect != null)
+            this.lastObjectsInPickRect.clear();
+        this.lastObjectsInPickRect = null;
 
         if (this.dc != null)
             this.dc.dispose();
@@ -142,16 +170,31 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         return this.verticalExaggeration;
     }
 
-    public void setPickPoint(java.awt.Point pickPoint)
+    /** {@inheritDoc} */
+    public void setPickPoint(Point pickPoint)
     {
         this.pickPoint = pickPoint;
     }
 
+    /** {@inheritDoc} */
     public Point getPickPoint()
     {
         return this.pickPoint;
     }
 
+    /** {@inheritDoc} */
+    public void setPickRectangle(Rectangle pickRect)
+    {
+        this.pickRect = pickRect;
+    }
+
+    /** {@inheritDoc} */
+    public Rectangle getPickRectangle()
+    {
+        return this.pickRect;
+    }
+
+    /** {@inheritDoc} */
     public PickedObjectList getPickedObjectList()
     {
         return this.lastPickedObjects;
@@ -160,6 +203,12 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected void setPickedObjectList(PickedObjectList pol)
     {
         this.lastPickedObjects = pol;
+    }
+
+    /** {@inheritDoc} */
+    public PickedObjectList getObjectsInPickRectangle()
+    {
+        return this.lastObjectsInPickRect;
     }
 
     public void setDeepPickEnabled(boolean tf)
@@ -311,6 +360,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         dc.setView(this.view);
         dc.setVerticalExaggeration(this.verticalExaggeration);
         dc.setPickPoint(this.pickPoint);
+        dc.setPickRectangle(this.pickRect);
         dc.setViewportCenterScreenPoint(this.getViewportCenter(dc));
         dc.setFrameTimeStamp(System.currentTimeMillis());
     }
@@ -383,6 +433,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected void createPickFrustum(DrawContext dc)
     {
         dc.addPickPointFrustum();
+        dc.addPickRectangleFrustum();
     }
 
     protected void createTerrain(DrawContext dc)
@@ -513,41 +564,90 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     protected void resolveTopPick(DrawContext dc)
     {
-        // Make a last reading to find out which is a top (resultant) color
-        PickedObjectList pickedObjectsList = dc.getPickedObjects();
-        if (pickedObjectsList != null && (pickedObjectsList.size() == 1))
-        {
-            pickedObjectsList.get(0).setOnTop();
-        }
-        else if (pickedObjectsList != null && (pickedObjectsList.size() > 1))
-        {
-            java.nio.ByteBuffer pixel = com.sun.opengl.util.BufferUtil.newByteBuffer(3);
-            GL gl = dc.getGL();
-            int yInGLCoords = dc.getView().getViewport().height - dc.getPickPoint().y - 1;
-            gl.glReadPixels(dc.getPickPoint().x, yInGLCoords, 1, 1,
-                GL.GL_RGB,
-                GL.GL_UNSIGNED_BYTE, pixel);
+        // Resolve the top object at the pick point, if the pick point is enabled.
+        if (dc.getPickPoint() != null)
+            this.doResolveTopPick(dc, dc.getPickPoint());
 
-            Color topColor = new Color(pixel.get(0) & 0xff, pixel.get(1) & 0xff, pixel.get(2) & 0xff, 0);
-            int colorCode = topColor.getRGB();
-            if (0 != colorCode)
-            {   // let's find the picked object in the list and set "OnTop" flag
-                for (PickedObject po : pickedObjectsList)
+        // Resolve the top objects in the pick rectangle, if the pick rectangle is enabled.
+        if (dc.getPickRectangle() != null)
+            this.doResolveTopPick(dc, dc.getPickRectangle());
+    }
+
+    protected void doResolveTopPick(DrawContext dc, Point pickPoint)
+    {
+        PickedObjectList pol = dc.getPickedObjects();
+        if (pol != null && pol.size() == 1)
+        {
+            // If there is only one picked object, then it must be the top object so we're done.
+            pol.get(0).setOnTop();
+        }
+        else if (pol != null && pol.size() > 1)
+        {
+            // If there is more than one picked object, then find the picked object corresponding to the top color at
+            // the pick point, and mark it as on top
+            int colorCode = dc.getPickColorAtPoint(pickPoint);
+            if (colorCode != 0)
+            {
+                for (PickedObject po : pol)
                 {
-                    if (null != po && po.getColorCode() == colorCode)
+                    if (po != null && po.getColorCode() == colorCode)
                     {
                         po.setOnTop();
-                        break;
+                        break; // No need to check the remaining picked objects.
                     }
                 }
             }
-        } // end of top pixel reading
+        }
+    }
+
+    protected void doResolveTopPick(DrawContext dc, Rectangle pickRect)
+    {
+        PickedObjectList pol = dc.getObjectsInPickRectangle();
+        if (pol != null && pol.size() == 1)
+        {
+            // If there is only one picked object, then it must be the top object so we're done.
+            pol.get(0).setOnTop();
+        }
+        else if (pol != null && pol.size() > 1)
+        {
+            // If there is more than one picked object, then find the picked objects corresponding to each of the top
+            // colors in the pick rectangle, and mark them all as on top.
+            int[] colorCodes = dc.getPickColorsInRectangle(pickRect);
+            if (colorCodes != null && colorCodes.length > 0)
+            {
+                // Put all of the eligible picked objects in a map to provide constant time access to a picked object
+                // by its color code. Since the number of unique color codes and picked objects may both be large, using
+                // a hash map reduces the complexity of the next loop from O(n*m) to O(n*c), where n and m are the
+                // lengths of the unique color list and picked object list, respectively, and c is the constant time
+                // associated with a hash map access.
+                for (PickedObject po : pol)
+                {
+                    this.pickableObjects.put(po.getColorCode(), po);
+                }
+
+                // Find the top picked object for each unique color code, if any, and mark it as on top.
+                for (int colorCode : colorCodes)
+                {
+                    if (colorCode != 0) // This should never happen, but we check anyway.
+                    {
+                        PickedObject po = this.pickableObjects.get(colorCode);
+                        if (po != null)
+                            po.setOnTop();
+                    }
+                }
+
+                // Clear the map of eligible picked objects so that the picked objects from this frame do not affect the
+                // next frame. This also ensures that we do not leak memory by retaining references to picked objects.
+                this.pickableObjects.clear();
+            }
+        }
     }
 
     protected void pick(DrawContext dc)
     {
         this.pickTime = System.currentTimeMillis();
         this.lastPickedObjects = null;
+        this.lastObjectsInPickRect = null;
 
         try
         {
@@ -556,9 +656,13 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
             this.doNonTerrainPick(dc);
             this.resolveTopPick(dc);
             this.lastPickedObjects = new PickedObjectList(dc.getPickedObjects());
+            this.lastObjectsInPickRect = new PickedObjectList(dc.getObjectsInPickRectangle());
 
-            if (this.isDeepPickEnabled() && this.lastPickedObjects.hasNonTerrainObjects())
+            if (this.isDeepPickEnabled() &&
+                (this.lastPickedObjects.hasNonTerrainObjects() || this.lastObjectsInPickRect.hasNonTerrainObjects()))
+            {
                 this.doDeepPick(dc);
+            }
         }
         catch (Throwable e)
         {
@@ -573,7 +677,8 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
 
     protected void doNonTerrainPick(DrawContext dc)
     {
-        if (dc.getPickPoint() == null) // Don't do the pick if there's no current pick point.
+        // Don't do the pick if there's no current pick point and no current pick rectangle.
+        if (dc.getPickPoint() == null && dc.getPickRectangle() == null)
             return;
 
         // Pick against the layers.
@@ -598,12 +703,15 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected void doDeepPick(DrawContext dc)
     {
         PickedObjectList currentPickedObjects = this.lastPickedObjects;
+        PickedObjectList currentObjectsInPickRect = this.lastObjectsInPickRect;
 
         dc.setDeepPickingEnabled(true);
         this.doNonTerrainPick(dc);
         dc.setDeepPickingEnabled(false);
 
         this.lastPickedObjects = this.mergePickedObjectLists(currentPickedObjects, dc.getPickedObjects());
+        this.lastObjectsInPickRect = this.mergePickedObjectLists(currentObjectsInPickRect,
+            dc.getObjectsInPickRectangle());
     }
 
     protected PickedObjectList mergePickedObjectLists(PickedObjectList listA, PickedObjectList listB)

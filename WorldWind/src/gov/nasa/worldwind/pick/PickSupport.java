@@ -5,13 +5,12 @@
  */
 package gov.nasa.worldwind.pick;
 
-import com.sun.opengl.util.BufferUtil;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.Logging;
 
 import javax.media.opengl.GL;
+import java.awt.*;
 import java.util.*;
 
 /**
@@ -47,13 +46,13 @@ public class PickSupport
         this.getPickableObjects().put(po.getColorCode(), po);
     }
 
-    public PickedObject getTopObject(DrawContext dc, java.awt.Point pickPoint)
+    public PickedObject getTopObject(DrawContext dc, Point pickPoint)
     {
         if (this.getPickableObjects().isEmpty())
             return null;
 
         int colorCode = this.getTopColor(dc, pickPoint);
-        if (colorCode == dc.getClearColor().getRGB())
+        if (colorCode == 0) // getTopColor returns 0 if the pick point selects the clear color.
             return null;
 
         PickedObject pickedObject = getPickableObjects().get(colorCode);
@@ -63,7 +62,60 @@ public class PickSupport
         return pickedObject;
     }
 
-    public PickedObject resolvePick(DrawContext dc, java.awt.Point pickPoint, Layer layer)
+    /**
+     * Adds picked object registered with this PickSupport that are drawn at the specified pick point or intersect the
+     * draw context's pick rectangle to the draw context's list of picked objects. This clears any registered picked
+     * objects upon returning.
+     * <p/>
+     * If this pick point is <code>null</code>, this ignores the pick point and does not attempt to determine which
+     * picked objects are drawn there. If the draw context's pick rectangle is <code>null</code>, this ignores the pick
+     * rectangle and does not attempt to determine which picked objects intersect it. This does nothing if no picked
+     * objects are currently registered with this PickSupport.
+     *
+     * @param dc        the draw context which receives the picked object.
+     * @param pickPoint the point in AWT screen coordinates.
+     * @param layer     the layer associated with the picked object.
+     *
+     * @return the picked object added to the draw context, or <code>null</code> if no picked object is drawn at the
+     *         specified point.
+     */
+    public PickedObject resolvePick(DrawContext dc, Point pickPoint, Layer layer)
+    {
+        // Avoid performing any additional work there are no picked objects registered with this PickSupport.
+        if (this.getPickableObjects().isEmpty())
+            return null;
+
+        PickedObject po = null;
+
+        // Resolve the object at the pick point, if any, adding it to the draw context's list of objects at the pick
+        // point. If any object is at the pick point we return it. Note that the pick point can be null when the pick
+        // rectangle is specified but the pick point is not.
+        if (pickPoint != null)
+            po = this.doResolvePick(dc, pickPoint, layer);
+
+        // Resolve the objects in the pick rectangle, if any, adding them to the draw context's list of objects
+        // intersecting the pick rectangle. Note that the pick rectangle can be null when the pick point is specified
+        // but the pick rectangle is not.
+        if (dc.getPickRectangle() != null)
+            this.doResolvePick(dc, dc.getPickRectangle(), layer);
+
+        this.clearPickList();
+
+        return po;
+    }
+
+    /**
+     * Adds a picked object registered with this PickSupport that is drawn at the specified point in AWT screen
+     * coordinates (if one exists) to the draw context's list of picked objects.
+     *
+     * @param dc        the draw context which receives the picked object.
+     * @param pickPoint the point in AWT screen coordinates.
+     * @param layer     the layer associated with the picked object.
+     *
+     * @return the picked object added to the draw context, or <code>null</code> if no picked object is drawn at the
+     *         specified point.
+     */
+    protected PickedObject doResolvePick(DrawContext dc, Point pickPoint, Layer layer)
     {
         PickedObject pickedObject = this.getTopObject(dc, pickPoint);
         if (pickedObject != null)
@@ -74,34 +126,60 @@ public class PickSupport
             dc.addPickedObject(pickedObject);
         }
 
-        this.clearPickList();
-
         return pickedObject;
     }
 
-    public int getTopColor(DrawContext dc, java.awt.Point pickPoint)
+    /**
+     * Adds all picked objects that are registered with this PickSupport and intersect the specified rectangle in AWT
+     * screen coordinates (if any) to the draw context's list of picked objects.
+     *
+     * @param dc       the draw context which receives the picked objects.
+     * @param pickRect the rectangle in AWT screen coordinates.
+     * @param layer    the layer associated with the picked objects.
+     */
+    protected void doResolvePick(DrawContext dc, Rectangle pickRect, Layer layer)
     {
-        if (pickPoint == null)
-            return 0;
+        int[] colorCodes = dc.getPickColorsInRectangle(pickRect);
+        if (colorCodes == null || colorCodes.length == 0)
+            return;
 
-        GL gl = dc.getGL();
-
-        java.nio.ByteBuffer pixel = BufferUtil.newByteBuffer(3);
-        int yInGLCoords = dc.getView().getViewport().height - pickPoint.y - 1;
-        gl.glReadPixels(pickPoint.x, yInGLCoords, 1, 1,
-            javax.media.opengl.GL.GL_RGB, GL.GL_UNSIGNED_BYTE, pixel);
-
-        java.awt.Color topColor = null;
-        try
+        // Lookup the pickable object (if any) for each unique color code appearing in the pick rectangle. Each picked
+        // object that corresponds to a picked color is added to the draw context.
+        for (int colorCode : colorCodes)
         {
-            topColor = new java.awt.Color(pixel.get(0) & 0xff, pixel.get(1) & 0xff, pixel.get(2) & 0xff, 0);
-        }
-        catch (Exception e)
-        {
-            Logging.logger().severe("layers.InvalidPickColorRead");
-        }
+            if (colorCode == 0) // This should never happen, but we check anyway.
+                continue;
 
-        return topColor != null ? topColor.getRGB() : 0;
+            PickedObject po = this.getPickableObjects().get(colorCode);
+            if (po == null)
+                continue;
+
+            if (layer != null)
+                po.setParentLayer(layer);
+
+            dc.addObjectInPickRectangle(po);
+        }
+    }
+
+    /**
+     * Returns the framebuffer RGB color for a point in AWT screen coordinates, formatted as a pick color code. The red,
+     * green, and blue components are each stored as an 8-bit unsigned integer, and packed into bits 0-23 of the
+     * returned integer as follows: bits 16-23 are red, bits 8-15 are green, and bits 0-7 are blue. This format is
+     * consistent with the RGB integers used to create the pick colors.
+     * <p/>
+     * This returns 0 if the point is <code>null</code>, if the point contains the clear color, or if the point is
+     * outside the draw context's drawable area.
+     *
+     * @param dc        the draw context to return a color for.
+     * @param pickPoint the point to return a color for, in AWT screen coordinates.
+     *
+     * @return the RGB color corresponding to the specified point.
+     */
+    public int getTopColor(DrawContext dc, Point pickPoint)
+    {
+        // This method's implementation has been moved into DrawContext.getPickColor in order to consolidate this logic
+        // into one place. We've left this method here to avoid removing an interface that applications may rely on.
+        return pickPoint != null ? dc.getPickColorAtPoint(pickPoint) : 0;
     }
 
     public void beginPicking(DrawContext dc)

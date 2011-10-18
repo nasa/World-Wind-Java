@@ -144,7 +144,7 @@ public interface WorldWindow extends AVList
     void removePositionListener(PositionListener listener);
 
     /**
-     * Causes a repaint event to be enqued with the window system for this world window. The repaint will occur at the
+     * Causes a repaint event to be enqueued with the window system for this world window. The repaint will occur at the
      * window system's discretion, within the window system toolkit's event loop, and on the thread of that loop. This
      * is the preferred method for requesting a repaint of the world window.
      */
@@ -165,13 +165,22 @@ public interface WorldWindow extends AVList
     Position getCurrentPosition();
 
     /**
-     * Returns the World Wind ojbects at the current cursor position. The list of objects under the cursor is determined
+     * Returns the World Wind objects at the current cursor position. The list of objects under the cursor is determined
      * each time the world window is repainted. This method returns the list of objects determined when the most recent
      * repaint was performed.
      *
      * @return The list of objects at the cursor position, or <code>null</code> if no objects are under the cursor.
      */
     PickedObjectList getObjectsAtCurrentPosition();
+
+    /**
+     * Returns the World Wind objects intersecting the current selection box. The list of objects in the selection box
+     * is determined each time the world window  is repainted. This method returns the list of objects determined when
+     * the most recent repaint was performed.
+     *
+     * @return The list of objects intersecting the selection box, or <code>null</code> if no objects are in the box.
+     */
+    PickedObjectList getObjectsInSelectionBox();
 
     /**
      * Returns the GPU Resource used by this World Window.

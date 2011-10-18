@@ -11,6 +11,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.PerformanceStatistic;
 
+import java.awt.*;
 import java.util.*;
 
 /**
@@ -19,10 +20,15 @@ import java.util.*;
  */
 public interface SceneController extends WWObject, Disposable
 {
+    /**
+     * Indicates the scene controller's model. This returns <code>null</code> if the scene controller has no model.
+     *
+     * @return the scene controller's model, or <code>null</code> if the scene controller has no model.
+     */
     Model getModel();
 
     /**
-     * Specifes the scene controller's model. This method fires an {@link gov.nasa.worldwind.avlist.AVKey#MODEL}
+     * Specifies the scene controller's model. This method fires an {@link gov.nasa.worldwind.avlist.AVKey#MODEL}
      * property change event.
      *
      * @param model the scene controller's model.
@@ -67,11 +73,21 @@ public interface SceneController extends WWObject, Disposable
     double getVerticalExaggeration();
 
     /**
-     * Returns the current list of picked objects.
+     * Returns the list of picked objects at the current pick point. The returned list is computed during the most
+     * recent call to repaint.
      *
-     * @return the list of currently picked objects, or null if no objects are currently picked.
+     * @return the list of picked objects at the pick point, or null if no objects are currently picked.
      */
     PickedObjectList getPickedObjectList();
+
+    /**
+     * Returns the list of picked objects that intersect the current pick rectangle. The returned list is computed
+     * during the most recent call to repaint.
+     *
+     * @return the list of picked objects intersecting the pick rectangle, or null if no objects are currently
+     *         intersecting the rectangle.
+     */
+    PickedObjectList getObjectsInPickRectangle();
 
     /**
      * Returns the current average frames drawn per second. A frame is one repaint of the window and includes a pick
@@ -89,18 +105,46 @@ public interface SceneController extends WWObject, Disposable
     double getFrameTime();
 
     /**
-     * Specifies the current pick point.
+     * Specifies the current pick point in AWT screen coordinates, or <code>null</code> to indicate that there is no
+     * pick point. Each frame, this scene controller determines which objects are drawn at the pick point and places
+     * them in a PickedObjectList. This list can be accessed by calling {@link #getPickedObjectList()}.
+     * <p/>
+     * If the pick point is <code>null</code>, this scene controller ignores the pick point and the list of objects
+     * returned by getPickedObjectList is empty.
      *
-     * @param pickPoint the current pick point, or null.
+     * @param pickPoint the current pick point, or <code>null</code>.
      */
-    void setPickPoint(java.awt.Point pickPoint);
+    void setPickPoint(Point pickPoint);
 
     /**
-     * Returns the current pick point.
+     * Returns the current pick point in AWT screen coordinates.
      *
-     * @return the current pick point, or null if no pick point is current.
+     * @return the current pick point, or <code>null</code> if no pick point is current.
+     *
+     * @see #setPickPoint(java.awt.Point)
      */
-    java.awt.Point getPickPoint();
+    Point getPickPoint();
+
+    /**
+     * Specifies the current pick rectangle in AWT screen coordinates, or <code>null</code> to indicate that there is no
+     * pick rectangle. Each frame, this scene controller determines which objects intersect the pick rectangle and
+     * places them in a PickedObjectList. This list can be accessed by calling {@link #getObjectsInPickRectangle()}.
+     * <p/>
+     * If the pick rectangle is <code>null</code>, this scene controller ignores the pick rectangle and the list of
+     * objects returned by getObjectsInPickRectangle is empty.
+     *
+     * @param pickRect the current pick rectangle, or <code>null</code>.
+     */
+    void setPickRectangle(Rectangle pickRect);
+
+    /**
+     * Returns the current pick rectangle in AWT screen coordinates.
+     *
+     * @return the current pick rectangle, or <code>null</code> if no pick rectangle is current.
+     *
+     * @see #setPickRectangle(java.awt.Rectangle)
+     */
+    Rectangle getPickRectangle();
 
     /**
      * Specifies whether all items under the cursor are identified during picking and within {@link

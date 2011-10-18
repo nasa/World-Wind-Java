@@ -173,6 +173,11 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
         return null;
     }
 
+    public PickedObjectList getObjectsInSelectionBox()
+    {
+        return null;
+    }
+
     public Position getCurrentPosition()
     {
         if (this.sceneController == null)
@@ -203,6 +208,15 @@ public abstract class WorldWindowImpl extends WWObjectImpl implements WorldWindo
 
         PickedObject top = pol.getTopPickedObject();
         return top.isTerrain() ? null : top;
+    }
+
+    protected PickedObjectList getCurrentBoxSelection()
+    {
+        if (this.sceneController == null)
+            return null;
+
+        PickedObjectList pol = this.sceneController.getObjectsInPickRectangle();
+        return pol != null && pol.size() > 0 ? pol : null;
     }
 
     public void addRenderingListener(RenderingListener listener)

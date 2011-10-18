@@ -9,7 +9,7 @@ import gov.nasa.worldwind.cache.GpuResourceCache;
 import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.pick.PickedObject;
+import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.ScreenCreditController;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.dashboard.DashboardController;
@@ -42,17 +42,14 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
     private boolean shuttingDown = false;
     private Timer redrawTimer;
     private boolean firstInit = true;
-
     /** Time in milliseconds that the view must remain unchanged before the {@link View#VIEW_STOPPED} message is sent. */
     protected long viewStopTime = DEFAULT_VIEW_STOP_TIME;
-
     /**
      * The most recent View modelView ID.
      *
      * @see gov.nasa.worldwind.View#getViewStateID()
      */
     protected long lastViewID;
-
     /** Schedule task to send the {@link View#VIEW_STOPPED} message after the view stop time elapses. */
     protected ScheduledFuture viewRefreshTask;
 
@@ -253,6 +250,7 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
 
             Position positionAtStart = this.getCurrentPosition();
             PickedObject selectionAtStart = this.getCurrentSelection();
+            PickedObjectList boxSelectionAtStart = this.getCurrentBoxSelection();
 
             try
             {
@@ -345,6 +343,13 @@ public class WorldWindowGLAutoDrawable extends WorldWindowImpl implements WorldW
             {
                 this.callSelectListeners(new SelectEvent(this.drawable, SelectEvent.ROLLOVER,
                     sc.getPickPoint(), sc.getPickedObjectList()));
+            }
+
+            PickedObjectList boxSelectionAtEnd = this.getCurrentBoxSelection();
+            if (boxSelectionAtStart != null || boxSelectionAtEnd != null)
+            {
+                this.callSelectListeners(new SelectEvent(this.drawable, SelectEvent.BOX_ROLLOVER,
+                    sc.getPickRectangle(), sc.getObjectsInPickRectangle()));
             }
         }
         catch (Exception e)
