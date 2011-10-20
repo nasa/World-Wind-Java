@@ -6,13 +6,14 @@
 
 package gov.nasa.worldwind.symbology;
 
+import gov.nasa.worldwind.Movable;
 import gov.nasa.worldwind.avlist.AVList;
-import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.*;
 
 /**
- * TacticalGraphic provides a common interface for displaying a vector graphics from symbology sets. A graphic can be an
- * icon that is drawn a geographic position, a vector graphic that is positioned using one or more control points, or a
- * line or polygon that is styled according to the symbol set's specification.
+ * TacticalGraphic provides a common interface for displaying a graphic from a symbology sets. A graphic can be an icon
+ * that is drawn a geographic position, a vector graphic that is positioned using one or more control points, or a line
+ * or polygon that is styled according to the symbol set's specification.
  * <p/>
  * <h1>Creating and Displaying Tactical Graphics</h1>
  * <p/>
@@ -21,16 +22,16 @@ import gov.nasa.worldwind.render.Renderable;
  * points.
  * <p/>
  * Each graphic within a symbol set is identified by a string identifier. The format of this identifier depends on the
- * symbol set. For example, a MIL-STD-2525 identifier is a string of 15 characters.
+ * symbol set. For example, a MIL-STD-2525 Symbol Identification Code (SIDC) is a string of 15 characters.
  * <p/>
  * You will need to instantiate the appropriate factory for the symbol set that you intend to use.  For example, {@link
  * gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory} creates graphics for the MIL-STD-2525 symbology
  * set.
  * <p/>
- * The TacticalGraphic interface, and it’s sub-interfaces TacticalShape and TacticalPoint, provide access to settings
- * common to all tactical graphics. TacticalGraphic extends the {@link Renderable} interface, so you can add a
- * TacticalGraphic directly to a {@link gov.nasa.worldwind.layers.RenderableLayer}. Here's an example of creating a
- * graphic from the MIL-STD-2525 symbol set:
+ * The TacticalGraphic interface provides access to settings common to all tactical graphics. TacticalGraphic extends
+ * the {@link Renderable} interface, so you can add a TacticalGraphic directly to a {@link
+ * gov.nasa.worldwind.layers.RenderableLayer}. Here's an example of creating a graphic from the MIL-STD-2525 symbol
+ * set:
  * <p/>
  * <pre>
  * // Create a graphic factory for MIL-STD-2525
@@ -94,7 +95,8 @@ import gov.nasa.worldwind.render.Renderable;
  * // 1) Specify the modifier as a key-value pair on the tactical graphic's AVList
  * graphic.setValue(SymbolCode.TEXT, "Boston");
  * // 2) Specify the modifier using an implementation specific setter method
- * ((MilStd2525Graphic) graphic).setText("Boston"); </pre>
+ * ((MilStd2525Graphic) graphic).setText("Boston");
+ * </pre>
  * <p/>
  * <h1>Positioning Tactical Graphics</h1>
  * <p/>
@@ -109,11 +111,11 @@ import gov.nasa.worldwind.render.Renderable;
  * Tactical Graphic graphic = milstd2525Factory.createGraphic("GFGPAPD----AUSX", position, null);
  * </pre>
  * <p/>
- * MIL-STD-2525 defines a template for each type of tactical graphic. Each template identifies how many control points
- * are required for the graphic, and how the points are interpreted. The TacticalGraphic requires a list of Position
- * objects, which identify the control points in the same order as in the specification. For example, in order to create
- * a graphic that requires three control points we need to create a list of positions that specifies the three points in
- * order:
+ * More complicated graphics will require more control points. MIL-STD-2525 defines a template for each type of tactical
+ * graphic. Each template identifies how many control points are required for the graphic, and how the points are
+ * interpreted. The TacticalGraphic requires a list of Position objects, which identify the control points in the same
+ * order as in the specification. For example, in order to create a graphic that requires three control points we need
+ * to create a list of positions that specifies the three points in order:
  * <p/>
  * <pre>
  * List<Position> positions = new ArrayList<Position>();
@@ -128,8 +130,22 @@ import gov.nasa.worldwind.render.Renderable;
  * @version $Id$
  * @see TacticalGraphicFactory
  */
-public interface TacticalGraphic extends Renderable, AVList
+public interface TacticalGraphic extends Renderable, Movable, AVList
 {
+    /**
+     * Indicates whether this graphic is drawn when in view.
+     *
+     * @return true if this graphic is drawn when in view, otherwise false.
+     */
+    boolean isVisible();
+
+    /**
+     * Specifies whether this graphic is drawn when in view.
+     *
+     * @param visible true if this graphic should be drawn when in view, otherwise false.
+     */
+    void setVisible(boolean visible);
+
     /**
      * Indicates a string identifier for this graphic. The format of the identifier depends on the symbol set to which
      * the graphic belongs.
