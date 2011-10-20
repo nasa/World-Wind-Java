@@ -8,7 +8,6 @@ All Rights Reserved.
 package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwindx.examples.util.SectorSelector;
-import gov.nasa.worldwind.geom.Sector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,7 +50,7 @@ public class SectorSelection extends ApplicationTemplate
             {
                 public void propertyChange(PropertyChangeEvent evt)
                 {
-                    Sector sector = (Sector) evt.getNewValue();
+//                    Sector sector = (Sector) evt.getNewValue();
 //                    System.out.println(sector != null ? sector : "no sector");
                 }
             });
