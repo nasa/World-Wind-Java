@@ -94,11 +94,11 @@ public class Symbology extends ApplicationTemplate
             // Create tactical icon
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever();
             AVListImpl params = new AVListImpl();
-            String url = "wwdev.tomgaskins.net";
+            String url = "worldwindserver.net";
             params.setValue(SymbolCode.SOURCE_TYPE, "url");
             params.setValue(SymbolCode.SOURCE_SERVER, url);
             params.setValue(SymbolCode.SOURCE_PATH, "/milstd2525/");
-            BufferedImage img = symGen.createIcon("SPAPC----------", params);
+            BufferedImage img = symGen.createIcon("SAAPC----------", params);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
                 Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.8));
             SurfaceImage symbol = new SurfaceImage(img, s);
