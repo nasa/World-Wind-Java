@@ -5,6 +5,8 @@
  */
 package gov.nasa.worldwind.symbology;
 
+import gov.nasa.worldwind.render.Material;
+
 import java.awt.*;
 
 /**
@@ -23,9 +25,17 @@ public interface TacticalSymbolAttributes
 
     Font getTextModifierFont();
 
+    Font getTextModifierFont(String modifierKey);
+
     void setTextModifierFont(Font font);
 
-    Color getTextModifierColor();
+    void setTextModifierFont(String modifierKey, Font font);
 
-    void setTextModifierColor(Color color);
+    Material getTextModifierMaterial();
+
+    Material getTextModifierMaterial(String modifierKey);
+
+    void setTextModifierMaterial(Material material);
+
+    void setTextModifierMaterial(String modifierKey, Material material);
 }

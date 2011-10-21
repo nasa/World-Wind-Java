@@ -21,4 +21,13 @@ public class MilStd2525TacticalSymbol
     public MilStd2525TacticalSymbol(String symbolIdentifier, Position position, AVList modifiers)
     {
     }
+
+    public boolean isShowFrameAndIcon()
+    {
+        return false;
+    }
+
+    public void setShowFrameAndIcon(boolean showFrameAndIcon)
+    {
+    }
 }
