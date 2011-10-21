@@ -47,6 +47,14 @@ public class SymbolCode extends AVListImpl
     public static final String IDENTITY_JOKER = "J";
     public static final String IDENTITY_FAKER = "K";
 
+    public static final String BATTLE_DIMENSION_UNKNOWN = "Z";
+    public static final String BATTLE_DIMENSION_SPACE = "P";
+    public static final String BATTLE_DIMENSION_AIR = "A";
+    public static final String BATTLE_DIMENSION_GROUND = "G";
+    public static final String BATTLE_DIMENSION_SEA_SURFACE = "S";
+    public static final String BATTLE_DIMENSION_SUBSURFACE = "U";
+    public static final String BATTLE_DIMENSION_SOF = "F";
+
     public static final String CATEGORY_TASKS = "T";
     public static final String CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER = "G";
     public static final String CATEGORY_MOBILITY_SURVIVAL = "M";
@@ -93,6 +101,13 @@ public class SymbolCode extends AVListImpl
         {
             this.parseTacticalSymbol(symCode);
         }
+        else
+        {
+            // Scheme code not recognized
+            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     protected void parseTacticalGraphic(String symCode)
@@ -125,12 +140,33 @@ public class SymbolCode extends AVListImpl
         this.setValue(SymbolCode.SCHEME, Character.toString(c));
 
         c = symCode.charAt(1);
+        if ("PUAFNSHGWMDLJKpuafnshgwmdljk".indexOf(c) == -1)
+        {
+            // Standard Identity code not recognized
+            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
         this.setValue(SymbolCode.STANDARD_IDENTITY, Character.toString(c));
 
         c = symCode.charAt(2);
+        if ("PAGSUFXZpagsufxz".indexOf(c) == -1)
+        {
+            // Battle Dimension code not recognized
+            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
         this.setValue(SymbolCode.BATTLE_DIMENSION, Character.toString(c));
 
         c = symCode.charAt(3);
+        if ("APCDXFapcdxf".indexOf(c) == -1)
+        {
+            // Status/Operational Condition code not recognized
+            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
         this.setValue(SymbolCode.STATUS, Character.toString(c));
 
         String s = symCode.substring(4, 10);
@@ -142,8 +178,15 @@ public class SymbolCode extends AVListImpl
         s = symCode.substring(12, 14);
         this.setValue(SymbolCode.COUNTRY_CODE, s);
 
-        s = symCode.substring(14, 15);
-        this.setValue(SymbolCode.ORDER_OF_BATTLE, s);
+        c = symCode.charAt(14);
+        if ("-AECGNSaecgns".indexOf(c) == -1)
+        {
+            // Order of Battle code not recognized
+            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        this.setValue(SymbolCode.ORDER_OF_BATTLE, Character.toString(c));
     }
 
     @Override
