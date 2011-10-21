@@ -7,12 +7,13 @@ package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.*;
 
 /**
  * TacticalSymbol provides a common interface for displaying tactical point symbols from symbology sets. Implementations
  * of this interface provide support for point symbols within a specific symbology set. For example, class {@link
- * MilStd2525TacticalSymbol} provides support for tactical symbols from the MIL-STD-2525 symbology specification.
+ * gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol} provides support for tactical symbols from the
+ * MIL-STD-2525 symbology specification.
  * <p/>
  * <h2>Creating and Displaying Tactical Symbols</h2> To create a tactical symbol, instantiate a concrete implementation
  * appropriate for the desired symbology set. Pass a string identifier, the desired geographic position, and
@@ -24,7 +25,7 @@ import gov.nasa.worldwind.render.Renderable;
  * <p/>
  * The format of the string identifier and the modifier key-value pairs are implementation dependent. For MIL-STD-2525,
  * the string identifier must be a 15-character alphanumeric symbol identification code (SIDC), and the modifier keys
- * must be one of the constants defined by {@link gov.nasa.worldwind.symbology.milstd2525.SymbolCode}.
+ * must be one of the constants defined in MilStd2525TacticalSymbol's documentation.
  * <p/>
  * Since TacticalSymbol extends the Renderable interface, a tactical symbol is displayed either by adding it to a layer,
  * or by calling its render method from within a custom layer or renderable object. The simplest way to display a
@@ -49,50 +50,6 @@ import gov.nasa.worldwind.render.Renderable;
  * wwd.redraw();
  * </pre>
  * <p/>
- * <h2>Tactical Symbol Modifiers</h2> Symbols modifiers are optional attributes that augment or change a symbol's
- * graphic. Which modifiers are recognized by a tactical symbol and how they affect the symbol's graphic is
- * implementation dependent. Symbol modifiers can be specified at construction by passing a list of key-value pairs, or
- * after construction by setting a key-value pair on the tactical symbol's AVList or calling an implementation defined
- * setter method. The modifier keys must be one of the constants defined by {@link
- * gov.nasa.worldwind.symbology.milstd2525.SymbolCode}. Each recognized modifier key corresponds an implementation
- * defined setter method. This enables callers to specify all modifiers either through the symbol's AVList or through an
- * implementation defined setter method. Here's an example of setting the the direction of movement modifier at
- * construction for a MIL-STD-2525 friendly ground unit:
- * <p/>
- * <pre>
- * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit, specifying the optional direction of movement
- * // modifier by passing in a list of key-value pairs.
- * AVList modifiers = new AVListImpl();
- * modifiers.setValue(SymbolCode.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
- * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0),
- *     modifiers);
- * </pre>
- * <p/>
- * Here's an example of setting the same modifier after construction:
- * <p/>
- * <pre>
- * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit.
- * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0));
- *
- * // Once a symbol is constructed, there are two ways to specify optional symbol modifiers:
- * // 1) Specify the modifier as a key-value pair on the tactical symbol's AVList:
- * symbol.setValue(SymbolCode.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
- * // 2) Specify the modifier using an implementation defined setter method:
- * ((MilStd2525TacticalSymbol) symbol).setDirectionOfMovement(Angle.fromDegrees(45));
- * </pre>
- * <p/>
- * Tactical symbol implementations apply modifiers from the string identifier specified during construction. For
- * example, given a MIL-STD-2525 symbol representing units, installation, or equipment, SIDC positions 11-12 specify the
- * echelon and task force modifiers (See MIL-STD-2525C, Appendix A). Here's an example of setting the echelon and task
- * force modifiers at construction for a MIL-STD-2525 friendly ground unit:
- * <p/>
- * <pre>
- * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit. Specify the echelon modifier and task force
- * // modifiers by setting the SIDC characters 11-12 to "EA". This indicates that the ground unit is a team/crew task
- * // force (see MIL-STD-2525C, Appendix A, Table A-II).
- * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU-----EA---", Position.fromDegrees(-120, 40, 0));
- * </pre>
- * <p/>
  * <h2>Positioning Tactical Symbols</h2> A symbol's geographic position defines where the symbol displays its graphic.
  * Either the graphic's geometric center is displayed at the position, or a specific location within the graphic (such
  * as the bottom of a leader line) is displayed at the position. This behavior depends on the symbol implementation, the
@@ -109,11 +66,54 @@ import gov.nasa.worldwind.render.Renderable;
  * For example, specifying the MIL-STD-2525 SIDC "SFGPU----------" specifies a friendly ground unit symbol, and causes a
  * tactical symbol to configure the altitude mode as WorldWind.CLAMP_TO_GROUND. The automatically configured mode can be
  * overridden by calling setAltitudeMode.
+ * <p/>
+ * <h2>Tactical Symbol Modifiers</h2> Symbols modifiers are optional attributes that augment or change a symbol's
+ * graphic. Which modifiers are recognized by a tactical symbol and how they affect the symbol's graphic is
+ * implementation dependent. Symbol modifiers can be specified at construction by passing a list of key-value pairs, or
+ * after construction by setting a key-value pair on the tactical symbol's AVList or calling an implementation defined
+ * setter method. The modifier keys must be one of the constants defined in MilStd2525TacticalSymbol's documentation.
+ * Each recognized modifier key corresponds an implementation defined setter method. This enables callers to specify all
+ * modifiers either through the symbol's AVList or through an implementation defined setter method. Here's an example of
+ * setting the the direction of movement modifier at construction for a MIL-STD-2525 friendly ground unit:
+ * <p/>
+ * <pre>
+ * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit, specifying the optional direction of movement
+ * // modifier by passing in a list of key-value pairs.
+ * AVList modifiers = new AVListImpl();
+ * modifiers.setValue(AVKey.HEADING, Angle.fromDegrees(45));
+ * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0),
+ *     modifiers);
+ * </pre>
+ * <p/>
+ * Here's an example of setting the same modifier after construction:
+ * <p/>
+ * <pre>
+ * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit.
+ * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0));
+ *
+ * // Once a symbol is constructed, there are two ways to specify optional symbol modifiers:
+ * // 1) Specify the modifier as a key-value pair on the tactical symbol's AVList:
+ * symbol.setValue(AVKey.HEADING, Angle.fromDegrees(45));
+ * // 2) Specify the modifier using an implementation defined setter method:
+ * ((MilStd2525TacticalSymbol) symbol).setHeading(Angle.fromDegrees(45));
+ * </pre>
+ * <p/>
+ * Tactical symbol implementations apply modifiers from the string identifier specified during construction. For
+ * example, given a MIL-STD-2525 symbol representing units, installation, or equipment, SIDC positions 11-12 specify the
+ * echelon and task force modifiers (See MIL-STD-2525C, Appendix A). Here's an example of setting the echelon and task
+ * force modifiers at construction for a MIL-STD-2525 friendly ground unit:
+ * <p/>
+ * <pre>
+ * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit. Specify the echelon modifier and task force
+ * // modifiers by setting the SIDC characters 11-12 to "EA". This indicates that the ground unit is a team/crew task
+ * // force (see MIL-STD-2525C, Appendix A, Table A-II).
+ * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU-----EA---", Position.fromDegrees(-120, 40, 0));
+ * </pre>
  *
  * @author dcollins
  * @version $Id$
  */
-public interface TacticalSymbol extends WWObject, Renderable
+public interface TacticalSymbol extends WWObject, Renderable, Highlightable
 {
     /**
      * Indicates whether this symbol is drawn when in view.
@@ -128,6 +128,15 @@ public interface TacticalSymbol extends WWObject, Renderable
      * @param visible true if this symbol should be drawn when in view, otherwise false.
      */
     void setVisible(boolean visible);
+
+    /**
+     * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
+     * this symbol belongs. For symbols belonging to the MIL-STD-2525 symbol set, this returns a 15-character
+     * alphanumeric symbol identification code (SIDC).
+     *
+     * @return an identifier for this symbol.
+     */
+    String getIdentifier();
 
     /**
      * Indicates this symbol's geographic position. See {@link #setPosition(gov.nasa.worldwind.geom.Position)} for a
@@ -170,13 +179,20 @@ public interface TacticalSymbol extends WWObject, Renderable
      */
     void setAltitudeMode(int altitudeMode);
 
-    /**
-     * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
-     * this symbol belongs. For symbols belonging to the MIL-STD-2525 symbol set, this returns a 15-character
-     * alphanumeric symbol identification code (SIDC).
-     *
-     * @return an identifier for this symbol.
-     */
-    String getIdentifier();
+    boolean isShowTextModifiers();
+
+    void setShowTextModifiers(boolean show);
+
+    boolean isShowGraphicModifiers();
+
+    void setShowGraphicModifiers(boolean show);
+
+    TacticalSymbolAttributes getAttributes();
+
+    void setAttributes(TacticalSymbolAttributes normalAttrs);
+
+    TacticalSymbolAttributes getHighlightAttributes();
+
+    void setHighlightAttributes(TacticalSymbolAttributes highlightAttrs);
 }
 
