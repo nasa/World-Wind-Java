@@ -6,11 +6,11 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalShape;
-import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.*;
 import java.util.*;
@@ -20,107 +20,33 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public class GeneralArea extends SurfacePolygon implements TacticalShape
+public class GeneralArea extends MilStd2525TacticalGraphic implements PreRenderable
 {
     public final static String FUNCTION_ID = "GAG---";
 
     public final static String HOSTILE_INDICATOR = "ENY";
 
-    protected String standardIdentity;
-    protected String echelon;
-    protected String category;
-    protected String status;
-    // TODO: add country code, etc.
-
-    protected String text;
-
+    protected SurfacePolygon polygon;
     protected SurfaceText label;
     protected List<SurfaceText> identityLabels;
 
+    protected boolean textVisible;
+
     public GeneralArea()
     {
+        this.polygon = new SurfacePolygon();
+        this.polygon.setDelegateOwner(this);
     }
 
-    public String getIdentifier()
+    public String getFunctionId()
     {
-        SymbolCode symCode = new SymbolCode();
-        symCode.setValue(SymbolCode.STANDARD_IDENTITY, this.standardIdentity);
-        symCode.setValue(SymbolCode.ECHELON, this.echelon);
-        symCode.setValue(SymbolCode.CATEGORY, this.category);
-        symCode.setValue(SymbolCode.FUNCTION_ID, FUNCTION_ID);
-
-        return symCode.toString();
+        return FUNCTION_ID;
     }
 
-    public String getStandardIdentity()
-    {
-        return this.standardIdentity;
-    }
-
-    public void setStandardIdentity(String standardIdentity)
-    {
-        if (standardIdentity == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.standardIdentity = standardIdentity;
-    }
-
-    public String getCategory()
-    {
-        return this.category;
-    }
-
-    public void setCategory(String category)
-    {
-        if (category == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.category = category;
-    }
-
-    public String getEchelon()
-    {
-        return this.echelon;
-    }
-
-    public void setEchelon(String echelon)
-    {
-        if (echelon == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.echelon = echelon;
-    }
-
-    public String getStatus()
-    {
-        return this.status;
-    }
-
-    public void setStatus(String status)
-    {
-        this.status = status;
-    }
-
-    public String getText()
-    {
-        return this.text;
-    }
-
+    @Override
     public void setText(String text)
     {
-        this.text = text;
+        super.setText(text);
 
         String fullText = this.createText(text);
         this.label = new SurfaceText(fullText, Position.ZERO);
@@ -133,7 +59,7 @@ public class GeneralArea extends SurfacePolygon implements TacticalShape
 
     protected void determineLabelPosition(DrawContext dc)
     {
-        List<Sector> sectors = this.getSectors(dc);
+        List<Sector> sectors = this.polygon.getSectors(dc);
         if (sectors != null)
         {
             // TODO: centroid of bounding sector is not always a good choice for label position
@@ -186,7 +112,33 @@ public class GeneralArea extends SurfacePolygon implements TacticalShape
         return count;
     }
 
-    @Override
+    public TacticalGraphicAttributes getAttributes()
+    {
+        if (this.attributes == null)
+        {
+            this.attributes = this.createDefaultAttributes();
+        }
+
+        return this.attributes;
+    }
+
+    public boolean isModifierVisible(String modifier)
+    {
+        //noinspection SimplifiableIfStatement
+        if (AVKey.TEXT.equals(modifier))
+            return this.textVisible;
+        else
+            return false;
+    }
+
+    public void setModifierVisible(String modifier, boolean visible)
+    {
+        if (AVKey.TEXT.equals(modifier))
+        {
+            this.textVisible = visible;
+        }
+    }
+
     public void preRender(DrawContext dc)
     {
         if (this.identityLabels == null && SymbolCode.IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
@@ -196,9 +148,9 @@ public class GeneralArea extends SurfacePolygon implements TacticalShape
 
         // If the attributes have not been created yet, create them now.
         // The default attributes are determined by the symbol code.
-        if (this.normalAttrs == null)
+        if (this.attributes == null)
         {
-            ShapeAttributes attrs = this.createShapeAttributes();
+            TacticalGraphicAttributes attrs = this.createDefaultAttributes();
             this.setAttributes(attrs);
 
             Color color = attrs.getOutlineMaterial().getDiffuse();
@@ -230,31 +182,30 @@ public class GeneralArea extends SurfacePolygon implements TacticalShape
             }
         }
 
-        super.preRender(dc);
+        this.polygon.preRender(dc);
     }
 
-    @Override
-    public void pick(DrawContext dc, Point pickPoint)
+    public void render(DrawContext dc)
     {
-        if (this.label != null)
+        if (this.label != null && this.textVisible)
         {
-            this.label.pick(dc, pickPoint);
+            this.label.render(dc);
         }
 
         if (this.identityLabels != null)
         {
             for (SurfaceText text : this.identityLabels)
             {
-                text.pick(dc, pickPoint);
+                text.render(dc);
             }
         }
 
-        super.pick(dc, pickPoint);
+        this.polygon.render(dc);
     }
 
-    protected ShapeAttributes createShapeAttributes()
+    protected TacticalGraphicAttributes createDefaultAttributes()
     {
-        ShapeAttributes attrs = new BasicShapeAttributes();
+        TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
 
         attrs.setDrawInterior(false);
 
@@ -280,12 +231,12 @@ public class GeneralArea extends SurfacePolygon implements TacticalShape
 
     public void setPositions(Iterable<? extends Position> positions)
     {
-        this.setLocations(positions);
+        this.polygon.setLocations(positions);
     }
 
     public Iterable<? extends Position> getPositions()
     {
-        Iterable<? extends LatLon> locations = this.getLocations();
+        Iterable<? extends LatLon> locations = this.polygon.getLocations();
         ArrayList<Position> positions = new ArrayList<Position>();
 
         for (LatLon ll : locations)
@@ -297,5 +248,27 @@ public class GeneralArea extends SurfacePolygon implements TacticalShape
         }
 
         return positions;
+    }
+
+    @Override
+    public void setAttributes(TacticalGraphicAttributes attributes)
+    {
+        this.attributes = attributes;
+        this.polygon.setAttributes(attributes);
+    }
+
+    public Position getReferencePosition()
+    {
+        return this.polygon.getReferencePosition();
+    }
+
+    public void move(Position position)
+    {
+        this.polygon.move(position);
+    }
+
+    public void moveTo(Position position)
+    {
+        this.polygon.moveTo(position);
     }
 }

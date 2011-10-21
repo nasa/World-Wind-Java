@@ -10,8 +10,8 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalShape;
-import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
+import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -20,114 +20,35 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class Dummy extends Path implements TacticalShape
+public class Dummy extends MilStd2525TacticalGraphic
 {
     public final static String FUNCTION_ID = "PD----";
 
-    protected String standardIdentity;
-    protected String echelon;
-    protected String category;
-    protected String status;
-    // TODO: add country code, etc.
+    protected Path path;
 
     public Dummy()
     {
-        this.setFollowTerrain(true);
-        this.setPathType(AVKey.GREAT_CIRCLE);
-        this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        this.path = new Path();
+        this.path.setFollowTerrain(true);
+        this.path.setPathType(AVKey.GREAT_CIRCLE);
+        this.path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        this.path.setDelegateOwner(this);
     }
 
-    public String getIdentifier()
+    public String getFunctionId()
     {
-        SymbolCode symCode = new SymbolCode();
-        symCode.setValue(SymbolCode.STANDARD_IDENTITY, this.standardIdentity);
-        symCode.setValue(SymbolCode.ECHELON, this.echelon);
-        symCode.setValue(SymbolCode.CATEGORY, this.category);
-        symCode.setValue(SymbolCode.FUNCTION_ID, FUNCTION_ID);
-
-        return symCode.toString();
+        return FUNCTION_ID;
     }
 
-    public String getStandardIdentity()
-    {
-        return this.standardIdentity;
-    }
-
-    public void setStandardIdentity(String standardIdentity)
-    {
-        if (standardIdentity == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.standardIdentity = standardIdentity;
-    }
-
-    public String getCategory()
-    {
-        return this.category;
-    }
-
-    public void setCategory(String category)
-    {
-        if (category == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.category = category;
-    }
-
-    public String getEchelon()
-    {
-        return this.echelon;
-    }
-
-    public void setEchelon(String echelon)
-    {
-        if (echelon == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.echelon = echelon;
-    }
-
-    public String getStatus()
-    {
-        return this.status;
-    }
-
-    public void setStatus(String status)
-    {
-        this.status = status;
-    }
-
-    public String getText()
-    {
-        return null;
-    }
-
-    public void setText(String text)
-    {
-    }
-
-    @Override
     public void render(DrawContext dc)
     {
-        if (this.normalAttrs == null)
+        if (this.attributes == null)
         {
-            ShapeAttributes attrs = this.createShapeAttributes();
+            TacticalGraphicAttributes attrs = this.createDefaultAttributes();
             this.setAttributes(attrs);
         }
 
-        super.render(dc);
+        this.path.render(dc);
     }
 
     /**
@@ -137,7 +58,6 @@ public class Dummy extends Path implements TacticalShape
      *
      * @throws IllegalArgumentException if less than three control points are provided.
      */
-    @Override
     public void setPositions(Iterable<? extends Position> positions)
     {
         if (positions == null)
@@ -154,7 +74,7 @@ public class Dummy extends Path implements TacticalShape
             Position pt2 = iterator.next();
             Position pt3 = iterator.next();
 
-            super.setPositions(Arrays.asList(pt2, pt1, pt3));
+            this.path.setPositions(Arrays.asList(pt2, pt1, pt3));
         }
         catch (NoSuchElementException e)
         {
@@ -164,9 +84,31 @@ public class Dummy extends Path implements TacticalShape
         }
     }
 
-    protected ShapeAttributes createShapeAttributes()
+    public Iterable<? extends Position> getPositions()
     {
-        ShapeAttributes attrs = new BasicShapeAttributes();
+        return this.path.getPositions();
+    }
+
+    public void setAttributes(TacticalGraphicAttributes attributes)
+    {
+    }
+
+    public boolean isModifierVisible(String modifier)
+    {
+        return false;
+    }
+
+    public void setModifierVisible(String modifier, boolean visible)
+    {
+    }
+
+    public void setAttributes(ShapeAttributes attributes)
+    {
+    }
+
+    protected TacticalGraphicAttributes createDefaultAttributes()
+    {
+        BasicTacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
 
         String identity = this.getStandardIdentity();
         if (SymbolCode.IDENTITY_FRIEND.equals(identity))
@@ -182,5 +124,20 @@ public class Dummy extends Path implements TacticalShape
         attrs.setOutlineStipplePattern((short) 0xAAAA);
 
         return attrs;
+    }
+
+    public Position getReferencePosition()
+    {
+        return this.path.getReferencePosition();
+    }
+
+    public void move(Position position)
+    {
+        this.path.move(position);
+    }
+
+    public void moveTo(Position position)
+    {
+        this.path.moveTo(position);
     }
 }

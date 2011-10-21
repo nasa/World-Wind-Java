@@ -19,4 +19,10 @@ public class EngagementArea extends GeneralArea
     {
         return "EA " + text;
     }
+
+    @Override
+    public String getFunctionId()
+    {
+        return FUNCTION_ID;
+    }
 }

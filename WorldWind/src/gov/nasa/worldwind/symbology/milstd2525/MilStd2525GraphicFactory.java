@@ -17,7 +17,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.Pe
 import gov.nasa.worldwind.util.*;
 
 import java.lang.reflect.*;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -48,6 +48,16 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      *
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
+    public TacticalGraphic createGraphic(String sidc, Position position, AVList params)
+    {
+        return this.createGraphic(sidc, Arrays.asList(position), params);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param sidc MIL-STD-2525 symbol identification code (SIDC).
+     */
     public TacticalGraphic createGraphic(String sidc, Iterable<Position> positions, AVList params)
     {
         SymbolCode symbolCode = new SymbolCode(sidc);
@@ -69,11 +79,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         try
         {
             graphic = (TacticalGraphic) clazz.newInstance();
-
-            if (graphic instanceof TacticalShape)
-            {
-                ((TacticalShape) graphic).setPositions(positions);
-            }
+            graphic.setPositions(positions);
         }
         catch (Exception e)
         {

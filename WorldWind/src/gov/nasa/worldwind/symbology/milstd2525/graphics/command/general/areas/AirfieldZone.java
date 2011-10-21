@@ -17,4 +17,10 @@ public class AirfieldZone extends GeneralArea
     public AirfieldZone()
     {
     }
+
+    @Override
+    public String getFunctionId()
+    {
+        return FUNCTION_ID;
+    }
 }

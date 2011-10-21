@@ -19,4 +19,10 @@ public class AssemblyArea extends GeneralArea
     {
         return "AA " + text;
     }
+
+    @Override
+    public String getFunctionId()
+    {
+        return FUNCTION_ID;
+    }
 }

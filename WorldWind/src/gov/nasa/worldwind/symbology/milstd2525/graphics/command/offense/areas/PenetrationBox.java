@@ -15,4 +15,10 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.Ge
 public class PenetrationBox extends GeneralArea
 {
     public final static String FUNCTION_ID = "OAP---";
+
+    @Override
+    public String getFunctionId()
+    {
+        return FUNCTION_ID;
+    }
 }

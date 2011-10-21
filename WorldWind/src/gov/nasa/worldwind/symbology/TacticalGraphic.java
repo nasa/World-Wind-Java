@@ -8,6 +8,7 @@ package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.Movable;
 import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 
 /**
@@ -147,6 +148,24 @@ public interface TacticalGraphic extends Renderable, Movable, AVList
     void setVisible(boolean visible);
 
     /**
+     * Indicates whether or not a text or graphic modifier is visible.
+     *
+     * @param modifier The modifier to test.
+     *
+     * @return {@code true} if the specified modifier is visible. {@code false} if the modifier is not visible, or no
+     *         such modifier is found.
+     */
+    boolean isModifierVisible(String modifier);
+
+    /**
+     * Specifies whether or not a text or graphic modifier is visible.
+     *
+     * @param modifier The modifier to test. Method has no effect if there is no modifier matching this key.
+     * @param visible  {@code true} if the modifier should be visible.
+     */
+    void setModifierVisible(String modifier, boolean visible);
+
+    /**
      * Indicates a string identifier for this graphic. The format of the identifier depends on the symbol set to which
      * the graphic belongs.
      *
@@ -155,16 +174,34 @@ public interface TacticalGraphic extends Renderable, Movable, AVList
     String getIdentifier();
 
     /**
-     * Indicates a string of descriptive text for this graphic.
+     * Indicates the positions of the control points that place and orient the graphic.
      *
-     * @return Descriptive text for this graphic.
+     * @return positions that orient the graphic. How many positions are returned depends on the type of graphic. Some
+     *         graphics require only a single position, others require many.
      */
-    String getText();
+    Iterable<? extends Position> getPositions();
 
     /**
-     * Specifies a string of descriptive text for this graphic.
+     * Specifies the positions of the control points that place and orient the graphic.
      *
-     * @param text Descriptive text for this graphic.
+     * @param positions Positions that orient the graphic. How many positions are returned depends on the type of
+     *                  graphic. Some graphics require only a single position, others require many. The positions must
+     *                  be specified in the same order as the control points defined by the symbology set's template for
+     *                  this type of graphic.
      */
-    void setText(String text);
+    void setPositions(Iterable<? extends Position> positions);
+
+    /**
+     * Indicates this graphic's attributes.
+     *
+     * @return this graphic's attributes. May be null.
+     */
+    TacticalGraphicAttributes getAttributes();
+
+    /**
+     * Specifies this graphic's attributes.
+     *
+     * @param attributes new attributes. May be null, in which case default attributes are used.
+     */
+    void setAttributes(TacticalGraphicAttributes attributes);
 }

@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -21,110 +21,47 @@ import java.util.Iterator;
  * @author pabercrombie
  * @version $Id$
  */
-// TODO: text annotation at the ends of the line
-public class PhaseLine extends Path implements TacticalShape, PreRenderable
+public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderable
 {
     public final static String FUNCTION_ID = "GLP---";
 
-    protected String standardIdentity;
-    protected String echelon;
-    protected String category;
-    protected String status;
-    // TODO: add country code, etc.
-
-    protected String text;
-
+    protected Path path;
     protected SurfaceText labelStart;
     protected SurfaceText labelEnd;
 
     public PhaseLine()
     {
-        this.setFollowTerrain(true);
-        this.setPathType(AVKey.GREAT_CIRCLE);
-        this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        this.path = new Path();
+        this.path.setFollowTerrain(true);
+        this.path.setPathType(AVKey.GREAT_CIRCLE);
+        this.path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        this.path.setDelegateOwner(this);
         this.setText("");
     }
 
-    public String getIdentifier()
+    public void setPositions(Iterable<? extends Position> positions)
     {
-        SymbolCode symCode = new SymbolCode();
-        symCode.setValue(SymbolCode.STANDARD_IDENTITY, this.standardIdentity);
-        symCode.setValue(SymbolCode.ECHELON, this.echelon);
-        symCode.setValue(SymbolCode.CATEGORY, this.category);
-        symCode.setValue(SymbolCode.FUNCTION_ID, FUNCTION_ID);
-
-        return symCode.toString();
+        this.path.setPositions(positions);
     }
 
-    public String getStandardIdentity()
+    public Iterable<? extends Position> getPositions()
     {
-        return this.standardIdentity;
+        return this.path.getPositions();
     }
 
-    public void setStandardIdentity(String standardIdentity)
+    public boolean isModifierVisible(String modifier)
     {
-        if (standardIdentity == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.standardIdentity = standardIdentity;
+        return false;
     }
 
-    public String getCategory()
+    public void setModifierVisible(String modifier, boolean visible)
     {
-        return this.category;
     }
 
-    public void setCategory(String category)
-    {
-        if (category == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.category = category;
-    }
-
-    public String getEchelon()
-    {
-        return this.echelon;
-    }
-
-    public void setEchelon(String echelon)
-    {
-        if (echelon == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.echelon = echelon;
-    }
-
-    public String getStatus()
-    {
-        return this.status;
-    }
-
-    public void setStatus(String status)
-    {
-        this.status = status;
-    }
-
-    public String getText()
-    {
-        return this.text;
-    }
-
+    @Override
     public void setText(String text)
     {
-        this.text = text;
+        super.setText(text);
 
         StringBuilder sb = new StringBuilder();
         sb.append("PL");
@@ -139,7 +76,7 @@ public class PhaseLine extends Path implements TacticalShape, PreRenderable
 
     protected void determineLabelPositions(DrawContext dc)
     {
-        Iterator<? extends Position> iterator = this.positions.iterator();
+        Iterator<? extends Position> iterator = this.path.getPositions().iterator();
 
         // Find the first two positions on the path
         Position first = iterator.next();
@@ -165,16 +102,32 @@ public class PhaseLine extends Path implements TacticalShape, PreRenderable
         this.labelEnd.setPosition(new Position(ll, 0));
     }
 
+    public Position getReferencePosition()
+    {
+        return this.path.getReferencePosition();
+    }
+
+    public void move(Position position)
+    {
+        this.path.move(position);
+    }
+
+    public void moveTo(Position position)
+    {
+        this.path.moveTo(position);
+    }
+
     public void preRender(DrawContext dc)
     {
         this.determineLabelPositions(dc);
 
         // If the attributes have not been created yet, create them now.
         // The default attributes are determined by the symbol code.
-        if (this.normalAttrs == null)
+        if (this.attributes == null)
         {
-            ShapeAttributes attrs = this.createShapeAttributes();
+            TacticalGraphicAttributes attrs = this.createDefaultAttributes();
             this.setAttributes(attrs);
+            this.path.setAttributes(attrs);
 
             Color color = attrs.getOutlineMaterial().getDiffuse();
             this.labelStart.setColor(color);
@@ -185,24 +138,14 @@ public class PhaseLine extends Path implements TacticalShape, PreRenderable
         this.labelEnd.preRender(dc);
     }
 
-    @Override
     public void render(DrawContext dc)
     {
-        super.render(dc);
+        this.path.render(dc);
     }
 
-    @Override
-    public void pick(DrawContext dc, Point pickPoint)
+    protected TacticalGraphicAttributes createDefaultAttributes()
     {
-        this.labelStart.pick(dc, pickPoint);
-        this.labelEnd.pick(dc, pickPoint);
-
-        super.pick(dc, pickPoint);
-    }
-
-    protected ShapeAttributes createShapeAttributes()
-    {
-        ShapeAttributes attrs = new BasicShapeAttributes();
+        TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
 
         String identity = this.getStandardIdentity();
         if (SymbolCode.IDENTITY_FRIEND.equals(identity))
@@ -222,5 +165,10 @@ public class PhaseLine extends Path implements TacticalShape, PreRenderable
         }
 
         return attrs;
+    }
+
+    public String getFunctionId()
+    {
+        return FUNCTION_ID;
     }
 }

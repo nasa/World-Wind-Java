@@ -39,7 +39,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.8235, -117.7196, 0));
             TacticalGraphic graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: friendly");
-            graphic.setText("A");
+            graphic.setValue(AVKey.TEXT, "A");
             layer.addRenderable(graphic);
 
             // Create a Hostile Phase Line
@@ -48,7 +48,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7328, -117.7305, 0));
             graphic = factory.createGraphic("GHGPGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile");
-            graphic.setText("B");
+            graphic.setValue(AVKey.TEXT, "B");
             layer.addRenderable(graphic);
 
             // Create a Hostile, Anticipated, Phase Line
@@ -57,7 +57,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7445, -117.9252, 0));
             graphic = factory.createGraphic("GHGAGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile (anticipated)");
-            graphic.setText("C");
+            graphic.setValue(AVKey.TEXT, "C");
             layer.addRenderable(graphic);
 
             // Create a General Area
@@ -68,7 +68,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7819, -117.6687, 0));
             graphic = factory.createGraphic("GHGPGAG----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "General Area");
-            graphic.setText("Area");
+            graphic.setValue(AVKey.TEXT, "Area");
             layer.addRenderable(graphic);
 
             // Create an Assembly Area
@@ -79,7 +79,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.6818, -117.6665, 0));
             graphic = factory.createGraphic("GFGPGAA----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Assembly Area");
-            graphic.setText("Area");
+            graphic.setValue(AVKey.TEXT, "Area");
             layer.addRenderable(graphic);
 
             // Create a Deception graphic
