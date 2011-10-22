@@ -14,7 +14,8 @@ import gov.nasa.worldwind.render.*;
 /**
  * TacticalGraphic provides a common interface for displaying a graphic from a symbology sets. A graphic can be an icon
  * that is drawn a geographic position, a vector graphic that is positioned using one or more control points, or a line
- * or polygon that is styled according to the symbol set's specification.
+ * or polygon that is styled according to the symbol set's specification. See the TacticalGraphic <a title="Tactical Graphic Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-graphics/"
+ * target="_blank">Usage Guide</a> for instructions on using TacticalGraphic in an application.
  * <p/>
  * <h1>Construction</h1>
  * <p/>
@@ -160,30 +161,18 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     void setModifier(String modifier, Object value);
 
     /**
-     * Indicates whether or not a text or graphic modifier is visible.
+     * Indicates whether or not a text or graphic modifiers are visible.
      *
-     * @param modifier The modifier to test.
-     *
-     * @return {@code true} if the specified modifier is visible. {@code false} if the modifier is not visible, or no
-     *         such modifier is found.
+     * @return {@code true} if the modifiers are visible.
      */
-    boolean isShowModifier(String modifier);
+    boolean isShowModifiers();
 
     /**
-     * Specifies whether or not a text or graphic modifier is visible.
-     *
-     * @param modifier     The modifier to test. Method has no effect if there is no modifier matching this key.
-     * @param showModifier {@code true} if the modifier should be visible.
-     */
-    void setShowModifier(String modifier, boolean showModifier);
-
-    /**
-     * Specifies whether or not to draw text or graphic modifiers. This method turns all modifiers on or off. Individual
-     * modifiers can be enabled using {@link #setShowModifier}.
+     * Specifies whether or not to draw text and graphic modifiers.
      *
      * @param showModifiers {@code true} if the modifier should be visible.
      */
-    void setShowAllModifiers(boolean showModifiers);
+    void setShowModifiers(boolean showModifiers);
 
     /**
      * Indicates a string identifier for this graphic. The format of the identifier depends on the symbol set to which

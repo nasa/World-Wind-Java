@@ -11,14 +11,17 @@ import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 
 /**
- * Base class for tactical graphics defined by <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a>
+ * Base class for tactical graphics defined by <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a>.
+ * See the TacticalGraphic <a title="Tactical Graphic Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-graphics/"
+ * target="_blank">Usage Guide</a> for instructions on using TacticalGraphic in an application.
  * <p/>
  * The following table lists the modifiers supported by 2525 graphics. Note that not all graphics support all modifiers.
  * <table> <tr><th>Field</th><th>Modifier key</th><th>Data type</th><th>Description</th></tr>
  * <tr><td>T</td><td>AVKey.TEXT</td><td>String</td><td>Text label</td></tr> <tr><td>A</td><td>AVKey.SYMBOL</td><td>TacticalSymbol</td><td>Symbol
  * icon</td></tr> <tr><td>W</td><td>AVKey.DATE</td><td>Date</td><td>Date/time</td></tr>
  * <tr><td>H</td><td>AVKey.DESCRIPTION</td><td>String</td><td>Additional information</td></tr>
- * <tr><td>Q</td><td>AVKey.HEADING</td><td>Angle</td><td>Direction indicator</td></tr> </table>
+ * <tr><td>Q</td><td>AVKey.HEADING</td><td>Angle</td><td>Direction indicator</td></tr><tr><td>Y</td><td>AVKey.SHOW_POSITION</td><td>Boolean</td><td>Show/hide
+ * position field</td></tr> </table>
  * <p/>
  * Here's an example of setting modifiers during construction of a graphic:
  * <pre>
@@ -57,7 +60,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
 
-    protected boolean showText;
+    protected boolean showModifiers;
 
     protected String standardIdentity;
     protected String echelon;
@@ -147,28 +150,15 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     }
 
     /** {@inheritDoc} */
-    public boolean isShowModifier(String modifier)
+    public boolean isShowModifiers()
     {
-        //noinspection SimplifiableIfStatement
-        if (AVKey.TEXT.equals(modifier))
-            return this.showText;
-        else
-            return false;
+        return this.showModifiers;
     }
 
     /** {@inheritDoc} */
-    public void setShowModifier(String modifier, boolean visible)
+    public void setShowModifiers(boolean showModifiers)
     {
-        if (AVKey.TEXT.equals(modifier))
-        {
-            this.showText = visible;
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void setShowAllModifiers(boolean showModifiers)
-    {
-        this.showText = showModifiers;
+        this.showModifiers = showModifiers;
     }
 
     public String getStandardIdentity()
