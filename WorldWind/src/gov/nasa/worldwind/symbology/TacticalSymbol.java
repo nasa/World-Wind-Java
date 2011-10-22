@@ -179,13 +179,19 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      */
     void setAltitudeMode(int altitudeMode);
 
-    boolean isShowGraphicModifiers();
+    boolean isShowModifier(String modifier);
+
+    void setShowModifier(String modifier, boolean showModifier);
+
+    void setShowAllModifiers(boolean showAllModifiers);
 
     void setShowGraphicModifiers(boolean showGraphicModifiers);
 
-    boolean isShowTextModifiers();
-
     void setShowTextModifiers(boolean showTextModifiers);
+
+    Object getModifier(String modifier);
+
+    void setModifier(String modifier, Object value);
 
     TacticalSymbolAttributes getAttributes();
 

@@ -14,11 +14,11 @@ import gov.nasa.worldwind.geom.Position;
  */
 public class MilStd2525TacticalSymbol
 {
-    public MilStd2525TacticalSymbol(String symbolIdentifier, Position position)
+    public MilStd2525TacticalSymbol(String symbolId, Position position)
     {
     }
 
-    public MilStd2525TacticalSymbol(String symbolIdentifier, Position position, AVList modifiers)
+    public MilStd2525TacticalSymbol(String symbolId, Position position, AVList modifiers)
     {
     }
 
