@@ -62,7 +62,7 @@ public class CompassLayer extends AbstractLayer
     public CompassLayer()
     {
         this.setOpacity(0.8); // TODO: make configurable
-        this.setPickEnabled(true);  // Default to no picking
+        this.setPickEnabled(false);  // Default to no picking
     }
 
     public CompassLayer(String iconFilePath)
