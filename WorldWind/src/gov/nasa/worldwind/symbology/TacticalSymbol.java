@@ -10,18 +10,22 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 
 /**
- * TacticalSymbol provides a common interface for displaying tactical point symbols from symbology sets. Implementations
- * of this interface provide support for point symbols within a specific symbology set. For example, class {@link
- * gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol} provides support for tactical symbols from the
- * MIL-STD-2525 symbology specification.
+ * TacticalSymbol provides a common interface for displaying tactical point symbols from symbology sets. A tactical
+ * symbol displays graphic and textual information about an object at a single geographic position at a particular point
+ * in time. See the TacticalSymbol <a title="Tactical Symbol Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/"
+ * target="_blank">Usage Guide</a> for instructions on using TacticalSymbol in an application.
  * <p/>
- * <h2>Creating and Displaying Tactical Symbols</h2> To create a tactical symbol, instantiate a concrete implementation
- * appropriate for the desired symbology set. Pass a string identifier, the desired geographic position, and
- * (optionally) one or more symbol modifier key-value pairs to the symbol's constructor. The tactical symbol creates a
- * graphic appropriate for the string identifier and optional symbol modifiers, and draws that graphic at the specified
- * position when its render method is called. For example, a symbol implementation may display a 3D object at the
- * position, or display a screen space icon who's screen location tracks the position. MIL-STD-2525 tactical symbols
- * display a screen space icon with graphic and text modifiers surrounding the icon.
+ * <h2>Construction</h2> Implementations of this interface provide support for symbols belonging to a specific symbology
+ * set. For example, class {@link gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol} provides support for
+ * tactical symbols from the MIL-STD-2525 symbology specification.
+ * <p/>
+ * To create a tactical symbol, instantiate a concrete implementation appropriate for the desired symbology set. Pass a
+ * string identifier, the desired geographic position, and (optionally) one or more symbol modifier key-value pairs to
+ * the symbol's constructor. The tactical symbol creates a graphic appropriate for the string identifier and optional
+ * symbol modifiers, and draws that graphic at the specified position when its render method is called. For example, a
+ * symbol implementation may display a 3D object at the position, or display a screen space icon who's screen location
+ * tracks the position. MIL-STD-2525 tactical symbols display a screen space icon with graphic and text modifiers
+ * surrounding the icon.
  * <p/>
  * The format of the string identifier and the modifier key-value pairs are implementation dependent. For MIL-STD-2525,
  * the string identifier must be a 15-character alphanumeric symbol identification code (SIDC), and the modifier keys
@@ -50,10 +54,10 @@ import gov.nasa.worldwind.render.*;
  * wwd.redraw();
  * </pre>
  * <p/>
- * <h2>Positioning Tactical Symbols</h2> A symbol's geographic position defines where the symbol displays its graphic.
- * Either the graphic's geometric center is displayed at the position, or a specific location within the graphic (such
- * as the bottom of a leader line) is displayed at the position. This behavior depends on the symbol implementation, the
- * string identifier, and the symbol modifiers (if any).
+ * <h2>Position</h2> A symbol's geographic position defines where the symbol displays its graphic. Either the graphic's
+ * geometric center is displayed at the position, or a specific location within the graphic (such as the bottom of a
+ * leader line) is displayed at the position. This behavior depends on the symbol implementation, the string identifier,
+ * and the symbol modifiers (if any).
  * <p/>
  * A symbol's altitude mode defines how the altitude component if the position is interpreted. Altitude mode may be
  * specified by calling {@link #setAltitudeMode(int)}. Recognized modes are: <ul> <li>WorldWind.CLAMP_TO_GROUND -- the
@@ -67,18 +71,15 @@ import gov.nasa.worldwind.render.*;
  * tactical symbol to configure the altitude mode as WorldWind.CLAMP_TO_GROUND. The automatically configured mode can be
  * overridden by calling setAltitudeMode.
  * <p/>
- * <h2>Tactical Symbol Modifiers</h2> Symbols modifiers are optional attributes that augment or change a symbol's
- * graphic. Which modifiers are recognized by a tactical symbol and how they affect the symbol's graphic is
- * implementation dependent. Symbol modifiers can be specified at construction by passing a list of key-value pairs, or
- * after construction by setting a key-value pair on the tactical symbol's AVList or calling an implementation defined
- * setter method. The modifier keys must be one of the constants defined in MilStd2525TacticalSymbol's documentation.
- * Each recognized modifier key corresponds an implementation defined setter method. This enables callers to specify all
- * modifiers either through the symbol's AVList or through an implementation defined setter method. Here's an example of
- * setting the the direction of movement modifier at construction for a MIL-STD-2525 friendly ground unit:
+ * <h2>Modifiers</h2> Symbols modifiers are optional attributes that augment or change a symbol's graphic. Modifiers can
+ * be specified at construction by passing a list of key-value pairs, or after construction by calling {@link
+ * #setModifier(String, Object)} with the modifier key and value. Which modifier keys are recognized by a tactical
+ * symbol and how they affect the symbol's graphic is implementation dependent. Here's an example of setting the the
+ * heading (direction of movement) modifier at construction for a MIL-STD-2525 friendly ground unit:
  * <p/>
  * <pre>
- * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit, specifying the optional direction of movement
- * // modifier by passing in a list of key-value pairs.
+ * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit, specifying the optional heading (direction of
+ * // movement) modifier by passing in a list of key-value pairs.
  * AVList modifiers = new AVListImpl();
  * modifiers.setValue(AVKey.HEADING, Angle.fromDegrees(45));
  * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0),
@@ -91,11 +92,8 @@ import gov.nasa.worldwind.render.*;
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit.
  * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0));
  *
- * // Once a symbol is constructed, there are two ways to specify optional symbol modifiers:
- * // 1) Specify the modifier as a key-value pair on the tactical symbol's AVList:
- * symbol.setValue(AVKey.HEADING, Angle.fromDegrees(45));
- * // 2) Specify the modifier using an implementation defined setter method:
- * ((MilStd2525TacticalSymbol) symbol).setHeading(Angle.fromDegrees(45));
+ * // Set the heading (direction of movement) modifier.
+ * symbol.setModifier(AVKey.HEADING, Angle.fromDegrees(45));
  * </pre>
  * <p/>
  * Tactical symbol implementations apply modifiers from the string identifier specified during construction. For
@@ -148,8 +146,8 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
 
     /**
      * Specifies this symbol's geographic position. The specified position must be non-null, and defines where on the
-     * globe this symbol displays its graphic. The type of graphic this symbol displays at the position is
-     * implementation dependent.
+     * globe this symbol displays its graphic. The position's altitude component is interpreted according to the
+     * altitudeMode. The type of graphic this symbol displays at the position is implementation dependent.
      *
      * @param position this symbol's new position.
      *
@@ -179,26 +177,93 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      */
     void setAltitudeMode(int altitudeMode);
 
-    boolean isShowModifier(String modifier);
+    /**
+     * Indicates whether this symbol draws its supplemental graphic modifiers.
+     *
+     * @return true if this symbol draws its graphic modifiers, otherwise false.
+     */
+    boolean isShowGraphicModifiers();
 
-    void setShowModifier(String modifier, boolean showModifier);
-
-    void setShowAllModifiers(boolean showAllModifiers);
-
+    /**
+     * Specifies whether to draw this symbol's supplemental graphic modifiers.
+     *
+     * @param showGraphicModifiers true if this symbol should draw its graphic modifiers, otherwise false.
+     */
     void setShowGraphicModifiers(boolean showGraphicModifiers);
 
+    /**
+     * Indicates whether this symbol draws its supplemental text modifiers.
+     *
+     * @return true if this symbol draws its text modifiers, otherwise false.
+     */
+    boolean isShowTextModifiers();
+
+    /**
+     * Specifies whether to draw this symbol's supplemental text modifiers.
+     *
+     * @param showTextModifiers true if this symbol should draw its text modifiers, otherwise false.
+     */
     void setShowTextModifiers(boolean showTextModifiers);
 
+    /**
+     * Indicates the current value of a text or graphic modifier. See {@link #setModifier(String, Object)} for a
+     * description of how modifiers values are interpreted.
+     *
+     * @param modifier the modifier key.
+     *
+     * @return the modifier value. May be <code>null</code>, indicating that this symbol does not display the specified
+     *         modifier.
+     *
+     * @throws IllegalArgumentException if the modifier is <code>null</code>.
+     */
     Object getModifier(String modifier);
 
+    /**
+     * Specifies the value of a text or graphic modifier. Which modifier keys are recognized how they affect the
+     * symbol's graphic is implementation dependent. If the modifier has an implicit value and only needs to be enabled
+     * (e.g. the MIL-STD-2525 location modifier), specify true as the modifier value. If the specified value is
+     * <code>null</code>, the modifier is removed from this symbol.
+     * <p/>
+     * If the specified modifier represents a graphic or text modifier, its display is suppressed if
+     * isShowGraphicModifiers or isShowTextModifiers, respectively, returns false.
+     *
+     * @param modifier the modifier key.
+     * @param value    the modifier value. May be <code>null</code>, indicating that the modifier should be removed from
+     *                 this symbol.
+     *
+     * @throws IllegalArgumentException if the modifier is <code>null</code>.
+     */
     void setModifier(String modifier, Object value);
 
+    /**
+     * Returns this shape's normal (as opposed to highlight) attributes.
+     *
+     * @return this shape's normal attributes. May be <code>null</code>, indicating that the default highlight
+     *         attributes are used.
+     */
     TacticalSymbolAttributes getAttributes();
 
+    /**
+     * Specifies this symbol's normal (as opposed to highlight) attributes.
+     *
+     * @param normalAttrs the normal attributes. May be <code>null</code>, in which case default attributes are used.
+     */
     void setAttributes(TacticalSymbolAttributes normalAttrs);
 
+    /**
+     * Returns this shape's highlight attributes.
+     *
+     * @return this shape's highlight attributes. May be <code>null</code>, indicating that the default attributes are
+     *         used.
+     */
     TacticalSymbolAttributes getHighlightAttributes();
 
+    /**
+     * Specifies this shape's highlight attributes.
+     *
+     * @param highlightAttrs the highlight attributes. May be <code>null</code>, in which case default highlight
+     *                       attributes are used.
+     */
     void setHighlightAttributes(TacticalSymbolAttributes highlightAttrs);
 }
 
