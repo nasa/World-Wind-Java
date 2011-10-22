@@ -225,13 +225,6 @@ public abstract class AbstractSurfaceObject extends AVListImpl implements Surfac
             throw new IllegalArgumentException(message);
         }
 
-        if (pickPoint == null)
-        {
-            String message = Logging.getMessage("nullValue.PickPoint");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
         // This method is called only during ordered picking. Therefore we setup for picking and draw this object to the
         // framebuffer in a unique pick color. We invoke a separate path for picking because this object creates and
         // draws a separate representation of itself during picking. Using a separate call stack enables us to use

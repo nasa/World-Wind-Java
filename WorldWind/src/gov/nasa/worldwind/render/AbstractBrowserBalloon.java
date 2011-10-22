@@ -2000,6 +2000,10 @@ public abstract class AbstractBrowserBalloon extends AbstractBalloon implements 
         if (this.webView == null)
             return;
 
+        // Ignore box selection events. These currently have no mapping to a WebView internal event.
+        if (event.isBoxSelect())
+            return;
+
         // Convert the mouse event's screen point to the WebView's local coordinate system. Note that we send the mouse
         // event to the WebView even when its screen point is outside the WebView's bounding rectangle. This gives the
         // WebView a chance to change its state or the cursor's state when the cursor it exits the WebView.

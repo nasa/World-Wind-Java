@@ -62,7 +62,7 @@ public class CompassLayer extends AbstractLayer
     public CompassLayer()
     {
         this.setOpacity(0.8); // TODO: make configurable
-        this.setPickEnabled(false);  // Default to no picking
+        this.setPickEnabled(true);  // Default to no picking
     }
 
     public CompassLayer(String iconFilePath)
@@ -363,26 +363,37 @@ public class CompassLayer extends AbstractLayer
                 // Picking
                 this.pickSupport.clearPickList();
                 this.pickSupport.beginPicking(dc);
-                // Compute pick point 'heading' relative to compass center
-                Vec4 center = new Vec4(locationSW.x + width * scale / 2, locationSW.y + height * scale / 2, 0);
-                double px = dc.getPickPoint().x - center.x;
-                double py = viewport.getHeight() - dc.getPickPoint().y - center.y;
-                Angle pickHeading = Angle.fromRadians(Math.atan2(px, py));
-                pickHeading = pickHeading.degrees >= 0 ? pickHeading : pickHeading.addDegrees(360);
-                // Draw unique color across the compass area
-                Color color = dc.getUniquePickColor();
-                int colorCode = color.getRGB();
-                // Add our object(s) to the pickable list with pick heading value
-                PickedObject po = new PickedObject(colorCode, this, null, false);
-                po.setValue("Heading", pickHeading);
-                this.pickSupport.addPickableObject(po);
-                // Draw
-                gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
-                gl.glScaled(width, height, 1d);
-                dc.drawUnitQuad();
-                // Done picking
-                this.pickSupport.endPicking(dc);
-                this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
+                try
+                {
+                    // Add a picked object for the compass to the list of pickable objects.
+                    Color color = dc.getUniquePickColor();
+                    PickedObject po = new PickedObject(color.getRGB(), this, null, false);
+                    this.pickSupport.addPickableObject(po);
+
+                    if (dc.getPickPoint() != null)
+                    {
+                        // If the pick point is not null, compute the pick point 'heading' relative to the compass
+                        // center and set the picked heading on our picked object. The pick point is null if a pick
+                        // rectangle is specified but a pick point is not.
+                        Vec4 center = new Vec4(locationSW.x + width * scale / 2, locationSW.y + height * scale / 2, 0);
+                        double px = dc.getPickPoint().x - center.x;
+                        double py = viewport.getHeight() - dc.getPickPoint().y - center.y;
+                        Angle pickHeading = Angle.fromRadians(Math.atan2(px, py));
+                        pickHeading = pickHeading.degrees >= 0 ? pickHeading : pickHeading.addDegrees(360);
+                        po.setValue("Heading", pickHeading);
+                    }
+
+                    // Draw the compass in the unique pick color.
+                    gl.glColor3ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue());
+                    gl.glScaled(width, height, 1d);
+                    dc.drawUnitQuad();
+                }
+                finally
+                {
+                    // Done picking
+                    this.pickSupport.endPicking(dc);
+                    this.pickSupport.resolvePick(dc, dc.getPickPoint(), this);
+                }
             }
         }
         finally

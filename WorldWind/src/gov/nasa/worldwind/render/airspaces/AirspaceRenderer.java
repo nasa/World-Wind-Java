@@ -475,13 +475,6 @@ public class AirspaceRenderer
                 throw new IllegalArgumentException(msg);
             }
 
-            if (pickPoint == null)
-            {
-                String msg = Logging.getMessage("nullValue.PickPoint");
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-
             PickSupport pickSupport = this.getRenderer().getPickSupport();
             pickSupport.clearPickList();
             try
