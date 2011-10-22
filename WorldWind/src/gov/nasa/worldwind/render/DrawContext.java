@@ -319,15 +319,23 @@ public interface DrawContext extends WWObject, Disposable
      * The returned array contains one entry for each unique color. Points in the rectangle that contain the clear color
      * or are outside this draw context's drawable area are ignored. This returns <code>null</code> if the specified
      * rectangle is empty, or contains only the clear color.
+     * <p/>
+     * The minAndMaxColorCodes parameter limits the unique colors that this method returns to the specified range. The
+     * minimum color must be stored in array index 0, and the maximum color must be stored in array index 1. These
+     * values can be used to specify a small range of colors relative to the framebuffer contents, effectively culling
+     * the colors that must be considered by this method and the caller. When specified, these integers must be
+     * formatted exactly as the integers this method returns.
      *
-     * @param rectangle the rectangle to return unique colors for, in AWT screen coordinates.
+     * @param rectangle           the rectangle to return unique colors for, in AWT screen coordinates.
+     * @param minAndMaxColorCodes an two element array representing the minimum and maximum RGB colors to return. May be
+     *                            <code>null</code> to specify that all color codes must be returned.
      *
      * @return the unique RGB colors corresponding to the specified rectangle, or <code>null</code> if the rectangle is
      *         empty or the rectangle contains only the clear color.
      *
      * @throws IllegalArgumentException if the rectangle is <code>null</code>.
      */
-    int[] getPickColorsInRectangle(Rectangle rectangle);
+    int[] getPickColorsInRectangle(Rectangle rectangle, int[] minAndMaxColorCodes);
 
     /** Specifies that the scene controller is beginning its pick traversal. */
     void enablePickingMode();

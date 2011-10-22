@@ -610,21 +610,38 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         }
         else if (pol != null && pol.size() > 1)
         {
-            // If there is more than one picked object, then find the picked objects corresponding to each of the top
-            // colors in the pick rectangle, and mark them all as on top.
-            int[] colorCodes = dc.getPickColorsInRectangle(pickRect);
-            if (colorCodes != null && colorCodes.length > 0)
+            int[] minAndMaxColorCodes = null;
+
+            for (PickedObject po : pol)
             {
+                int colorCode = po.getColorCode();
+
                 // Put all of the eligible picked objects in a map to provide constant time access to a picked object
                 // by its color code. Since the number of unique color codes and picked objects may both be large, using
                 // a hash map reduces the complexity of the next loop from O(n*m) to O(n*c), where n and m are the
                 // lengths of the unique color list and picked object list, respectively, and c is the constant time
                 // associated with a hash map access.
-                for (PickedObject po : pol)
-                {
-                    this.pickableObjects.put(po.getColorCode(), po);
-                }
+                this.pickableObjects.put(colorCode, po);
 
+                // Keep track of the minimum and maximum color codes of the scene's picked objects. These values are
+                // used to cull the number of colors that the draw context must consider with identifying the unique
+                // pick colors in the specified screen rectangle.
+                if (minAndMaxColorCodes == null)
+                    minAndMaxColorCodes = new int[] {colorCode, colorCode};
+                else
+                {
+                    if (minAndMaxColorCodes[0] > colorCode)
+                        minAndMaxColorCodes[0] = colorCode;
+                    if (minAndMaxColorCodes[1] < colorCode)
+                        minAndMaxColorCodes[1] = colorCode;
+                }
+            }
+
+            // If there is more than one picked object, then find the picked objects corresponding to each of the top
+            // colors in the pick rectangle, and mark them all as on top.
+            int[] colorCodes = dc.getPickColorsInRectangle(pickRect, minAndMaxColorCodes);
+            if (colorCodes != null && colorCodes.length > 0)
+            {
                 // Find the top picked object for each unique color code, if any, and mark it as on top.
                 for (int colorCode : colorCodes)
                 {
@@ -635,11 +652,11 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
                             po.setOnTop();
                     }
                 }
-
-                // Clear the map of eligible picked objects so that the picked objects from this frame do not affect the
-                // next frame. This also ensures that we do not leak memory by retaining references to picked objects.
-                this.pickableObjects.clear();
             }
+
+            // Clear the map of eligible picked objects so that the picked objects from this frame do not affect the
+            // next frame. This also ensures that we do not leak memory by retaining references to picked objects.
+            this.pickableObjects.clear();
         }
     }
 

@@ -19,31 +19,45 @@ import java.util.*;
  */
 public class PickSupport
 {
+    /**
+     * The picked objects currently registered with this PickSupport, represented as a map of color codes to picked
+     * objects. This maps provides constant time access to a picked object when its color code is known.
+     */
     protected Map<Integer, PickedObject> pickableObjects = new HashMap<Integer, PickedObject>();
+    /**
+     * Indicates the minimum and maximum color code associated with the picked objects in the pickableObjects map.
+     * Initially <code>null</code>, indicating that the minimum and maximum color codes are unknown.
+     */
+    protected int[] minAndMaxColorCodes;
 
     public void clearPickList()
     {
         this.getPickableObjects().clear();
+        this.minAndMaxColorCodes = null; // Reset the min and max color codes.
     }
 
     public void addPickableObject(int colorCode, Object o, Position position, boolean isTerrain)
     {
         this.getPickableObjects().put(colorCode, new PickedObject(colorCode, o, position, isTerrain));
+        this.adjustExtremeColorCodes(colorCode);
     }
 
     public void addPickableObject(int colorCode, Object o, Position position)
     {
         this.getPickableObjects().put(colorCode, new PickedObject(colorCode, o, position, false));
+        this.adjustExtremeColorCodes(colorCode);
     }
 
     public void addPickableObject(int colorCode, Object o)
     {
         this.getPickableObjects().put(colorCode, new PickedObject(colorCode, o));
+        this.adjustExtremeColorCodes(colorCode);
     }
 
     public void addPickableObject(PickedObject po)
     {
         this.getPickableObjects().put(po.getColorCode(), po);
+        this.adjustExtremeColorCodes(po.getColorCode());
     }
 
     public PickedObject getTopObject(DrawContext dc, Point pickPoint)
@@ -139,7 +153,10 @@ public class PickSupport
      */
     protected void doResolvePick(DrawContext dc, Rectangle pickRect, Layer layer)
     {
-        int[] colorCodes = dc.getPickColorsInRectangle(pickRect);
+        // Get the unique pick colors in the specified screen rectangle. Use the minimum and maximum color codes to cull
+        // the number of colors that the draw context must consider with identifying the unique pick colors in the
+        // specified rectangle.
+        int[] colorCodes = dc.getPickColorsInRectangle(pickRect, this.minAndMaxColorCodes);
         if (colorCodes == null || colorCodes.length == 0)
             return;
 
@@ -206,6 +223,26 @@ public class PickSupport
     protected Map<Integer, PickedObject> getPickableObjects()
     {
         return this.pickableObjects;
+    }
+
+    /**
+     * Adjust this PickSupport's minimum and maximum color codes by decreasing and increasing each extreme,
+     * respectively, according to the specified code. If the minimum and maximum color codes are unknown, both the
+     * minimum and maximum color codes are set to the specified code.
+     *
+     * @param colorCode the code used to adjust the current min and max codes.
+     */
+    protected void adjustExtremeColorCodes(int colorCode)
+    {
+        if (this.minAndMaxColorCodes == null)
+            this.minAndMaxColorCodes = new int[] {colorCode, colorCode};
+        else
+        {
+            if (this.minAndMaxColorCodes[0] > colorCode)
+                this.minAndMaxColorCodes[0] = colorCode;
+            if (this.minAndMaxColorCodes[1] < colorCode)
+                this.minAndMaxColorCodes[1] = colorCode;
+        }
     }
 
     /**

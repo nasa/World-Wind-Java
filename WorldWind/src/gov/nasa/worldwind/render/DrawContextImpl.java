@@ -55,11 +55,12 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     /** Buffer of RGB colors used to read back the framebuffer's colors and store them in client memory. */
     protected ByteBuffer pixelColors;
     /**
-     * Set of ints used by {@link #getPickColorsInRectangle(java.awt.Rectangle)} to identify the unique color codes in
-     * the specified rectangle. This consolidates duplicate colors to a single entry. Initialized to a HashSet in order
-     * to achieve constant time insertion.
+     * Set of ints used by {@link #getPickColorsInRectangle(java.awt.Rectangle, int[])} to identify the unique color
+     * codes in the specified rectangle. This consolidates duplicate colors to a single entry. We use IntSet to achieve
+     * constant time insertion, and to reduce overhead associated associated with storing integer primitives in a
+     * HashSet.
      */
-    protected Set<Integer> uniquePixelColors = new HashSet<Integer>();
+    protected IntSet uniquePixelColors = new IntSet();
     protected boolean pickingMode = false;
     protected boolean deepPickingMode = false;
     /**
@@ -506,7 +507,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
     }
 
     /** {@inheritDoc} */
-    public int[] getPickColorsInRectangle(Rectangle rectangle)
+    public int[] getPickColorsInRectangle(Rectangle rectangle, int[] minAndMaxColorCodes)
     {
         if (rectangle == null)
         {
@@ -527,46 +528,56 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         if (r.width == 0 || r.height == 0) // Return null if the rectangle is empty.
             return null;
 
-        // Read the colors in the specified rectangle in OpenGL screen coordinates.
+        if (minAndMaxColorCodes == null)
+            minAndMaxColorCodes = new int[] {0, Integer.MAX_VALUE};
+
+        // Allocate a native byte buffer to hold the framebuffer RGB colors.
         int numPixels = r.width * r.height;
-        if (this.pixelColors == null || this.pixelColors.capacity() < 4 * numPixels)
-            this.pixelColors = BufferUtil.newByteBuffer(4 * numPixels);
+        if (this.pixelColors == null || this.pixelColors.capacity() < 3 * numPixels)
+            this.pixelColors = BufferUtil.newByteBuffer(3 * numPixels);
         this.pixelColors.clear();
 
-        // Read the framebuffer colors in the specified rectangle as 32-bit RGBA values (instead of 24-bit RGB values as
-        // is done in getPickColorAtPoint). This enables us to avoid setting the GL pack alignment state, and improves
-        // performance by ~15%. We discard the alpha components when processing each framebuffer color.
         GL gl = this.getGL();
-        gl.glReadPixels(r.x, r.y, r.width, r.height, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, this.pixelColors);
+        int[] packAlignment = new int[1];
+        gl.glGetIntegerv(GL.GL_PACK_ALIGNMENT, packAlignment, 0);
+        try
+        {
+            // Read the framebuffer colors in the specified rectangle as 24-bit RGB values. We're reading multiple rows
+            // of pixels, and our row lengths are not aligned with the default 4-byte boundary, so we must set the GL
+            // pack alignment state to 1.
+            gl.glPixelStorei(GL.GL_PACK_ALIGNMENT, 1);
+            gl.glReadPixels(r.x, r.y, r.width, r.height, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, this.pixelColors);
+        }
+        finally
+        {
+            // Restore the previous GL pack alignment state.
+            gl.glPixelStorei(GL.GL_PACK_ALIGNMENT, packAlignment[0]);
+        }
 
-        // Compute the set of unique color codes in the pick rectangle, ignoring the clear color. We place each color
-        // in a set to consolidates duplicate pick colors to a single entry. This reduces the number of colors we need
-        // to return to the caller, and ensures that callers creating picked objects based on the returned colors do not
-        // create duplicates.
+        // Compute the set of unique color codes in the pick rectangle, ignoring the clear color and colors outside the
+        // specified range. We place each color in a set to consolidates duplicate pick colors to a single entry. This
+        // reduces the number of colors we need to return to the caller, and ensures that callers creating picked
+        // objects based on the returned colors do not create duplicates.
         int clearColorCode = this.clearColor.getRGB();
         for (int i = 0; i < numPixels; i++)
         {
             int colorCode = ((this.pixelColors.get() & 0xff) << 16) // Red, bits 16-23
                 | ((this.pixelColors.get() & 0xff) << 8) // Green, bits 8-16
                 | (this.pixelColors.get() & 0xff); // Blue, bits 0-7
-            this.pixelColors.get(); // Discard the alpha component
 
-            // Add a 24-bit integer corresponding to each unique RGB color that's not the clear color.
-            if (colorCode != clearColorCode)
+            // Add a 24-bit integer corresponding to each unique RGB color that's not the clear color, and is in the
+            // specifies range of colors.
+            if (colorCode != clearColorCode && colorCode >= minAndMaxColorCodes[0]
+                && colorCode <= minAndMaxColorCodes[1])
+            {
                 this.uniquePixelColors.add(colorCode);
+            }
         }
 
-        // Copy the Integer set to a primitive int array that we return to the caller. The Java collections are not
-        // capable of returning an array of primitives directly, so we loop over the collection ourselves.
+        // Copy the unique color set to an int array that we return to the caller, then clear the set to ensure that the
+        // colors computed during this call do not affect the next call.
         int[] array = new int[this.uniquePixelColors.size()];
-        int index = 0;
-        for (Integer i : this.uniquePixelColors)
-        {
-            array[index++] = i;
-        }
-
-        // Clear the set of unique pick colors to ensure that the colors computed during this call do not affect the
-        // next call.
+        this.uniquePixelColors.toArray(array);
         this.uniquePixelColors.clear();
 
         return array;
