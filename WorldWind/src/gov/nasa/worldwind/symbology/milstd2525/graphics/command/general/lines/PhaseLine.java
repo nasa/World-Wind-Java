@@ -49,15 +49,6 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         return this.path.getPositions();
     }
 
-    public boolean isModifierVisible(String modifier)
-    {
-        return false;
-    }
-
-    public void setModifierVisible(String modifier, boolean visible)
-    {
-    }
-
     @Override
     public void setText(String text)
     {
@@ -123,7 +114,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
 
         // If the attributes have not been created yet, create them now.
         // The default attributes are determined by the symbol code.
-        if (this.attributes == null)
+        if (this.normalAttributes == null)
         {
             TacticalGraphicAttributes attrs = this.createDefaultAttributes();
             this.setAttributes(attrs);

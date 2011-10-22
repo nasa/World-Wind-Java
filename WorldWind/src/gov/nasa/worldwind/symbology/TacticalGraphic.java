@@ -16,7 +16,7 @@ import gov.nasa.worldwind.render.*;
  * that is drawn a geographic position, a vector graphic that is positioned using one or more control points, or a line
  * or polygon that is styled according to the symbol set's specification.
  * <p/>
- * <h1>Creating and Displaying Tactical Graphics</h1>
+ * <h1>Construction</h1>
  * <p/>
  * TacticalGraphics are typically created by an instance of {@link TacticalGraphicFactory}. Tactical graphics fall into
  * two basic categories: graphics that are positioned with a single point, and graphics that are positioned by multiple
@@ -44,12 +44,12 @@ import gov.nasa.worldwind.render.*;
  * positions.add(Position.fromDegrees(34.7328, -117.7305, 0));
  * <br/>
  * // Specify a text modifier
- * AVList params = new AVListImpl();
- * params.put("Text", "Alpha");
+ * AVList modifiers = new AVListImpl();
+ * modifiers.put(AVKey.TEXT, "Alpha");
  * <br/>
  * // Create a graphic for a MIL-STD-2525 hostile phase line. The first argument is the symbol identification code
  * // (SIDC) that identifies the type of graphic to create.
- * TacticalGraphic graphic = factory.createGraphic("GHGPGLP----AUSX", positions, params);
+ * TacticalGraphic graphic = factory.createGraphic("GHGPGLP----AUSX", positions, modifiers);
  * <br/>
  * // Create a renderable layer to display the tactical graphic. This example adds only a single graphic, but many
  * // graphics can be added to a single layer.
@@ -69,19 +69,18 @@ import gov.nasa.worldwind.render.*;
  * parameters can be specified using a parameter list when the TacticalGraphic is created, as shown above. They can also
  * be set after creation using setters in the TacticalGraphic interface.
  * <p/>
- * <h1>Tactical Graphic Modifiers</h1>
+ * <h1>Modifiers</h1>
  * <p/>
- * Many graphics support text modifiers beyond their symbol identifier. Modifiers add text or graphic elements that to
- * the tactical graphic. The possible modifiers depend on the symbol set. Modifiers can be specified in the parameter
- * list when a graphic is created, or using the setters on an implementation specific graphic class after the graphic
- * has been created.
+ * Many graphics support text or graphic modifiers. Each modifier is identified by a String key. The set of possible
+ * modifiers is determined by the symbol set. Modifiers can be specified in the parameter list when a graphic is
+ * created, or using {#link #setModifier} after the graphic has been created.
  * <p/>
  * For example, a MIL-STD-2525 General Area graphic can have a text modifier that identifies the area. Here's an example
  * of how to specify the modifier when the graphic is created:
  * <p/>
  * <pre>
- * AVList params = new AVListImpl();
- * params.setValue("Text", "Boston"); // Text that identifies the area enclosed by the graphic.
+ * AVList modifiers = new AVListImpl();
+ * modifiers.setValue(AVKey.TEXT, "Boston"); // Text that identifies the area enclosed by the graphic.
  * <br/>
  * List<Position> positions = ...; // List of positions that define the boundary of the area.
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions, params);
@@ -92,14 +91,10 @@ import gov.nasa.worldwind.render.*;
  * <pre>
  * // Create the graphic
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions);
- * <br/>
- * // 1) Specify the modifier as a key-value pair on the tactical graphic's AVList
- * graphic.setValue(SymbolCode.TEXT, "Boston");
- * // 2) Specify the modifier using an implementation specific setter method
- * ((MilStd2525Graphic) graphic).setText("Boston");
+ * graphic.setModifier(AVKey.TEXT, "Boston");
  * </pre>
  * <p/>
- * <h1>Positioning Tactical Graphics</h1>
+ * <h1>Position</h1>
  * <p/>
  * Each tactical graphic is positioned by one or more control points. How many points are required depends on the type
  * of graphic.  A point graphic will only require one point. A more complex shape may require three or four, and a line
@@ -131,7 +126,7 @@ import gov.nasa.worldwind.render.*;
  * @version $Id$
  * @see TacticalGraphicFactory
  */
-public interface TacticalGraphic extends Renderable, Movable, AVList
+public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVList
 {
     /**
      * Indicates whether this graphic is drawn when in view.
@@ -148,6 +143,23 @@ public interface TacticalGraphic extends Renderable, Movable, AVList
     void setVisible(boolean visible);
 
     /**
+     * Indicates the current value of a text or graphic modifier.
+     *
+     * @param modifier Key that identifies the modifier to retrieve. The possible modifiers depends on the symbol set.
+     *
+     * @return The value of the modifier, or {@code null} if the modifier is not set.
+     */
+    Object getModifier(String modifier);
+
+    /**
+     * Specifies the value of a text or graphic modifier.
+     *
+     * @param modifier Key that identifies the modifier to set. The possible modifiers depends on the symbol set.
+     * @param value    New value for the modifier.
+     */
+    void setModifier(String modifier, Object value);
+
+    /**
      * Indicates whether or not a text or graphic modifier is visible.
      *
      * @param modifier The modifier to test.
@@ -155,15 +167,23 @@ public interface TacticalGraphic extends Renderable, Movable, AVList
      * @return {@code true} if the specified modifier is visible. {@code false} if the modifier is not visible, or no
      *         such modifier is found.
      */
-    boolean isModifierVisible(String modifier);
+    boolean isShowModifier(String modifier);
 
     /**
      * Specifies whether or not a text or graphic modifier is visible.
      *
-     * @param modifier The modifier to test. Method has no effect if there is no modifier matching this key.
-     * @param visible  {@code true} if the modifier should be visible.
+     * @param modifier     The modifier to test. Method has no effect if there is no modifier matching this key.
+     * @param showModifier {@code true} if the modifier should be visible.
      */
-    void setModifierVisible(String modifier, boolean visible);
+    void setShowModifier(String modifier, boolean showModifier);
+
+    /**
+     * Specifies whether or not to draw text or graphic modifiers. This method turns all modifiers on or off. Individual
+     * modifiers can be enabled using {@link #setShowModifier}.
+     *
+     * @param showModifiers {@code true} if the modifier should be visible.
+     */
+    void setShowAllModifiers(boolean showModifiers);
 
     /**
      * Indicates a string identifier for this graphic. The format of the identifier depends on the symbol set to which
@@ -192,16 +212,31 @@ public interface TacticalGraphic extends Renderable, Movable, AVList
     void setPositions(Iterable<? extends Position> positions);
 
     /**
-     * Indicates this graphic's attributes.
+     * Indicates this graphic's attributes when it is in the normal (as opposed to highlighted) state.
      *
      * @return this graphic's attributes. May be null.
      */
     TacticalGraphicAttributes getAttributes();
 
     /**
-     * Specifies this graphic's attributes.
+     * Specifies attributes for this graphic in the normal (as opposed to highlighted) state.
      *
      * @param attributes new attributes. May be null, in which case default attributes are used.
      */
     void setAttributes(TacticalGraphicAttributes attributes);
+
+    /**
+     * Indicate this graphic's attributes when it is in the highlighted state.
+     *
+     * @return this graphic's highlight attributes. May be null.
+     */
+    TacticalGraphicAttributes getHighlightAttributes();
+
+    /**
+     * Specifies attributes for this graphic in the highlighted state.
+     *
+     * @param attributes Attributes to apply to the graphic when it is highlighted. May be null, in which default
+     *                   attributes are used.
+     */
+    void setHighlightAttributes(TacticalGraphicAttributes attributes);
 }

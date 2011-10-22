@@ -30,8 +30,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     protected SurfaceText label;
     protected List<SurfaceText> identityLabels;
 
-    protected boolean textVisible;
-
     public GeneralArea()
     {
         this.polygon = new SurfacePolygon();
@@ -114,29 +112,12 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
     public TacticalGraphicAttributes getAttributes()
     {
-        if (this.attributes == null)
+        if (this.normalAttributes == null)
         {
-            this.attributes = this.createDefaultAttributes();
+            this.normalAttributes = this.createDefaultAttributes();
         }
 
-        return this.attributes;
-    }
-
-    public boolean isModifierVisible(String modifier)
-    {
-        //noinspection SimplifiableIfStatement
-        if (AVKey.TEXT.equals(modifier))
-            return this.textVisible;
-        else
-            return false;
-    }
-
-    public void setModifierVisible(String modifier, boolean visible)
-    {
-        if (AVKey.TEXT.equals(modifier))
-        {
-            this.textVisible = visible;
-        }
+        return this.normalAttributes;
     }
 
     public void preRender(DrawContext dc)
@@ -148,7 +129,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
         // If the attributes have not been created yet, create them now.
         // The default attributes are determined by the symbol code.
-        if (this.attributes == null)
+        if (this.normalAttributes == null)
         {
             TacticalGraphicAttributes attrs = this.createDefaultAttributes();
             this.setAttributes(attrs);
@@ -187,7 +168,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
     public void render(DrawContext dc)
     {
-        if (this.label != null && this.textVisible)
+        if (this.label != null && this.showText)
         {
             this.label.render(dc);
         }
@@ -253,7 +234,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     @Override
     public void setAttributes(TacticalGraphicAttributes attributes)
     {
-        this.attributes = attributes;
+        this.normalAttributes = attributes;
         this.polygon.setAttributes(attributes);
     }
 

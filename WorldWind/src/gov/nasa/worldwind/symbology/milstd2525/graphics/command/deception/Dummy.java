@@ -42,7 +42,7 @@ public class Dummy extends MilStd2525TacticalGraphic
 
     public void render(DrawContext dc)
     {
-        if (this.attributes == null)
+        if (this.normalAttributes == null)
         {
             TacticalGraphicAttributes attrs = this.createDefaultAttributes();
             this.setAttributes(attrs);

@@ -11,38 +11,50 @@ import gov.nasa.worldwind.render.*;
 import java.awt.*;
 
 /**
+ * Basic implementation of {@link TacticalGraphicAttributes}.
+ *
  * @author pabercrombie
  * @version $Id$
  */
 public class BasicTacticalGraphicAttributes extends BasicShapeAttributes implements TacticalGraphicAttributes
 {
+    protected Offset labelOffset;
+    protected Font font;
+    protected Material textMaterial;
+
+    /** {@inheritDoc} */
     public Offset getLabelOffset()
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return this.labelOffset;
     }
 
+    /** {@inheritDoc} */
     public void setLabelOffset(Offset offset)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.labelOffset = offset;
     }
 
+    /** {@inheritDoc} */
     public Font getTextModifierFont()
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return this.font;
     }
 
+    /** {@inheritDoc} */
     public void setTextModifierFont(Font font)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.font = font;
     }
 
-    public Color getTextModifierColor()
+    /** {@inheritDoc} */
+    public Material getTextModifierMaterial()
     {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return this.textMaterial;
     }
 
-    public void setTextModifierColor(Color color)
+    /** {@inheritDoc} */
+    public void setTextModifierMaterial(Material material)
     {
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.textMaterial = material;
     }
 }

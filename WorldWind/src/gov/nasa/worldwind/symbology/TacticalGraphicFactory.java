@@ -24,12 +24,12 @@ public interface TacticalGraphicFactory
      *
      * @param symbolIdentifier Identifier for the symbol within its symbol set.
      * @param position         Control point to use to place the graphic.
-     * @param params           Modifiers to apply to the graphic.
+     * @param modifiers           Modifiers to apply to the graphic.
      *
      * @return A new TacticalGraphic configured to render at the position indicated, or {@code null} if no graphic can
      *         be created for the given symbol identifier.
      */
-    TacticalGraphic createGraphic(String symbolIdentifier, Position position, AVList params);
+    TacticalGraphic createGraphic(String symbolIdentifier, Position position, AVList modifiers);
 
     /**
      * Create a tactical graphic positioned by more than one control point.
@@ -37,10 +37,10 @@ public interface TacticalGraphicFactory
      * @param symbolIdentifier Identifier for the symbol within its symbol set.
      * @param positions        Control points to use to place the graphic. How many points are required depends on the
      *                         type of graphic.
-     * @param params           Modifiers to apply to the graphic.
+     * @param modifiers           Modifiers to apply to the graphic.
      *
      * @return A new TacticalGraphic configured to render at the position indicated, or {@code null} if no graphic can
      *         be created for the given symbol identifier.
      */
-    TacticalGraphic createGraphic(String symbolIdentifier, Iterable<Position> positions, AVList params);
+    TacticalGraphic createGraphic(String symbolIdentifier, Iterable<Position> positions, AVList modifiers);
 }
