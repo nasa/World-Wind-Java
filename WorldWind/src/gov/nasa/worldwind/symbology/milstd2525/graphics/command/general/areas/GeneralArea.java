@@ -168,16 +168,19 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
     public void render(DrawContext dc)
     {
-        if (this.label != null && this.showText)
+        if (this.isShowModifiers())
         {
-            this.label.render(dc);
-        }
-
-        if (this.identityLabels != null)
-        {
-            for (SurfaceText text : this.identityLabels)
+            if (this.label != null)
             {
-                text.render(dc);
+                this.label.render(dc);
+            }
+
+            if (this.identityLabels != null)
+            {
+                for (SurfaceText text : this.identityLabels)
+                {
+                    text.render(dc);
+                }
             }
         }
 
