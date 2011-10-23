@@ -208,7 +208,10 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     TacticalGraphicAttributes getAttributes();
 
     /**
-     * Specifies attributes for this graphic in the normal (as opposed to highlighted) state.
+     * Specifies attributes for this graphic in the normal (as opposed to highlighted) state. If any fields in the
+     * attribute bundle are null, the default attribute will be used instead. For example, if the attribute bundle
+     * includes a setting for outline material but not for interior material the new outline material will override
+     * the default outline material, but the interior material will remain the default.
      *
      * @param attributes new attributes. May be null, in which case default attributes are used.
      */

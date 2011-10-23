@@ -16,12 +16,19 @@ import gov.nasa.worldwind.util.Logging;
  * target="_blank">Usage Guide</a> for instructions on using TacticalGraphic in an application.
  * <p/>
  * The following table lists the modifiers supported by 2525 graphics. Note that not all graphics support all modifiers.
- * <table> <tr><th>Field</th><th>Modifier key</th><th>Data type</th><th>Description</th></tr>
- * <tr><td>T</td><td>AVKey.TEXT</td><td>String</td><td>Text label</td></tr> <tr><td>A</td><td>AVKey.SYMBOL</td><td>TacticalSymbol</td><td>Symbol
- * icon</td></tr> <tr><td>W</td><td>AVKey.DATE</td><td>Date</td><td>Date/time</td></tr>
+ * <table width="100%"> <tr><th>Field</th><th>Modifier key</th><th>Data type</th><th>Description</th></tr>
+ * <tr><td>A</td><td>AVKey.SYMBOL</td><td>{@link TacticalSymbol}</td><td>Symbol icon</td></tr>
+ * <tr><td>B</td><td>AVKey.ECHELON</td><td>String</td><td>Echelon</td></tr> <tr><td>C</td><td>AVKey.QUANTITY</td><td>String</td><td>Quantity</td></tr>
  * <tr><td>H</td><td>AVKey.DESCRIPTION</td><td>String</td><td>Additional information</td></tr>
- * <tr><td>Q</td><td>AVKey.HEADING</td><td>Angle</td><td>Direction indicator</td></tr><tr><td>Y</td><td>AVKey.SHOW_POSITION</td><td>Boolean</td><td>Show/hide
- * position field</td></tr> </table>
+ * <tr><td>N</td><td>AVKey.SHOW_HOSTILE</td><td>Boolean</td><td>Show/hide hostile entity indicator</td></tr>
+ * <tr><td>Q</td><td>AVKey.HEADING</td><td>{@link gov.nasa.worldwind.geom.Angle}</td><td>Direction indicator</td></tr>
+ * <tr><td>S</td><td>AVKey.OFFSET</td><td>{@link gov.nasa.worldwind.render.Offset}</td><td>Offset location
+ * indicator</td></tr> <tr><td>T</td><td>AVKey.TEXT</td><td>String</td><td>Unique designation</td></tr>
+ * <tr><td>V</td><td>AVKey.TYPE</td><td>String</td><td>Type</td></tr> <tr><td>W</td><td>AVKey.DATE</td><td>Date</td><td>Date/time</td></tr>
+ * <tr><td>X</td><td>AVKey.ALTITUDE</td><td>Double</td><td>Altitude/depth</td></tr>
+ * <tr><td>Y</td><td>AVKey.SHOW_POSITION</td><td>Boolean</td><td>Show/hide position field</td></tr>
+ * <tr><td>AM</td><td>AVKey.DISTANCE</td><td>Double</td><td>Distance</td></tr> <tr><td>AN</td><td>AVKey.AZIMUTH</td><td>Angle</td><td>Azimuth</td></tr>
+ * <tr><td>--</td><td>AVKey.GRAPHIC</td><td>{@link TacticalGraphic}</td><td>Child graphic</td></tr> </table>
  * <p/>
  * Here's an example of setting modifiers during construction of a graphic:
  * <pre>
@@ -47,6 +54,31 @@ import gov.nasa.worldwind.util.Logging;
  *
  * graphic.setModifier(AVKey.DATE, Arrays.asList(startDate, endDate));
  * </pre>
+ * <p/>
+ * <h1>Composite graphics</h1>
+ * <p/>
+ * Some tactical graphics can include other graphics. For example, a Minimum Risk Route (MRR) can include Air Control
+ * Point or Communications Checkpoint graphics along the route. These child graphics can be specified using the {@code
+ * AVKey.GRAPHIC} modifier. Here's an example of how to create a Minimum Risk Route:
+ * <p/>
+ * <pre>
+ * List&lt;Position&gt; positions = ... // Positions that define the route
+ *
+ * // Create the Minimum Risk Route graphic
+ * TacticalGraphic parent = factory.createGraphic("GFGPALM-------X", positions, null);
+ *
+ * // Create the child graphics that will appear at the control points of the route
+ * List&lt;TacticalGraphic&gt; childGraphics = new ArrayList&lt;TacticalGraphic&gt;();
+ * for (Position position : positions)
+ * {
+ *     // Create an Air Control Point graphic
+ *     TacticalGraphic child = factory.createGraphic("GFGPAPP-------X", position, null); // Create
+ *     childGraphics.add(child);
+ * }
+ *
+ * // Set the child graphics
+ * parent.setModifier(AVKey.GRAPHIC, childGraphics);
+ * </pre>
  *
  * @author pabercrombie
  * @version $Id$
@@ -60,7 +92,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
 
-    protected boolean showModifiers;
+    protected boolean showModifiers = true;
 
     protected String standardIdentity;
     protected String echelon;

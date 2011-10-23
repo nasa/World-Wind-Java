@@ -10,7 +10,6 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
@@ -114,10 +113,9 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
 
         // If the attributes have not been created yet, create them now.
         // The default attributes are determined by the symbol code.
-        if (this.normalAttributes == null)
+        if (this.path.getAttributes() == null)
         {
-            TacticalGraphicAttributes attrs = this.createDefaultAttributes();
-            this.setAttributes(attrs);
+            ShapeAttributes attrs = this.createDefaultAttributes();
             this.path.setAttributes(attrs);
 
             Color color = attrs.getOutlineMaterial().getDiffuse();
@@ -134,9 +132,9 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         this.path.render(dc);
     }
 
-    protected TacticalGraphicAttributes createDefaultAttributes()
+    protected ShapeAttributes createDefaultAttributes()
     {
-        TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
+        ShapeAttributes attrs = new BasicShapeAttributes();
 
         String identity = this.getStandardIdentity();
         if (SymbolCode.IDENTITY_FRIEND.equals(identity))

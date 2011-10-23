@@ -10,7 +10,6 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
@@ -42,10 +41,10 @@ public class Dummy extends MilStd2525TacticalGraphic
 
     public void render(DrawContext dc)
     {
-        if (this.normalAttributes == null)
+        if (this.path.getAttributes() == null)
         {
-            TacticalGraphicAttributes attrs = this.createDefaultAttributes();
-            this.setAttributes(attrs);
+            ShapeAttributes attrs = this.createDefaultAttributes();
+            this.path.setAttributes(attrs);
         }
 
         this.path.render(dc);
@@ -89,26 +88,24 @@ public class Dummy extends MilStd2525TacticalGraphic
         return this.path.getPositions();
     }
 
-    public void setAttributes(TacticalGraphicAttributes attributes)
+    public Position getReferencePosition()
     {
+        return this.path.getReferencePosition();
     }
 
-    public boolean isModifierVisible(String modifier)
+    public void move(Position position)
     {
-        return false;
+        this.path.move(position);
     }
 
-    public void setModifierVisible(String modifier, boolean visible)
+    public void moveTo(Position position)
     {
+        this.path.moveTo(position);
     }
 
-    public void setAttributes(ShapeAttributes attributes)
+    protected ShapeAttributes createDefaultAttributes()
     {
-    }
-
-    protected TacticalGraphicAttributes createDefaultAttributes()
-    {
-        BasicTacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
+        BasicShapeAttributes attrs = new BasicShapeAttributes();
 
         String identity = this.getStandardIdentity();
         if (SymbolCode.IDENTITY_FRIEND.equals(identity))
@@ -124,20 +121,5 @@ public class Dummy extends MilStd2525TacticalGraphic
         attrs.setOutlineStipplePattern((short) 0xAAAA);
 
         return attrs;
-    }
-
-    public Position getReferencePosition()
-    {
-        return this.path.getReferencePosition();
-    }
-
-    public void move(Position position)
-    {
-        this.path.move(position);
-    }
-
-    public void moveTo(Position position)
-    {
-        this.path.moveTo(position);
     }
 }

@@ -6,10 +6,8 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.*;
@@ -34,6 +32,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     {
         this.polygon = new SurfacePolygon();
         this.polygon.setDelegateOwner(this);
+        this.setText("");
     }
 
     public String getFunctionId()
@@ -110,16 +109,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         return count;
     }
 
-    public TacticalGraphicAttributes getAttributes()
-    {
-        if (this.normalAttributes == null)
-        {
-            this.normalAttributes = this.createDefaultAttributes();
-        }
-
-        return this.normalAttributes;
-    }
-
     public void preRender(DrawContext dc)
     {
         if (this.identityLabels == null && SymbolCode.IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
@@ -129,10 +118,10 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
         // If the attributes have not been created yet, create them now.
         // The default attributes are determined by the symbol code.
-        if (this.normalAttributes == null)
+        if (this.polygon.getAttributes() == null)
         {
-            TacticalGraphicAttributes attrs = this.createDefaultAttributes();
-            this.setAttributes(attrs);
+            ShapeAttributes attrs = this.createDefaultAttributes();
+            this.polygon.setAttributes(attrs);
 
             Color color = attrs.getOutlineMaterial().getDiffuse();
             if (this.label != null)
@@ -187,9 +176,9 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.polygon.render(dc);
     }
 
-    protected TacticalGraphicAttributes createDefaultAttributes()
+    protected ShapeAttributes createDefaultAttributes()
     {
-        TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
+        ShapeAttributes attrs = new BasicShapeAttributes();
 
         attrs.setDrawInterior(false);
 
@@ -232,13 +221,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         }
 
         return positions;
-    }
-
-    @Override
-    public void setAttributes(TacticalGraphicAttributes attributes)
-    {
-        this.normalAttributes = attributes;
-        this.polygon.setAttributes(attributes);
     }
 
     public Position getReferencePosition()
