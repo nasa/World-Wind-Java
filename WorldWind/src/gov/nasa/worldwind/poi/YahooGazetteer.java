@@ -6,15 +6,15 @@
 
 package gov.nasa.worldwind.poi;
 
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.exception.*;
-import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.Logging;
 
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;
 import java.io.*;
-import java.net.URLEncoder;
+import java.net.*;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -27,12 +27,14 @@ import java.util.logging.Level;
 public class YahooGazetteer implements Gazetteer
 {
     protected static final String GEOCODE_SERVICE =
-        "http://local.yahooapis.com/MapsService/V1/geocode?appid=nasaworldwind&location=";
+        "http://where.yahooapis.com/geocode?appid=nasaworldwind&location=";
 
     public List<PointOfInterest> findPlaces(String lookupString) throws NoItemException, ServiceException
     {
         if (lookupString == null || lookupString.length() < 1)
+        {
             return null;
+        }
 
         String urlString;
         try
@@ -44,9 +46,11 @@ public class YahooGazetteer implements Gazetteer
             urlString = GEOCODE_SERVICE + lookupString.replaceAll(" ", "+");
         }
         String locationString = POIUtils.callService(urlString);
-        
+
         if (locationString == null || locationString.length() < 1)
+        {
             return null;
+        }
 
         return this.parseLocationString(locationString);
     }
@@ -71,18 +75,28 @@ public class YahooGazetteer implements Gazetteer
             for (int i = 0; i < resultNodes.getLength(); i++)
             {
                 org.w3c.dom.Node location = resultNodes.item(i);
-                String lat = xpath.evaluate("Latitude", location);
-                String lon = xpath.evaluate("Longitude", location);
+                String lat = xpath.evaluate("latitude", location);
+                String lon = xpath.evaluate("longitude", location);
                 StringBuilder displayName = new StringBuilder();
-                String str = xpath.evaluate("Address", location);               
-                if (str.length() > 0)
+
+                String house = xpath.evaluate("house", location);
+                String street = xpath.evaluate("street", location);
+
+                if (house != null && !house.equals(""))
                 {
-                    displayName.append(str);
+                    displayName.append(house);
+                    displayName.append(" ");
+                }
+
+                if (street != null && !street.equals(""))
+                {
+                    displayName.append(street);
                     displayName.append(", ");
                 }
-                displayName.append(xpath.evaluate("City", location));
+
+                displayName.append(xpath.evaluate("city", location));
                 displayName.append(", ");
-                displayName.append(xpath.evaluate("State", location));
+                displayName.append(xpath.evaluate("state", location));
 
                 if (lat != null && lon != null)
                 {
