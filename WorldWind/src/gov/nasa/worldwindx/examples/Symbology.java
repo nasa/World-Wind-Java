@@ -92,15 +92,13 @@ public class Symbology extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             // Create tactical icon
+            String URL = "http://worldwindserver.net/milstd2525/";
+            //String URL = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever();
             AVListImpl params = new AVListImpl();
-            String url = "worldwindserver.net";
-            params.setValue(SymbolCode.SOURCE_TYPE, "url");
-            params.setValue(SymbolCode.SOURCE_SERVER, url);
-            params.setValue(SymbolCode.SOURCE_PATH, "/milstd2525/");
-            BufferedImage img = symGen.createIcon("SAAPC----------", params);
+            BufferedImage img = symGen.createIcon("SAAPC----------", params, URL);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.8));
+                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
             SurfaceImage symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);
 

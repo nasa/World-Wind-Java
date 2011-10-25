@@ -19,25 +19,49 @@ import java.net.URL;
  */
 public abstract class AbstractIconRetriever implements IconRetriever
 {
-    public BufferedImage retrieveImageFromFile(String path, String filename, BufferedImage img)
+    String iconRepository;
+
+    // Specify the URL where the icons for this symbology set can be found.
+    public void setRepository(String url)
     {
-        if (path == null)
+        if (url == null)
         {
-            String msg = Logging.getMessage("Symbology.StringIsNull");
+            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
+
+        // make sure last character in URL is '/'
+        if (!url.endsWith("/"))
+            url = url + "/";
+
+        iconRepository = url;
+    }
+
+    public String getRepository()
+    {
+        return iconRepository;
+    }
+
+    public BufferedImage retrieveImageFromURL(String filename, BufferedImage img)
+    {
         if (filename == null)
         {
             String msg = Logging.getMessage("Symbology.StringIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
+        if (this.getRepository() == null)
+        {
+            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
         try
         {
-            File file = new File(path + filename);
-            img = ImageIO.read(file);
+            URL myURL = new URL(this.getRepository() + filename);
+            img = ImageIO.read(myURL);
         }
         catch (Exception e)
         {
@@ -71,9 +95,37 @@ public abstract class AbstractIconRetriever implements IconRetriever
 
         try
         {
-
             URL myURL = new URL("HTTP", server, path + filename);
             img = ImageIO.read(myURL);
+        }
+        catch (Exception e)
+        {
+            // TODO: error handling
+            return null;
+        }
+
+        return img;
+    }
+
+    public BufferedImage retrieveImageFromFile(String path, String filename, BufferedImage img)
+    {
+        if (path == null)
+        {
+            String msg = Logging.getMessage("Symbology.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+        if (filename == null)
+        {
+            String msg = Logging.getMessage("Symbology.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        try
+        {
+            File file = new File(path + filename);
+            img = ImageIO.read(file);
         }
         catch (Exception e)
         {

@@ -6,12 +6,13 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.symbology.AbstractIconRetriever;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
 import java.awt.image.*;
+import java.util.MissingResourceException;
 
 /**
  * @author ccrick
@@ -21,6 +22,41 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 {
     // TODO: add more error checking
 
+    public BufferedImage createIcon(String symbolIdentifier)
+    {
+        AVListImpl params = new AVListImpl();
+
+        return createIcon(symbolIdentifier, params);
+    }
+
+    public BufferedImage createIcon(String symbolIdentifier, String URL)
+    {
+        if (URL == null)
+        {
+            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        setRepository(URL);
+
+        return createIcon(symbolIdentifier);
+    }
+
+    public BufferedImage createIcon(String symbolIdentifier, AVList params, String URL)
+    {
+        if (URL == null)
+        {
+            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        setRepository(URL);
+
+        return createIcon(symbolIdentifier, params);
+    }
+
     public BufferedImage createIcon(String symbolIdentifier, AVList params)
     {
         // retrieve desired symbol and convert to bufferedImage
@@ -29,23 +65,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         BufferedImage img = null;
         String filename = getFilename(symbolCode);
 
-        if (params.getValue(SymbolCode.SOURCE_TYPE).equals("file"))
-        {
-            String path = (String) params.getValue(SymbolCode.SOURCE_PATH);
-
-            img = retrieveImageFromFile(path, filename, img);
-        }
-        else if (params.getValue(SymbolCode.SOURCE_TYPE).equals("url"))
-        {
-            String server = (String) params.getValue(SymbolCode.SOURCE_SERVER);
-            String path = (String) params.getValue(SymbolCode.SOURCE_PATH);
-
-            img = retrieveImageFromURL(server, path, filename, img);
-        }
+        img = retrieveImageFromURL(filename, img);
 
         if (img == null)
         {
-            return null;
+            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
+            Logging.logger().severe(msg);
+            throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
         }
 
         // apply dotted border where required by Standard Identity (cases P, A, S, G, M)
@@ -67,6 +93,12 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             img = dest;
         }
 
+        // handle Suspect and Joker, which should have a Friend frame, but with fill color red
+        if ("JKjk".indexOf(stdid.charAt(0)) > -1)
+        {
+            // TODO: change fill color to red
+        }
+
         // TODO: modify image with given params
 
         return img;
@@ -79,6 +111,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         String stdID = (String) symbolCode.getValue(SymbolCode.STANDARD_IDENTITY);
         String battleDim = (String) symbolCode.getValue(SymbolCode.BATTLE_DIMENSION);
         String functionID = (String) symbolCode.getValue(SymbolCode.FUNCTION_ID);
+
+        // TODO: handle special case of installations with overlays
 
         if (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_PENDING) ||
             stdID.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_PENDING))
@@ -165,19 +199,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             }
         }
 
-        if (params.getValue(SymbolCode.SOURCE_TYPE).equals("file"))
-        {
-            String path = (String) params.getValue(SymbolCode.SOURCE_PATH);
-
-            img = retrieveImageFromFile(path, filename, img);
-        }
-        else if (params.getValue(SymbolCode.SOURCE_TYPE).equals("url"))
-        {
-            String server = (String) params.getValue(SymbolCode.SOURCE_SERVER);
-            String path = (String) params.getValue(SymbolCode.SOURCE_PATH);
-
-            img = retrieveImageFromURL(server, path, filename, img);
-        }
+        img = retrieveImageFromURL(filename, img);
 
         return img;
     }
