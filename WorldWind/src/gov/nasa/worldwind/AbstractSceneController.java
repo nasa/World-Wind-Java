@@ -569,7 +569,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
             this.doResolveTopPick(dc, dc.getPickPoint());
 
         // Resolve the top objects in the pick rectangle, if the pick rectangle is enabled.
-        if (dc.getPickRectangle() != null)
+        if (dc.getPickRectangle() != null && !dc.getPickRectangle().isEmpty())
             this.doResolveTopPick(dc, dc.getPickRectangle());
     }
 
@@ -695,7 +695,7 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
     protected void doNonTerrainPick(DrawContext dc)
     {
         // Don't do the pick if there's no current pick point and no current pick rectangle.
-        if (dc.getPickPoint() == null && dc.getPickRectangle() == null)
+        if (dc.getPickPoint() == null && (dc.getPickRectangle() == null || dc.getPickRectangle().isEmpty()))
             return;
 
         // Pick against the layers.

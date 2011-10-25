@@ -110,7 +110,7 @@ public class PickSupport
         // Resolve the objects in the pick rectangle, if any, adding them to the draw context's list of objects
         // intersecting the pick rectangle. Note that the pick rectangle can be null when the pick point is specified
         // but the pick rectangle is not.
-        if (dc.getPickRectangle() != null)
+        if (dc.getPickRectangle() != null && !dc.getPickRectangle().isEmpty())
             this.doResolvePick(dc, dc.getPickRectangle(), layer);
 
         this.clearPickList();

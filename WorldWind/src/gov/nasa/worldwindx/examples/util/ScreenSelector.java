@@ -76,15 +76,14 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
 
         public SelectionRectangle()
         {
+            this.rect = new Rectangle();
             this.startPoint = new Point();
             this.endPoint = new Point();
-            this.rect = new Rectangle();
         }
 
         public boolean hasSelection()
         {
-            // TODO: Handle a selection where only one of the the width or height are zero.
-            return this.rect.width != 0 || this.rect.height != 0;
+            return !this.rect.isEmpty();
         }
 
         public Rectangle getSelection()
@@ -117,23 +116,49 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
 
             this.endPoint.setLocation(point);
 
-            double minx = this.startPoint.x;
-            if (minx > this.endPoint.x)
+            // Compute the selection's extremes along the x axis.
+            double minx, maxx;
+            if (this.startPoint.x < this.endPoint.x)
+            {
+                minx = this.startPoint.x;
+                maxx = this.endPoint.x;
+            }
+            else
+            {
                 minx = this.endPoint.x;
+                maxx = this.startPoint.x;
+            }
 
-            double maxy = this.startPoint.y;
-            if (maxy < this.endPoint.y)
+            // Compute the selection's extremes along the y axis. The selection is defined in AWT screen coordinates, so
+            // the origin is in the upper left corner and the y axis points down.
+            double miny, maxy;
+            if (this.startPoint.y < this.endPoint.y)
+            {
+                miny = this.startPoint.y;
                 maxy = this.endPoint.y;
+            }
+            else
+            {
+                miny = this.endPoint.y;
+                maxy = this.startPoint.y;
+            }
 
-            this.rect.setRect(minx, maxy, Math.abs(this.endPoint.x - this.startPoint.x),
-                Math.abs(this.endPoint.y - this.startPoint.y));
+            // If only one of the selection rectangle's dimensions is zero, then the selection is either a horizontal or
+            // vertical line. In this case, we set the zero dimension to 1 because both dimensions must be nonzero to
+            // perform a selection.
+            if (minx == maxx && miny < maxy)
+                maxx = minx + 1;
+            if (miny == maxy && minx < maxx)
+                miny = maxy - 1;
+
+            this.rect.setRect(minx, maxy, maxx - minx, maxy - miny);
         }
 
         public void clearSelection()
         {
-            this.rect.setRect(0, 0, 0, 0);
             this.startPoint.setLocation(0, 0);
             this.endPoint.setLocation(0, 0);
+            this.rect.setRect(0, 0, 0, 0);
         }
 
         public Color getInteriorColor()
@@ -201,14 +226,16 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
                 // Configure the modelview-projection matrix to transform vertex points from screen rectangle
                 // coordinates to clip coordinates without any perspective transformation. We offset the rectangle by
                 // 0.5 pixels to ensure that the line loop draws a line without a 1-pixel gap between the line's
-                // beginning and its end.
+                // beginning and its end. We scale by (width - 1, height - 1) to ensure that only the actual selected
+                // area is filled. If we scaled by (width, height), GL line rasterization would fill one pixel beyond
+                // the actual selected area.
                 this.BEogsh.pushProjectionIdentity(gl);
                 gl.glOrtho(0, dc.getDrawableWidth(), 0, dc.getDrawableHeight(), -1, 1); // l, r, b, t, n, f
                 this.BEogsh.pushModelviewIdentity(gl);
                 Rectangle r = this.getSelection();
                 gl.glTranslated(0.5, 0.5, 0.0);
                 gl.glTranslated(r.getMinX(), dc.getDrawableHeight() - r.getMinY(), 0);
-                gl.glScaled(r.getWidth(), r.getHeight(), 1);
+                gl.glScaled(r.getWidth() - 1, r.getHeight() - 1, 1);
 
                 // Disable the depth test and enable blending so this screen rectangle appears on top of the existing
                 // framebuffer contents.

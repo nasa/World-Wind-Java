@@ -524,8 +524,7 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         Rectangle r = new Rectangle(rectangle.x, viewport.height - rectangle.y - 1, rectangle.width, rectangle.height);
         r = r.intersection(viewport);
 
-        // TODO: Handle a rectangle where only one of the width or height are zero.
-        if (r.width == 0 || r.height == 0) // Return null if the rectangle is empty.
+        if (r.isEmpty()) // Return null if the rectangle is empty.
             return null;
 
         if (minAndMaxColorCodes == null)

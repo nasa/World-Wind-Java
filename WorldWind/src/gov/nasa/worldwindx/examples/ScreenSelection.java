@@ -43,7 +43,7 @@ public class ScreenSelection extends ApplicationTemplate
             panel.add(btn, BorderLayout.CENTER);
             this.getLayerPanel().add(panel, BorderLayout.SOUTH);
 
-            // Add up a layer of highlightable shapes to select.
+            // Create layer of highlightable shapes to select.
             this.addShapes();
         }
 
