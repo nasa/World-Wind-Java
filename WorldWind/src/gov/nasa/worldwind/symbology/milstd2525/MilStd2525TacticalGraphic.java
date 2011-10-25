@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -88,7 +89,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected String text;
 
     protected boolean highlighted;
-    protected boolean visible;
+    protected boolean visible = true;
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
 
@@ -101,6 +102,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     // TODO: add country code, etc.
 
     public abstract String getFunctionId();
+
+    public abstract void doRenderGraphic(DrawContext dc);
 
     /** {@inheritDoc} */
     public String getIdentifier()
@@ -272,5 +275,80 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setText(String text)
     {
         this.text = text;
+    }
+
+    /** {@inheritDoc} */
+    public void render(DrawContext dc)
+    {
+        if (!this.isVisible())
+        {
+            return;
+        }
+
+        this.doRenderGraphic(dc);
+
+        if (!this.isShowModifiers())
+        {
+            this.doRenderModifiers(dc);
+        }
+    }
+
+    @SuppressWarnings( {"UnusedParameters"})
+    protected void doRenderModifiers(DrawContext dc)
+    {
+        // Do nothing
+    }
+
+    protected void applyDefaultAttributes(ShapeAttributes attributes)
+    {
+        String identity = this.getStandardIdentity();
+        if (SymbolCode.IDENTITY_FRIEND.equals(identity))
+        {
+            attributes.setOutlineMaterial(Material.BLACK);
+        }
+        else if (SymbolCode.IDENTITY_HOSTILE.equals(identity))
+        {
+            attributes.setOutlineMaterial(Material.RED);
+        }
+
+        String status = this.getStatus();
+        if (SymbolCode.STATUS_ANTICIPATED.equals(status))
+        {
+            attributes.setOutlineStippleFactor(6);
+            attributes.setOutlineStipplePattern((short) 0xAAAA);
+        }
+    }
+
+    protected void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes, ShapeAttributes shapeAttributes)
+    {
+        Material material = graphicAttributes.getInteriorMaterial();
+        if (material != null)
+        {
+            shapeAttributes.setInteriorMaterial(material);
+        }
+
+        material = graphicAttributes.getOutlineMaterial();
+        if (material != null)
+        {
+            shapeAttributes.setInteriorMaterial(material);
+        }
+
+        Double value = graphicAttributes.getInteriorOpacity();
+        if (value != null)
+        {
+            shapeAttributes.setInteriorOpacity(value);
+        }
+
+        value = graphicAttributes.getOutlineOpacity();
+        if (value != null)
+        {
+            shapeAttributes.setOutlineOpacity(value);
+        }
+
+        value = graphicAttributes.getOutlineWidth();
+        if (value != null)
+        {
+            shapeAttributes.setOutlineWidth(value);
+        }
     }
 }

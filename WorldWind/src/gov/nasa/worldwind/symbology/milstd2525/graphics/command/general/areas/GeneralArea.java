@@ -8,6 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.*;
@@ -15,6 +16,8 @@ import java.util.*;
 import java.util.List;
 
 /**
+ * Implementation of the General Area graphic (hierarchy 2.X.2.1.3, SIDC: G*GPGAG---****X).
+ *
  * @author pabercrombie
  * @version $Id$
  */
@@ -35,9 +38,51 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.setText("");
     }
 
+    /** {@inheritDoc} */
     public String getFunctionId()
     {
         return FUNCTION_ID;
+    }
+
+    /** {@inheritDoc} */
+    public void setPositions(Iterable<? extends Position> positions)
+    {
+        this.polygon.setLocations(positions);
+    }
+
+    /** {@inheritDoc} */
+    public Iterable<? extends Position> getPositions()
+    {
+        Iterable<? extends LatLon> locations = this.polygon.getLocations();
+        ArrayList<Position> positions = new ArrayList<Position>();
+
+        for (LatLon ll : locations)
+        {
+            if (ll instanceof Position)
+                positions.add((Position) ll);
+            else
+                positions.add(new Position(ll, 0));
+        }
+
+        return positions;
+    }
+
+    /** {@inheritDoc} */
+    public Position getReferencePosition()
+    {
+        return this.polygon.getReferencePosition();
+    }
+
+    /** {@inheritDoc} */
+    public void move(Position position)
+    {
+        this.polygon.move(position);
+    }
+
+    /** {@inheritDoc} */
+    public void moveTo(Position position)
+    {
+        this.polygon.moveTo(position);
     }
 
     @Override
@@ -47,6 +92,70 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
         String fullText = this.createText(text);
         this.label = new SurfaceText(fullText, Position.ZERO);
+    }
+
+    /** {@inheritDoc} */
+    public void preRender(DrawContext dc)
+    {
+        if (!this.isVisible())
+        {
+            return;
+        }
+
+        this.determineActiveAttributes();
+
+        if (this.identityLabels == null && SymbolCode.IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
+        {
+            this.determineIdentityLabelPosition();
+        }
+
+        if (this.label != null)
+        {
+            this.determineLabelPosition(dc);
+            this.label.preRender(dc);
+        }
+
+        if (this.identityLabels != null)
+        {
+            for (SurfaceText text : this.identityLabels)
+            {
+                text.preRender(dc);
+            }
+        }
+
+        this.polygon.preRender(dc);
+    }
+
+    /**
+     * Render the polygon.
+     *
+     * @param dc Current draw context.
+     */
+    public void doRenderGraphic(DrawContext dc)
+    {
+        this.polygon.render(dc);
+    }
+
+    /**
+     * Render the labels.
+     *
+     * @param dc Current draw context.
+     */
+    @Override
+    public void doRenderModifiers(DrawContext dc)
+    {
+        if (this.label != null)
+        {
+            this.label.render(dc);
+        }
+
+        if (this.identityLabels != null)
+        {
+            for (SurfaceText text : this.identityLabels)
+            {
+                text.render(dc);
+            }
+        }
     }
 
     protected String createText(String text)
@@ -109,21 +218,43 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         return count;
     }
 
-    public void preRender(DrawContext dc)
+    /** Determine active attributes for this frame. */
+    protected void determineActiveAttributes()
     {
-        if (this.identityLabels == null && SymbolCode.IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
+        ShapeAttributes shapeAttributes;
+        if (this.isHighlighted())
         {
-            this.determineIdentityLabelPosition();
+            shapeAttributes = this.polygon.getHighlightAttributes();
+            if (shapeAttributes == null)
+            {
+                shapeAttributes = new BasicShapeAttributes();
+                this.polygon.setHighlightAttributes(shapeAttributes);
+            }
+
+            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
+            if (highlightAttributes != null)
+            {
+                this.applyDefaultAttributes(shapeAttributes);
+                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
+            }
         }
-
-        // If the attributes have not been created yet, create them now.
-        // The default attributes are determined by the symbol code.
-        if (this.polygon.getAttributes() == null)
+        else
         {
-            ShapeAttributes attrs = this.createDefaultAttributes();
-            this.polygon.setAttributes(attrs);
+            shapeAttributes = this.polygon.getAttributes();
+            if (shapeAttributes == null)
+            {
+                shapeAttributes = new BasicShapeAttributes();
+                this.polygon.setAttributes(shapeAttributes);
+            }
+            this.applyDefaultAttributes(shapeAttributes);
 
-            Color color = attrs.getOutlineMaterial().getDiffuse();
+            TacticalGraphicAttributes normalAttributes = this.getAttributes();
+            if (normalAttributes != null)
+            {
+                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
+            }
+
+            Color color = shapeAttributes.getOutlineMaterial().getDiffuse();
             if (this.label != null)
             {
                 this.label.setColor(color);
@@ -137,104 +268,12 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
                 }
             }
         }
-
-        if (this.label != null)
-        {
-            this.determineLabelPosition(dc);
-            this.label.preRender(dc);
-        }
-
-        if (this.identityLabels != null)
-        {
-            for (SurfaceText text : this.identityLabels)
-            {
-                text.preRender(dc);
-            }
-        }
-
-        this.polygon.preRender(dc);
     }
 
-    public void render(DrawContext dc)
+    @Override
+    protected void applyDefaultAttributes(ShapeAttributes attributes)
     {
-        if (this.isShowModifiers())
-        {
-            if (this.label != null)
-            {
-                this.label.render(dc);
-            }
-
-            if (this.identityLabels != null)
-            {
-                for (SurfaceText text : this.identityLabels)
-                {
-                    text.render(dc);
-                }
-            }
-        }
-
-        this.polygon.render(dc);
-    }
-
-    protected ShapeAttributes createDefaultAttributes()
-    {
-        ShapeAttributes attrs = new BasicShapeAttributes();
-
-        attrs.setDrawInterior(false);
-
-        String identity = this.getStandardIdentity();
-        if (SymbolCode.IDENTITY_FRIEND.equals(identity))
-        {
-            attrs.setOutlineMaterial(Material.BLACK);
-        }
-        else if (SymbolCode.IDENTITY_HOSTILE.equals(identity))
-        {
-            attrs.setOutlineMaterial(Material.RED);
-        }
-
-        String status = this.getStatus();
-        if (SymbolCode.STATUS_ANTICIPATED.equals(status))
-        {
-            attrs.setOutlineStippleFactor(6);
-            attrs.setOutlineStipplePattern((short) 0xAAAA);
-        }
-
-        return attrs;
-    }
-
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        this.polygon.setLocations(positions);
-    }
-
-    public Iterable<? extends Position> getPositions()
-    {
-        Iterable<? extends LatLon> locations = this.polygon.getLocations();
-        ArrayList<Position> positions = new ArrayList<Position>();
-
-        for (LatLon ll : locations)
-        {
-            if (ll instanceof Position)
-                positions.add((Position) ll);
-            else
-                positions.add(new Position(ll, 0));
-        }
-
-        return positions;
-    }
-
-    public Position getReferencePosition()
-    {
-        return this.polygon.getReferencePosition();
-    }
-
-    public void move(Position position)
-    {
-        this.polygon.move(position);
-    }
-
-    public void moveTo(Position position)
-    {
-        this.polygon.moveTo(position);
+        super.applyDefaultAttributes(attributes);
+        attributes.setDrawInterior(false);
     }
 }

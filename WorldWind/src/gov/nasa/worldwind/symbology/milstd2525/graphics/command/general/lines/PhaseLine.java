@@ -10,6 +10,7 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
@@ -17,44 +18,118 @@ import java.awt.*;
 import java.util.Iterator;
 
 /**
+ * Implementation of the Phase Line graphic (hierarchy: 2.X.2.1.2.4, SIDC G*GPGLP---****X).
+ *
  * @author pabercrombie
  * @version $Id$
  */
 public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderable
 {
+    /** Function ID for the Phase Line. */
     public final static String FUNCTION_ID = "GLP---";
 
+    /** Path used to render the line. */
     protected Path path;
+    /** Label rendered at the start of the line. */
     protected SurfaceText labelStart;
+    /** Label rendered at the end of the line. */
     protected SurfaceText labelEnd;
 
+    /** Create a new Phase Line. */
     public PhaseLine()
     {
-        this.path = new Path();
-        this.path.setFollowTerrain(true);
-        this.path.setPathType(AVKey.GREAT_CIRCLE);
-        this.path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
-        this.path.setDelegateOwner(this);
-        this.setText("");
+        this.path = this.createPath();
     }
 
+    /** {@inheritDoc} */
+    public String getFunctionId()
+    {
+        return FUNCTION_ID;
+    }
+
+    /** {@inheritDoc} */
     public void setPositions(Iterable<? extends Position> positions)
     {
         this.path.setPositions(positions);
     }
 
+    /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
         return this.path.getPositions();
     }
 
-    @Override
-    public void setText(String text)
+    /** {@inheritDoc} */
+    public Position getReferencePosition()
     {
-        super.setText(text);
+        return this.path.getReferencePosition();
+    }
 
+    /** {@inheritDoc} */
+    public void move(Position position)
+    {
+        this.path.move(position);
+    }
+
+    /** {@inheritDoc} */
+    public void moveTo(Position position)
+    {
+        this.path.moveTo(position);
+    }
+
+    /** {@inheritDoc} */
+    public void preRender(DrawContext dc)
+    {
+        if (!this.isVisible())
+        {
+            return;
+        }
+
+        if (this.labelStart == null)
+        {
+            this.createLabels();
+        }
+
+        this.determineActiveAttributes();
+        this.determineLabelPositions(dc);
+
+        if (this.isShowModifiers())
+        {
+            this.labelStart.preRender(dc);
+            this.labelEnd.preRender(dc);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void doRenderGraphic(DrawContext dc)
+    {
+        this.path.render(dc);
+    }
+
+    /**
+     * Create and configure the Path used to render this graphic.
+     *
+     * @return New path configured with defaults appropriate for this type of graphic.
+     */
+    protected Path createPath()
+    {
+        Path path = new Path();
+        path.setFollowTerrain(true);
+        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        path.setDelegateOwner(this);
+        return path;
+    }
+
+    /**
+     * Create labels for the start and end of the path.
+     */
+    protected void createLabels()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append("PL");
+
+        String text = this.getText();
         if (!WWUtil.isEmpty(text))
             sb.append(" ").append(text);
 
@@ -64,6 +139,11 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         this.labelEnd = new SurfaceText(fullText, Position.ZERO);
     }
 
+    /**
+     * Determine positions for the start and end labels.
+     *
+     * @param dc Current draw context.
+     */
     protected void determineLabelPositions(DrawContext dc)
     {
         Iterator<? extends Position> iterator = this.path.getPositions().iterator();
@@ -92,72 +172,50 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         this.labelEnd.setPosition(new Position(ll, 0));
     }
 
-    public Position getReferencePosition()
+    public void setHighlighted(boolean highlighted)
     {
-        return this.path.getReferencePosition();
+        super.setHighlighted(highlighted);
+        this.path.setHighlighted(highlighted);
     }
 
-    public void move(Position position)
+    /** Determine active attributes for this frame. */
+    protected void determineActiveAttributes()
     {
-        this.path.move(position);
-    }
-
-    public void moveTo(Position position)
-    {
-        this.path.moveTo(position);
-    }
-
-    public void preRender(DrawContext dc)
-    {
-        this.determineLabelPositions(dc);
-
-        // If the attributes have not been created yet, create them now.
-        // The default attributes are determined by the symbol code.
-        if (this.path.getAttributes() == null)
+        ShapeAttributes shapeAttributes;
+        if (this.isHighlighted())
         {
-            ShapeAttributes attrs = this.createDefaultAttributes();
-            this.path.setAttributes(attrs);
+            shapeAttributes = this.path.getHighlightAttributes();
+            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
+            if (highlightAttributes != null)
+            {
+                if (shapeAttributes == null)
+                {
+                    shapeAttributes = new BasicShapeAttributes();
+                    this.path.setHighlightAttributes(shapeAttributes);
+                }
 
-            Color color = attrs.getOutlineMaterial().getDiffuse();
-            this.labelStart.setColor(color);
-            this.labelEnd.setColor(color);
+                this.applyDefaultAttributes(shapeAttributes);
+                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
+            }
         }
-
-        this.labelStart.preRender(dc);
-        this.labelEnd.preRender(dc);
-    }
-
-    public void render(DrawContext dc)
-    {
-        this.path.render(dc);
-    }
-
-    protected ShapeAttributes createDefaultAttributes()
-    {
-        ShapeAttributes attrs = new BasicShapeAttributes();
-
-        String identity = this.getStandardIdentity();
-        if (SymbolCode.IDENTITY_FRIEND.equals(identity))
+        else
         {
-            attrs.setOutlineMaterial(Material.BLACK);
-        }
-        else if (SymbolCode.IDENTITY_HOSTILE.equals(identity))
-        {
-            attrs.setOutlineMaterial(Material.RED);
-        }
+            shapeAttributes = this.path.getAttributes();
+            if (shapeAttributes == null)
+            {
+                shapeAttributes = new BasicShapeAttributes();
+                this.path.setAttributes(shapeAttributes);
+            }
+            this.applyDefaultAttributes(shapeAttributes);
 
-        String status = this.getStatus();
-        if (SymbolCode.STATUS_ANTICIPATED.equals(status))
-        {
-            attrs.setOutlineStippleFactor(6);
-            attrs.setOutlineStipplePattern((short) 0xAAAA);
+            TacticalGraphicAttributes normalAttributes = this.getAttributes();
+            if (normalAttributes != null)
+            {
+                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
+            }
+            Color color = shapeAttributes.getOutlineMaterial().getDiffuse();
+            labelStart.setColor(color);
+            labelEnd.setColor(color);
         }
-
-        return attrs;
-    }
-
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
     }
 }

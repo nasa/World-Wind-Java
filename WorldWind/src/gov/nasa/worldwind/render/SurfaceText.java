@@ -110,6 +110,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
 
         this.text = text;
         this.textBounds = null; // Need to recompute bounds
+        this.updateModifiedTime();
     }
 
     /** {@inheritDoc} */
@@ -136,6 +137,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         }
 
         this.location = position;
+        this.updateModifiedTime();
     }
 
     /** {@inheritDoc} */
@@ -156,6 +158,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
 
         this.font = font;
         this.textBounds = null; // Need to recompute bounds
+        this.updateModifiedTime();
     }
 
     /** {@inheritDoc} */
@@ -175,6 +178,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         }
 
         this.color = color;
+        this.updateModifiedTime();
     }
 
     /** {@inheritDoc} */
@@ -194,6 +198,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         }
 
         this.bgColor = background;
+        this.updateModifiedTime();
     }
 
     /** {@inheritDoc} */
@@ -237,6 +242,7 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         }
 
         this.offset = offset;
+        this.updateModifiedTime();
     }
 
     /** {@inheritDoc} */

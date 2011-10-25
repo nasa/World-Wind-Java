@@ -10,12 +10,15 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
 
 /**
+ * Implementation of the Dummy graphic (hierarchy 2.X.2.3.1, SIDC: G*GPPD----****X).
+ *
  * @author pabercrombie
  * @version $Id$
  */
@@ -25,13 +28,11 @@ public class Dummy extends MilStd2525TacticalGraphic
 
     protected Path path;
 
+    protected long frameTimestamp = -1L;
+
     public Dummy()
     {
-        this.path = new Path();
-        this.path.setFollowTerrain(true);
-        this.path.setPathType(AVKey.GREAT_CIRCLE);
-        this.path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
-        this.path.setDelegateOwner(this);
+        this.path = this.createPath();
     }
 
     public String getFunctionId()
@@ -39,12 +40,12 @@ public class Dummy extends MilStd2525TacticalGraphic
         return FUNCTION_ID;
     }
 
-    public void render(DrawContext dc)
+    public void doRenderGraphic(DrawContext dc)
     {
-        if (this.path.getAttributes() == null)
+        if (this.frameTimestamp != dc.getFrameTimeStamp())
         {
-            ShapeAttributes attrs = this.createDefaultAttributes();
-            this.path.setAttributes(attrs);
+            this.determineActiveAttributes();
+            this.frameTimestamp = dc.getFrameTimeStamp();
         }
 
         this.path.render(dc);
@@ -83,43 +84,83 @@ public class Dummy extends MilStd2525TacticalGraphic
         }
     }
 
+    /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
         return this.path.getPositions();
     }
 
+    /** {@inheritDoc} */
     public Position getReferencePosition()
     {
         return this.path.getReferencePosition();
     }
 
+    /** {@inheritDoc} */
     public void move(Position position)
     {
         this.path.move(position);
     }
 
+    /** {@inheritDoc} */
     public void moveTo(Position position)
     {
         this.path.moveTo(position);
     }
 
-    protected ShapeAttributes createDefaultAttributes()
+    protected void determineActiveAttributes()
     {
-        BasicShapeAttributes attrs = new BasicShapeAttributes();
-
-        String identity = this.getStandardIdentity();
-        if (SymbolCode.IDENTITY_FRIEND.equals(identity))
+        ShapeAttributes shapeAttributes;
+        if (this.isHighlighted())
         {
-            attrs.setOutlineMaterial(Material.BLACK);
+            shapeAttributes = this.path.getHighlightAttributes();
+            if (shapeAttributes == null)
+            {
+                shapeAttributes = new BasicShapeAttributes();
+                this.path.setHighlightAttributes(shapeAttributes);
+            }
+
+            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
+            if (highlightAttributes != null)
+            {
+                this.applyDefaultAttributes(shapeAttributes);
+                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
+            }
         }
-        else if (SymbolCode.IDENTITY_HOSTILE.equals(identity))
+        else
         {
-            attrs.setOutlineMaterial(Material.RED);
+            shapeAttributes = this.path.getAttributes();
+            if (shapeAttributes == null)
+            {
+                shapeAttributes = new BasicShapeAttributes();
+                this.path.setAttributes(shapeAttributes);
+            }
+            this.applyDefaultAttributes(shapeAttributes);
+
+            TacticalGraphicAttributes normalAttributes = this.getAttributes();
+            if (normalAttributes != null)
+            {
+                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
+            }
         }
+    }
 
-        attrs.setOutlineStippleFactor(15);
-        attrs.setOutlineStipplePattern((short) 0xAAAA);
+    @Override
+    protected void applyDefaultAttributes(ShapeAttributes attributes)
+    {
+        super.applyDefaultAttributes(attributes);
 
-        return attrs;
+        attributes.setOutlineStippleFactor(15);
+        attributes.setOutlineStipplePattern((short) 0xAAAA);
+    }
+
+    protected Path createPath()
+    {
+        Path path = new Path();
+        path.setFollowTerrain(true);
+        path.setPathType(AVKey.GREAT_CIRCLE);
+        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        path.setDelegateOwner(this);
+        return path;
     }
 }

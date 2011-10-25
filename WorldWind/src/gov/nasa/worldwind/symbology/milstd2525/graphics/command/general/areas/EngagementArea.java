@@ -7,6 +7,8 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
 /**
+ * Implementation of a Assembly Area (hierarchy 2.X.2.1.3.3, SIDC: G*GPGAE---****X).
+ *
  * @author pabercrombie
  * @version $Id$
  */
