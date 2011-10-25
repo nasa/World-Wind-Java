@@ -91,7 +91,22 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         super.setText(text);
 
         String fullText = this.createText(text);
-        this.label = new SurfaceText(fullText, Position.ZERO);
+        if (fullText != null)
+        {
+            this.label = new SurfaceText(fullText, Position.ZERO);
+        }
+        else
+        {
+            this.label = null;
+        }
+    }
+
+    /** {@inheritDoc} Overridden to apply highlight to all parts of the graphic. */
+    @Override
+    public void setHighlighted(boolean highlighted)
+    {
+        super.setHighlighted(highlighted);
+        this.polygon.setHighlighted(highlighted);
     }
 
     /** {@inheritDoc} */
@@ -101,6 +116,8 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         {
             return;
         }
+
+        this.makeShapes(dc);
 
         this.determineActiveAttributes();
 
@@ -124,6 +141,11 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         }
 
         this.polygon.preRender(dc);
+    }
+
+    protected void makeShapes(DrawContext dc)
+    {
+        // Do nothing, but allow subclasses to override
     }
 
     /**
@@ -225,15 +247,15 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         if (this.isHighlighted())
         {
             shapeAttributes = this.polygon.getHighlightAttributes();
-            if (shapeAttributes == null)
-            {
-                shapeAttributes = new BasicShapeAttributes();
-                this.polygon.setHighlightAttributes(shapeAttributes);
-            }
-
             TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
             if (highlightAttributes != null)
             {
+                if (shapeAttributes == null)
+                {
+                    shapeAttributes = new BasicShapeAttributes();
+                    this.polygon.setHighlightAttributes(shapeAttributes);
+                }
+
                 this.applyDefaultAttributes(shapeAttributes);
                 this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
             }

@@ -71,15 +71,14 @@ public class Symbology extends ApplicationTemplate
             graphic.setModifier(AVKey.TEXT, "Area");
             layer.addRenderable(graphic);
 
-            // Create an Assembly Area
+            // Create an Airfield Zone
             positions = new ArrayList<Position>();
             positions.add(Position.fromDegrees(34.7152, -117.6526, 0));
             positions.add(Position.fromDegrees(34.7219, -117.6089, 0));
             positions.add(Position.fromDegrees(34.6918, -117.5904, 0));
             positions.add(Position.fromDegrees(34.6818, -117.6665, 0));
-            graphic = factory.createGraphic("GFGPGAA----AUSX", positions, null);
-            graphic.setModifier(AVKey.TEXT, "Area");
-            graphic.setValue(AVKey.DISPLAY_NAME, "Assembly Area");
+            graphic = factory.createGraphic("GPGPGAZ----AUSX", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Airfield Zone");
             layer.addRenderable(graphic);
 
             // Create a Deception graphic

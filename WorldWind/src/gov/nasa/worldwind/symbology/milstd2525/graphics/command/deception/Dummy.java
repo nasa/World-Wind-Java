@@ -150,6 +150,7 @@ public class Dummy extends MilStd2525TacticalGraphic
     {
         super.applyDefaultAttributes(attributes);
 
+        attributes.setOutlineWidth(2.0);
         attributes.setOutlineStippleFactor(15);
         attributes.setOutlineStipplePattern((short) 0xAAAA);
     }
