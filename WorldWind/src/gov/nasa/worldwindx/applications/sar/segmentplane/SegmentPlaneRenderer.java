@@ -617,7 +617,7 @@ public class SegmentPlaneRenderer
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void drawPlaneOutline(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
         java.awt.Point pickPoint, Layer layer)
     {
@@ -689,10 +689,15 @@ public class SegmentPlaneRenderer
             renderInfo.planeGridIndices);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void resolvePlaneBackgroundPick(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
         java.awt.Point pickPoint, Layer layer)
     {
+        // The pick point is null when a pick rectangle is specified but a pick point is not. In this case, there's
+        // nothing for the segment plane to resolve.
+        if (pickPoint == null)
+            return;
+
         PickedObject topObject = this.getTopPickedObject(dc, pickPoint, SegmentPlane.PLANE_BACKGROUND);
         if (topObject == null)
             return;
@@ -737,6 +742,11 @@ public class SegmentPlaneRenderer
     protected void resolvePlaneGridPick(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
         java.awt.Point pickPoint, Layer layer)
     {
+        // The pick point is null when a pick rectangle is specified but a pick point is not. In this case, there's
+        // nothing for the segment plane to resolve.
+        if (pickPoint == null)
+            return;
+
         PickedObject topObject = this.getTopPickedObject(dc, pickPoint, SegmentPlane.PLANE_GRID);
         if (topObject == null)
             return;
@@ -764,7 +774,7 @@ public class SegmentPlaneRenderer
     //********************  Border Rendering  **********************//
     //**************************************************************//
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void drawPlaneBorder(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
         java.awt.Point pickPoint, Layer layer)
     {
@@ -867,7 +877,7 @@ public class SegmentPlaneRenderer
         this.drawSegmentAltimeterLabel(dc, segmentPlane, renderInfo, pickPoint, layer);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void drawSegmentAltimeterGeometry(DrawContext dc, SegmentPlane segmentPlane,
         RenderInfo renderInfo, java.awt.Point pickPoint, Layer layer)
     {
@@ -924,7 +934,7 @@ public class SegmentPlaneRenderer
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void drawSegmentAltimeterLabel(DrawContext dc, SegmentPlane segmentPlane,
         RenderInfo renderInfo, java.awt.Point pickPoint, Layer layer)
     {
@@ -1069,10 +1079,15 @@ public class SegmentPlaneRenderer
         this.drawLabel(dc, segmentPlane, position, values, controlPoint.getKey());
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void resolveControlPointPick(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
         java.awt.Point pickPoint, Layer layer)
     {
+        // The pick point is null when a pick rectangle is specified but a pick point is not. In this case, there's
+        // nothing for the segment plane to resolve.
+        if (pickPoint == null)
+            return;
+
         PickedObject topObject = null;
 
         // Pick user-defined control points.
@@ -1107,7 +1122,7 @@ public class SegmentPlaneRenderer
     //********************  Axis Label Rendering  ******************//
     //**************************************************************//
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void drawAxisLabels(DrawContext dc, SegmentPlane segmentPlane, RenderInfo renderInfo,
         java.awt.Point pickPoint, Layer layer)
     {
@@ -1706,7 +1721,7 @@ public class SegmentPlaneRenderer
         }
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void computePlaneNormals(Globe globe, SegmentPlane segmentPlane, int indexCount, int vertexCount,
         IntBuffer indices, DoubleBuffer vertices, DoubleBuffer buffer)
     {
@@ -1739,7 +1754,7 @@ public class SegmentPlaneRenderer
 
     // TODO: investigate necessary changes to create a general-use cylinder with caps, a height, and a radius.
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void createBorderGeometry(Globe globe, SegmentPlane segmentPlane, RenderInfo renderInfo)
     {
         int slices = 16;
@@ -1823,7 +1838,7 @@ public class SegmentPlaneRenderer
     //********************  Control Point Construction  ************//
     //**************************************************************//
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @SuppressWarnings( {"UnusedDeclaration"})
     protected void createControlPointGeometry(Globe globe, SegmentPlane segmentPlane, RenderInfo renderInfo)
     {
         if (renderInfo.markerShapeMap == null)
