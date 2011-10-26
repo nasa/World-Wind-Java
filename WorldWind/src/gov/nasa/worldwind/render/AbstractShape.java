@@ -1104,17 +1104,30 @@ public abstract class AbstractShape extends WWObjectImpl
     }
 
     /**
-     * Create a {@link gov.nasa.worldwind.pick.PickedObject} for this shape. The PickedObject returned by this method
-     * will be added to the pick list to represent the current shape.
+     * Creates a {@link gov.nasa.worldwind.pick.PickedObject} for this shape and the specified unique pick color. The
+     * PickedObject returned by this method will be added to the pick list to represent the current shape.
      *
      * @param dc        the current draw context.
-     * @param pickColor unique color for this shape.
+     * @param pickColor the unique color for this shape.
      *
-     * @return A new picked object.
+     * @return a new picked object.
      */
     protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
     {
-        return new PickedObject(pickColor.getRGB(), this.getDelegateOwner() != null ? this.getDelegateOwner() : this);
+        return this.createPickedObject(pickColor.getRGB());
+    }
+
+    /**
+     * Creates a {@link gov.nasa.worldwind.pick.PickedObject} for this shape and the specified unique pick color code.
+     * The PickedObject returned by this method will be added to the pick list to represent the current shape.
+     *
+     * @param colorCode the unique color code for this shape.
+     *
+     * @return a new picked object.
+     */
+    protected PickedObject createPickedObject(int colorCode)
+    {
+        return new PickedObject(colorCode, this.getDelegateOwner() != null ? this.getDelegateOwner() : this);
     }
 
     /**

@@ -262,9 +262,14 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String OPACITY = "gov.nasa.worldwind.avkey.Opacity";
     /**
      * Indicates an object's position in a series. When used as a key, the corresponding value must be an {@link
-     * Integer} indicating the ordinal.
+     * Integer} object indicating the ordinal.
      */
     final String ORDINAL = "gov.nasa.worldwind.avkey.Ordinal";
+    /**
+     * Indicates a list of one or more object's positions in a series. When used as a key, the corresponding value must
+     * be a {@link java.util.List} of {@link Integer} objects indicating the ordinals.
+     */
+    final String ORDINAL_LIST = "gov.nasa.worldwind.avkey.OrdinalList";
     final String ORIGIN = "gov.nasa.worldwind.avkey.Origin";
 
     final String OVERVIEW_FILE_NAME = "gov.nasa.worldwind.avkey.Overview.FileName";

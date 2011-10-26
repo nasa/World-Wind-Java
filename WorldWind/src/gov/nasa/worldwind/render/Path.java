@@ -14,6 +14,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.Cylinder;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.layers.Layer;
 import gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.terrain.Terrain;
@@ -65,8 +66,13 @@ import static gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil.kmlBoolean;
  * when the Path is within a threshold distance from the eye point. The threshold may be specified by calling {@link
  * #setShowPositionsThreshold(double)}. The dots are drawn in the path's outline material colors by default.
  * <p/>
- * The path's line and position dots may be drawn in unique RGBA colors by configuring the path with a {@link
+ * The path's line and the path's position dots may be drawn in unique RGBA colors by configuring the path with a {@link
  * PositionColors} (see {@link #setPositionColors(gov.nasa.worldwind.render.Path.PositionColors)}).
+ * <p/>
+ * Path picking includes information about which position dots are picked, in addition to the path itself. A position
+ * dot under the cursor is returned as an Integer object in the PickedObject's AVList under they key AVKey.ORDINAL.
+ * Position dots intersecting the pick rectangle are returned as a List of Integer objects in the PickedObject's AVList
+ * under the key AVKey.ORDINAL_LIST.
  *
  * @author tag
  * @version $Id$
@@ -396,6 +402,12 @@ public class Path extends AbstractShape
          * points are drawn in.
          */
         protected List<PickablePositions> pickablePositions = new ArrayList<PickablePositions>();
+        /**
+         * A map that associates each path with a picked object. Used to during box picking to consolidate the
+         * information about what parts of each path are picked into a single picked object. Path's positions are drawn
+         * in unique colors and are therefore separately pickable during box picking.
+         */
+        protected Map<Object, PickedObject> pathPickedObjects = new HashMap<Object, PickedObject>();
 
         /**
          * {@inheritDoc}
@@ -442,6 +454,11 @@ public class Path extends AbstractShape
             }
 
             this.pickablePositions.add(new PickablePositions(minColorCode, maxColorCode, path));
+
+            // Incorporate the Path position's min and max color codes into this PickSupport's minimum and maximum color
+            // codes.
+            this.adjustExtremeColorCodes(minColorCode);
+            this.adjustExtremeColorCodes(maxColorCode);
         }
 
         /**
@@ -486,15 +503,115 @@ public class Path extends AbstractShape
             {
                 if (colorCode >= positions.minColorCode && colorCode <= positions.maxColorCode)
                 {
-                    // If the top color code matches a Path's position color, convert the color code to a position
-                    // ordinal and delegate to the Path to resolve the ordinal to a PickedObject. minColorCode
-                    // corresponds to ordinal number 0, and minColorCode+i corresponds to ordinal number i.
+                    // If the top color code matches a Path's position color, convert the color code to a position index
+                    // and delegate to the Path to resolve the index to a PickedObject. minColorCode corresponds to
+                    // index 0, and minColorCode+i corresponds to index i.
                     int ordinal = colorCode - positions.minColorCode;
                     return positions.path.resolvePickedPosition(colorCode, ordinal);
                 }
             }
 
             return null;
+        }
+
+        /**
+         * Adds all picked paths that are registered with this PickSupport and intersect the specified rectangle in AWT
+         * screen coordinates (if any) to the draw context's list of picked objects. Each picked object includes the
+         * picked path and the ordinal numbers of positions that intersect the specified rectangle, if any. If any
+         * positions intersect the rectangle, the picked object's AVList contains the ordinal numbers in the key
+         * AVKey.ORDINAL_LIST.
+         *
+         * @param dc       the draw context which receives the picked objects.
+         * @param pickRect the rectangle in AWT screen coordinates.
+         * @param layer    the layer associated with the picked objects.
+         */
+        @SuppressWarnings( {"unchecked"})
+        @Override
+        protected void doResolvePick(DrawContext dc, Rectangle pickRect, Layer layer)
+        {
+            if (this.pickableObjects.isEmpty() && this.pickablePositions.isEmpty())
+            {
+                // There's nothing to do if both the pickable objects and pickable positions are empty.
+                return;
+            }
+            else if (this.pickablePositions.isEmpty())
+            {
+                // Fall back to the superclass version of this method if we have pickable objects but no pickable
+                // positions. This avoids the additional overhead of consolidating multiple objects picked from the same
+                // path.
+                super.doResolvePick(dc, pickRect, layer);
+                return;
+            }
+
+            // Get the unique pick colors in the specified screen rectangle. Use the minimum and maximum color codes to
+            // cull the number of colors that the draw context must consider with identifying the unique pick colors in
+            // the specified rectangle.
+            int[] colorCodes = dc.getPickColorsInRectangle(pickRect, this.minAndMaxColorCodes);
+            if (colorCodes == null || colorCodes.length == 0)
+                return;
+
+            // Lookup the pickable object (if any) for each unique color code appearing in the pick rectangle. Each
+            // picked object that corresponds to a picked color is added to the draw context. Since the
+            for (int colorCode : colorCodes)
+            {
+                if (colorCode == 0) // This should never happen, but we check anyway.
+                    continue;
+
+                PickedObject po = this.pickableObjects.get(colorCode);
+                if (po != null)
+                {
+                    // The color code corresponds to a path's line, so we add the path and its picked object to the map
+                    // of picked objects if one doesn't already exist. If one already exists, then this picked object
+                    // provides no additional information and we just ignore it. Note that if multiple parts of a path
+                    // are picked, we use the pick color of the first part we encounter.
+                    if (!this.pathPickedObjects.containsKey(po.getObject()))
+                        this.pathPickedObjects.put(po.getObject(), po);
+                }
+                else
+                {
+                    for (PickablePositions positions : this.getPickablePositions())
+                    {
+                        if (colorCode >= positions.minColorCode && colorCode <= positions.maxColorCode)
+                        {
+                            Path path = positions.path;
+
+                            // The color code corresponds to a path's position, so we incorporate that position's
+                            // ordinal into the picked object. Note that if multiple parts of a path are picked, we use
+                            // the pick color of the first part we encounter.
+                            po = this.pathPickedObjects.get(path);
+                            if (po == null)
+                                this.pathPickedObjects.put(path, po = path.createPickedObject(colorCode));
+
+                            // Convert the color code to a position index and delegate to the Path to resolve the
+                            // ordinal. minColorCode corresponds to position index 0, and minColorCode+i corresponds to
+                            // position index i.
+                            int ordinal = path.getOrdinal(colorCode - positions.minColorCode);
+
+                            // Add the ordinal to the list of picked ordinals on the path's picked object.
+                            List<Integer> ordinalList = (List<Integer>) po.getValue(AVKey.ORDINAL_LIST);
+                            if (ordinalList == null)
+                                po.setValue(AVKey.ORDINAL_LIST, ordinalList = new ArrayList<Integer>());
+                            ordinalList.add(ordinal);
+
+                            break; // No need to check the remaining paths.
+                        }
+                    }
+                }
+            }
+
+            // We've consolidated the information about what parts of each path are picked into a map of picked objects.
+            // The values in this map contain all the information we need, so we just add them to the draw context.
+            for (PickedObject po : this.pathPickedObjects.values())
+            {
+                if (layer != null)
+                    po.setParentLayer(layer);
+
+                dc.addObjectInPickRectangle(po);
+            }
+
+            // Clear the map of path's to corresponding picked objects to ensure that the picked objects from this call
+            // do not interfere with the next call.
+            this.pathPickedObjects.clear();
         }
     }
 
@@ -1661,7 +1778,7 @@ public class Path extends AbstractShape
      */
     protected PickedObject resolvePickedPosition(int colorCode, int positionIndex)
     {
-        PickedObject po = new PickedObject(colorCode, this.getDelegateOwner() != null ? this.getDelegateOwner() : this);
+        PickedObject po = this.createPickedObject(colorCode);
 
         Position pos = this.getPosition(positionIndex);
         if (pos != null)
