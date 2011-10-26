@@ -12,8 +12,6 @@ import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
 
-import java.awt.*;
-
 /**
  * @author tag
  * @version $Id$
@@ -142,9 +140,9 @@ public class KMLLineStringPlacemarkImpl extends Path implements KMLRenderable
 
     /** {@inheritDoc} */
     @Override
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
+    protected PickedObject createPickedObject(int colorCode)
     {
-        PickedObject po = super.createPickedObject(dc, pickColor);
+        PickedObject po = super.createPickedObject(colorCode);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.
         po.setValue(AVKey.CONTEXT, this.parent);

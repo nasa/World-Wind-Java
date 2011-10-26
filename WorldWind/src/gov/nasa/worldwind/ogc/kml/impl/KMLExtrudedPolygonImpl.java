@@ -8,13 +8,11 @@ package gov.nasa.worldwind.ogc.kml.impl;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
-
-import java.awt.*;
 
 /**
  * @author tag
@@ -152,9 +150,9 @@ public class KMLExtrudedPolygonImpl extends ExtrudedPolygon implements KMLRender
 
     /** {@inheritDoc} */
     @Override
-    protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
+    protected PickedObject createPickedObject(int colorCode)
     {
-        PickedObject po = super.createPickedObject(dc, pickColor);
+        PickedObject po = super.createPickedObject(colorCode);
 
         // Add the KMLPlacemark to the picked object as the context of the picked object.
         po.setValue(AVKey.CONTEXT, this.parent);

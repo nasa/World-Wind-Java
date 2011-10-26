@@ -1096,7 +1096,7 @@ public abstract class AbstractShape extends WWObjectImpl
         if (dc.isPickingMode())
         {
             Color pickColor = dc.getUniquePickColor();
-            pickCandidates.addPickableObject(this.createPickedObject(dc, pickColor));
+            pickCandidates.addPickableObject(this.createPickedObject(pickColor.getRGB()));
             gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
         }
 
@@ -1111,7 +1111,10 @@ public abstract class AbstractShape extends WWObjectImpl
      * @param pickColor the unique color for this shape.
      *
      * @return a new picked object.
+     *
+     * @deprecated Use the more general {@link #createPickedObject(int)} instead.
      */
+    @SuppressWarnings( {"UnusedParameters"})
     protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
     {
         return this.createPickedObject(pickColor.getRGB());
