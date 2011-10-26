@@ -12,6 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfaceImage;
 import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.image.*;
@@ -90,15 +91,26 @@ public class Symbology extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Dummy (Deception/Decoy)");
             layer.addRenderable(graphic);
 
-            // Create tactical icon
+            // Display a MIL-STD2525 tactical icon
             String URL = "http://worldwindserver.net/milstd2525/";
             //String URL = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever();
             AVListImpl params = new AVListImpl();
-            BufferedImage img = symGen.createIcon("SAAPC----------", params, URL);
+            BufferedImage img = symGen.createIcon("SKGPIR----H----", params, URL);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
                 Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
             SurfaceImage symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
+
+            // Display a MIL-STD1477 icon
+            URL = "http://worldwindserver.net/milstd1477/";
+            MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever();
+            params = new AVListImpl();
+            // use temporary test values: Storage_Location, Tree, Building, Church, Tower, Mountain, Bridge
+            img = symGen1477.createIcon("Storage_Location", params, URL);
+            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
+                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
+            symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);
 
             this.getWwd().getModel().getLayers().add(layer);
