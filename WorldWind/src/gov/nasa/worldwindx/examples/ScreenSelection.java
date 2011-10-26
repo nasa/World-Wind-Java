@@ -29,14 +29,8 @@ public class ScreenSelection extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected ScreenSelector selector;
-
         public AppFrame()
         {
-            // Create a screen selector to display a screen selection rectangle and specify the scene controllers
-            // current pick rectangle.
-            this.selector = new ScreenSelector(this.getWwd());
-
             // Create a button to enable and disable screen selection.
             JButton btn = new JButton(new EnableSelectorAction());
             JPanel panel = new JPanel(new BorderLayout(5, 5));
@@ -90,7 +84,7 @@ public class ScreenSelection extends ApplicationTemplate
             public void actionPerformed(ActionEvent actionEvent)
             {
                 ((JButton) actionEvent.getSource()).setAction(new DisableSelectorAction());
-                selector.enable();
+                ((AppPanel) getWwjPanel()).getScreenSelector().enable();
             }
         }
 
@@ -104,31 +98,44 @@ public class ScreenSelection extends ApplicationTemplate
             public void actionPerformed(ActionEvent actionEvent)
             {
                 ((JButton) actionEvent.getSource()).setAction(new EnableSelectorAction());
-                selector.disable();
+                ((AppPanel) getWwjPanel()).getScreenSelector().disable();
             }
         }
     }
 
     public static class AppPanel extends ApplicationTemplate.AppPanel
     {
+        protected ScreenSelector screenSelector;
+
         public AppPanel(Dimension canvasSize, boolean includeStatusBar)
         {
             super(canvasSize, includeStatusBar);
 
+            // Create a screen selector to display a screen selection rectangle and specify the scene controllers
+            // current pick rectangle.
+            this.screenSelector = new ScreenSelector(this.getWwd());
+
             // Set up a custom highlight controller that highlights objects under the cursor and inside the selection
             // box.
             this.highlightController.dispose();
-            this.highlightController = new BoxHighlightController(this.getWwd());
+            this.highlightController = new BoxHighlightController(this.getWwd(), this.screenSelector);
+        }
+
+        public ScreenSelector getScreenSelector()
+        {
+            return this.screenSelector;
         }
     }
 
     protected static class BoxHighlightController extends HighlightController
     {
         protected List<Highlightable> lastBoxHighlightObjects = new ArrayList<Highlightable>();
+        protected ScreenSelector screenSelector;
 
-        public BoxHighlightController(WorldWindow wwd)
+        public BoxHighlightController(WorldWindow wwd, ScreenSelector screenSelector)
         {
             super(wwd, SelectEvent.ROLLOVER);
+            this.screenSelector = screenSelector;
         }
 
         public void selected(SelectEvent event)
@@ -137,7 +144,10 @@ public class ScreenSelection extends ApplicationTemplate
 
             try
             {
-                if (event.getEventAction().equals(SelectEvent.BOX_ROLLOVER))
+                // Highlight objects in the selection box only when the screen selector is armed. This avoids clearing
+                // the list of app-selected objects when the user completes the drag operation that defines the
+                // selection.
+                if (event.getEventAction().equals(SelectEvent.BOX_ROLLOVER) && this.screenSelector.isArmed())
                     this.highlightObjectsInBox(event.getAllTopObjects());
             }
             catch (Exception e)
@@ -161,7 +171,7 @@ public class ScreenSelection extends ApplicationTemplate
             super.highlight(o);
         }
 
-        protected void highlightObjectsInBox(java.util.List<?> list)
+        protected void highlightObjectsInBox(List<?> list)
         {
             if (this.lastBoxHighlightObjects.equals(list))
                 return; // same thing selected

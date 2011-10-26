@@ -301,6 +301,11 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         return this.layer;
     }
 
+    public boolean isArmed()
+    {
+        return this.armed;
+    }
+
     public Color getInteriorColor()
     {
         return this.screenRect.getInteriorColor();
@@ -418,6 +423,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
     protected void selectionEnded(MouseEvent mouseEvent)
     {
         this.screenRect.clearSelection();
+        this.wwd.getSceneController().setPickRectangle(null);
         this.wwd.redraw();
     }
 
