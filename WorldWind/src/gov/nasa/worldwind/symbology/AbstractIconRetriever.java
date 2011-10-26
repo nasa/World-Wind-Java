@@ -10,7 +10,6 @@ import gov.nasa.worldwind.util.Logging;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
-import java.io.File;
 import java.net.URL;
 
 /**
@@ -72,6 +71,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
         return img;
     }
 
+    /*
     public BufferedImage retrieveImageFromURL(String server, String path, String filename, BufferedImage img)
     {
         if (server == null)
@@ -135,4 +135,5 @@ public abstract class AbstractIconRetriever implements IconRetriever
 
         return img;
     }
+    */
 }

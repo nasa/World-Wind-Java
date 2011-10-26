@@ -84,10 +84,16 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             g.setBackground(new Color(0, 0, 0, 0));
             g.clearRect(0, 0, dest.getWidth(), dest.getHeight());
             g.drawImage(img, 0, 0, null);
+
             // now overlay dotted line
             BufferedImage overlay = retrieveOverlay(symbolCode, params);
-            if (overlay != null)
-                g.drawImage(overlay, 0, 0, null);
+            if (overlay == null)
+            {
+                String msg = Logging.getMessage("Symbology.SymbolIconOverlayNotFound", symbolCode);
+                Logging.logger().severe(msg);
+                throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
+            }
+            g.drawImage(overlay, 0, 0, null);
             g.dispose();
 
             img = dest;
@@ -99,7 +105,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             // TODO: change fill color to red
         }
 
-        // TODO: modify image with given params
+        // TODO: add exercise overlay
 
         return img;
     }
@@ -160,11 +166,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 filename = "smile_overlay.png";
             }
             else if
-                (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND) ||
-                    battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SOF))
+                (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND))
             {
-
-                if ("G".equalsIgnoreCase(functionID.substring(0, 1)))   // special case of Ground Equipment
+                if ("E".equalsIgnoreCase(functionID.substring(0, 1)))   // special case of Ground Equipment
                 {
                     // 4. circle
                     filename = "circle_overlay.png";
@@ -174,6 +178,12 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                     // 7. rectangle
                     filename = "rectangle_overlay.png";
                 }
+            }
+            else if
+                (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SOF))
+            {
+                // 7. rectangle
+                filename = "rectangle_overlay.png";
             }
         }
         else if (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_SUSPECT))
@@ -197,6 +207,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 // 10. top
                 filename = "top_overlay.png";
             }
+        }
+
+        // handle the special case of overlays for installations (Ground battle dimension only)
+        if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND)
+            && "I".equalsIgnoreCase(functionID.substring(0, 1)))
+        {
+            filename = "installation_" + filename;
         }
 
         img = retrieveImageFromURL(filename, img);
@@ -248,6 +265,10 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         String padding = "-----";
+
+        // handle special case of installations, as indicated by a 'H' in position 11
+        if ("Hh".indexOf(((String) code.getValue(SymbolCode.SYMBOL_MODIFIER)).charAt(0)) > -1)
+            padding = "h----";
 
         String result = Integer.toString(prefix) + '.' + code.getValue(SymbolCode.SCHEME).toString().toLowerCase()
             + stdid + code.getValue(SymbolCode.BATTLE_DIMENSION).toString().toLowerCase()
