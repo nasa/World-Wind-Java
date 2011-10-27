@@ -96,10 +96,17 @@ public class Symbology extends ApplicationTemplate
             //String URL = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever();
             AVListImpl params = new AVListImpl();
-            BufferedImage img = symGen.createIcon("SKGPIR----H----", params, URL);
+            //BufferedImage img = symGen.createIcon("SAGPIR----H----", params, URL);
+            BufferedImage img = symGen.createIcon("SKGPUSTST------", params, URL);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
                 Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
             SurfaceImage symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
+
+            img = symGen.createIcon("SHGPUSTST------", params, URL);
+            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
+                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
+            symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);
 
             // Display a MIL-STD1477 icon
