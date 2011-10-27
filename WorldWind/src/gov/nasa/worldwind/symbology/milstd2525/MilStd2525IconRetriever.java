@@ -102,7 +102,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         // handle Joker and Faker, which should have a Friend frame, but with fill color red
         if ("JKjk".indexOf(stdid.charAt(0)) > -1)
         {
-            img = changeFillColor(img, SymbolCode.COLOR_HOSTILE);
+            img = changeIconFillColor(img, SymbolCode.COLOR_HOSTILE);
         }
 
         // TODO: add exercise overlay

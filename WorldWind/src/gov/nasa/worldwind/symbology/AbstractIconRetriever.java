@@ -142,8 +142,15 @@ public abstract class AbstractIconRetriever implements IconRetriever
     *  Sets all colored fill pixels in the icon to be transparent,
     *  while all black, white and grey pixels remain opaque. Destructive.
     */
-    public BufferedImage removeFillColor(BufferedImage src)
+    public BufferedImage removeIconFillColor(BufferedImage src)
     {
+        if (src == null)
+        {
+            String msg = Logging.getMessage("nullValue.IconImageSource");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         int srcWidth = src.getWidth();
         int srcHeight = src.getHeight();
 
@@ -175,8 +182,15 @@ public abstract class AbstractIconRetriever implements IconRetriever
     *  Sets all colored fill pixels in the icon to be the designated hue,
     *  while all black, white and grey pixels remain unchanged. Destructive.
     */
-    public BufferedImage changeFillColor(BufferedImage src, int hue)
+    public BufferedImage changeIconFillColor(BufferedImage src, int hue)
     {
+        if (src == null)
+        {
+            String msg = Logging.getMessage("nullValue.IconImageSource");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         int srcWidth = src.getWidth();
         int srcHeight = src.getHeight();
         float hueRatio = (float) hue / 359.0f;
