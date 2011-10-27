@@ -99,10 +99,10 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             img = dest;
         }
 
-        // handle Suspect and Joker, which should have a Friend frame, but with fill color red
+        // handle Joker and Faker, which should have a Friend frame, but with fill color red
         if ("JKjk".indexOf(stdid.charAt(0)) > -1)
         {
-            // TODO: change fill color to red
+            img = changeFillColor(img, SymbolCode.COLOR_HOSTILE);
         }
 
         // TODO: add exercise overlay
