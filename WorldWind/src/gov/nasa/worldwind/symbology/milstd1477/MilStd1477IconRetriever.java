@@ -21,37 +21,14 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever
 {
     // TODO: add more error checking
 
+    public MilStd1477IconRetriever(String URL)
+    {
+        super(URL);
+    }
+
     public BufferedImage createIcon(String symbolIdentifier)
     {
         AVListImpl params = new AVListImpl();
-
-        return createIcon(symbolIdentifier, params);
-    }
-
-    public BufferedImage createIcon(String symbolIdentifier, String URL)
-    {
-        if (URL == null)
-        {
-            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        setRepository(URL);
-
-        return createIcon(symbolIdentifier);
-    }
-
-    public BufferedImage createIcon(String symbolIdentifier, AVList params, String URL)
-    {
-        if (URL == null)
-        {
-            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        setRepository(URL);
 
         return createIcon(symbolIdentifier, params);
     }

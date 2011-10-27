@@ -66,11 +66,11 @@ public class SymbolCode extends AVListImpl
     public static final String STATUS_PRESENT = "P";
     public static final String STATUS_KNOWN = "K";
 
-    // fill colors
-    public static final int COLOR_UNKNOWN = 60;      // yellow
-    public static final int COLOR_FRIEND = 195;      // blue
-    public static final int COLOR_NEUTRAL = 120;     // green  TODO: not quite the correct green, Sat = 33, not 50
-    public static final int COLOR_HOSTILE = 0;      // red
+    // fill colors (hue, out of 360)
+    public static final int COLOR_UNKNOWN = 60;       // yellow
+    public static final int COLOR_FRIEND = 195;       // blue
+    public static final int COLOR_NEUTRAL = 120;      // green  TODO: not quite the correct green, Sat = 33, not 50
+    public static final int COLOR_HOSTILE = 0;        // red
     public static final int COLOR_CIVILIAN = 300;     // purple   TODO:  Sat = 37, not 50
 
     public SymbolCode()

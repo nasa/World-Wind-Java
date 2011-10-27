@@ -22,43 +22,34 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 {
     // TODO: add more error checking
 
+    public MilStd2525IconRetriever(String URL)
+    {
+        super(URL);
+    }
+
     public BufferedImage createIcon(String symbolIdentifier)
     {
+        if (symbolIdentifier == null)
+        {
+            String msg = Logging.getMessage("null.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         AVListImpl params = new AVListImpl();
-
-        return createIcon(symbolIdentifier, params);
-    }
-
-    public BufferedImage createIcon(String symbolIdentifier, String URL)
-    {
-        if (URL == null)
-        {
-            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        setRepository(URL);
-
-        return createIcon(symbolIdentifier);
-    }
-
-    public BufferedImage createIcon(String symbolIdentifier, AVList params, String URL)
-    {
-        if (URL == null)
-        {
-            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        setRepository(URL);
 
         return createIcon(symbolIdentifier, params);
     }
 
     public BufferedImage createIcon(String symbolIdentifier, AVList params)
     {
+        if (symbolIdentifier == null)
+        {
+            String msg = Logging.getMessage("null.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         // retrieve desired symbol and convert to bufferedImage
         SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
 
@@ -105,7 +96,36 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             img = changeIconFillColor(img, SymbolCode.COLOR_HOSTILE);
         }
 
-        // TODO: add exercise overlay
+        // if exercise, add exercise amplifying overlay
+        if (stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_PENDING) ||
+            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_UNKNOWN) ||
+            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_FRIEND) ||
+            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_NEUTRAL) ||
+            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_ASSUMED_FRIEND) ||
+            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_JOKER) ||
+            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_FAKER))
+        {
+            if (stdid.equalsIgnoreCase(SymbolCode.IDENTITY_JOKER))
+                filename = "j_overlay.png";
+            else if (stdid.equalsIgnoreCase(SymbolCode.IDENTITY_FAKER))
+                filename = "k_overlay.png";
+            else
+                filename = "x_overlay.png";
+
+            BufferedImage overlay = null;
+            overlay = retrieveImageFromURL(filename, overlay);
+            if (overlay == null)
+            {
+                String msg = Logging.getMessage("Symbology.SymbolIconOverlayNotFound", symbolCode);
+                Logging.logger().severe(msg);
+                throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
+            }
+
+            Graphics2D g = img.createGraphics();
+            g.setComposite(AlphaComposite.SrcOver);
+            g.drawImage(overlay, 0, 0, null);
+            g.dispose();
+        }
 
         return img;
     }
@@ -217,6 +237,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         img = retrieveImageFromURL(filename, img);
+
+        if (img == null)
+        {
+            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
+            Logging.logger().severe(msg);
+            throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
+        }
 
         return img;
     }

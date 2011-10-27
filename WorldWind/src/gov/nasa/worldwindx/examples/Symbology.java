@@ -94,16 +94,16 @@ public class Symbology extends ApplicationTemplate
             // Display a MIL-STD2525 tactical icon
             String URL = "http://worldwindserver.net/milstd2525/";
             //String URL = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
-            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever();
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
             AVListImpl params = new AVListImpl();
-            //BufferedImage img = symGen.createIcon("SAGPIR----H----", params, URL);
-            BufferedImage img = symGen.createIcon("SKGPUSTST------", params, URL);
+            BufferedImage img = symGen.createIcon("SWGPIR----H----", params);
+            //BufferedImage img = symGen.createIcon("SKGPUSTST------", params);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
                 Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
             SurfaceImage symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);
 
-            img = symGen.createIcon("SHGPUSTST------", params, URL);
+            img = symGen.createIcon("SUGPIRM---H----");
             s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
                 Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
             symbol = new SurfaceImage(img, s);
@@ -111,10 +111,10 @@ public class Symbology extends ApplicationTemplate
 
             // Display a MIL-STD1477 icon
             URL = "http://worldwindserver.net/milstd1477/";
-            MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever();
+            MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever(URL);
             params = new AVListImpl();
             // use temporary test values: Storage_Location, Tree, Building, Church, Tower, Mountain, Bridge
-            img = symGen1477.createIcon("Storage_Location", params, URL);
+            img = symGen1477.createIcon("Storage_Location", params);
             s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
                 Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
             symbol = new SurfaceImage(img, s);

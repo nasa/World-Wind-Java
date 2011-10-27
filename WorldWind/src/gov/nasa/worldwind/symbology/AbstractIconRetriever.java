@@ -19,10 +19,11 @@ import java.net.URL;
  */
 public abstract class AbstractIconRetriever implements IconRetriever
 {
-    String iconRepository;
+    protected String iconRepository;
 
-    // Specify the URL where the icons for this symbology set can be found.
-    public void setRepository(String url)
+    // Must specify in the constructor the URL where the icons for this
+    // symbology set can be found.
+    public AbstractIconRetriever(String url)
     {
         if (url == null)
         {
