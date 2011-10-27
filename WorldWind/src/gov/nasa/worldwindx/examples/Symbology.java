@@ -19,6 +19,10 @@ import java.awt.image.*;
 import java.util.ArrayList;
 
 /**
+ * Demonstrates how to create and render symbols from the MIL-STD-2525 symbol set. See the <a title="Symbology Usage
+ * Guide" href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Usage Guide</a> for more information
+ * on symbology support in World Wind.
+ *
  * @author pabercrombie
  * @version $Id$
  */
@@ -32,6 +36,43 @@ public class Symbology extends ApplicationTemplate
 
             RenderableLayer layer = new RenderableLayer();
 
+            // Create tactical graphics and add them to the layer
+            this.createGraphics(layer);
+
+            // Display a MIL-STD2525 tactical icon
+            String URL = "http://worldwindserver.net/milstd2525/";
+            //String URL = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
+            AVListImpl params = new AVListImpl();
+            BufferedImage img = symGen.createIcon("SWGPIR----H----", params);
+            //BufferedImage img = symGen.createIcon("SKGPUSTST------", params);
+            Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
+                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
+            SurfaceImage symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
+
+            img = symGen.createIcon("SUGPIRM---H----");
+            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
+                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
+            symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
+
+            // Display a MIL-STD1477 icon
+            URL = "http://worldwindserver.net/milstd1477/";
+            MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever(URL);
+            params = new AVListImpl();
+            // use temporary test values: Storage_Location, Tree, Building, Church, Tower, Mountain, Bridge
+            img = symGen1477.createIcon("Storage_Location", params);
+            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
+                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
+            symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
+
+            this.getWwd().getModel().getLayers().add(layer);
+        }
+
+        protected void createGraphics(RenderableLayer layer)
+        {
             TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
 
             // Create a Friendly Phase Line
@@ -91,36 +132,16 @@ public class Symbology extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Dummy (Deception/Decoy)");
             layer.addRenderable(graphic);
 
-            // Display a MIL-STD2525 tactical icon
-            String URL = "http://worldwindserver.net/milstd2525/";
-            //String URL = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
-            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
-            AVListImpl params = new AVListImpl();
-            BufferedImage img = symGen.createIcon("SWGPIR----H----", params);
-            //BufferedImage img = symGen.createIcon("SKGPUSTST------", params);
-            Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
-            SurfaceImage symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            img = symGen.createIcon("SUGPIRM---H----");
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
-                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            // Display a MIL-STD1477 icon
-            URL = "http://worldwindserver.net/milstd1477/";
-            MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever(URL);
-            params = new AVListImpl();
-            // use temporary test values: Storage_Location, Tree, Building, Church, Tower, Mountain, Bridge
-            img = symGen1477.createIcon("Storage_Location", params);
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            this.getWwd().getModel().getLayers().add(layer);
+            // Create a Supporting Attack graphic
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.5610, -117.4541, 0)); // Pt. 1: Tip of the arrow
+            positions.add(Position.fromDegrees(34.5614, -117.5852, 0)); // Pt. 2: First path control point
+            positions.add(Position.fromDegrees(34.5287, -117.6363, 0));
+            positions.add(Position.fromDegrees(34.4726, -117.6363, 0)); // Pt. N - 1: Last path control point
+            positions.add(Position.fromDegrees(34.5820, -117.4700, 0)); // Pt. N: Width of the arrow head
+            graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack");
+            layer.addRenderable(graphic);
         }
     }
 
