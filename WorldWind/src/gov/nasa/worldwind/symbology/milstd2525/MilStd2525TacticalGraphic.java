@@ -99,7 +99,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected String echelon;
     protected String category;
     protected String status;
-    // TODO: add country code, etc.
+    protected String countryCode;
 
     public abstract String getFunctionId();
 
@@ -182,6 +182,18 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         {
             this.setText((String) value);
         }
+        else if (SymbolCode.STANDARD_IDENTITY.equals(modifier) && (value instanceof String))
+        {
+            this.setStandardIdentity((String) value);
+        }
+        else if (SymbolCode.ECHELON.equals(modifier) && (value instanceof String))
+        {
+            this.setEchelon((String) value);
+        }
+        else if (SymbolCode.STATUS.equals(modifier) && (value instanceof String))
+        {
+            this.setStatus((String) value);
+        }
     }
 
     /** {@inheritDoc} */
@@ -194,6 +206,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setShowModifiers(boolean showModifiers)
     {
         this.showModifiers = showModifiers;
+    }
+
+    public String getScheme()
+    {
+        return SymbolCode.SCHEME_TACTICAL_GRAPHICS;
     }
 
     public String getStandardIdentity()
@@ -255,6 +272,26 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setStatus(String status)
     {
         this.status = status;
+    }
+
+    /**
+     * Indicates the country code portion of the graphic identifier.
+     *
+     * @return The country code associated with this graphic.
+     */
+    public String getCountryCode()
+    {
+        return this.countryCode;
+    }
+
+    /**
+     * Specifies the country code portion of the graphic identifier.
+     *
+     * @param countryCode The country code associated with this graphic.
+     */
+    public void setCountryCode(String countryCode)
+    {
+        this.countryCode = countryCode;
     }
 
     /**

@@ -20,7 +20,6 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.AreaTa
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target.*;
 import gov.nasa.worldwind.util.*;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -69,7 +68,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      *
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
-    public TacticalGraphic createGraphic(String sidc, Iterable<Position> positions, AVList params)
+    public TacticalGraphic createGraphic(String sidc, Iterable<Position> positions, AVList modifiers)
     {
         SymbolCode symbolCode = new SymbolCode(sidc);
 
@@ -99,38 +98,21 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             throw new WWRuntimeException(e);
         }
 
-        this.setProperties(graphic, symbolCode);
+        this.setModifiers(graphic, symbolCode);
 
-        if (params != null)
+        if (modifiers != null)
         {
-            this.setProperties(graphic, params);
+            this.setModifiers(graphic, modifiers);
         }
 
         return graphic;
     }
 
-    protected void setProperties(Object o, AVList props)
+    protected void setModifiers(TacticalGraphic graphic, AVList props)
     {
         for (Map.Entry<String, Object> entry : props.getEntries())
         {
-            try
-            {
-                WWUtil.invokePropertyMethod(o, entry.getKey(), (String) entry.getValue()); // TODO: support non-strings
-            }
-            catch (NoSuchMethodException e)
-            {
-                // Property not supported, ignore
-            }
-            catch (IllegalAccessException e)
-            {
-                // Property not supported, ignore
-            }
-            catch (InvocationTargetException e)
-            {
-                String msg = Logging.getMessage("generic.ExceptionInvokingPropertyMethod", entry.getKey());
-                Logging.logger().severe(msg);
-                throw new WWRuntimeException(e);
-            }
+            graphic.setModifier(entry.getKey(), entry.getValue());
         }
     }
 

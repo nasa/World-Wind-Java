@@ -15,9 +15,6 @@ import gov.nasa.worldwind.util.Logging;
  */
 public class SymbolCode extends AVListImpl
 {
-    // Constants for the fields of a symbol code. These constants match the property
-    // names used by tactical graphic implementation classes, so factories can use
-    // reflection to configure graphic objects.
     public static final String SCHEME = "Scheme";
     public static final String STANDARD_IDENTITY = "StandardIdentity";
     public static final String CATEGORY = "Category";
