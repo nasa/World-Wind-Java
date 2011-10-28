@@ -11,7 +11,6 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfaceImage;
-import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
@@ -73,15 +72,16 @@ public class Symbology extends ApplicationTemplate
 
         protected void createGraphics(RenderableLayer layer)
         {
-            TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
+            MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
+            MilStd2525TacticalGraphic graphic;
 
             // Create a Friendly Phase Line
             ArrayList<Position> positions = new ArrayList<Position>();
             positions.add(Position.fromDegrees(34.8221, -117.8043, 0));
             positions.add(Position.fromDegrees(34.8235, -117.7196, 0));
-            TacticalGraphic graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
+            graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: friendly");
-            graphic.setModifier(AVKey.TEXT, "A");
+            graphic.setText("A");
             layer.addRenderable(graphic);
 
             // Create a Hostile Phase Line
@@ -90,7 +90,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7328, -117.7305, 0));
             graphic = factory.createGraphic("GHGPGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile");
-            graphic.setModifier(AVKey.TEXT, "B");
+            graphic.setText("B");
             layer.addRenderable(graphic);
 
             // Create a Hostile, Anticipated, Phase Line
@@ -99,7 +99,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7445, -117.9252, 0));
             graphic = factory.createGraphic("GHGAGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile (anticipated)");
-            graphic.setModifier(AVKey.TEXT, "C");
+            graphic.setText("C");
             layer.addRenderable(graphic);
 
             // Create a General Area
@@ -110,7 +110,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7819, -117.6687, 0));
             graphic = factory.createGraphic("GHGPGAG----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "General Area");
-            graphic.setModifier(AVKey.TEXT, "Area");
+            graphic.setText("Area");
             layer.addRenderable(graphic);
 
             // Create an Airfield Zone
@@ -178,7 +178,7 @@ public class Symbology extends ApplicationTemplate
             // Create a Circular Target graphic
             Position position = (Position.fromDegrees(34.7202, -117.4278, 0));
             graphic = factory.createGraphic("GHFPATC-------X", position, null);
-            graphic.setModifier(AVKey.TEXT, "AG9999");
+            graphic.setText("AG9999");
             graphic.setModifier(AVKey.DISTANCE, 5000.0); // Radius of the circle
             graphic.setValue(AVKey.DISPLAY_NAME, "Circular Target");
             layer.addRenderable(graphic);
