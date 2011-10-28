@@ -174,6 +174,14 @@ public class Symbology extends ApplicationTemplate
             graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack");
             layer.addRenderable(graphic);
+
+            // Create a Circular Target graphic
+            Position position = (Position.fromDegrees(34.7202, -117.4278, 0));
+            graphic = factory.createGraphic("GHFPATC-------X", position, null);
+            graphic.setModifier(AVKey.TEXT, "AG9999");
+            graphic.setModifier(AVKey.DISTANCE, 5000.0); // Radius of the circle
+            graphic.setValue(AVKey.DISPLAY_NAME, "Circular Target");
+            layer.addRenderable(graphic);
         }
     }
 

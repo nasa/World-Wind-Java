@@ -16,6 +16,8 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.Ph
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.AreaTarget;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target.*;
 import gov.nasa.worldwind.util.*;
 
 import java.lang.reflect.*;
@@ -47,6 +49,9 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.classMap.put(Aviation.FUNCTION_ID, Aviation.class);
         this.classMap.put(MainAttack.FUNCTION_ID, MainAttack.class);
         this.classMap.put(AttackRotaryWing.FUNCTION_ID, AttackRotaryWing.class);
+        this.classMap.put(AreaTarget.FUNCTION_ID, AreaTarget.class);
+        this.classMap.put(CircularTarget.FUNCTION_ID, CircularTarget.class);
+        this.classMap.put(Bomb.FUNCTION_ID, Bomb.class);
     }
 
     /**

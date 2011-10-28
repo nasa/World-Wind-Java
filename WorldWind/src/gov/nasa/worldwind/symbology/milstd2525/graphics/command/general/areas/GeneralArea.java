@@ -291,11 +291,4 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
             }
         }
     }
-
-    @Override
-    protected void applyDefaultAttributes(ShapeAttributes attributes)
-    {
-        super.applyDefaultAttributes(attributes);
-        attributes.setDrawInterior(false);
-    }
 }

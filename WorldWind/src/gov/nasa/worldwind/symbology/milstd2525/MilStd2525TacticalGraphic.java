@@ -317,6 +317,9 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             attributes.setOutlineStippleFactor(6);
             attributes.setOutlineStipplePattern((short) 0xAAAA);
         }
+
+        // Most 2525 area graphic do not have a fill.
+        attributes.setDrawInterior(false);
     }
 
     protected void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes, ShapeAttributes shapeAttributes)
