@@ -4,10 +4,11 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis;
 
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
 
 import java.util.*;
 

@@ -4,9 +4,9 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.axis.ground;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground;
 
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.AbstractOffenseArrow;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
 
 /**
  * Implementation of the Supporting Attack graphic (hierarchy 2.X.2.5.2.1.4.2, SIDC: G*GPOLAGS-****X).

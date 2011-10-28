@@ -14,7 +14,8 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.axis.ground.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground.*;
 import gov.nasa.worldwind.util.*;
 
 import java.lang.reflect.*;
