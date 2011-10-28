@@ -153,6 +153,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String GRAYSCALE = "gov.nasa.worldwind.avkey.Grayscale";
     final String GREAT_CIRCLE = "gov.nasa.worldwind.avkey.GreatCircle";
 
+    final String HEADING = "gov.nasa.worldwind.avkey.HEADING";
     final String HEIGHT = "gov.nasa.worldwind.avkey.Height";
     final String HIDDEN = "gov.nasa.worldwind.avkey.Hidden";
     final String HORIZONTAL = "gov.nasa.worldwind.avkey.Horizontal";

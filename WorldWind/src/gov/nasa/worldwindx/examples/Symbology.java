@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.image.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Demonstrates how to create and render symbols from the MIL-STD-2525 symbol set. See the <a title="Symbology Usage
@@ -181,6 +181,18 @@ public class Symbology extends ApplicationTemplate
             graphic.setText("AG9999");
             graphic.setModifier(AVKey.DISTANCE, 5000.0); // Radius of the circle
             graphic.setValue(AVKey.DISPLAY_NAME, "Circular Target");
+            layer.addRenderable(graphic);
+
+            // Create a Rectangular Target graphic
+            position = (Position.fromDegrees(34.7275, -118.0544, 0));
+
+            AVListImpl modifiers = new AVListImpl();
+            // Length and width of the rectangle are specified as distance modifiers
+            modifiers.setValue(AVKey.DISTANCE, Arrays.asList(5000.0, 3000.0));
+
+            graphic = factory.createGraphic("GHFPATR-------X", position, modifiers);
+            graphic.setText("AB0176");
+            graphic.setValue(AVKey.DISPLAY_NAME, "Rectangular Target");
             layer.addRenderable(graphic);
         }
     }

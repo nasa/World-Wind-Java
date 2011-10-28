@@ -16,21 +16,22 @@ import java.awt.*;
 import java.util.*;
 
 /**
- * Implementation of the Circular Target graphic (hierarchy 2.X.4.3.1.2, SIDC: G*FPATC---****X).
+ * Implementation of the Rectangular Target graphic (hierarchy 2.X.4.3.1.1, SIDC: G*FPATR---****X).
  *
  * @author pabercrombie
  * @version $Id$
  */
-public class CircularTarget extends MilStd2525TacticalGraphic implements PreRenderable
+// TODO need to implement heading for SurfaceText
+public class RectangularTarget extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    public final static String FUNCTION_ID = "ATC---";
+    public final static String FUNCTION_ID = "ATR---";
 
-    protected SurfaceCircle circle;
+    protected SurfaceQuad quad;
     protected SurfaceText label;
 
-    public CircularTarget()
+    public RectangularTarget()
     {
-        this.circle = this.createShape();
+        this.quad = this.createShape();
     }
 
     /** {@inheritDoc} */
@@ -68,17 +69,59 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
             throw new IllegalArgumentException(message);
         }
 
-        this.circle.setCenter(iterator.next());
+        this.quad.setCenter(iterator.next());
     }
 
     /** {@inheritDoc} */
     @Override
     public void setModifier(String modifier, Object value)
     {
-        if (AVKey.DISTANCE.equals(modifier) && (value instanceof Double))
-            this.circle.setRadius((Double) value);
+        if (AVKey.DISTANCE.equals(modifier) && (value instanceof Iterable))
+            this.setDistanceModifier((Iterable) value);
+        else if (AVKey.HEADING.equals(modifier) && (value instanceof Angle))
+            this.quad.setHeading((Angle) value);
         else
             super.setModifier(modifier, value);
+    }
+
+    protected void setDistanceModifier(Iterable iterable)
+    {
+        Iterator iterator = iterable.iterator();
+        if (!iterator.hasNext())
+        {
+            String message = Logging.getMessage("Symbology.InsufficientValuesForModifier", AVKey.DISTANCE);
+            Logging.logger().severe(message);
+            return;
+        }
+
+        Object o = iterator.next();
+        if (o instanceof Double)
+        {
+            this.quad.setWidth((Double) o);
+        }
+        else
+        {
+            String message = Logging.getMessage("generic.UnexpectedObjectType", (o != null ? o.getClass() : null));
+            Logging.logger().severe(message);
+        }
+
+        if (!iterator.hasNext())
+        {
+            String message = Logging.getMessage("Symbology.InsufficientValuesForModifier", AVKey.DISTANCE);
+            Logging.logger().severe(message);
+            return;
+        }
+
+        o = iterator.next();
+        if (o instanceof Double)
+        {
+            this.quad.setHeight((Double) o);
+        }
+        else
+        {
+            String message = Logging.getMessage("generic.UnexpectedObjectType", (o != null ? o.getClass() : null));
+            Logging.logger().severe(message);
+        }
     }
 
     /** {@inheritDoc} */
@@ -86,7 +129,9 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     public Object getModifier(String modifier)
     {
         if (AVKey.DISTANCE.equals(modifier))
-            return this.circle.getRadius();
+            return Arrays.asList(this.quad.getWidth(), this.quad.getHeight());
+        if (AVKey.HEADING.equals(modifier))
+            return this.quad.getHeading();
         else
             return super.getModifier(modifier);
     }
@@ -94,25 +139,25 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(new Position(this.circle.getCenter(), 0));
+        return Arrays.asList(new Position(this.quad.getCenter(), 0));
     }
 
     /** {@inheritDoc} */
     public Position getReferencePosition()
     {
-        return this.circle.getReferencePosition();
+        return this.quad.getReferencePosition();
     }
 
     /** {@inheritDoc} */
     public void move(Position position)
     {
-        this.circle.move(position);
+        this.quad.move(position);
     }
 
     /** {@inheritDoc} */
     public void moveTo(Position position)
     {
-        this.circle.moveTo(position);
+        this.quad.moveTo(position);
     }
 
     @Override
@@ -148,7 +193,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
             this.label.preRender(dc);
         }
 
-        this.circle.preRender(dc);
+        this.quad.preRender(dc);
     }
 
     /**
@@ -158,7 +203,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        this.circle.render(dc);
+        this.quad.render(dc);
     }
 
     protected String createText(String text)
@@ -168,7 +213,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
 
     protected void determineLabelPosition()
     {
-        this.label.setPosition(new Position(this.circle.getCenter(), 0));
+        this.label.setPosition(new Position(this.quad.getCenter(), 0));
     }
 
     protected void determineLabelAttributes()
@@ -183,11 +228,11 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         this.label.setFont(font);
     }
 
-    protected SurfaceCircle createShape()
+    protected SurfaceQuad createShape()
     {
-        SurfaceCircle circle = new SurfaceCircle();
-        circle.setDelegateOwner(this);
-        circle.setAttributes(this.activeShapeAttributes);
-        return circle;
+        SurfaceQuad quad = new SurfaceQuad();
+        quad.setDelegateOwner(this);
+        quad.setAttributes(this.getActiveShapeAttributes());
+        return quad;
     }
 }

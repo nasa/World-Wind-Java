@@ -50,6 +50,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.classMap.put(AttackRotaryWing.FUNCTION_ID, AttackRotaryWing.class);
         this.classMap.put(AreaTarget.FUNCTION_ID, AreaTarget.class);
         this.classMap.put(CircularTarget.FUNCTION_ID, CircularTarget.class);
+        this.classMap.put(RectangularTarget.FUNCTION_ID, RectangularTarget.class);
         this.classMap.put(Bomb.FUNCTION_ID, Bomb.class);
     }
 
