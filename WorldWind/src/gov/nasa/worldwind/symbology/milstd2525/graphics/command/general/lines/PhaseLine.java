@@ -10,7 +10,6 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
@@ -39,6 +38,12 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
     public PhaseLine()
     {
         this.path = this.createPath();
+    }
+
+    /** {@inheritDoc} */
+    public String getCategory()
+    {
+        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */
@@ -85,16 +90,18 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
             return;
         }
 
-        if (this.labelStart == null)
-        {
-            this.createLabels();
-        }
-
         this.determineActiveAttributes();
-        this.determineLabelPositions(dc);
 
         if (this.isShowModifiers())
         {
+            if (this.labelStart == null)
+            {
+                this.createLabels();
+            }
+
+            this.determineLabelPositions(dc);
+            this.determineLabelAttributes();
+
             this.labelStart.preRender(dc);
             this.labelEnd.preRender(dc);
         }
@@ -118,6 +125,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         path.setPathType(AVKey.GREAT_CIRCLE);
         path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
         path.setDelegateOwner(this);
+        path.setAttributes(this.getActiveShapeAttributes());
         return path;
     }
 
@@ -172,50 +180,18 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         this.labelEnd.setPosition(new Position(ll, 0));
     }
 
-    public void setHighlighted(boolean highlighted)
+    protected void determineLabelAttributes()
     {
-        super.setHighlighted(highlighted);
-        this.path.setHighlighted(highlighted);
-    }
+        Color color = this.getLabelMaterial().getDiffuse();
 
-    /** Determine active attributes for this frame. */
-    protected void determineActiveAttributes()
-    {
-        ShapeAttributes shapeAttributes;
-        if (this.isHighlighted())
-        {
-            shapeAttributes = this.path.getHighlightAttributes();
-            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
-            if (highlightAttributes != null)
-            {
-                if (shapeAttributes == null)
-                {
-                    shapeAttributes = new BasicShapeAttributes();
-                    this.path.setHighlightAttributes(shapeAttributes);
-                }
+        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
+        if (font == null)
+            font = DEFAULT_FONT;
 
-                this.applyDefaultAttributes(shapeAttributes);
-                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
-            }
-        }
-        else
-        {
-            shapeAttributes = this.path.getAttributes();
-            if (shapeAttributes == null)
-            {
-                shapeAttributes = new BasicShapeAttributes();
-                this.path.setAttributes(shapeAttributes);
-            }
-            this.applyDefaultAttributes(shapeAttributes);
+        this.labelStart.setColor(color);
+        this.labelStart.setFont(font);
 
-            TacticalGraphicAttributes normalAttributes = this.getAttributes();
-            if (normalAttributes != null)
-            {
-                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
-            }
-            Color color = shapeAttributes.getOutlineMaterial().getDiffuse();
-            labelStart.setColor(color);
-            labelEnd.setColor(color);
-        }
+        this.labelEnd.setColor(color);
+        this.labelEnd.setFont(font);
     }
 }

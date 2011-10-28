@@ -11,7 +11,6 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.Logging;
 
@@ -33,8 +32,6 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
 
     /** Positions computed from the control points, used to draw the arrow path. */
     protected List<? extends Position> arrowPositions;
-
-    protected long frameTimestamp = -1L;
 
     /** Create a new arrow graphic. */
     public AbstractOffenseArrow()
@@ -105,18 +102,6 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void setHighlighted(boolean highlighted)
-    {
-        super.setHighlighted(highlighted);
-
-        for (Path path : this.paths)
-        {
-            path.setHighlighted(highlighted);
-        }
-    }
-
-    /** {@inheritDoc} */
     public Position getReferencePosition()
     {
         if (this.positions != null)
@@ -175,13 +160,6 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
         if (this.arrowPositions == null)
         {
             this.createShapePositions(dc);
-        }
-
-        long timeStamp = dc.getFrameTimeStamp();
-        if (this.frameTimestamp != timeStamp)
-        {
-            this.determineActiveAttributes();
-            this.frameTimestamp = timeStamp;
         }
 
         for (Path path : this.paths)
@@ -400,52 +378,7 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
         path.setPathType(AVKey.GREAT_CIRCLE);
         path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
         path.setDelegateOwner(this);
+        path.setAttributes(this.getActiveShapeAttributes());
         return path;
-    }
-
-    /** Determine active attributes for this frame. */
-    protected void determineActiveAttributes()
-    {
-        ShapeAttributes shapeAttributes;
-        if (this.isHighlighted())
-        {
-            shapeAttributes = this.paths[0].getHighlightAttributes();
-            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
-            if (highlightAttributes != null)
-            {
-                if (shapeAttributes == null)
-                {
-                    shapeAttributes = new BasicShapeAttributes();
-
-                    for (Path path : this.paths)
-                    {
-                        path.setHighlightAttributes(shapeAttributes);
-                    }
-                }
-
-                this.applyDefaultAttributes(shapeAttributes);
-                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
-            }
-        }
-        else
-        {
-            shapeAttributes = this.paths[0].getAttributes();
-            if (shapeAttributes == null)
-            {
-                shapeAttributes = new BasicShapeAttributes();
-
-                for (Path path : this.paths)
-                {
-                    path.setAttributes(shapeAttributes);
-                }
-            }
-            this.applyDefaultAttributes(shapeAttributes);
-
-            TacticalGraphicAttributes normalAttributes = this.getAttributes();
-            if (normalAttributes != null)
-            {
-                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
-            }
-        }
     }
 }

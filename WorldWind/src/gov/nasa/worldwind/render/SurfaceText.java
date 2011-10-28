@@ -156,9 +156,13 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
             throw new IllegalArgumentException(message);
         }
 
-        this.font = font;
-        this.textBounds = null; // Need to recompute bounds
-        this.updateModifiedTime();
+        // Only set the font if it is different than the active font
+        if (!font.equals(this.font))
+        {
+            this.font = font;
+            this.textBounds = null; // Need to recompute bounds
+            this.updateModifiedTime();
+        }
     }
 
     /** {@inheritDoc} */

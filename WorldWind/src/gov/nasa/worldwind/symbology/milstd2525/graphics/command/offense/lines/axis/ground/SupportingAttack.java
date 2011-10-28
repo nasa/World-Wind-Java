@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground;
 
+import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
 
 /**
@@ -18,6 +19,12 @@ public class SupportingAttack extends AbstractOffenseArrow
 {
     /** Function ID for the Phase Line. */
     public final static String FUNCTION_ID = "OLAGS-";
+
+    /** {@inheritDoc} */
+    public String getCategory()
+    {
+        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+    }
 
     /** {@inheritDoc} */
     public String getFunctionId()

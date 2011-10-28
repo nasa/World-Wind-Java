@@ -10,7 +10,6 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
@@ -28,26 +27,27 @@ public class Dummy extends MilStd2525TacticalGraphic
 
     protected Path path;
 
-    protected long frameTimestamp = -1L;
-
     public Dummy()
     {
         this.path = this.createPath();
+        this.path.setAttributes(this.getActiveShapeAttributes());
     }
 
+    /** {@inheritDoc} */
+    public String getCategory()
+    {
+        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+    }
+
+    /** {@inheritDoc} */
     public String getFunctionId()
     {
         return FUNCTION_ID;
     }
 
+    /** {@inheritDoc} */
     public void doRenderGraphic(DrawContext dc)
     {
-        if (this.frameTimestamp != dc.getFrameTimeStamp())
-        {
-            this.determineActiveAttributes();
-            this.frameTimestamp = dc.getFrameTimeStamp();
-        }
-
         this.path.render(dc);
     }
 
@@ -106,43 +106,6 @@ public class Dummy extends MilStd2525TacticalGraphic
     public void moveTo(Position position)
     {
         this.path.moveTo(position);
-    }
-
-    protected void determineActiveAttributes()
-    {
-        ShapeAttributes shapeAttributes;
-        if (this.isHighlighted())
-        {
-            shapeAttributes = this.path.getHighlightAttributes();
-            if (shapeAttributes == null)
-            {
-                shapeAttributes = new BasicShapeAttributes();
-                this.path.setHighlightAttributes(shapeAttributes);
-            }
-
-            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
-            if (highlightAttributes != null)
-            {
-                this.applyDefaultAttributes(shapeAttributes);
-                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
-            }
-        }
-        else
-        {
-            shapeAttributes = this.path.getAttributes();
-            if (shapeAttributes == null)
-            {
-                shapeAttributes = new BasicShapeAttributes();
-                this.path.setAttributes(shapeAttributes);
-            }
-            this.applyDefaultAttributes(shapeAttributes);
-
-            TacticalGraphicAttributes normalAttributes = this.getAttributes();
-            if (normalAttributes != null)
-            {
-                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
-            }
-        }
     }
 
     @Override

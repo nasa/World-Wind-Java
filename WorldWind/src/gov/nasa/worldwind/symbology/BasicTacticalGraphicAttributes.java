@@ -34,6 +34,13 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     protected Material textMaterial;
 
     /**
+     * Creates a new <code>BasicShapeAttributes</code>.
+     */
+    public BasicTacticalGraphicAttributes()
+    {
+    }
+
+    /**
      * Creates a new <code>BasicShapeAttributes</code> configured with the specified <code>attributes</code>.
      *
      * @param attributes the attributes to configure the new <code>BasicShapeAttributes</code> with.

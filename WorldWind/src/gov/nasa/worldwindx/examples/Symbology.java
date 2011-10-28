@@ -119,7 +119,7 @@ public class Symbology extends ApplicationTemplate
             positions.add(Position.fromDegrees(34.7219, -117.6089, 0));
             positions.add(Position.fromDegrees(34.6918, -117.5904, 0));
             positions.add(Position.fromDegrees(34.6818, -117.6665, 0));
-            graphic = factory.createGraphic("GPGPGAZ----AUSX", positions, null);
+            graphic = factory.createGraphic("GFGPGAZ----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Airfield Zone");
             layer.addRenderable(graphic);
 

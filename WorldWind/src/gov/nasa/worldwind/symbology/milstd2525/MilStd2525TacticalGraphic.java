@@ -11,6 +11,8 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
+
 /**
  * Base class for tactical graphics defined by <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a>.
  * See the TacticalGraphic <a title="Tactical Graphic Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-graphics/"
@@ -86,22 +88,34 @@ import gov.nasa.worldwind.util.Logging;
  */
 public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic
 {
+    public final static String HOSTILE_INDICATOR = "ENY";
+
+    /** The default highlight color. */
+    protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
+    /** Default font. */
+    public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-24");
+
     protected String text;
 
     protected boolean highlighted;
     protected boolean visible = true;
+    protected boolean showModifiers = true;
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
 
-    protected boolean showModifiers = true;
-
     protected String standardIdentity;
     protected String echelon;
-    protected String category;
     protected String status;
     protected String countryCode;
 
+    protected long frameTimestamp = -1L;
+
+    protected TacticalGraphicAttributes activeOverrides = new BasicTacticalGraphicAttributes();
+    protected ShapeAttributes activeShapeAttributes = new BasicShapeAttributes();
+
     public abstract String getFunctionId();
+
+    public abstract String getCategory();
 
     public abstract void doRenderGraphic(DrawContext dc);
 
@@ -111,7 +125,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         SymbolCode symCode = new SymbolCode();
         symCode.setValue(SymbolCode.STANDARD_IDENTITY, this.standardIdentity);
         symCode.setValue(SymbolCode.ECHELON, this.echelon);
-        symCode.setValue(SymbolCode.CATEGORY, this.category);
+        symCode.setValue(SymbolCode.CATEGORY, this.getCategory());
         symCode.setValue(SymbolCode.FUNCTION_ID, this.getFunctionId());
 
         return symCode.toString();
@@ -230,23 +244,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         this.standardIdentity = standardIdentity;
     }
 
-    public String getCategory()
-    {
-        return this.category;
-    }
-
-    public void setCategory(String category)
-    {
-        if (category == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.category = category;
-    }
-
     public String getEchelon()
     {
         return this.echelon;
@@ -322,6 +319,13 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             return;
         }
 
+        long timeStamp = dc.getFrameTimeStamp();
+        if (this.frameTimestamp != timeStamp)
+        {
+            this.determineActiveAttributes();
+            this.frameTimestamp = timeStamp;
+        }
+
         this.doRenderGraphic(dc);
 
         if (!this.isShowModifiers())
@@ -330,22 +334,96 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected void doRenderModifiers(DrawContext dc)
     {
         // Do nothing
     }
 
+    /** Determine active attributes for this frame. */
+    protected void determineActiveAttributes()
+    {
+        // Apply defaults for this graphic
+        this.applyDefaultAttributes(this.activeShapeAttributes);
+
+        if (this.isHighlighted())
+        {
+            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
+
+            // If the application specified overrides to the highlight attributes, then apply the overrides
+            if (highlightAttributes != null)
+            {
+                this.activeOverrides.copy(highlightAttributes);
+
+                // Apply overrides specified by application
+                this.applyOverrideAttributes(highlightAttributes, this.activeShapeAttributes);
+            }
+            else
+            {
+                // If no highlight attributes have been specified we need to use the normal attributes but adjust them
+                // to cause highlighting.
+                this.activeShapeAttributes.setOutlineMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeShapeAttributes.setInteriorMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
+            }
+        }
+        else
+        {
+            // Apply overrides specified by application
+            TacticalGraphicAttributes normalAttributes = this.getAttributes();
+            if (normalAttributes != null)
+            {
+                this.activeOverrides.copy(normalAttributes);
+                this.applyOverrideAttributes(normalAttributes, this.activeShapeAttributes);
+            }
+        }
+    }
+
+    /**
+     * Get the override attributes that are active for this frame.
+     *
+     * @return Override attributes. Values set in this bundle override defaults specified by the symbol set.
+     */
+    protected TacticalGraphicAttributes getActiveOverrideAttributes()
+    {
+        return this.activeOverrides;
+    }
+
+    /**
+     * Get the active shape attributes for this frame. The active attributes are created by applying application
+     * specified overrides to the default attributes specified by the symbol set.
+     *
+     * @return Active shape attributes.
+     */
+    protected ShapeAttributes getActiveShapeAttributes()
+    {
+        return this.activeShapeAttributes;
+    }
+
+    /**
+     * Get the Material that should be used to draw labels. If no override material has been specified, the graphic's
+     * outline Material is used for the labels.
+     *
+     * @return The Material that should be used when drawing labels. May change each frame.
+     */
+    protected Material getLabelMaterial()
+    {
+        Material material = this.activeOverrides.getTextModifierMaterial();
+        if (material != null)
+            return material;
+        else
+            return this.activeShapeAttributes.getOutlineMaterial();
+    }
+
     protected void applyDefaultAttributes(ShapeAttributes attributes)
     {
         String identity = this.getStandardIdentity();
-        if (SymbolCode.IDENTITY_FRIEND.equals(identity))
-        {
-            attributes.setOutlineMaterial(Material.BLACK);
-        }
-        else if (SymbolCode.IDENTITY_HOSTILE.equals(identity))
+        if (SymbolCode.IDENTITY_HOSTILE.equals(identity))
         {
             attributes.setOutlineMaterial(Material.RED);
+        }
+        else
+        {
+            attributes.setOutlineMaterial(Material.BLACK);
         }
 
         String status = this.getStatus();
@@ -370,7 +448,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         material = graphicAttributes.getOutlineMaterial();
         if (material != null)
         {
-            shapeAttributes.setInteriorMaterial(material);
+            shapeAttributes.setOutlineMaterial(material);
         }
 
         Double value = graphicAttributes.getInteriorOpacity();

@@ -8,7 +8,6 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.*;
@@ -25,8 +24,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 {
     public final static String FUNCTION_ID = "GAG---";
 
-    public final static String HOSTILE_INDICATOR = "ENY";
-
     protected SurfacePolygon polygon;
     protected SurfaceText label;
     protected List<SurfaceText> identityLabels;
@@ -35,7 +32,14 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     {
         this.polygon = new SurfacePolygon();
         this.polygon.setDelegateOwner(this);
+        this.polygon.setAttributes(this.getActiveShapeAttributes());
         this.setText("");
+    }
+
+    /** {@inheritDoc} */
+    public String getCategory()
+    {
+        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */
@@ -101,14 +105,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         }
     }
 
-    /** {@inheritDoc} Overridden to apply highlight to all parts of the graphic. */
-    @Override
-    public void setHighlighted(boolean highlighted)
-    {
-        super.setHighlighted(highlighted);
-        this.polygon.setHighlighted(highlighted);
-    }
-
     /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {
@@ -120,6 +116,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.makeShapes(dc);
 
         this.determineActiveAttributes();
+        this.determineLabelAttributes();
 
         if (this.identityLabels == null && SymbolCode.IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
         {
@@ -156,28 +153,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     public void doRenderGraphic(DrawContext dc)
     {
         this.polygon.render(dc);
-    }
-
-    /**
-     * Render the labels.
-     *
-     * @param dc Current draw context.
-     */
-    @Override
-    public void doRenderModifiers(DrawContext dc)
-    {
-        if (this.label != null)
-        {
-            this.label.render(dc);
-        }
-
-        if (this.identityLabels != null)
-        {
-            for (SurfaceText text : this.identityLabels)
-            {
-                text.render(dc);
-            }
-        }
     }
 
     protected String createText(String text)
@@ -240,54 +215,26 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         return count;
     }
 
-    /** Determine active attributes for this frame. */
-    protected void determineActiveAttributes()
+    protected void determineLabelAttributes()
     {
-        ShapeAttributes shapeAttributes;
-        if (this.isHighlighted())
-        {
-            shapeAttributes = this.polygon.getHighlightAttributes();
-            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
-            if (highlightAttributes != null)
-            {
-                if (shapeAttributes == null)
-                {
-                    shapeAttributes = new BasicShapeAttributes();
-                    this.polygon.setHighlightAttributes(shapeAttributes);
-                }
+        Color color = this.getLabelMaterial().getDiffuse();
 
-                this.applyDefaultAttributes(shapeAttributes);
-                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
-            }
+        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
+        if (font == null)
+            font = DEFAULT_FONT;
+
+        if (this.label != null)
+        {
+            this.label.setColor(color);
+            this.label.setFont(font);
         }
-        else
+
+        if (this.identityLabels != null)
         {
-            shapeAttributes = this.polygon.getAttributes();
-            if (shapeAttributes == null)
+            for (SurfaceText text : this.identityLabels)
             {
-                shapeAttributes = new BasicShapeAttributes();
-                this.polygon.setAttributes(shapeAttributes);
-            }
-            this.applyDefaultAttributes(shapeAttributes);
-
-            TacticalGraphicAttributes normalAttributes = this.getAttributes();
-            if (normalAttributes != null)
-            {
-                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
-            }
-
-            Color color = shapeAttributes.getOutlineMaterial().getDiffuse();
-            if (this.label != null)
-            {
-                this.label.setColor(color);
-            }
-
-            if (this.identityLabels != null)
-            {
-                for (SurfaceText text : this.identityLabels)
-                {
-                    text.setColor(color);
-                }
+                text.setColor(color);
+                text.setFont(font);
             }
         }
     }

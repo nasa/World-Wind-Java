@@ -41,21 +41,6 @@ public class AirfieldZone extends GeneralArea
         this.airfieldPaths = null; // Need to regenerate
     }
 
-    /** {@inheritDoc} Overridden to apply highlight to all parts of the graphic. */
-    @Override
-    public void setHighlighted(boolean highlighted)
-    {
-        super.setHighlighted(highlighted);
-
-        if (this.airfieldPaths != null)
-        {
-            for (Path path : this.airfieldPaths)
-            {
-                path.setHighlighted(highlighted);
-            }
-        }
-    }
-
     /** {@inheritDoc} Overridden to draw airfield graphic. */
     @Override
     public void doRenderGraphic(DrawContext dc)
@@ -144,30 +129,6 @@ public class AirfieldZone extends GeneralArea
         path.setDelegateOwner(this);
         path.setFollowTerrain(true);
         path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    protected void determineActiveAttributes()
-    {
-        super.determineActiveAttributes();
-
-        ShapeAttributes activeAttributes;
-        if (this.isHighlighted())
-        {
-            activeAttributes = this.polygon.getHighlightAttributes();
-            for (Path path : this.airfieldPaths)
-            {
-                path.setHighlightAttributes(activeAttributes);
-            }
-        }
-        else
-        {
-            activeAttributes = this.polygon.getAttributes();
-            for (Path path : this.airfieldPaths)
-            {
-                path.setAttributes(activeAttributes);
-            }
-        }
+        path.setAttributes(this.activeShapeAttributes);
     }
 }

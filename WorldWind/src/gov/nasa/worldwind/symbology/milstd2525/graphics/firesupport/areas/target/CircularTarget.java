@@ -9,7 +9,6 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.targe
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -17,6 +16,8 @@ import java.awt.*;
 import java.util.*;
 
 /**
+ * Implementation of the Circular Target graphic (hierarchy 2.X.4.3.1.2, SIDC: G*FPATC---****X).
+ *
  * @author pabercrombie
  * @version $Id$
  */
@@ -29,8 +30,13 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
 
     public CircularTarget()
     {
-        this.circle = new SurfaceCircle();
-        this.circle.setDelegateOwner(this);
+        this.circle = this.createShape();
+    }
+
+    /** {@inheritDoc} */
+    public String getCategory()
+    {
+        return SymbolCode.CATEGORY_FIRE_SUPPORT_COMBAT_SERVICE_SUPPORT;
     }
 
     /** {@inheritDoc} */
@@ -70,13 +76,9 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     public void setModifier(String modifier, Object value)
     {
         if (AVKey.DISTANCE.equals(modifier) && (value instanceof Double))
-        {
             this.circle.setRadius((Double) value);
-        }
         else
-        {
             super.setModifier(modifier, value);
-        }
     }
 
     /** {@inheritDoc} */
@@ -150,6 +152,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         if (this.label != null)
         {
             this.determineLabelPosition();
+            this.determineLabelAttributes();
             this.label.preRender(dc);
         }
 
@@ -166,20 +169,6 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         this.circle.render(dc);
     }
 
-    /**
-     * Render the labels.
-     *
-     * @param dc Current draw context.
-     */
-    @Override
-    public void doRenderModifiers(DrawContext dc)
-    {
-        if (this.label != null)
-        {
-            this.label.render(dc);
-        }
-    }
-
     protected String createText(String text)
     {
         return text;
@@ -190,58 +179,23 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         this.label.setPosition(new Position(this.circle.getCenter(), 0));
     }
 
-    protected int getPositionCount()
+    protected void determineLabelAttributes()
     {
-        int count = 0;
-        //noinspection UnusedDeclaration
-        for (Position p : this.getPositions())
-        {
-            count++;
-        }
-        return count;
+        Color color = this.getLabelMaterial().getDiffuse();
+
+        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
+        if (font == null)
+            font = DEFAULT_FONT;
+
+        this.label.setColor(color);
+        this.label.setFont(font);
     }
 
-    /** Determine active attributes for this frame. */
-    protected void determineActiveAttributes()
+    protected SurfaceCircle createShape()
     {
-        ShapeAttributes shapeAttributes;
-        if (this.isHighlighted())
-        {
-            shapeAttributes = this.circle.getHighlightAttributes();
-            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
-            if (highlightAttributes != null)
-            {
-                if (shapeAttributes == null)
-                {
-                    shapeAttributes = new BasicShapeAttributes();
-                    this.circle.setHighlightAttributes(shapeAttributes);
-                }
-
-                this.applyDefaultAttributes(shapeAttributes);
-                this.applyOverrideAttributes(highlightAttributes, shapeAttributes);
-            }
-        }
-        else
-        {
-            shapeAttributes = this.circle.getAttributes();
-            if (shapeAttributes == null)
-            {
-                shapeAttributes = new BasicShapeAttributes();
-                this.circle.setAttributes(shapeAttributes);
-            }
-            this.applyDefaultAttributes(shapeAttributes);
-
-            TacticalGraphicAttributes normalAttributes = this.getAttributes();
-            if (normalAttributes != null)
-            {
-                this.applyOverrideAttributes(normalAttributes, shapeAttributes);
-            }
-
-            Color color = shapeAttributes.getOutlineMaterial().getDiffuse();
-            if (this.label != null)
-            {
-                this.label.setColor(color);
-            }
-        }
+        SurfaceCircle circle = new SurfaceCircle();
+        circle.setDelegateOwner(this);
+        circle.setAttributes(this.activeShapeAttributes);
+        return circle;
     }
 }

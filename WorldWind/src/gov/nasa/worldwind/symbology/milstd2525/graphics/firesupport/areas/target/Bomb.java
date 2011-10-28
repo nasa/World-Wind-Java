@@ -6,9 +6,12 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
 
+import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
 
 /**
+ * Implementation of the Circular Target graphic (hierarchy 2.X.4.3.1.5, SIDC: G*FPATB---****X).
+
  * @author pabercrombie
  * @version $Id$
  */
@@ -22,6 +25,13 @@ public class Bomb extends GeneralArea
     protected String createText(String text)
     {
         return "BOMB";
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getCategory()
+    {
+        return SymbolCode.CATEGORY_FIRE_SUPPORT_COMBAT_SERVICE_SUPPORT;
     }
 
     /** {@inheritDoc} */
