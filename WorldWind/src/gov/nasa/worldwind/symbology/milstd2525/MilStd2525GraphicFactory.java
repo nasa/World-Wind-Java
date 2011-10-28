@@ -13,8 +13,8 @@ import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.PenetrationBox;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.axis.ground.SupportingAttack;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.axis.ground.*;
 import gov.nasa.worldwind.util.*;
 
 import java.lang.reflect.*;
@@ -43,6 +43,9 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.classMap.put(Dummy.FUNCTION_ID, Dummy.class);
         this.classMap.put(PenetrationBox.FUNCTION_ID, PenetrationBox.class);
         this.classMap.put(SupportingAttack.FUNCTION_ID, SupportingAttack.class);
+        this.classMap.put(Aviation.FUNCTION_ID, Aviation.class);
+        this.classMap.put(MainAttack.FUNCTION_ID, MainAttack.class);
+        this.classMap.put(AttackRotaryWing.FUNCTION_ID, AttackRotaryWing.class);
     }
 
     /**

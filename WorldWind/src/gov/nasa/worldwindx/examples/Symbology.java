@@ -132,13 +132,45 @@ public class Symbology extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Dummy (Deception/Decoy)");
             layer.addRenderable(graphic);
 
+            // Create a Main Attack graphic
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.4643, -117.7323, 0)); // Pt. 1: Tip of the arrow
+            positions.add(Position.fromDegrees(34.4962, -117.7808, 0)); // Pt. 2: First path control point
+            positions.add(Position.fromDegrees(34.4934, -117.8444, 0)); // Pt. N - 1: Last path control point
+            positions.add(Position.fromDegrees(34.4602, -117.8570, 0));
+            positions.add(Position.fromDegrees(34.4844, -117.7303, 0)); // Pt. N: Width of the arrow head
+            graphic = factory.createGraphic("GFGPOLAGM-----X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Main Attack");
+            layer.addRenderable(graphic);
+
+            // Create an Rotary Wing graphic
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.5610, -117.4541, 0));
+            positions.add(Position.fromDegrees(34.5614, -117.5852, 0));
+            positions.add(Position.fromDegrees(34.5287, -117.6363, 0));
+            positions.add(Position.fromDegrees(34.4726, -117.6363, 0));
+            positions.add(Position.fromDegrees(34.5820, -117.4700, 0));
+            graphic = factory.createGraphic("GFGPOLAR------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Attack, Rotary Wing");
+            layer.addRenderable(graphic);
+
+            // Create an Aviation offensive graphic
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.5437, -117.8007, 0));
+            positions.add(Position.fromDegrees(34.5535, -117.9256, 0));
+            positions.add(Position.fromDegrees(34.6051, -117.9707, 0));
+            positions.add(Position.fromDegrees(34.5643, -117.8219, 0));
+            graphic = factory.createGraphic("GFGPOLAV------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Aviation");
+            layer.addRenderable(graphic);
+
             // Create a Supporting Attack graphic
             positions = new ArrayList<Position>();
-            positions.add(Position.fromDegrees(34.5610, -117.4541, 0)); // Pt. 1: Tip of the arrow
-            positions.add(Position.fromDegrees(34.5614, -117.5852, 0)); // Pt. 2: First path control point
-            positions.add(Position.fromDegrees(34.5287, -117.6363, 0));
-            positions.add(Position.fromDegrees(34.4726, -117.6363, 0)); // Pt. N - 1: Last path control point
-            positions.add(Position.fromDegrees(34.5820, -117.4700, 0)); // Pt. N: Width of the arrow head
+            positions.add(Position.fromDegrees(34.4980, -117.5541, 0));
+            positions.add(Position.fromDegrees(34.4951, -117.4667, 0));
+            positions.add(Position.fromDegrees(34.4733, -117.4303, 0));
+            positions.add(Position.fromDegrees(34.4217, -117.4056, 0));
+            positions.add(Position.fromDegrees(34.4780, -117.53, 0));
             graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack");
             layer.addRenderable(graphic);
@@ -147,9 +179,9 @@ public class Symbology extends ApplicationTemplate
 
     public static void main(String[] args)
     {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.73);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.77);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 50000);
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.64);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.73);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 80000);
 
         ApplicationTemplate.start("World Wind Symbology", AppFrame.class);
     }
