@@ -181,8 +181,11 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
             throw new IllegalArgumentException(message);
         }
 
-        this.color = color;
-        this.updateModifiedTime();
+        if (!color.equals(this.color))
+        {
+            this.color = color;
+            this.updateModifiedTime();
+        }
     }
 
     /** {@inheritDoc} */
@@ -194,15 +197,18 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
     /** {@inheritDoc} */
     public void setBackgroundColor(Color background)
     {
-        if (this.bgColor == null)
+        if (background == null)
         {
             String message = Logging.getMessage("nullValue.ColorIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
 
-        this.bgColor = background;
-        this.updateModifiedTime();
+        if (!bgColor.equals(background))
+        {
+            this.bgColor = background;
+            this.updateModifiedTime();
+        }
     }
 
     /** {@inheritDoc} */
@@ -231,8 +237,12 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
 
     /**
      * Specifies a location relative to the label position at which to align the label. The label text begins at the
-     * point indicated by the offset. An offset of (0, 0) pixels aligns the left baseline of the text with the position.
-     * An offset of (-0.5, -0.5) fraction aligns the center of the text with the position.
+     * point indicated by the offset. An offset of (0, 0) aligns the left baseline of the text with the position. An
+     * offset of (-0.5, -0.5) fraction aligns the center of the text with the position.
+     * <p/>
+     * A pixel based offset is interpreted based on the geographic size of the text. For example, if the text rendered
+     * "normally" in two dimensions would be 20 pixels tall, and the geographic text is 100 meters tall, then each pixel
+     * of text corresponds to 5 meters. So an offset of 2 pixels would correspond to a geographic offset of 10 meters.
      *
      * @param offset Offset that controls where to position the label relative to its geographic location.
      */
@@ -245,8 +255,11 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
             throw new IllegalArgumentException(message);
         }
 
-        this.offset = offset;
-        this.updateModifiedTime();
+        if (!offset.equals(this.offset))
+        {
+            this.offset = offset;
+            this.updateModifiedTime();
+        }
     }
 
     /** {@inheritDoc} */
@@ -465,17 +478,30 @@ public class SurfaceText extends AbstractSurfaceObject implements GeographicText
         // Compute text extent depending on distance from eye
         Globe globe = dc.getGlobe();
 
-        double heightInMeters = this.textSizeInMeters;
-        double widthInMeters = heightInMeters * (this.textBounds.getWidth() / this.textBounds.getHeight());
+        double widthInPixels = this.textBounds.getWidth();
+        double heightInPixels = this.textBounds.getHeight();
 
-        double heightInRadians = heightInMeters / globe.getRadius();
-        double halfWidthInRadians = widthInMeters / globe.getRadius() / 2d;
+        double heightInMeters = this.textSizeInMeters;
+        double widthInMeters = heightInMeters * (widthInPixels / heightInPixels);
+
+        double radius = globe.getRadius();
+        double heightInRadians = heightInMeters / radius;
+        double widthInRadians = widthInMeters / radius;
+
+        // Compute the offset from the reference position. Convert pixels to meters based on the geographic size
+        // of the text.
+        Point2D point = this.getOffset().computeOffset(widthInPixels, heightInPixels, null, null);
+
+        double metersPerPixel = heightInMeters / heightInPixels;
+
+        double dxRadians = (point.getX() * metersPerPixel) / radius;
+        double dyRadians = (point.getY() * metersPerPixel) / radius;
 
         return new Sector(
-            this.location.latitude,
-            this.location.latitude.addRadians(heightInRadians),
-            this.location.longitude.subtractRadians(halfWidthInRadians),
-            this.location.longitude.addRadians(halfWidthInRadians)
+            this.location.latitude.addRadians(dyRadians),
+            this.location.latitude.addRadians(heightInRadians + dyRadians),
+            this.location.longitude.addRadians(dxRadians),
+            this.location.longitude.addRadians(widthInRadians + dxRadians)
         );
     }
 
