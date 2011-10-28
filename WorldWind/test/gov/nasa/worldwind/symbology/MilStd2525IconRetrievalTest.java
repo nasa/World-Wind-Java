@@ -19,8 +19,6 @@ public class MilStd2525IconRetrievalTest
     // TODO: test unframed icons
 
     // This path should correspond to the location of the appropriate symbology source icons on your system
-    private final static String PATH
-        = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
     private final static String URL
         = "http://worldwindserver.net/milstd2525/";
 
@@ -37,14 +35,6 @@ public class MilStd2525IconRetrievalTest
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
             AVListImpl params = new AVListImpl();
             BufferedImage img = symGen.createIcon("SUAPC----------", params);
-            assertNotNull(img);
-        }
-
-        @org.junit.Test
-        public void testFileRetrieval()
-        {
-            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(PATH);
-            BufferedImage img = symGen.createIcon("SUAPC----------");
             assertNotNull(img);
         }
     }
