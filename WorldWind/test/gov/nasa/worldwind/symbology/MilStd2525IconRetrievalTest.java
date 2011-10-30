@@ -203,6 +203,29 @@ public class MilStd2525IconRetrievalTest
         //////////////////////////////////////////////////////////
 
         @org.junit.Test
+        public void testSpaceFunctionIDRetrieval()
+        {
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
+            AVList params = new AVListImpl();
+            BufferedImage img = null;
+
+            for (String s : SpaceFunctionIDs)
+            {
+                img = symGen.createIcon("SUPP" + s + "-----", params);
+                assertNotNull("Icon " + "0.supp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SFPP" + s + "-----", params);
+                assertNotNull("Icon " + "1.sfpp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SNPP" + s + "-----", params);
+                assertNotNull("Icon " + "2.snpp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SHPP" + s + "-----", params);
+                assertNotNull("Icon " + "3.shpp" + s.toLowerCase() + "-----.png not found.", img);
+            }
+        }
+
+        @org.junit.Test
         public void testAirFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
@@ -253,6 +276,75 @@ public class MilStd2525IconRetrievalTest
         }
 
         @org.junit.Test
+        public void testSeaSurfaceFunctionIDRetrieval()
+        {
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
+            AVList params = new AVListImpl();
+            BufferedImage img = null;
+
+            for (String s : SeaSurfaceFunctionIDs)
+            {
+                img = symGen.createIcon("SUSP" + s + "-----", params);
+                assertNotNull("Icon " + "0.susp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SFSP" + s + "-----", params);
+                assertNotNull("Icon " + "1.sfsp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SNSP" + s + "-----", params);
+                assertNotNull("Icon " + "2.snsp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SHSP" + s + "-----", params);
+                assertNotNull("Icon " + "3.shsp" + s.toLowerCase() + "-----.png not found.", img);
+            }
+        }
+
+        @org.junit.Test
+        public void testSubsurfaceFunctionIDRetrieval()
+        {
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
+            AVList params = new AVListImpl();
+            BufferedImage img = null;
+
+            for (String s : SubsurfaceFunctionIDs)
+            {
+                img = symGen.createIcon("SUUP" + s + "-----", params);
+                assertNotNull("Icon " + "0.suup" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SFUP" + s + "-----", params);
+                assertNotNull("Icon " + "1.sfup" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SNUP" + s + "-----", params);
+                assertNotNull("Icon " + "2.snup" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SHUP" + s + "-----", params);
+                assertNotNull("Icon " + "3.shup" + s.toLowerCase() + "-----.png not found.", img);
+            }
+        }
+
+        @org.junit.Test
+        public void testSpecialOpsFunctionIDRetrieval()
+        {
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
+            AVList params = new AVListImpl();
+            BufferedImage img = null;
+
+            for (String s : SOFFunctionIDs)
+            {
+                img = symGen.createIcon("SUFP" + s + "-----", params);
+                assertNotNull("Icon " + "0.sufp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SFFP" + s + "-----", params);
+                assertNotNull("Icon " + "1.sffp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SNFP" + s + "-----", params);
+                assertNotNull("Icon " + "2.snfp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SHFP" + s + "-----", params);
+                assertNotNull("Icon " + "3.shfp" + s.toLowerCase() + "-----.png not found.", img);
+            }
+        }
+
+        @org.junit.Test
         public void testIconOverlayRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
@@ -287,6 +379,12 @@ public class MilStd2525IconRetrievalTest
         "installation_clover_overlay.png",
         "installation_diamond_overlay.png",
         "installation_rectangle_overlay.png"};
+
+    private final static String[] SpaceFunctionIDs = {"------",
+        "S-----",
+        "V-----",
+        "T-----",
+        "L-----"};
 
     private final static String[] AirFunctionIDs = {"------",
         "C-----",
@@ -975,5 +1073,191 @@ public class MilStd2525IconRetrievalTest
         "IT----",
         "IX----",
         "IXH---"};
+
+    private final static String[] SeaSurfaceFunctionIDs = {"------",
+        "C-----",
+        "CL----",
+        "CLCV--",
+        "CLBB--",
+
+        "CLCC--",
+        "CLDD--",
+        "CLFF--",
+        "CLLL--",
+        "CLLLAS",
+        "CLLLMI",
+        "CLLLSU",
+        "CA----",
+        "CALA--",
+        "CALS--",
+        "CALSM-",
+        "CALST-",
+        "CALC--",
+        "CM----",
+        "CMML--",
+        "CMMS--",
+        "CMMH--",
+        "CMMA--",
+        "CP----",
+        "CPSB--",
+        "CPSU--",
+        "CPSUM-",
+        "CPSUT-",
+        "CPSUG-",
+        "CH----",
+
+        "G-----",
+        "GT----",
+        "GG----",
+        "GU----",
+        "GC----",
+        "CD----",
+        "CU----",
+        "CUM---",
+        "CUS---",
+        "CUN---",
+        "CUR---",
+        "N-----",
+        "NR----",
+        "NF----",
+        "NI----",
+        "NS----",
+        "NM----",
+        "NH----",
+        //"X-----",     // icon not used
+        "XM----",
+        "XMC---",
+        "XMR---",
+        "XMO---",
+        "XMTU--",
+        "XMF---",
+
+        "XMP---",
+        "XMH---",
+        "XMTO--",
+        "XF----",
+        "XFDF--",
+        "XFDR--",
+        "XFTR--",
+        "XR----",
+        "XL----",
+        "XH----",
+        "XA----",
+        "XAR---",
+        "XAS---",
+        "XP----",
+        "O-----"};
+
+    private final static String[] SubsurfaceFunctionIDs = {"------",
+        "S-----",
+        "SF----",
+        "SB----",
+        "SR----",
+        "SX----",
+        "SN----",
+        "SNF---",
+        "SNA---",
+        "SNM---",
+
+        "SNG---",
+        "SNB---",
+        "SC----",
+        "SCF---",
+        "SCA---",
+        "SCM---",
+        "SCG---",
+        "SCB---",
+        "SO----",
+        "SOF---",
+        "SU----",
+        "SUM---",
+        "SUS---",
+        "SUN---",
+        "S1----",
+        "S2----",
+        "S3----",
+        "S4----",
+        "SL----",
+        "SK----",
+        "W-----",
+        "WT----",
+        "WM----",
+        "WMD---",
+        "WMG---",
+
+        "WMGD--",
+        "WMGX--",
+        "WMGE--",
+        "WMGC--",
+        "WMGR--",
+        "WMGO--",
+        "WMM---",
+        "WMMD--",
+        "WMMX--",
+        "WMME--",
+        "WMMC--",
+        "WMMR--",
+        "WMMO--",
+        "WMF---",
+        "WMFD--",
+        "WMFX--",
+        "WMFE--",
+        "WMFC--",
+        "WMFR--",
+        "WMFO--",
+        "WMO---",
+        "WMOD--",
+        "WMX---",
+        "WME---",
+        "WMA---",
+
+        "WMC---",
+        "WMR---",
+        "WMB---",
+        "WMBD--",
+        "WMN---",
+        "WMS---",
+        "WMSX--",
+        "WMSD--",
+        "WD----",
+        "WDM---",
+        "WDMG--",
+        "WDMM--",
+        //"N-----",         // icon not used
+        "ND----",
+        "E-----",
+        "V-----",
+        "X-----"};
+
+    private final static String[] SOFFunctionIDs = {"------",
+        "A-----",
+        "AF----",
+        "AFA---",
+        "AFK---",
+        "AFU---",
+        "AFUL--",
+        "AFUM--",
+
+        "AFUH--",
+        "AV----",
+        "AH----",
+        "AHH---",
+        "AHA---",
+        "AHU---",
+        "AHUL--",
+        "AHUM--",
+        "AHUH--",
+        "N-----",
+        "NS----",
+        "NU----",
+        "NB----",
+        "NN----",
+        "G-----",
+        "GS----",
+        "GR----",
+        "GP----",
+        "GPA---",
+        "GC----",
+        "B-----"};
 }
 

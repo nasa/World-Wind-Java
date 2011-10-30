@@ -240,7 +240,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
         if (img == null)
         {
-            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
+            String msg = Logging.getMessage("Symbology.SymbolIconOverlayNotFound", filename);
             Logging.logger().severe(msg);
             throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
         }
