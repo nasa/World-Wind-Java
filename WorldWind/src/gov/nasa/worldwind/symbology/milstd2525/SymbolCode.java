@@ -6,26 +6,23 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.util.Logging;
 
 /**
+ * Class to parse and manipulate MIL-STD-2525 Symbol Identifier Codes (SIDC). Different sections of the 2525
+ * specification use different types of symbol codes, so not all fields will be defined in every code.
+ * <p/>
+ * Fields in a parsed symbol code can be accessed using explicit get and set methods, or using String keys. The possible
+ * keys are: <ul><li>AVKey.SCHEME</li> <li>AVKey.STANDARD_IDENTITY</li> <li>AVKey.CATEGORY</li>
+ * <li>AVKey.BATTLE_DIMENSION</li> <li>AVKey.FUNCTION_ID</li> <li>AVKey.ECHELON</li> <li>AVKey.SYMBOL_MODIFIER</li>
+ * <li>AVKey.STATUS</li> <li>AVKey.COUNTRY_CODE</li> <li>AVKey.ORDER_OF_BATTLE</li> </ul>
+ *
  * @author pabercrombie
  * @version $Id$
  */
 public class SymbolCode extends AVListImpl
 {
-    public static final String SCHEME = "Scheme";
-    public static final String STANDARD_IDENTITY = "StandardIdentity";
-    public static final String CATEGORY = "Category";
-    public static final String BATTLE_DIMENSION = "BattleDimension";
-    public static final String FUNCTION_ID = "FunctionId";
-    public static final String ECHELON = "Echelon";
-    public static final String SYMBOL_MODIFIER = "SymbolModifier";
-    public static final String STATUS = "Status";
-    public static final String COUNTRY_CODE = "CountryCode";
-    public static final String ORDER_OF_BATTLE = "OrderOfBattle";
-
     public static final String SCHEME_WARFIGHTING = "S";
     public static final String SCHEME_TACTICAL_GRAPHICS = "G";
 
@@ -70,11 +67,17 @@ public class SymbolCode extends AVListImpl
     public static final int COLOR_HOSTILE = 0;        // red
     public static final int COLOR_CIVILIAN = 300;     // purple   TODO:  Sat = 37, not 50
 
+    /** Create a new symbol code. All fields will be null. */
     public SymbolCode()
     {
         // Intentionally blank
     }
 
+    /**
+     * Parse an SIDC code.
+     *
+     * @param symCode Symbol code to parse.
+     */
     public SymbolCode(String symCode)
     {
         if (symCode == null)
@@ -109,34 +112,234 @@ public class SymbolCode extends AVListImpl
         }
     }
 
+    /**
+     * Retrieves the Coding Scheme field of the symbol code.
+     *
+     * @return The value of the coding scheme field. May be null.
+     */
+    public String getScheme()
+    {
+        return this.getStringValue(AVKey.SCHEME);
+    }
+
+    /**
+     * Sets the value of the Coding Scheme field.
+     *
+     * @param scheme New value for the coding scheme field. May be null.
+     */
+    public void setScheme(String scheme)
+    {
+        this.setValue(AVKey.SCHEME, scheme);
+    }
+
+    /**
+     * Retrieves the StandardIdentity field of the symbol code.
+     *
+     * @return The value of the standard identity field. May be null.
+     */
+    public String getStandardIdentity()
+    {
+        return this.getStringValue(AVKey.STANDARD_IDENTITY);
+    }
+
+    /**
+     * Sets the value of the Standard Identity field.
+     *
+     * @param value New value for the coding scheme field. May be null.
+     */
+    public void setStandardIdentity(String value)
+    {
+        this.setValue(AVKey.STANDARD_IDENTITY, value);
+    }
+
+    /**
+     * Retrieves the Category field of the symbol code.
+     *
+     * @return The value of the category field. May be null.
+     */
+    public String getCategory()
+    {
+        return this.getStringValue(AVKey.CATEGORY);
+    }
+
+    /**
+     * Sets the value of the Category field.
+     *
+     * @param value New value for the coding scheme field. May be null.
+     */
+    public void setCategory(String value)
+    {
+        this.setValue(AVKey.CATEGORY, value);
+    }
+
+    /**
+     * Retrieves the Battle Dimension field of the symbol code.
+     *
+     * @return The value of the battle dimension field. May be null.
+     */
+    public String getBattleDimension()
+    {
+        return this.getStringValue(AVKey.BATTLE_DIMENSION);
+    }
+
+    /**
+     * Sets the value of the Battle Dimension field.
+     *
+     * @param value New value for the Battle Dimension field. May be null.
+     */
+    public void setBattleDimension(String value)
+    {
+        this.setValue(AVKey.BATTLE_DIMENSION, value);
+    }
+
+    /**
+     * Retrieves the Function ID field of the symbol code.
+     *
+     * @return The value of the function ID field. May be null.
+     */
+    public String getFunctionId()
+    {
+        return this.getStringValue(AVKey.FUNCTION_ID);
+    }
+
+    /**
+     * Sets the value of the Function ID field.
+     *
+     * @param value New value for the Function ID field. May be null.
+     */
+    public void setFunctionId(String value)
+    {
+        this.setValue(AVKey.FUNCTION_ID, value);
+    }
+
+    /**
+     * Retrieves the Echelon field of the symbol code.
+     *
+     * @return The value of the echelon field. May be null.
+     */
+    public String getEchelon()
+    {
+        return this.getStringValue(AVKey.ECHELON);
+    }
+
+    /**
+     * Sets the value of the Echelon field.
+     *
+     * @param value New value for the Echelon field. May be null.
+     */
+    public void setEchelon(String value)
+    {
+        this.setValue(AVKey.ECHELON, value);
+    }
+
+    /**
+     * Retrieves the Symbol Modifier field of the symbol code.
+     *
+     * @return The value of the Symbol Modifier field. May be null.
+     */
+    public String getSymbolModifier()
+    {
+        return this.getStringValue(AVKey.SYMBOL_MODIFIER);
+    }
+
+    /**
+     * Sets the value of the Symbol Modifier field.
+     *
+     * @param value New value for the Symbol Modifier field. May be null.
+     */
+    public void setSymbolModifier(String value)
+    {
+        this.setValue(AVKey.SYMBOL_MODIFIER, value);
+    }
+
+    /**
+     * Retrieves the Status/Operation Condition field of the symbol code.
+     *
+     * @return The value of the Status field. May be null.
+     */
+    public String getStatus()
+    {
+        return this.getStringValue(AVKey.STATUS);
+    }
+
+    /**
+     * Sets the value of the Status field.
+     *
+     * @param value New value for the Status field. May be null.
+     */
+    public void setStatus(String value)
+    {
+        this.setValue(AVKey.STATUS, value);
+    }
+
+    /**
+     * Retrieves the Country Code field of the symbol code.
+     *
+     * @return The value of the Country Code field. May be null.
+     */
+    public String getCountryCode()
+    {
+        return this.getStringValue(AVKey.COUNTRY_CODE);
+    }
+
+    /**
+     * Sets the value of the Country Code field.
+     *
+     * @param value New value for the Country Code field. May be null.
+     */
+    public void setCountryCode(String value)
+    {
+        this.setValue(AVKey.COUNTRY_CODE, value);
+    }
+
+    /**
+     * Retrieves the Order of Battle field of the symbol code.
+     *
+     * @return The value of the Order of Battle field. May be null.
+     */
+    public String getOrderOfBattle()
+    {
+        return this.getStringValue(AVKey.ORDER_OF_BATTLE);
+    }
+
+    /**
+     * Sets the value of the Order of Battle field.
+     *
+     * @param value New value for the Order of Battle field. May be null.
+     */
+    public void setOrderOfBattle(String value)
+    {
+        this.setValue(AVKey.ORDER_OF_BATTLE, value);
+    }
+
     protected void parseTacticalGraphic(String symCode)
     {
         char c = symCode.charAt(1);
-        this.setValue(SymbolCode.STANDARD_IDENTITY, Character.toString(c));
+        this.setStandardIdentity(Character.toString(c));
 
         c = symCode.charAt(2);
-        this.setValue(SymbolCode.CATEGORY, Character.toString(c));
+        this.setCategory(Character.toString(c));
 
         c = symCode.charAt(3);
-        this.setValue(SymbolCode.STATUS, Character.toString(c));
+        this.setStatus(Character.toString(c));
 
         String s = symCode.substring(4, 10);
-        this.setValue(SymbolCode.FUNCTION_ID, s);
+        this.setFunctionId(s);
 
         s = symCode.substring(10, 12);
-        this.setValue(SymbolCode.ECHELON, s);
+        this.setEchelon(s);
 
         s = symCode.substring(12, 14);
-        this.setValue(SymbolCode.COUNTRY_CODE, s);
+        this.setCountryCode(s);
 
         s = symCode.substring(14, 15);
-        this.setValue(SymbolCode.ORDER_OF_BATTLE, s);
+        this.setOrderOfBattle(s);
     }
 
     protected void parseTacticalSymbol(String symCode)
     {
         char c = symCode.charAt(0);
-        this.setValue(SymbolCode.SCHEME, Character.toString(c));
+        this.setScheme(Character.toString(c));
 
         c = symCode.charAt(1);
         if ("PUAFNSHGWMDLJKpuafnshgwmdljk".indexOf(c) == -1)
@@ -146,7 +349,7 @@ public class SymbolCode extends AVListImpl
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.setValue(SymbolCode.STANDARD_IDENTITY, Character.toString(c));
+        this.setStandardIdentity(Character.toString(c));
 
         c = symCode.charAt(2);
         if ("PAGSUFXZpagsufxz".indexOf(c) == -1)
@@ -156,7 +359,7 @@ public class SymbolCode extends AVListImpl
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.setValue(SymbolCode.BATTLE_DIMENSION, Character.toString(c));
+        this.setBattleDimension(Character.toString(c));
 
         c = symCode.charAt(3);
         if ("APCDXFapcdxf".indexOf(c) == -1)
@@ -166,16 +369,16 @@ public class SymbolCode extends AVListImpl
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.setValue(SymbolCode.STATUS, Character.toString(c));
+        this.setStatus(Character.toString(c));
 
         String s = symCode.substring(4, 10);
-        this.setValue(SymbolCode.FUNCTION_ID, s);
+        this.setFunctionId(s);
 
         s = symCode.substring(10, 12);
-        this.setValue(SymbolCode.SYMBOL_MODIFIER, s);
+        this.setSymbolModifier(s);
 
         s = symCode.substring(12, 14);
-        this.setValue(SymbolCode.COUNTRY_CODE, s);
+        this.setCountryCode(s);
 
         c = symCode.charAt(14);
         if ("-AECGNSaecgns".indexOf(c) == -1)
@@ -185,7 +388,7 @@ public class SymbolCode extends AVListImpl
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-        this.setValue(SymbolCode.ORDER_OF_BATTLE, Character.toString(c));
+        this.setOrderOfBattle(Character.toString(c));
     }
 
     @Override
@@ -193,28 +396,28 @@ public class SymbolCode extends AVListImpl
     {
         StringBuilder sb = new StringBuilder();
 
-        String scheme = this.getStringValue(SCHEME);
+        String scheme = this.getScheme();
         if (SCHEME_TACTICAL_GRAPHICS.equals(scheme))
         {
             sb.append(scheme);
-            sb.append(this.getStringValue(STANDARD_IDENTITY));
-            sb.append(this.getStringValue(CATEGORY));
-            sb.append(this.getStringValue(STATUS));
-            sb.append(this.getStringValue(FUNCTION_ID));
-            sb.append(this.getStringValue(ECHELON));
-            sb.append(this.getStringValue(COUNTRY_CODE));
-            sb.append(this.getStringValue(ORDER_OF_BATTLE));
+            sb.append(this.getStandardIdentity());
+            sb.append(this.getCategory());
+            sb.append(this.getStatus());
+            sb.append(this.getFunctionId());
+            sb.append(this.getEchelon());
+            sb.append(this.getCountryCode());
+            sb.append(this.getOrderOfBattle());
         }
         else if (SCHEME_WARFIGHTING.equals(scheme))
         {
             sb.append(scheme);
-            sb.append(this.getStringValue(STANDARD_IDENTITY));
-            sb.append(this.getStringValue(BATTLE_DIMENSION));
-            sb.append(this.getStringValue(STATUS));
-            sb.append(this.getStringValue(FUNCTION_ID));
-            sb.append(this.getStringValue(SYMBOL_MODIFIER));
-            sb.append(this.getStringValue(COUNTRY_CODE));
-            sb.append(this.getStringValue(ORDER_OF_BATTLE));
+            sb.append(this.getStandardIdentity());
+            sb.append(this.getBattleDimension());
+            sb.append(this.getStatus());
+            sb.append(this.getFunctionId());
+            sb.append(this.getSymbolModifier());
+            sb.append(this.getCountryCode());
+            sb.append(this.getOrderOfBattle());
         }
 
         return sb.toString();

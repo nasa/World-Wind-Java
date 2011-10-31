@@ -34,6 +34,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String BALLOON = "gov.nasa.worldwind.avkey.Balloon";
     final String BALLOON_TEXT = "gov.nasa.worldwind.avkey.BalloonText";
     final String BACK = "gov.nasa.worldwind.avkey.Back";
+    final String BATTLE_DIMENSION = "gov.nasa.worldwind.avkey.BattleDimension";
     final String BEGIN = "gov.nasa.worldwind.avkey.Begin";
     final String BIG_ENDIAN = "gov.nasa.worldwind.avkey.BigEndian";
     final String BOTTOM = "gov.nasa.worldwind.avkey.Bottom";
@@ -44,6 +45,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String BOUNDS = "gov.nasa.worldwind.avkey.Bounds";
 
     final String CACHE_CONTENT_TYPES = "gov.nasa.worldwind.avkey.CacheContentTypes";
+    final String CATEGORY = "gov.nasa.worldwind.avkey.Category";
     final String CENTER = "gov.nasa.worldwind.avkey.Center";
 
     final String CLASS_LEVEL = "gov.nasa.worldwind.avkey.ClassLevel";
@@ -67,6 +69,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String COORDINATE_SYSTEM_UNKNOWN = "gov.nasa.worldwind.avkey.CoordinateSystem.Unknown";
 
     final String COUNTER_CLOCKWISE = "gov.nasa.worldwind.avkey.CounterClockWise";
+    final String COUNTRY_CODE = "gov.nasa.worldwind.avkey.CountryCode";
 
     final String DATABASE_CONNECTION_POOL_CLASS_NAME = "gov.nasa.worldwind.avkey.Database.ConnectionPoolClassName";
     final String DATABASE_CONNECTION_POOL_FACTORY_CLASS_NAME
@@ -104,6 +107,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String EARTH_ELEVATION_MODEL_CLASS_NAME = "gov.nasa.worldwind.avkey.EarthElevationModelClassName";
     final String EARTH_ELEVATION_MODEL_CONFIG_FILE = "gov.nasa.worldwind.avkey.EarthElevationModelConfigFile";
     final String EAST = "gov.nasa.worldwind.avkey.East";
+    final String ECHELON = "gov.nasa.worldwind.avkey.Echelon";
 
     final String ELEVATION = "gov.nasa.worldwind.avkey.Elevation";
     final String ELEVATION_EXTREMES_FILE = "gov.nasa.worldwind.avkey.ElevationExtremesFileKey";
@@ -135,6 +139,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String FORWARD = "gov.nasa.worldwind.avkey.Forward";
     final String FOV = "gov.nasa.worldwind.avkey.FieldOfView";
     final String FORCE_LEVEL_ZERO_LOADS = "gov.nasa.worldwind.avkey.ForceLevelZeroLoads";
+    final String FUNCTION_ID = "gov.nasa.worldwind.avkey.FunctionId";
     final String RETAIN_LEVEL_ZERO_TILES = "gov.nasa.worldwind.avkey.RetainLevelZeroTiles";
     final String FRACTION = "gov.nasa.worldwind.avkey.Fraction";
 
@@ -262,6 +267,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
 
     final String OFFLINE_MODE = "gov.nasa.worldwind.avkey.OfflineMode";
     final String OPACITY = "gov.nasa.worldwind.avkey.Opacity";
+    final String ORDER_OF_BATTLE = "gov.nasa.worldwind.avkey.OrderOfBattle";
     /**
      * Indicates an object's position in a series. When used as a key, the corresponding value must be an {@link
      * Integer} object indicating the ordinal.
@@ -376,6 +382,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String SCHEDULED_TASK_SERVICE_CLASS_NAME = "gov.nasa.worldwind.avkey.ScheduledTaskServiceClassName";
     final String SCENE_CONTROLLER = "gov.nasa.worldwind.avkey.SceneControllerObject";
     final String SCENE_CONTROLLER_CLASS_NAME = "gov.nasa.worldwind.avkey.SceneControllerClassName";
+    final String SCHEME = "gov.nasa.worldwind.avkey.Scheme";
     final String SCREEN = "gov.nasa.worldwind.avkey.ScreenObject";
     final String SCREEN_CREDIT = "gov.nasa.worldwind.avkey.ScreenCredit";
     final String SCREEN_CREDIT_LINK = "gov.nasa.worldwind.avkey.ScreenCreditLink";
@@ -426,7 +433,9 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String SIZE_FIXED = "gov.nasa.worldwind.avkey.SizeFixed";
     final String SPATIAL_REFERENCE_WKT = "gov.nasa.worldwind.avkey.SpatialReference.WKT";
     final String SOUTH = "gov.nasa.worldwdind.avkey.South";
+    final String STANDARD_IDENTITY = "gov.nasa.worldwdind.avkey.StandardIdentity";
     final String START = "gov.nasa.worldwind.avkey.Start";
+    final String STATUS = "gov.nasa.worldwind.avkey.Status";
     final String STEREO_FOCUS_ANGLE = "gov.nasa.worldwind.StereoFocusAngle";
     final String STEREO_INTEROCULAR_DISTANCE = "gov.nasa.worldwind.StereoFInterocularDistance";
     final String STEREO_MODE = "gov.nasa.worldwind.stereo.mode"; // lowercase to match Java property convention
@@ -439,6 +448,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String STOP = "gov.nasa.worldwind.avkey.Stop";
     final String STYLE_NAMES = "gov.nasa.worldwind.avkey.StyleNames";
     final String SURFACE_TILE_DRAW_CONTEXT = "gov.nasa.worldwind.avkey.SurfaceTileDrawContext";
+    final String SYMBOL_MODIFIER = "gov.nasa.worldwind.avkey.SymbolModifier";
 
     final String TESSELLATOR_CLASS_NAME = "gov.nasa.worldwind.avkey.TessellatorClassName";
     final String TEXTURE = "gov.nasa.worldwind.avkey.Texture";

@@ -123,10 +123,10 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public String getIdentifier()
     {
         SymbolCode symCode = new SymbolCode();
-        symCode.setValue(SymbolCode.STANDARD_IDENTITY, this.standardIdentity);
-        symCode.setValue(SymbolCode.ECHELON, this.echelon);
-        symCode.setValue(SymbolCode.CATEGORY, this.getCategory());
-        symCode.setValue(SymbolCode.FUNCTION_ID, this.getFunctionId());
+        symCode.setStandardIdentity(this.standardIdentity);
+        symCode.setEchelon(this.echelon);
+        symCode.setCategory(this.getCategory());
+        symCode.setFunctionId(this.getFunctionId());
 
         return symCode.toString();
     }
@@ -196,15 +196,15 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         {
             this.setText((String) value);
         }
-        else if (SymbolCode.STANDARD_IDENTITY.equals(modifier) && (value instanceof String))
+        else if (AVKey.STANDARD_IDENTITY.equals(modifier) && (value instanceof String))
         {
             this.setStandardIdentity((String) value);
         }
-        else if (SymbolCode.ECHELON.equals(modifier) && (value instanceof String))
+        else if (AVKey.ECHELON.equals(modifier) && (value instanceof String))
         {
             this.setEchelon((String) value);
         }
-        else if (SymbolCode.STATUS.equals(modifier) && (value instanceof String))
+        else if (AVKey.STATUS.equals(modifier) && (value instanceof String))
         {
             this.setStatus((String) value);
         }

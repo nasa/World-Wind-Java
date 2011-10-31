@@ -66,7 +66,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         // apply dotted border where required by Standard Identity (cases P, A, S, G, M)
-        String stdid = (String) symbolCode.getValue(SymbolCode.STANDARD_IDENTITY);
+        String stdid = symbolCode.getStandardIdentity();
         if ("PASGMpasgm".indexOf(stdid.charAt(0)) > -1)
         {
             BufferedImage dest = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -134,9 +134,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     {
         BufferedImage img = null;
         String filename = null;
-        String stdID = (String) symbolCode.getValue(SymbolCode.STANDARD_IDENTITY);
-        String battleDim = (String) symbolCode.getValue(SymbolCode.BATTLE_DIMENSION);
-        String functionID = (String) symbolCode.getValue(SymbolCode.FUNCTION_ID);
+        String stdID = symbolCode.getStandardIdentity();
+        String battleDim = symbolCode.getBattleDimension();
+        String functionID = symbolCode.getFunctionId();
 
         // TODO: handle special case of installations with overlays
 
@@ -251,7 +251,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static String getFilename(SymbolCode code)
     {
 
-        String standardID = (String) code.getValue(SymbolCode.STANDARD_IDENTITY);
+        String standardID = code.getStandardIdentity();
         standardID = standardID.toLowerCase();
 
         int prefix = 0;
@@ -294,12 +294,12 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         String padding = "-----";
 
         // handle special case of installations, as indicated by a 'H' in position 11
-        if ("Hh".indexOf(((String) code.getValue(SymbolCode.SYMBOL_MODIFIER)).charAt(0)) > -1)
+        if ("Hh".indexOf((code.getSymbolModifier()).charAt(0)) > -1)
             padding = "h----";
 
-        String result = Integer.toString(prefix) + '.' + code.getValue(SymbolCode.SCHEME).toString().toLowerCase()
-            + stdid + code.getValue(SymbolCode.BATTLE_DIMENSION).toString().toLowerCase()
-            + 'p' + code.getValue(SymbolCode.FUNCTION_ID).toString().toLowerCase()
+        String result = Integer.toString(prefix) + '.' + code.getScheme().toLowerCase()
+            + stdid + code.getBattleDimension().toLowerCase()
+            + 'p' + code.getFunctionId().toLowerCase()
             //+ code.getValue(SymbolCode.SYMBOL_MODIFIER).toString().toLowerCase()
             + padding + ".png";
         return result;

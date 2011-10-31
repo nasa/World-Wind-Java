@@ -126,7 +126,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      */
     protected Class getClassForCode(SymbolCode symbolCode)
     {
-        String key = symbolCode.getStringValue(SymbolCode.FUNCTION_ID);
+        String key = symbolCode.getFunctionId();
         return this.classMap.get(key);
     }
 }
