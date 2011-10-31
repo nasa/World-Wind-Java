@@ -76,61 +76,29 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
     @Override
     public void setModifier(String modifier, Object value)
     {
-        if (AVKey.DISTANCE.equals(modifier) && (value instanceof Iterable))
-            this.setDistanceModifier((Iterable) value);
+        // Map Length modifier to the width field of the quad, and Width modifier to height. MIL-STD-2525 uses different
+        // names for these dimensions than SurfaceQuad.
+        if (AVKey.LENGTH.equals(modifier) && (value instanceof Double))
+            this.quad.setWidth((Double) value);
+        else if (AVKey.WIDTH.equals(modifier) && (value instanceof Double))
+            this.quad.setHeight((Double) value);
         else if (AVKey.HEADING.equals(modifier) && (value instanceof Angle))
             this.quad.setHeading((Angle) value);
         else
             super.setModifier(modifier, value);
     }
 
-    protected void setDistanceModifier(Iterable iterable)
-    {
-        Iterator iterator = iterable.iterator();
-        if (!iterator.hasNext())
-        {
-            String message = Logging.getMessage("Symbology.InsufficientValuesForModifier", AVKey.DISTANCE);
-            Logging.logger().severe(message);
-            return;
-        }
-
-        Object o = iterator.next();
-        if (o instanceof Double)
-        {
-            this.quad.setWidth((Double) o);
-        }
-        else
-        {
-            String message = Logging.getMessage("generic.UnexpectedObjectType", (o != null ? o.getClass() : null));
-            Logging.logger().severe(message);
-        }
-
-        if (!iterator.hasNext())
-        {
-            String message = Logging.getMessage("Symbology.InsufficientValuesForModifier", AVKey.DISTANCE);
-            Logging.logger().severe(message);
-            return;
-        }
-
-        o = iterator.next();
-        if (o instanceof Double)
-        {
-            this.quad.setHeight((Double) o);
-        }
-        else
-        {
-            String message = Logging.getMessage("generic.UnexpectedObjectType", (o != null ? o.getClass() : null));
-            Logging.logger().severe(message);
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public Object getModifier(String modifier)
     {
-        if (AVKey.DISTANCE.equals(modifier))
-            return Arrays.asList(this.quad.getWidth(), this.quad.getHeight());
-        if (AVKey.HEADING.equals(modifier))
+        // Map Length modifier to the width field of the quad, and Width modifier to height. MIL-STD-2525 uses different
+        // names for these dimensions than SurfaceQuad.
+        if (AVKey.WIDTH.equals(modifier))
+            return this.quad.getHeight();
+        else if (AVKey.LENGTH.equals(modifier))
+            return this.quad.getWidth();
+        else if (AVKey.HEADING.equals(modifier))
             return this.quad.getHeading();
         else
             return super.getModifier(modifier);

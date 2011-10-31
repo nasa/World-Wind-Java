@@ -179,7 +179,7 @@ public class Symbology extends ApplicationTemplate
             Position position = (Position.fromDegrees(34.7202, -117.4278, 0));
             graphic = factory.createGraphic("GHFPATC-------X", position, null);
             graphic.setText("AG9999");
-            graphic.setModifier(AVKey.DISTANCE, 5000.0); // Radius of the circle
+            graphic.setModifier(AVKey.RADIUS, 5000.0); // Radius of the circle
             graphic.setValue(AVKey.DISPLAY_NAME, "Circular Target");
             layer.addRenderable(graphic);
 
@@ -188,7 +188,8 @@ public class Symbology extends ApplicationTemplate
 
             AVListImpl modifiers = new AVListImpl();
             // Length and width of the rectangle are specified as distance modifiers
-            modifiers.setValue(AVKey.DISTANCE, Arrays.asList(5000.0, 3000.0));
+            modifiers.setValue(AVKey.WIDTH, 3000.0);
+            modifiers.setValue(AVKey.LENGTH, 5000.0);
 
             graphic = factory.createGraphic("GHFPATR-------X", position, modifiers);
             graphic.setText("AB0176");

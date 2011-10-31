@@ -75,7 +75,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     @Override
     public void setModifier(String modifier, Object value)
     {
-        if (AVKey.DISTANCE.equals(modifier) && (value instanceof Double))
+        if (AVKey.RADIUS.equals(modifier) && (value instanceof Double))
             this.circle.setRadius((Double) value);
         else
             super.setModifier(modifier, value);
@@ -85,7 +85,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     @Override
     public Object getModifier(String modifier)
     {
-        if (AVKey.DISTANCE.equals(modifier))
+        if (AVKey.RADIUS.equals(modifier))
             return this.circle.getRadius();
         else
             return super.getModifier(modifier);
