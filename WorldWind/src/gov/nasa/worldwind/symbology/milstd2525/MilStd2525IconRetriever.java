@@ -31,7 +31,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     {
         if (symbolIdentifier == null)
         {
-            String msg = Logging.getMessage("null.StringIsNull");
+            String msg = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
@@ -45,7 +45,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     {
         if (symbolIdentifier == null)
         {
-            String msg = Logging.getMessage("null.StringIsNull");
+            String msg = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
