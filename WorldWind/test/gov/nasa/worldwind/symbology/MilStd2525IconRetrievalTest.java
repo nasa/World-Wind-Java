@@ -153,25 +153,31 @@ public class MilStd2525IconRetrievalTest
             }
         }
 
-        /*
         @org.junit.Test
         public void testInvalidFunctionID()
         {
-            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
-            BufferedImage img = symGen.createIcon("SUAPZ----------");
-            assertNull(img);
+            try
+            {
+                MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
+                BufferedImage img = symGen.createIcon("SUAPZ----------");
+                fail("Should raise an IllegalArgumentException");
+            }
+            catch (Exception e)
+            {
+            }
         }
 
+        /*
         @org.junit.Test
         public void testInvalidModifierCode()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
-            BufferedImage img = symGen.createIcon("SUAPCZZ--------");
+            BufferedImage img = symGen.createIcon("SUAP------ZZ---");
             assertNull(img);
         }
 
         @org.junit.Test
-        public void testInvalidModifierCode()
+        public void testInvalidCountryCode()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
             BufferedImage img = symGen.createIcon("SUAPC-------ZZ-");
@@ -201,6 +207,29 @@ public class MilStd2525IconRetrievalTest
         // iterating through all combinations of Standard Identity and FunctionID.
         // Battle Dimensions AIR and GROUND only are tested here.
         //////////////////////////////////////////////////////////
+
+        @org.junit.Test
+        public void testUnknownFunctionIDRetrieval()
+        {
+            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
+            AVList params = new AVListImpl();
+            BufferedImage img = null;
+
+            for (String s : UnknownFunctionIDs)
+            {
+                img = symGen.createIcon("SUZP" + s + "-----", params);
+                assertNotNull("Icon " + "0.suzp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SFZP" + s + "-----", params);
+                assertNotNull("Icon " + "1.sfzp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SNZP" + s + "-----", params);
+                assertNotNull("Icon " + "2.snzp" + s.toLowerCase() + "-----.png not found.", img);
+
+                img = symGen.createIcon("SHZP" + s + "-----", params);
+                assertNotNull("Icon " + "3.shzp" + s.toLowerCase() + "-----.png not found.", img);
+            }
+        }
 
         @org.junit.Test
         public void testSpaceFunctionIDRetrieval()
@@ -379,6 +408,8 @@ public class MilStd2525IconRetrievalTest
         "installation_clover_overlay.png",
         "installation_diamond_overlay.png",
         "installation_rectangle_overlay.png"};
+
+    private final static String[] UnknownFunctionIDs = {"------"};
 
     private final static String[] SpaceFunctionIDs = {"------",
         "S-----",

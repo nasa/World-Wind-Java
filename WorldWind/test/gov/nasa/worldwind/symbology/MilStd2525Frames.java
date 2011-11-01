@@ -39,26 +39,9 @@ public class MilStd2525Frames extends ApplicationTemplate
 
             //********************************
             // Standard Identity - Pending (P):
-/*
+
             // Battle Dimension: Unknown (Z)
             String symCode = "SPZP-----------";
-            BufferedImage img = symGen.createIcon(symCode);
-            Sector s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
-                Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
-            //SurfaceImage symbol = new SurfaceImage(img, s);
-            Position textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
-            SurfaceText labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            SurfaceText labelSI = new SurfaceText("Standard Identity: Pending (" + symCode.charAt(1) + ")", textPos);
-            SurfaceText labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            layer.addRenderable(symbol);
-            layer.addRenderable(labelSymCode);
-            layer.addRenderable(labelSI);
-            layer.addRenderable(labelBD);
-
-            deltaLon += deltaDeltaLon;
-*/
-            // Battle Dimension: Space (P)
-            String symCode = "SPPP-----------";
             BufferedImage img = symGen.createIcon(symCode);
             Sector s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
@@ -66,9 +49,28 @@ public class MilStd2525Frames extends ApplicationTemplate
             Position textPos = new Position(Angle.fromDegrees(47.73 + deltaLat),
                 Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
             SurfaceText labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            SurfaceText labelSI = new SurfaceText("Standard Identity: Pending (" + symCode.charAt(1) + ")",
+            SurfaceText labelSI = new SurfaceText("Standard Identity: Pending (" + symCode.charAt(1) + ")", textPos);
+            SurfaceText labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
                 textPos.subtract(Position.fromDegrees(0.01, 0)));
-            SurfaceText labelBD = new SurfaceText("Battle Dimension: Space (" + symCode.charAt(2) + ")",
+            layer.addRenderable(symbol);
+            layer.addRenderable(labelSymCode);
+            layer.addRenderable(labelSI);
+            layer.addRenderable(labelBD);
+
+            deltaLon += deltaDeltaLon;
+
+            // Battle Dimension: Space (P)
+            symCode = "SPPP-----------";
+            img = symGen.createIcon(symCode);
+            s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
+                Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
+            symbol = new SurfaceImage(img, s);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat),
+                Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
+            labelSI = new SurfaceText("Standard Identity: Pending (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Space (" + symCode.charAt(2) + ")",
                 textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
@@ -224,24 +226,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SUZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Unknown (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Unknown (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SUPP-----------";
@@ -355,7 +358,7 @@ public class MilStd2525Frames extends ApplicationTemplate
             textPos = new Position(Angle.fromDegrees(47.73 + deltaLat),
                 Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Pending (" + symCode.charAt(1) + ")",
+            labelSI = new SurfaceText("Standard Identity: Unknown (" + symCode.charAt(1) + ")",
                 textPos.subtract(Position.fromDegrees(0.01, 0)));
             labelBD = new SurfaceText("Battle Dimension: Sea Surface (" + symCode.charAt(2) + ")",
                 textPos.subtract(Position.fromDegrees(0.02, 0)));
@@ -410,24 +413,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SFZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Friend (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Friend (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SFPP-----------";
@@ -541,7 +545,7 @@ public class MilStd2525Frames extends ApplicationTemplate
             textPos = new Position(Angle.fromDegrees(47.73 + deltaLat),
                 Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Pending (" + symCode.charAt(1) + ")",
+            labelSI = new SurfaceText("Standard Identity: Friend (" + symCode.charAt(1) + ")",
                 textPos.subtract(Position.fromDegrees(0.01, 0)));
             labelBD = new SurfaceText("Battle Dimension: Sea Surface (" + symCode.charAt(2) + ")",
                 textPos.subtract(Position.fromDegrees(0.02, 0)));
@@ -596,24 +600,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SNZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Neutral (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Neutral (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SNPP-----------";
@@ -782,24 +787,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SHZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Hostile (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Hostile (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SHPP-----------";
@@ -913,7 +919,7 @@ public class MilStd2525Frames extends ApplicationTemplate
             textPos = new Position(Angle.fromDegrees(47.73 + deltaLat),
                 Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Pending (" + symCode.charAt(1) + ")",
+            labelSI = new SurfaceText("Standard Identity: Hostile (" + symCode.charAt(1) + ")",
                 textPos.subtract(Position.fromDegrees(0.01, 0)));
             labelBD = new SurfaceText("Battle Dimension: Sea Surface (" + symCode.charAt(2) + ")",
                 textPos.subtract(Position.fromDegrees(0.02, 0)));
@@ -968,24 +974,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SAZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Assumed Friend (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Assumed Friend (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SAPP-----------";
@@ -1154,24 +1161,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SSZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Suspect (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Suspect (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SSPP-----------";
@@ -1342,24 +1350,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SGZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Exercise Pending (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Exercise Pending (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SGPP-----------";
@@ -1528,24 +1537,25 @@ public class MilStd2525Frames extends ApplicationTemplate
             deltaLat -= 0.2f;
             deltaLon = 0.0f;
 
-            /*
             // Battle Dimension: Unknown (Z)
             symCode = "SWZP-----------";
             img = symGen.createIcon(symCode);
             s = new Sector(Angle.fromDegrees(47.6 + deltaLat), Angle.fromDegrees(47.7 + deltaLat),
                 Angle.fromDegrees(-122.33 + deltaLon), Angle.fromDegrees(-122.17 + deltaLon));
             symbol = new SurfaceImage(img, s);
-            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon), 0);
+            textPos = new Position(Angle.fromDegrees(47.73 + deltaLat), Angle.fromDegreesLongitude(-122.25 + deltaLon),
+                0);
             labelSymCode = new SurfaceText("Symbol Code: " + symCode, textPos);
-            labelSI = new SurfaceText("Standard Identity: Exercise Unknown (" + symCode.charAt(1) + ")", textPos.subtract(Position.fromDegrees(0.01, 0)));
-            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")", textPos.subtract(Position.fromDegrees(0.02, 0)));
+            labelSI = new SurfaceText("Standard Identity: Exercise Unknown (" + symCode.charAt(1) + ")",
+                textPos.subtract(Position.fromDegrees(0.01, 0)));
+            labelBD = new SurfaceText("Battle Dimension: Unknown (" + symCode.charAt(2) + ")",
+                textPos.subtract(Position.fromDegrees(0.02, 0)));
             layer.addRenderable(symbol);
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
 
             deltaLon += deltaDeltaLon;
-*/
 
             // Battle Dimension: Space (P)
             symCode = "SWPP-----------";
@@ -1729,9 +1739,8 @@ public class MilStd2525Frames extends ApplicationTemplate
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
-
-            deltaLon += deltaDeltaLon;
 */
+            deltaLon += deltaDeltaLon;
 
             // Battle Dimension: Space (P)
             symCode = "SDPP-----------";
@@ -1915,9 +1924,8 @@ public class MilStd2525Frames extends ApplicationTemplate
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
-
-            deltaLon += deltaDeltaLon;
 */
+            deltaLon += deltaDeltaLon;
 
             // Battle Dimension: Space (P)
             symCode = "SLPP-----------";
@@ -2101,9 +2109,8 @@ public class MilStd2525Frames extends ApplicationTemplate
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
-
-            deltaLon += deltaDeltaLon;
 */
+            deltaLon += deltaDeltaLon;
 
             // Battle Dimension: Space (P)
             symCode = "SMPP-----------";
@@ -2287,9 +2294,8 @@ public class MilStd2525Frames extends ApplicationTemplate
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
-
-            deltaLon += deltaDeltaLon;
 */
+            deltaLon += deltaDeltaLon;
 
             // Battle Dimension: Space (P)
             symCode = "SJPP-----------";
@@ -2473,9 +2479,8 @@ public class MilStd2525Frames extends ApplicationTemplate
             layer.addRenderable(labelSymCode);
             layer.addRenderable(labelSI);
             layer.addRenderable(labelBD);
-
-            deltaLon += deltaDeltaLon;
 */
+            deltaLon += deltaDeltaLon;
 
             // Battle Dimension: Space (P)
             symCode = "SKPP-----------";
