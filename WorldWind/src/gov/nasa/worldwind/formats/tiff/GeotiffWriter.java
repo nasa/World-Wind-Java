@@ -65,9 +65,12 @@ public class GeotiffWriter
 
     private void commonInitializer(File file) throws IOException
     {
-        if (!file.getParentFile().canWrite())
+        File parent = file.getParentFile();
+        if (parent == null)
+            parent = new File(System.getProperty("user.dir"));
+        if (!parent.canWrite())
         {
-            String msg = Logging.getMessage("generic.FolderNoWritePermission", file.getParentFile().getAbsolutePath());
+            String msg = Logging.getMessage("generic.FolderNoWritePermission", parent.getAbsolutePath());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
