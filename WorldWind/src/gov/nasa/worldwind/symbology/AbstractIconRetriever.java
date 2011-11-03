@@ -128,7 +128,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
 
         int srcWidth = src.getWidth();
         int srcHeight = src.getHeight();
-        float hueRatio = (float) hue / 359.0f;
+        float hueRatio = (float) (hue % 360) / 359.0f;
 
         for (int dy = 0; dy < srcHeight; dy++)
         {
@@ -141,7 +141,6 @@ public abstract class AbstractIconRetriever implements IconRetriever
                 if (HSBColor[1] > 0)    // pixel has color, so change it to designated hue
                 {
                     int alpha = c.getAlpha();        // save the old alpha value
-                    //int newColor = Color.HSBtoRGB((float)hue/360, HSBColor[1], HSBColor[2]);
                     int newColor = Color.HSBtoRGB(hueRatio, HSBColor[1], HSBColor[2]);
                     // convert to a Color object
                     c = new Color(newColor);

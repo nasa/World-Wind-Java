@@ -24,6 +24,9 @@ import gov.nasa.worldwind.util.Logging;
 public class SymbolCode extends AVListImpl
 {
     public static final String SCHEME_WARFIGHTING = "S";
+    public static final String SCHEME_SIGNALS_INTELLIGENCE = "I";
+    public static final String SCHEME_STABILITY_OPERATIONS = "O";
+    public static final String SCHEME_EMERGENCY_MANAGEMENT = "E";
     public static final String SCHEME_TACTICAL_GRAPHICS = "G";
 
     public static final String IDENTITY_PENDING = "P";
@@ -94,12 +97,15 @@ public class SymbolCode extends AVListImpl
             throw new IllegalArgumentException(msg);
         }
 
-        String scheme = symCode.substring(0, 1);
+        String scheme = symCode.substring(0, 1).toUpperCase();
         if (SCHEME_TACTICAL_GRAPHICS.equals(scheme))
         {
             this.parseTacticalGraphic(symCode);
         }
-        else if (SCHEME_WARFIGHTING.equals(scheme))
+        else if (SCHEME_WARFIGHTING.equals(scheme) ||
+            SCHEME_SIGNALS_INTELLIGENCE.equals(scheme) ||
+            SCHEME_STABILITY_OPERATIONS.equals(scheme) ||
+            SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
         {
             this.parseTacticalSymbol(symCode);
         }
@@ -129,7 +135,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setScheme(String scheme)
     {
-        this.setValue(AVKey.SCHEME, scheme);
+        this.setValue(AVKey.SCHEME, scheme.toUpperCase());
     }
 
     /**
@@ -149,7 +155,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setStandardIdentity(String value)
     {
-        this.setValue(AVKey.STANDARD_IDENTITY, value);
+        this.setValue(AVKey.STANDARD_IDENTITY, value.toUpperCase());
     }
 
     /**
@@ -169,7 +175,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setCategory(String value)
     {
-        this.setValue(AVKey.CATEGORY, value);
+        this.setValue(AVKey.CATEGORY, value.toUpperCase());
     }
 
     /**
@@ -189,7 +195,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setBattleDimension(String value)
     {
-        this.setValue(AVKey.BATTLE_DIMENSION, value);
+        this.setValue(AVKey.BATTLE_DIMENSION, value.toUpperCase());
     }
 
     /**
@@ -209,7 +215,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setFunctionId(String value)
     {
-        this.setValue(AVKey.FUNCTION_ID, value);
+        this.setValue(AVKey.FUNCTION_ID, value.toUpperCase());
     }
 
     /**
@@ -229,7 +235,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setEchelon(String value)
     {
-        this.setValue(AVKey.ECHELON, value);
+        this.setValue(AVKey.ECHELON, value.toUpperCase());
     }
 
     /**
@@ -249,7 +255,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setSymbolModifier(String value)
     {
-        this.setValue(AVKey.SYMBOL_MODIFIER, value);
+        this.setValue(AVKey.SYMBOL_MODIFIER, value.toUpperCase());
     }
 
     /**
@@ -269,7 +275,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setStatus(String value)
     {
-        this.setValue(AVKey.STATUS, value);
+        this.setValue(AVKey.STATUS, value.toUpperCase());
     }
 
     /**
@@ -289,7 +295,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setCountryCode(String value)
     {
-        this.setValue(AVKey.COUNTRY_CODE, value);
+        this.setValue(AVKey.COUNTRY_CODE, value.toUpperCase());
     }
 
     /**
@@ -309,7 +315,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setOrderOfBattle(String value)
     {
-        this.setValue(AVKey.ORDER_OF_BATTLE, value);
+        this.setValue(AVKey.ORDER_OF_BATTLE, value.toUpperCase());
     }
 
     protected void parseTacticalGraphic(String symCode)
@@ -340,6 +346,7 @@ public class SymbolCode extends AVListImpl
     {
         char c = symCode.charAt(0);
         this.setScheme(Character.toString(c));
+        String scheme = this.getScheme();
 
         c = symCode.charAt(1);
         if ("PUAFNSHGWMDLJKpuafnshgwmdljk".indexOf(c) == -1)
@@ -352,14 +359,43 @@ public class SymbolCode extends AVListImpl
         this.setStandardIdentity(Character.toString(c));
 
         c = symCode.charAt(2);
-        if ("PAGSUFXZpagsufxz".indexOf(c) == -1)
+        // Warfighting and Signals Intelligence schemes use Battle Dimension
+        if (SCHEME_WARFIGHTING.equals(scheme) ||
+            SCHEME_SIGNALS_INTELLIGENCE.equals(scheme))
         {
-            // Battle Dimension code not recognized
-            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
+            if ("PAGSUFXZpagsufxz".indexOf(c) == -1)
+            {
+                // Battle Dimension code not recognized
+                String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+            this.setBattleDimension(Character.toString(c));
         }
-        this.setBattleDimension(Character.toString(c));
+        // Stability Operations scheme uses Category
+        else if (SCHEME_STABILITY_OPERATIONS.equals(scheme))
+        {
+            if ("VLOIPGRvloipgr".indexOf(c) == -1)
+            {
+                // Stability Operations Category code not recognized
+                String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+            this.setCategory(Character.toString(c));
+        }
+        //  Emergency Management scheme uses Category
+        else if (SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+        {
+            if ("INOFinof".indexOf(c) == -1)
+            {
+                // Emergency Management Category code not recognized
+                String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+            this.setCategory(Character.toString(c));
+        }
 
         c = symCode.charAt(3);
         if ("APCDXFapcdxf".indexOf(c) == -1)
@@ -408,11 +444,24 @@ public class SymbolCode extends AVListImpl
             sb.append(this.getCountryCode());
             sb.append(this.getOrderOfBattle());
         }
-        else if (SCHEME_WARFIGHTING.equals(scheme))
+        else if (SCHEME_WARFIGHTING.equals(scheme) ||
+            SCHEME_SIGNALS_INTELLIGENCE.equals(scheme))
         {
             sb.append(scheme);
             sb.append(this.getStandardIdentity());
             sb.append(this.getBattleDimension());
+            sb.append(this.getStatus());
+            sb.append(this.getFunctionId());
+            sb.append(this.getSymbolModifier());
+            sb.append(this.getCountryCode());
+            sb.append(this.getOrderOfBattle());
+        }
+        else if (SCHEME_STABILITY_OPERATIONS.equals(scheme) ||
+            SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+        {
+            sb.append(scheme);
+            sb.append(this.getStandardIdentity());
+            sb.append(this.getCategory());
             sb.append(this.getStatus());
             sb.append(this.getFunctionId());
             sb.append(this.getSymbolModifier());

@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.image.*;
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Demonstrates how to create and render symbols from the MIL-STD-2525 symbol set. See the <a title="Symbology Usage
@@ -39,19 +39,27 @@ public class Symbology extends ApplicationTemplate
             this.createGraphics(layer);
 
             // Display a MIL-STD2525 tactical icon
+            //      Warfighting
             String URL = "http://worldwindserver.net/milstd2525/";
-            //String URL = "file:///C:/WorldWind/release/trunk/WorldWind/src/gov/nasa/worldwind/symbology/milstd2525/icons";
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
             AVListImpl params = new AVListImpl();
-            BufferedImage img = symGen.createIcon("SWGPIR----H----", params);
+            BufferedImage img = symGen.createIcon("SUGPIXH---H----", params);
             //BufferedImage img = symGen.createIcon("SKGPUSTST------", params);
             Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
                 Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
             SurfaceImage symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);
 
-            img = symGen.createIcon("SUGPIRM---H----");
+            //      Signals Intelligence
+            img = symGen.createIcon("IGAPSCO--------");
             s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
+                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
+            symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
+
+            //      Stability Operations
+            img = symGen.createIcon("OHOPYT---------");
+            s = new Sector(Angle.fromDegrees(34.58), Angle.fromDegrees(34.48),
                 Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
             symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);

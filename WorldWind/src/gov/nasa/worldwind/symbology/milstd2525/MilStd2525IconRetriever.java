@@ -96,6 +96,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             img = changeIconFillColor(img, SymbolCode.COLOR_HOSTILE);
         }
 
+        // TODO: remove this code
         // if exercise, add exercise amplifying overlay
         if (stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_PENDING) ||
             stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_UNKNOWN) ||
@@ -143,7 +144,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         if (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_PENDING) ||
             stdID.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_PENDING))
         {
-            if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
+            if (battleDim == null)
+                filename = "clover_overlay.png";
+            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
                 battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND) ||
                 battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SEA_SURFACE) ||
                 battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SOF))
@@ -167,7 +170,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_ASSUMED_FRIEND) ||
                 stdID.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_ASSUMED_FRIEND))
         {
-            if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
+            if (battleDim == null)
+                filename = "rectangle_overlay.png";
+            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
                 battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SEA_SURFACE))
             {
                 // 4. circle
@@ -208,7 +213,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
         else if (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_SUSPECT))
         {
-            if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
+            if (battleDim == null)
+                filename = "diamond_overlay.png";
+            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
                 battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND) ||
                 battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SEA_SURFACE) ||
                 battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SOF))
@@ -230,7 +237,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         // handle the special case of overlays for installations (Ground battle dimension only)
-        if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND)
+        if (battleDim != null && battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND)
             && "I".equalsIgnoreCase(functionID.substring(0, 1)))
         {
             filename = "installation_" + filename;
@@ -250,7 +257,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     protected static String getFilename(SymbolCode code)
     {
-
+        String scheme = code.getScheme();
         String standardID = code.getStandardIdentity();
         standardID = standardID.toLowerCase();
 
@@ -297,12 +304,20 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         if ("Hh".indexOf((code.getSymbolModifier()).charAt(0)) > -1)
             padding = "h----";
 
-        String result = Integer.toString(prefix) + '.' + code.getScheme().toLowerCase()
-            + stdid + code.getBattleDimension().toLowerCase()
+        String pos3 = code.getBattleDimension();
+        // Stability Operations and Emergency Management schemes
+        // use Category instead of Battle Dimension
+        if (SymbolCode.SCHEME_STABILITY_OPERATIONS.equals(scheme) ||
+            SymbolCode.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+        {
+            pos3 = code.getCategory();
+        }
+
+        return Integer.toString(prefix) + '.' + code.getScheme().toLowerCase()
+            + stdid + pos3.toLowerCase()
             + 'p' + code.getFunctionId().toLowerCase()
             //+ code.getValue(SymbolCode.SYMBOL_MODIFIER).toString().toLowerCase()
             + padding + ".png";
-        return result;
     }
 }
 
