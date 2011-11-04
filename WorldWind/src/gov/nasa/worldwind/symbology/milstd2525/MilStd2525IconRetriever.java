@@ -135,9 +135,11 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     {
         BufferedImage img = null;
         String filename = null;
+        String scheme = symbolCode.getScheme();
         String stdID = symbolCode.getStandardIdentity();
         String battleDim = symbolCode.getBattleDimension();
         String functionID = symbolCode.getFunctionId();
+        String symbolModifier = symbolCode.getSymbolModifier();
 
         // TODO: handle special case of installations with overlays
 
@@ -242,6 +244,12 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         {
             filename = "installation_" + filename;
         }
+        // handle case of Emergency Management installations, which have a Category but no Battle Dimension
+        else if (SymbolCode.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme) &&
+            symbolModifier.substring(0, 1).equals("H"))
+        {
+            filename = "installation_" + filename;
+        }
 
         img = retrieveImageFromURL(filename, img);
 
@@ -301,7 +309,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         String padding = "-----";
 
         // handle special case of installations, as indicated by a 'H' in position 11
-        if ("Hh".indexOf((code.getSymbolModifier()).charAt(0)) > -1)
+        // (except for Emergency Management icons, which do not have the 'H' in the filename)
+        if ("Hh".indexOf((code.getSymbolModifier()).charAt(0)) > -1 &&
+            !SymbolCode.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
             padding = "h----";
 
         String pos3 = code.getBattleDimension();
