@@ -64,6 +64,13 @@ public class Symbology extends ApplicationTemplate
             symbol = new SurfaceImage(img, s);
             layer.addRenderable(symbol);
 
+            //      Emergency Management
+            img = symGen.createIcon("ESFPBB----H----");
+            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
+                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
+            symbol = new SurfaceImage(img, s);
+            layer.addRenderable(symbol);
+
             // Display a MIL-STD1477 icon
             URL = "http://worldwindserver.net/milstd1477/";
             MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever(URL);
