@@ -429,12 +429,47 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
 
     protected void selectionChanged(MouseEvent mouseEvent)
     {
+        // Limit the end point to the World Window's viewport rectangle. This ensures that a user drag event to define
+        // the selection does not exceed the viewport and the viewing frustum. This is only necessary during mouse drag
+        // events because those events are reported when the cursor is outside the World Window's viewport.
+        Point p = this.limitPointToWorldWindow(mouseEvent.getPoint());
+
         // Specify the selection's end point and set the scene controller's pick rectangle to the selected rectangle.
         // We create a copy of the selected rectangle to insulate the scene controller from changes to rectangle
         // returned by ScreenRectangle.getSelection.
-        this.screenRect.endSelection(mouseEvent.getPoint());
+        this.screenRect.endSelection(p);
         this.wwd.getSceneController().setPickRectangle(
             this.screenRect.hasSelection() ? new Rectangle(this.screenRect.getSelection()) : null);
         this.wwd.redraw();
+    }
+
+    /**
+     * Limits the specified point's x and y coordinates to the World Window's viewport, and returns a new point with the
+     * limited coordinates. For example, if the World Window's viewport rectangle is x=0, y=0, width=100, height=100 and
+     * the point's coordinates are x=50, y=200 this returns a new point with coordinates x=50, y=100. If the specified
+     * point is already inside the World Window's viewport, this returns a new point with the same x and y coordinates
+     * as the specified point.
+     *
+     * @param point the point to limit.
+     *
+     * @return a new Point representing the specified point limited to the World Window's viewport rectangle.
+     */
+    protected Point limitPointToWorldWindow(Point point)
+    {
+        Rectangle viewport = this.wwd.getView().getViewport();
+
+        int x = point.x;
+        if (x < viewport.x)
+            x = viewport.x;
+        if (x > viewport.x + viewport.width)
+            x = viewport.x + viewport.width;
+
+        int y = point.y;
+        if (y < viewport.y)
+            y = viewport.y;
+        if (y > viewport.y + viewport.height)
+            y = viewport.y + viewport.height;
+
+        return new Point(x, y);
     }
 }
