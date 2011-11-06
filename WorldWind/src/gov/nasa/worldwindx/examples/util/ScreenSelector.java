@@ -6,46 +6,61 @@
 package gov.nasa.worldwindx.examples.util;
 
 import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwindx.applications.worldwindow.util.Util;
 
 import javax.media.opengl.GL;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
+import java.util.List;
 
 /**
- * ScreenSelector is an application utility that provides interactive screen rectangle selection with visual feedback.
- * The screen rectangle creating by using ScreenSelector is displayed on a layer, and is used as the WorldWindow's
- * selection box. Objects in the selected rectangle can be accessed by either calling the WorldWindow method {@link
- * gov.nasa.worldwind.WorldWindow#getObjectsInSelectionBox()}, or by registering a select listener and responding to
- * BOX_ROLLOVER select events.
+ * ScreenSelector is an application utility that provides interactive screen rectangle selection with visual feedback,
+ * and tracks the list of objects intersecting the screen rectangle. The screen rectangle is displayed on a layer
+ * created by ScreenSelector, and is used as the WorldWindow's pick rectangle to perform object selection. Objects
+ * intersecting the screen rectangle can be accessed by calling {@link #getSelectedObjects()}.
  * <p/>
  * <h3>Using ScreenSelector</h3>
  * <p/>
  * To use ScreenSelector in an application, create a new instance of ScreenSelector and specify the application's
- * WorldWindow as the sole parameter. The ScreenSelector registers itself as a mouse listener on the WorldWindow's input
- * handler. When the user wants to define a screen selection, call {@link #enable} and the ScreenSelector then
- * translates mouse events to changes in the screen selection and sets the WorldWindow's selection box to the selected
- * rectangle. The screen selection is displayed as a filled rectangle with a 1-pixel wide border drawn in the
- * ScreenSelector's current interiorColor and borderColor. The ScreenSelector consumes mouse events that it responds to
- * to prevent the World Wind View from responding to those same events. When the user selection is done, call {@link
- * #disable} and the ScreenSelector stops responding to mouse events and sets the WorldWindow's selection box to
- * <code>null</code>.
+ * WorldWindow as the sole parameter. When the user wants to define a screen selection, call {@link #enable} and the
+ * ScreenSelector then translates mouse events to changes in the selection rectangle. The selection rectangle is
+ * displayed as a filled rectangle with a 1-pixel wide border drawn in the interiorColor and borderColor. The
+ * ScreenSelector consumes mouse events it responds in order to suppress navigation events while the user is performing
+ * a selection. When the user selection is complete, call {@link #disable} and the ScreenSelector stops responding to
+ * mouse events.
+ * <p/>
+ * While the ScreenSelector is enabled it keeps track of the objects intersecting the selection rectangle, which can be
+ * accessed by calling getSelectedObjects. When the list of selected objects changes, SceneSelector sends
+ * SELECTION_STARTED, SELECTION_CHANGED, and SELECTION_ENDED messages to its message listeners. These three messages
+ * correspond to the user starting a selection, changing what's in the selection, and completing the selection. To
+ * receive a notification when the list of selected objects changes, register a MessageListener with the SceneSelector
+ * by calling {@link #addMessageListener(gov.nasa.worldwind.event.MessageListener)}.
+ * <p/>
+ * Note that enabling or disabling the ScreenSelector does not change its list of selected objects. The list of selected
+ * objects only changes in response to user input when the ScreenSelector is enabled.
  * <p/>
  * <h3>User Input</h3>
  * <p/>
- * When ScreenSelector is enabled, pressing the first mouse button and dragging a causes ScreenSelector to display the
- * selection rectangle and set the WorldWindow's pick rectangle to the selected rectangle. Subsequently releasing the
- * first mouse button causes ScreenSelector to stop displaying the selection rectangle, but does not change the
- * WorldWindow's pick rectangle (until the first mouse button is subsequently pressed or the ScreenSelector is
- * disabled). This enables the application to access the user's final selection by calling
- * WorldWindow.getObjectsInSelectionBox. To customize ScreenSelector's response to mouse events, create a subclass of
- * ScreenSelector and override the methods mousePressed, mouseReleased, and mouseDragged.
+ * When ScreenSelector is enabled, pressing the first mouse button causes ScreenSelector to set its selection to a
+ * rectangle at the cursor with zero width and height, then clear the list of selected objects. Subsequently dragging
+ * the mouse causes ScreenSelector to update its selection rectangle to include the starting point and the current
+ * cursor point, then update the list of objects intersecting that rectangle. Finally, releasing the first mouse button
+ * causes ScreenSelector to stop displaying the selection rectangle, but does not change the list of selected objects.
+ * Keeping the list of selected object available after the selection is complete enables applications to access the
+ * user's final selection by calling getSelectedObjects.
  * <p/>
- * ScreenSelector translates its raw mouse events to the semantic selection events selectionStarted, selectionEnded, and
- * selectionChanged. To customize how ScreenSelector responds to these semantic events without changing the user input
- * model, create a subclass of ScreenSelector and override any of these methods.
+ * To customize ScreenSelector's response to mouse events, create a subclass of ScreenSelector and override the methods
+ * mousePressed, mouseReleased, and mouseDragged. To customize ScreenSelector's response to screen rectangle select
+ * events, override the method selected.
+ * <p/>
+ * ScreenSelector translates its raw mouse events to the methods selectionStarted, selectionEnded, and selectionChanged.
+ * To customize how ScreenSelector responds to these semantic events without changing the user input model, create a
+ * subclass of ScreenSelector and override any of these methods.
  * <p/>
  * <h3>Screen Rectangle Appearance</h3>
  * <p/>
@@ -60,7 +75,7 @@ import java.awt.event.*;
  * @author dcollins
  * @version $Id$
  */
-public class ScreenSelector extends WWObjectImpl implements MouseListener, MouseMotionListener
+public class ScreenSelector extends WWObjectImpl implements MouseListener, MouseMotionListener, SelectListener
 {
     protected static class SelectionRectangle implements OrderedRenderable
     {
@@ -260,9 +275,28 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         }
     }
 
+    /**
+     * Message type indicating that the user has started their selection. The ScreenSelector's list of selected objects
+     * is empty, and does not change until a subsequent SELECTION_CHANGED event, if any. If this is followed by a
+     * SELECTION_ENDED event without any SELECTION_CHANGED event in between, then the user has selected nothing.
+     */
+    public static final String SELECTION_STARTED = "ScreenSelector.SelectionStarted";
+    /**
+     * Message type indicating that the list of selected objects has changed. This may be followed by one or more
+     * SELECTION_CHANGED events before the final SELECTION_ENDED event.
+     */
+    public static final String SELECTION_CHANGED = "ScreenSelector.SelectionChanged";
+    /**
+     * Message type indicating that the user has completed their selection. The ScreenSelector's list of selected
+     * objects does not changes until a subsequent SELECTION_STARTED event, if any.
+     */
+    public static final String SELECTION_ENDED = "ScreenSelector.SelectionEnded";
+
     protected WorldWindow wwd;
     protected Layer layer;
-    protected SelectionRectangle screenRect;
+    protected SelectionRectangle selectionRect;
+    protected List<Object> selectedObjects = new ArrayList<Object>();
+    protected List<MessageListener> messageListeners = new ArrayList<MessageListener>();
     protected boolean armed;
 
     public ScreenSelector(WorldWindow worldWindow)
@@ -277,8 +311,8 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         this.wwd = worldWindow;
         this.layer = this.createLayer();
         this.layer.setPickEnabled(false); // The screen selector is not pickable.
-        this.screenRect = this.createSelectionRectangle();
-        ((RenderableLayer) this.layer).addRenderable(this.screenRect);
+        this.selectionRect = this.createSelectionRectangle();
+        ((RenderableLayer) this.layer).addRenderable(this.selectionRect);
     }
 
     protected Layer createLayer()
@@ -301,36 +335,34 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         return this.layer;
     }
 
-    public boolean isArmed()
-    {
-        return this.armed;
-    }
-
     public Color getInteriorColor()
     {
-        return this.screenRect.getInteriorColor();
+        return this.selectionRect.getInteriorColor();
     }
 
     public void setInteriorColor(Color color)
     {
-        this.screenRect.setInteriorColor(color);
+        this.selectionRect.setInteriorColor(color);
     }
 
     public Color getBorderColor()
     {
-        return this.screenRect.getBorderColor();
+        return this.selectionRect.getBorderColor();
     }
 
     public void setBorderColor(Color color)
     {
-        this.screenRect.setBorderColor(color);
+        this.selectionRect.setBorderColor(color);
     }
 
     public void enable()
     {
-        this.screenRect.clearSelection();
+        // Clear any existing selection and clear set the SceneController's pick rectangle. This ensures that this
+        // ScreenSelector starts with the correct state when enabled.
+        this.selectionRect.clearSelection();
         this.getWwd().getSceneController().setPickRectangle(null);
 
+        // Add and enable the layer that displays this ScreenSelector's selection rectangle.
         LayerList layers = this.getWwd().getModel().getLayers();
 
         if (!layers.contains(this.getLayer()))
@@ -339,19 +371,72 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         if (!this.getLayer().isEnabled())
             this.getLayer().setEnabled(true);
 
+        // Listen for mouse input on the World Window.
         this.getWwd().getInputHandler().addMouseListener(this);
         this.getWwd().getInputHandler().addMouseMotionListener(this);
     }
 
     public void disable()
     {
-        this.screenRect.clearSelection();
+        // Clear the selection, clear the SceneController's pick rectangle, and stop listening for changes in the pick
+        // rectangle selection. These steps should have been done when the selection ends, but do them here in case the
+        // caller disables this ScreenSelector before the selection ends.
+        this.selectionRect.clearSelection();
         this.getWwd().getSceneController().setPickRectangle(null);
+        this.getWwd().removeSelectListener(this);
 
+        // Remove the layer that displays this ScreenSelector's selection rectangle.
         this.getWwd().getModel().getLayers().remove(this.getLayer());
 
+        // Stop listening for mouse input on the world window.
         this.getWwd().getInputHandler().removeMouseListener(this);
         this.getWwd().getInputHandler().removeMouseMotionListener(this);
+    }
+
+    public List<?> getSelectedObjects()
+    {
+        return this.selectedObjects;
+    }
+
+    public void addMessageListener(MessageListener listener)
+    {
+        if (listener == null)
+        {
+            String msg = Logging.getMessage("nullValue.ListenerIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.messageListeners.add(listener);
+    }
+
+    public void removeMessageListener(MessageListener listener)
+    {
+        if (listener == null)
+        {
+            String msg = Logging.getMessage("nullValue.ListenerIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.messageListeners.remove(listener);
+    }
+
+    protected void sendMessage(Message message)
+    {
+        for (MessageListener listener : this.messageListeners)
+        {
+            try
+            {
+                listener.onMessage(message);
+            }
+            catch (Exception e)
+            {
+                String msg = Logging.getMessage("generic.ExceptionInvokingMessageListener");
+                Logging.logger().severe(msg);
+                // Don't throw an exception, just log a severe message and continue to the next listener.
+            }
+        }
     }
 
     public void mouseClicked(MouseEvent mouseEvent)
@@ -414,17 +499,27 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
 
     protected void selectionStarted(MouseEvent mouseEvent)
     {
-        this.screenRect.startSelection(mouseEvent.getPoint());
-        this.wwd.getSceneController().setPickRectangle(null);
-        this.wwd.redraw();
+        this.selectionRect.startSelection(mouseEvent.getPoint());
+        this.getWwd().getSceneController().setPickRectangle(null);
+        this.getWwd().addSelectListener(this); // Listen for changes in the pick rectangle selection.
+        this.getWwd().redraw();
+
+        // Clear the list of selected objects and send a message indicating that the user has started a selection.
+        this.selectedObjects.clear();
+        this.sendMessage(new Message(SELECTION_STARTED, this));
     }
 
     @SuppressWarnings( {"UnusedParameters"})
     protected void selectionEnded(MouseEvent mouseEvent)
     {
-        this.screenRect.clearSelection();
-        this.wwd.getSceneController().setPickRectangle(null);
-        this.wwd.redraw();
+        this.selectionRect.clearSelection();
+        this.getWwd().getSceneController().setPickRectangle(null);
+        this.getWwd().removeSelectListener(this); // Stop listening for changes the pick rectangle selection.
+        this.getWwd().redraw();
+
+        // Send a message indicating that the user has completed their selection. We don't clear the list of selected
+        // objects in order to preserve the list of selected objects for the caller.
+        this.sendMessage(new Message(SELECTION_ENDED, this));
     }
 
     protected void selectionChanged(MouseEvent mouseEvent)
@@ -437,10 +532,10 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
         // Specify the selection's end point and set the scene controller's pick rectangle to the selected rectangle.
         // We create a copy of the selected rectangle to insulate the scene controller from changes to rectangle
         // returned by ScreenRectangle.getSelection.
-        this.screenRect.endSelection(p);
-        this.wwd.getSceneController().setPickRectangle(
-            this.screenRect.hasSelection() ? new Rectangle(this.screenRect.getSelection()) : null);
-        this.wwd.redraw();
+        this.selectionRect.endSelection(p);
+        this.getWwd().getSceneController().setPickRectangle(
+            this.selectionRect.hasSelection() ? new Rectangle(this.selectionRect.getSelection()) : null);
+        this.getWwd().redraw();
     }
 
     /**
@@ -456,7 +551,7 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
      */
     protected Point limitPointToWorldWindow(Point point)
     {
-        Rectangle viewport = this.wwd.getView().getViewport();
+        Rectangle viewport = this.getWwd().getView().getViewport();
 
         int x = point.x;
         if (x < viewport.x)
@@ -471,5 +566,37 @@ public class ScreenSelector extends WWObjectImpl implements MouseListener, Mouse
             y = viewport.y + viewport.height;
 
         return new Point(x, y);
+    }
+
+    public void selected(SelectEvent event)
+    {
+        try
+        {
+            // Respond to box rollover select events when armed.
+            if (event.getEventAction().equals(SelectEvent.BOX_ROLLOVER) && this.armed)
+                this.selectObjects(event.getAllTopObjects());
+        }
+        catch (Exception e)
+        {
+            // Wrap the handler in a try/catch to keep exceptions from bubbling up
+            Util.getLogger().warning(e.getMessage() != null ? e.getMessage() : e.toString());
+        }
+    }
+
+    protected void selectObjects(List<?> list)
+    {
+        if (this.selectedObjects.equals(list))
+            return; // Same thing selected.
+
+        this.selectedObjects.clear();
+
+        // If the selection is empty, then we've cleared the list of selected objects and there's nothing left to do.
+        // Otherwise, we add the selected objects to our list.
+        if (list != null)
+            this.selectedObjects.addAll(list);
+
+        // Send a message indicating that the user has ended selection. We don't clear the list of selected objects
+        // in order to preserve the list of selected objects for the caller.
+        this.sendMessage(new Message(SELECTION_CHANGED, this));
     }
 }
