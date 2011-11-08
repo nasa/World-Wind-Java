@@ -609,6 +609,25 @@ public interface SymbologyConstants
     );
 
     /**
+     * Indicates whether to display a MIL-STD-2525 tactical symbol's fill color. See MIL-STD-2525 section 5.4.5 p. 24
+     * and table IX p. 35. When used as a key, the corresponding value must be a boolean value. The value is
+     * <code>true</code> if the symbol's fill color should be displayed, and <code>false</code> otherwise.
+     */
+    final String SHOW_FILL = "gov.nasa.worldwind.symbology.ShowFill";
+    /**
+     * Indicates whether to display a MIL-STD-2525 tactical symbol's frame. See MIL-STD-2525 section 5.4.5 p. 24 and
+     * table IX p. 35. When used as a key, the corresponding value must be a boolean value. The value is
+     * <code>true</code> if the symbol's frame should be displayed, and <code>false</code> otherwise.
+     */
+    final String SHOW_FRAME = "gov.nasa.worldwind.symbology.ShowFrame";
+    /**
+     * Indicates whether to display a MIL-STD-2525 tactical symbol's icon. See MIL-STD-2525 section 5.4.5 p. 24 and
+     * table IX p. 35. When used as a key, the corresponding value must be a boolean value. The value is
+     * <code>true</code> if the symbol's icon should be displayed, and <code>false</code> otherwise.
+     */
+    final String SHOW_ICON = "gov.nasa.worldwind.symbology.ShowIcon";
+
+    /**
      * Indicates the standard identity code associated with a MIL-STD-2525 symbol (SIDC position 2). A symbol's standard
      * identity defines the threat posed by the object being represented. See MIL-STD-2525C section 3.2.39 p. 10,
      * section 5.3.1.1 p. 17, and table I pp. 15-16. When used as a key, the corresponding value must be one of the
