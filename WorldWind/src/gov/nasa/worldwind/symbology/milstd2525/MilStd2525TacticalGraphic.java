@@ -30,7 +30,8 @@ import java.awt.*;
  * <tr><td>V</td><td>AVKey.TYPE</td><td>String</td><td>Type</td></tr> <tr><td>W</td><td>AVKey.DATE</td><td>Date</td><td>Date/time</td></tr>
  * <tr><td>X</td><td>AVKey.ALTITUDE</td><td>Double</td><td>Altitude/depth</td></tr>
  * <tr><td>Y</td><td>AVKey.SHOW_POSITION</td><td>Boolean</td><td>Show/hide position field</td></tr>
- * <tr><td>AM</td><td>AVKey.RADIUS, AVKey.WIDTH, AVKey.LENGTH</td><td>Double</td><td>Radius, length or width of rectangle.</td></tr> <tr><td>AN</td><td>AVKey.AZIMUTH</td><td>Angle</td><td>Azimuth</td></tr>
+ * <tr><td>AM</td><td>AVKey.RADIUS, AVKey.WIDTH, AVKey.LENGTH</td><td>Double</td><td>Radius, length or width of
+ * rectangle.</td></tr> <tr><td>AN</td><td>AVKey.AZIMUTH</td><td>Angle</td><td>Azimuth</td></tr>
  * <tr><td>--</td><td>AVKey.GRAPHIC</td><td>{@link TacticalGraphic}</td><td>Child graphic</td></tr> </table>
  * <p/>
  * Here's an example of setting modifiers during construction of a graphic:
@@ -196,15 +197,15 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         {
             this.setText((String) value);
         }
-        else if (AVKey.STANDARD_IDENTITY.equals(modifier) && (value instanceof String))
+        else if (SymbologyConstants.STANDARD_IDENTITY.equals(modifier) && (value instanceof String))
         {
             this.setStandardIdentity((String) value);
         }
-        else if (AVKey.ECHELON.equals(modifier) && (value instanceof String))
+        else if (SymbologyConstants.ECHELON.equals(modifier) && (value instanceof String))
         {
             this.setEchelon((String) value);
         }
-        else if (AVKey.STATUS.equals(modifier) && (value instanceof String))
+        else if (SymbologyConstants.STATUS.equals(modifier) && (value instanceof String))
         {
             this.setStatus((String) value);
         }
@@ -224,7 +225,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     public String getScheme()
     {
-        return SymbolCode.SCHEME_TACTICAL_GRAPHICS;
+        return SymbologyConstants.SCHEME_TACTICAL_GRAPHICS;
     }
 
     public String getStandardIdentity()
@@ -334,7 +335,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
     }
 
-    @SuppressWarnings({"UnusedParameters"})
+    @SuppressWarnings( {"UnusedParameters"})
     protected void doRenderModifiers(DrawContext dc)
     {
         // Do nothing
@@ -417,7 +418,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected void applyDefaultAttributes(ShapeAttributes attributes)
     {
         String identity = this.getStandardIdentity();
-        if (SymbolCode.IDENTITY_HOSTILE.equals(identity))
+        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(identity))
         {
             attributes.setOutlineMaterial(Material.RED);
         }
@@ -427,7 +428,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
 
         String status = this.getStatus();
-        if (SymbolCode.STATUS_ANTICIPATED.equals(status))
+        if (SymbologyConstants.STATUS_ANTICIPATED.equals(status))
         {
             attributes.setOutlineStippleFactor(6);
             attributes.setOutlineStipplePattern((short) 0xAAAA);

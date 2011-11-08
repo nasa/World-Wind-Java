@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.symbology.AbstractIconRetriever;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -98,17 +98,17 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
         // TODO: remove this code
         // if exercise, add exercise amplifying overlay
-        if (stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_PENDING) ||
-            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_UNKNOWN) ||
-            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_FRIEND) ||
-            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_NEUTRAL) ||
-            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_ASSUMED_FRIEND) ||
-            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_JOKER) ||
-            stdid.equalsIgnoreCase(SymbolCode.IDENTITY_FAKER))
+        if (stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING) ||
+            stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN) ||
+            stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND) ||
+            stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL) ||
+            stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND) ||
+            stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER) ||
+            stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))
         {
-            if (stdid.equalsIgnoreCase(SymbolCode.IDENTITY_JOKER))
+            if (stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER))
                 filename = "j_overlay.png";
-            else if (stdid.equalsIgnoreCase(SymbolCode.IDENTITY_FAKER))
+            else if (stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))
                 filename = "k_overlay.png";
             else
                 filename = "x_overlay.png";
@@ -143,57 +143,57 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
         // TODO: handle special case of installations with overlays
 
-        if (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_PENDING) ||
-            stdID.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_PENDING))
+        if (stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING) ||
+            stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING))
         {
             if (battleDim == null)
                 filename = "clover_overlay.png";
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SEA_SURFACE) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SOF))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SOF))
             {
                 // 1. clover
                 filename = "clover_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SPACE) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_AIR))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))
             {
                 // 2. cloverTop
                 filename = "clovertop_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SUBSURFACE))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
             {
                 // 3. cloverBottom
                 filename = "cloverbottom_overlay.png";
             }
         }
         else if
-            (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_ASSUMED_FRIEND) ||
-                stdID.equalsIgnoreCase(SymbolCode.IDENTITY_EXERCISE_ASSUMED_FRIEND))
+            (stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND) ||
+                stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND))
         {
             if (battleDim == null)
                 filename = "rectangle_overlay.png";
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SEA_SURFACE))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE))
             {
                 // 4. circle
                 filename = "circle_overlay.png";
             }
             else if
-                (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SPACE) ||
-                    battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_AIR))
+                (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE) ||
+                    battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))
             {
                 // 5. arch
                 filename = "arch_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SUBSURFACE))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
             {
                 // 6. smile
                 filename = "smile_overlay.png";
             }
             else if
-                (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND))
+                (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
             {
                 if ("E".equalsIgnoreCase(functionID.substring(0, 1)))   // special case of Ground Equipment
                 {
@@ -207,31 +207,31 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 }
             }
             else if
-                (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SOF))
+                (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SOF))
             {
                 // 7. rectangle
                 filename = "rectangle_overlay.png";
             }
         }
-        else if (stdID.equalsIgnoreCase(SymbolCode.IDENTITY_SUSPECT))
+        else if (stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT))
         {
             if (battleDim == null)
                 filename = "diamond_overlay.png";
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_UNKNOWN) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SEA_SURFACE) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SOF))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SOF))
             {
                 // 8. diamond
                 filename = "diamond_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SPACE) ||
-                battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_AIR))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE) ||
+                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))
             {
                 // 9. tent
                 filename = "tent_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_SUBSURFACE))
+            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
             {
                 // 10. top
                 filename = "top_overlay.png";
@@ -239,13 +239,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         // handle the special case of overlays for installations (Ground battle dimension only)
-        if (battleDim != null && battleDim.equalsIgnoreCase(SymbolCode.BATTLE_DIMENSION_GROUND)
+        if (battleDim != null && battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
             && "I".equalsIgnoreCase(functionID.substring(0, 1)))
         {
             filename = "installation_" + filename;
         }
         // handle case of Emergency Management installations, which have a Category but no Battle Dimension
-        else if (SymbolCode.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme) &&
+        else if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme) &&
             symbolModifier.substring(0, 1).equals("H"))
         {
             filename = "installation_" + filename;
@@ -310,15 +310,17 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
         // handle special case of installations, as indicated by a 'H' in position 11
         // (except for Emergency Management icons, which do not have the 'H' in the filename)
-        if ("Hh".indexOf((code.getSymbolModifier()).charAt(0)) > -1 &&
-            !SymbolCode.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+        if (code.getSymbolModifier() != null && "Hh".indexOf((code.getSymbolModifier()).charAt(0)) > -1
+            && !SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+        {
             padding = "h----";
+        }
 
         String pos3 = code.getBattleDimension();
         // Stability Operations and Emergency Management schemes
         // use Category instead of Battle Dimension
-        if (SymbolCode.SCHEME_STABILITY_OPERATIONS.equals(scheme) ||
-            SymbolCode.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+        if (SymbologyConstants.SCHEME_STABILITY_OPERATIONS.equalsIgnoreCase(scheme) ||
+            SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equalsIgnoreCase(scheme))
         {
             pos3 = code.getCategory();
         }

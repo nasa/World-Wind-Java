@@ -7,68 +7,35 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.exception.WWUnrecognizedException;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.Logging;
 
 /**
- * Class to parse and manipulate MIL-STD-2525 Symbol Identifier Codes (SIDC). Different sections of the 2525
+ * Class to parse and manipulate MIL-STD-2525 symbol identification codes (SIDC). Different sections of the 2525
  * specification use different types of symbol codes, so not all fields will be defined in every code.
  * <p/>
  * Fields in a parsed symbol code can be accessed using explicit get and set methods, or using String keys. The possible
- * keys are: <ul><li>AVKey.SCHEME</li> <li>AVKey.STANDARD_IDENTITY</li> <li>AVKey.CATEGORY</li>
- * <li>AVKey.BATTLE_DIMENSION</li> <li>AVKey.FUNCTION_ID</li> <li>AVKey.ECHELON</li> <li>AVKey.SYMBOL_MODIFIER</li>
- * <li>AVKey.STATUS</li> <li>AVKey.COUNTRY_CODE</li> <li>AVKey.ORDER_OF_BATTLE</li> </ul>
+ * keys are: <ul><li>SymbologyConstants.SCHEME</li> <li>SymbologyConstants.STANDARD_IDENTITY</li>
+ * <li>SymbologyConstants.CATEGORY</li> <li>SymbologyConstants.BATTLE_DIMENSION</li>
+ * <li>SymbologyConstants.FUNCTION_ID</li> <li>SymbologyConstants.ECHELON</li> <li>SymbologyConstants.SYMBOL_MODIFIER</li>
+ * <li>SymbologyConstants.STATUS</li> <li>SymbologyConstants.COUNTRY_CODE</li> <li>SymbologyConstants.ORDER_OF_BATTLE</li>
+ * </ul>
  *
  * @author pabercrombie
  * @version $Id$
  */
 public class SymbolCode extends AVListImpl
 {
-    public static final String SCHEME_WARFIGHTING = "S";
-    public static final String SCHEME_SIGNALS_INTELLIGENCE = "I";
-    public static final String SCHEME_STABILITY_OPERATIONS = "O";
-    public static final String SCHEME_EMERGENCY_MANAGEMENT = "E";
-    public static final String SCHEME_TACTICAL_GRAPHICS = "G";
-
-    public static final String IDENTITY_PENDING = "P";
-    public static final String IDENTITY_UNKNOWN = "U";
-    public static final String IDENTITY_ASSUMED_FRIEND = "A";
-    public static final String IDENTITY_FRIEND = "F";
-    public static final String IDENTITY_NEUTRAL = "N";
-    public static final String IDENTITY_SUSPECT = "S";
-    public static final String IDENTITY_HOSTILE = "H";
-    public static final String IDENTITY_EXERCISE_PENDING = "G";
-    public static final String IDENTITY_EXERCISE_UNKNOWN = "W";
-    public static final String IDENTITY_EXERCISE_ASSUMED_FRIEND = "M";
-    public static final String IDENTITY_EXERCISE_FRIEND = "D";
-    public static final String IDENTITY_EXERCISE_NEUTRAL = "L";
-    public static final String IDENTITY_JOKER = "J";
-    public static final String IDENTITY_FAKER = "K";
-
-    public static final String BATTLE_DIMENSION_UNKNOWN = "Z";
-    public static final String BATTLE_DIMENSION_SPACE = "P";
-    public static final String BATTLE_DIMENSION_AIR = "A";
-    public static final String BATTLE_DIMENSION_GROUND = "G";
-    public static final String BATTLE_DIMENSION_SEA_SURFACE = "S";
-    public static final String BATTLE_DIMENSION_SUBSURFACE = "U";
-    public static final String BATTLE_DIMENSION_SOF = "F";
-
-    public static final String CATEGORY_TASKS = "T";
-    public static final String CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER = "G";
-    public static final String CATEGORY_MOBILITY_SURVIVAL = "M";
-    public static final String CATEGORY_FIRE_SUPPORT_COMBAT_SERVICE_SUPPORT = "F";
-    public static final String CATEGORY_OTHER = "S";
-
-    public static final String STATUS_ANTICIPATED = "A";
-    public static final String STATUS_SUSPECTED = "S";
-    public static final String STATUS_PRESENT = "P";
-    public static final String STATUS_KNOWN = "K";
-
     // fill colors (hue, out of 360)
     public static final int COLOR_UNKNOWN = 60;       // yellow
     public static final int COLOR_FRIEND = 195;       // blue
     public static final int COLOR_NEUTRAL = 120;      // green  TODO: not quite the correct green, Sat = 33, not 50
     public static final int COLOR_HOSTILE = 0;        // red
     public static final int COLOR_CIVILIAN = 300;     // purple   TODO:  Sat = 37, not 50
+
+    /** Indicates the character for an unused position in a MIL-STD-2525 symbol identification code */
+    protected static final String UNUSED_POSITION_CODE = "-";
 
     /** Create a new symbol code. All fields will be null. */
     public SymbolCode()
@@ -77,44 +44,35 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Parse an SIDC code.
+     * Creates a new SymCode by parsing the fields of the specified MIL-STD-2525 15-character alphanumeric symbol
+     * identification code (SIDC).
      *
-     * @param symCode Symbol code to parse.
+     * @param symCode the symbol identification code to parse.
+     *
+     * @throws IllegalArgumentException if the symCode is null or has length other than 15.
+     * @throws WWUnrecognizedException  if any field in the symCode is invalid or cannot be recognized.
      */
     public SymbolCode(String symCode)
     {
         if (symCode == null)
         {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
+            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         if (symCode.length() != 15)
         {
-            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
+            String msg = Logging.getMessage("Symbology.SymbolCodeLengthInvalid", symCode);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        String scheme = symCode.substring(0, 1).toUpperCase();
-        if (SCHEME_TACTICAL_GRAPHICS.equals(scheme))
+        String s = this.parseSymCode(symCode);
+        if (s != null)
         {
-            this.parseTacticalGraphic(symCode);
-        }
-        else if (SCHEME_WARFIGHTING.equals(scheme) ||
-            SCHEME_SIGNALS_INTELLIGENCE.equals(scheme) ||
-            SCHEME_STABILITY_OPERATIONS.equals(scheme) ||
-            SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
-        {
-            this.parseTacticalSymbol(symCode);
-        }
-        else
-        {
-            // Scheme code not recognized
-            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
+            Logging.logger().severe(s);
+            throw new WWUnrecognizedException(s);
         }
     }
 
@@ -125,7 +83,7 @@ public class SymbolCode extends AVListImpl
      */
     public String getScheme()
     {
-        return this.getStringValue(AVKey.SCHEME);
+        return this.getStringValue(SymbologyConstants.SCHEME);
     }
 
     /**
@@ -135,7 +93,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setScheme(String scheme)
     {
-        this.setValue(AVKey.SCHEME, scheme.toUpperCase());
+        this.setValue(SymbologyConstants.SCHEME, scheme);
     }
 
     /**
@@ -145,7 +103,7 @@ public class SymbolCode extends AVListImpl
      */
     public String getStandardIdentity()
     {
-        return this.getStringValue(AVKey.STANDARD_IDENTITY);
+        return this.getStringValue(SymbologyConstants.STANDARD_IDENTITY);
     }
 
     /**
@@ -155,27 +113,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setStandardIdentity(String value)
     {
-        this.setValue(AVKey.STANDARD_IDENTITY, value.toUpperCase());
-    }
-
-    /**
-     * Retrieves the Category field of the symbol code.
-     *
-     * @return The value of the category field. May be null.
-     */
-    public String getCategory()
-    {
-        return this.getStringValue(AVKey.CATEGORY);
-    }
-
-    /**
-     * Sets the value of the Category field.
-     *
-     * @param value New value for the coding scheme field. May be null.
-     */
-    public void setCategory(String value)
-    {
-        this.setValue(AVKey.CATEGORY, value.toUpperCase());
+        this.setValue(SymbologyConstants.STANDARD_IDENTITY, value);
     }
 
     /**
@@ -185,7 +123,7 @@ public class SymbolCode extends AVListImpl
      */
     public String getBattleDimension()
     {
-        return this.getStringValue(AVKey.BATTLE_DIMENSION);
+        return this.getStringValue(SymbologyConstants.BATTLE_DIMENSION);
     }
 
     /**
@@ -195,67 +133,27 @@ public class SymbolCode extends AVListImpl
      */
     public void setBattleDimension(String value)
     {
-        this.setValue(AVKey.BATTLE_DIMENSION, value.toUpperCase());
+        this.setValue(SymbologyConstants.BATTLE_DIMENSION, value);
     }
 
     /**
-     * Retrieves the Function ID field of the symbol code.
+     * Retrieves the Category field of the symbol code.
      *
-     * @return The value of the function ID field. May be null.
+     * @return The value of the category field. May be null.
      */
-    public String getFunctionId()
+    public String getCategory()
     {
-        return this.getStringValue(AVKey.FUNCTION_ID);
+        return this.getStringValue(SymbologyConstants.CATEGORY);
     }
 
     /**
-     * Sets the value of the Function ID field.
+     * Sets the value of the Category field.
      *
-     * @param value New value for the Function ID field. May be null.
+     * @param value New value for the coding scheme field. May be null.
      */
-    public void setFunctionId(String value)
+    public void setCategory(String value)
     {
-        this.setValue(AVKey.FUNCTION_ID, value.toUpperCase());
-    }
-
-    /**
-     * Retrieves the Echelon field of the symbol code.
-     *
-     * @return The value of the echelon field. May be null.
-     */
-    public String getEchelon()
-    {
-        return this.getStringValue(AVKey.ECHELON);
-    }
-
-    /**
-     * Sets the value of the Echelon field.
-     *
-     * @param value New value for the Echelon field. May be null.
-     */
-    public void setEchelon(String value)
-    {
-        this.setValue(AVKey.ECHELON, value.toUpperCase());
-    }
-
-    /**
-     * Retrieves the Symbol Modifier field of the symbol code.
-     *
-     * @return The value of the Symbol Modifier field. May be null.
-     */
-    public String getSymbolModifier()
-    {
-        return this.getStringValue(AVKey.SYMBOL_MODIFIER);
-    }
-
-    /**
-     * Sets the value of the Symbol Modifier field.
-     *
-     * @param value New value for the Symbol Modifier field. May be null.
-     */
-    public void setSymbolModifier(String value)
-    {
-        this.setValue(AVKey.SYMBOL_MODIFIER, value.toUpperCase());
+        this.setValue(SymbologyConstants.CATEGORY, value);
     }
 
     /**
@@ -265,7 +163,7 @@ public class SymbolCode extends AVListImpl
      */
     public String getStatus()
     {
-        return this.getStringValue(AVKey.STATUS);
+        return this.getStringValue(SymbologyConstants.STATUS);
     }
 
     /**
@@ -275,7 +173,117 @@ public class SymbolCode extends AVListImpl
      */
     public void setStatus(String value)
     {
-        this.setValue(AVKey.STATUS, value.toUpperCase());
+        this.setValue(SymbologyConstants.STATUS, value);
+    }
+
+    /**
+     * Retrieves the Function ID field of the symbol code.
+     *
+     * @return The value of the function ID field. May be null.
+     */
+    public String getFunctionId()
+    {
+        return this.getStringValue(SymbologyConstants.FUNCTION_ID);
+    }
+
+    /**
+     * Sets the value of the Function ID field.
+     *
+     * @param value New value for the Function ID field. May be null.
+     */
+    public void setFunctionId(String value)
+    {
+        this.setValue(SymbologyConstants.FUNCTION_ID, value);
+    }
+
+    /**
+     * Retrieves the Echelon field of the symbol code.
+     *
+     * @return The value of the echelon field. May be null.
+     */
+    public String getEchelon()
+    {
+        return this.getStringValue(SymbologyConstants.ECHELON);
+    }
+
+    /**
+     * Sets the value of the Echelon field.
+     *
+     * @param value New value for the Echelon field. May be null.
+     */
+    public void setEchelon(String value)
+    {
+        this.setValue(SymbologyConstants.ECHELON, value);
+    }
+
+    /**
+     * Retrieves the Symbol Modifier field of the symbol code.
+     *
+     * @return The value of the Symbol Modifier field. May be null.
+     */
+    public String getSymbolModifier()
+    {
+        return this.getStringValue(SymbologyConstants.SYMBOL_MODIFIER);
+    }
+
+    /**
+     * Sets the value of the Symbol Modifier field.
+     *
+     * @param value New value for the Symbol Modifier field. May be null.
+     */
+    public void setSymbolModifier(String value)
+    {
+        this.setValue(SymbologyConstants.SYMBOL_MODIFIER, value);
+    }
+
+    public AVList getSymbolModifierParams(AVList params)
+    {
+        String code = this.getSymbolModifier();
+
+        if (code == null || code.length() != 2 || code.equals("--"))
+            return params;
+
+        if (params == null)
+            params = new AVListImpl();
+
+        String firstChar = code.substring(0, 1);
+        String secondChar = code.substring(1, 2);
+        String uppercaseCode = code.toUpperCase();
+        String uppercaseFirstChar = firstChar.toUpperCase();
+        String uppercaseSecondChar = secondChar.toUpperCase();
+
+        if (UNUSED_POSITION_CODE.equals(uppercaseFirstChar)
+            || SymbologyConstants.UNIT_EQUIPMENT_ALL.contains(uppercaseFirstChar))
+        {
+            if (SymbologyConstants.ECHELON_ALL.contains(uppercaseSecondChar))
+                params.setValue(SymbologyConstants.ECHELON, secondChar);
+
+            if (SymbologyConstants.UNIT_EQUIPMENT_ALL_HEADQUARTERS.contains(uppercaseFirstChar))
+                params.setValue(SymbologyConstants.HEADQUARTERS, Boolean.TRUE);
+
+            if (SymbologyConstants.UNIT_EQUIPMENT_ALL_TASK_FORCE.contains(uppercaseFirstChar))
+                params.setValue(SymbologyConstants.TASK_FORCE, Boolean.TRUE);
+
+            if (SymbologyConstants.UNIT_EQUIPMENT_ALL_FEINT_DUMMY.contains(uppercaseFirstChar))
+                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
+        }
+        else if (SymbologyConstants.INSTALLATION_ALL.contains(uppercaseCode))
+        {
+            params.setValue(SymbologyConstants.INSTALLATION, code);
+
+            if (SymbologyConstants.INSTALLATION_FEINT_DUMMY.equalsIgnoreCase(code))
+                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
+        }
+        else if (SymbologyConstants.MOBILITY_ALL.contains(uppercaseCode))
+        {
+            params.setValue(SymbologyConstants.MOBILITY, code);
+        }
+        else if (SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(uppercaseCode))
+        {
+            params.setValue(SymbologyConstants.AUXILIARY_EQUIPMENT, code);
+        }
+
+        return params;
     }
 
     /**
@@ -285,7 +293,7 @@ public class SymbolCode extends AVListImpl
      */
     public String getCountryCode()
     {
-        return this.getStringValue(AVKey.COUNTRY_CODE);
+        return this.getStringValue(SymbologyConstants.COUNTRY_CODE);
     }
 
     /**
@@ -295,7 +303,7 @@ public class SymbolCode extends AVListImpl
      */
     public void setCountryCode(String value)
     {
-        this.setValue(AVKey.COUNTRY_CODE, value.toUpperCase());
+        this.setValue(SymbologyConstants.COUNTRY_CODE, value);
     }
 
     /**
@@ -305,7 +313,7 @@ public class SymbolCode extends AVListImpl
      */
     public String getOrderOfBattle()
     {
-        return this.getStringValue(AVKey.ORDER_OF_BATTLE);
+        return this.getStringValue(SymbologyConstants.ORDER_OF_BATTLE);
     }
 
     /**
@@ -315,160 +323,551 @@ public class SymbolCode extends AVListImpl
      */
     public void setOrderOfBattle(String value)
     {
-        this.setValue(AVKey.ORDER_OF_BATTLE, value.toUpperCase());
+        this.setValue(SymbologyConstants.ORDER_OF_BATTLE, value);
     }
 
-    protected void parseTacticalGraphic(String symCode)
-    {
-        char c = symCode.charAt(1);
-        this.setStandardIdentity(Character.toString(c));
-
-        c = symCode.charAt(2);
-        this.setCategory(Character.toString(c));
-
-        c = symCode.charAt(3);
-        this.setStatus(Character.toString(c));
-
-        String s = symCode.substring(4, 10);
-        this.setFunctionId(s);
-
-        s = symCode.substring(10, 12);
-        this.setEchelon(s);
-
-        s = symCode.substring(12, 14);
-        this.setCountryCode(s);
-
-        s = symCode.substring(14, 15);
-        this.setOrderOfBattle(s);
-    }
-
-    protected void parseTacticalSymbol(String symCode)
-    {
-        char c = symCode.charAt(0);
-        this.setScheme(Character.toString(c));
-        String scheme = this.getScheme();
-
-        c = symCode.charAt(1);
-        if ("PUAFNSHGWMDLJKpuafnshgwmdljk".indexOf(c) == -1)
-        {
-            // Standard Identity code not recognized
-            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        this.setStandardIdentity(Character.toString(c));
-
-        c = symCode.charAt(2);
-        // Warfighting and Signals Intelligence schemes use Battle Dimension
-        if (SCHEME_WARFIGHTING.equals(scheme) ||
-            SCHEME_SIGNALS_INTELLIGENCE.equals(scheme))
-        {
-            if ("PAGSUFXZpagsufxz".indexOf(c) == -1)
-            {
-                // Battle Dimension code not recognized
-                String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-            this.setBattleDimension(Character.toString(c));
-        }
-        // Stability Operations scheme uses Category
-        else if (SCHEME_STABILITY_OPERATIONS.equals(scheme))
-        {
-            if ("VLOIPGRvloipgr".indexOf(c) == -1)
-            {
-                // Stability Operations Category code not recognized
-                String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-            this.setCategory(Character.toString(c));
-        }
-        //  Emergency Management scheme uses Category
-        else if (SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
-        {
-            if ("INOFinof".indexOf(c) == -1)
-            {
-                // Emergency Management Category code not recognized
-                String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-                Logging.logger().severe(msg);
-                throw new IllegalArgumentException(msg);
-            }
-            this.setCategory(Character.toString(c));
-        }
-
-        c = symCode.charAt(3);
-        if ("APCDXFapcdxf".indexOf(c) == -1)
-        {
-            // Status/Operational Condition code not recognized
-            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        this.setStatus(Character.toString(c));
-
-        String s = symCode.substring(4, 10);
-        this.setFunctionId(s);
-
-        s = symCode.substring(10, 12);
-        this.setSymbolModifier(s);
-
-        s = symCode.substring(12, 14);
-        this.setCountryCode(s);
-
-        c = symCode.charAt(14);
-        if ("-AECGNSaecgns".indexOf(c) == -1)
-        {
-            // Order of Battle code not recognized
-            String msg = Logging.getMessage("Symbology.InvalidSymbolCode", symCode);
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        this.setOrderOfBattle(Character.toString(c));
-    }
-
-    @Override
     public String toString()
+    {
+        return this.composeSymCode();
+    }
+
+    protected String parseSymCode(String symCode)
+    {
+        // Coding Scheme (position 1).
+        String scheme = symCode.substring(0, 1);
+
+        if (SymbologyConstants.SCHEME_WARFIGHTING.equalsIgnoreCase(scheme))
+        {
+            return this.parseWarfightingSymCode(symCode);
+        }
+        else if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equalsIgnoreCase(scheme))
+        {
+            return this.parseTacticalGraphicsSymCode(symCode);
+        }
+        else if (SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(scheme))
+        {
+            return this.parseMetocSymCode(symCode);
+        }
+        else if (SymbologyConstants.SCHEME_INTELLIGENCE.equalsIgnoreCase(scheme))
+        {
+            return this.parseIntelligenceSymCode(symCode);
+        }
+        else if (SymbologyConstants.SCHEME_STABILITY_OPERATIONS.equalsIgnoreCase(scheme))
+        {
+            return this.parseStabilityOperationsSymCode(symCode);
+        }
+        else if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equalsIgnoreCase(scheme))
+        {
+            return this.parseEmergencyManagementSymCode(symCode);
+        }
+        else
+        {
+            return this.parseUnrecognizedSymCode(symCode);
+        }
+    }
+
+    protected String parseUnrecognizedSymCode(String symCode)
+    {
+        // The scheme code is not recognized. Throw an exception indicating that the symCode is invalid. Note that
+        // MIL-STD-2525C, Appendix F does not specify a symbology scheme. Instead, it provides guidelines for
+        // displaying symbology in 3D displays.
+        String scheme = symCode.substring(0, 1);
+        return Logging.getMessage("Symbology.SymbolCodeSchemeUnrecognized", scheme, symCode);
+    }
+
+    /**
+     * Parses symbol codes encoded for the Warfighting coding scheme. The Warfighting coding scheme is defined in
+     * MIL-STD-2525C, Appendix A, table A-I (p. 51).
+     *
+     * @param symCode the symbol code to parse. Must be non-null and have length of 15 or greater. Characters beyond the
+     *                15th are ignored.
+     *
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-null string listing the unrecognized
+     *         symbol elements.
+     */
+    protected String parseWarfightingSymCode(String symCode)
     {
         StringBuilder sb = new StringBuilder();
 
+        // Coding Scheme (position 1).
+        String s = symCode.substring(0, 1);
+        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING))
+            this.setScheme(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.scheme"));
+
+        // Standard Identity/Exercise Amplifying Descriptor (position 2).
+        s = symCode.substring(1, 2);
+        if (SymbologyConstants.STANDARD_IDENTITY_ALL.contains(s.toUpperCase()))
+            this.setStandardIdentity(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
+
+        // Battle Dimension (position 3).
+        s = symCode.substring(2, 3);
+        if (SymbologyConstants.BATTLE_DIMENSION_ALL.contains(s.toUpperCase()))
+            this.setBattleDimension(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.battleDimension"));
+
+        // Status/Operational Condition (position 4).
+        s = symCode.substring(3, 4);
+        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO.contains(s.toUpperCase()))
+            this.setStatus(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
+
+        // Function ID (positions 5-10).
+        s = symCode.substring(4, 10);
+        if (!"-----".equals(s)) // Just validate that the function id is not null.
+            this.setFunctionId(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
+
+        // Symbol Modifier (positions 11-12).
+        s = symCode.substring(10, 12);
+        if (this.isUnitSymbolModifier(s)
+            || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase())
+            || SymbologyConstants.MOBILITY_ALL.contains(s.toUpperCase())
+            || SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(s.toUpperCase()))
+        {
+            this.setSymbolModifier(s);
+        }
+        else if (!"--".equals(s)) // "--" is accepted and indicates a null symbol modifier.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.symbolModifier"));
+
+        // Country Code (positions 13-14).
+        s = symCode.substring(12, 14);
+        if (!"--".equals(s)) // "--" is accepted and indicates a null country code.
+            this.setCountryCode(s);
+
+        // Order Of Battle (position 15).
+        s = symCode.substring(14, 15);
+        if (SymbologyConstants.ORDER_OF_BATTLE_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
+            this.setOrderOfBattle(s);
+        else if (!"-".equals(s)) // "-" is accepted and indicates a null order of battle.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
+
+        return sb.length() > 0
+            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+    }
+
+    /**
+     * Parses symbol codes encoded for the Tactical Graphics coding scheme. The Tactical Graphics coding scheme is
+     * defined in MIL-STD-2525C, Appendix B, table B-I (p. 305).
+     *
+     * @param symCode the symbol code to parse. Must be non-null and have length of 15 or greater. Characters beyond the
+     *                15th are ignored.
+     *
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-null string listing the unrecognized
+     *         symbol elements.
+     */
+    protected String parseTacticalGraphicsSymCode(String symCode)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        // Coding Scheme (position 1).
+        String s = symCode.substring(0, 1);
+        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_TACTICAL_GRAPHICS))
+            this.setScheme(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.scheme"));
+
+        // Standard Identity/Exercise Amplifying Descriptor (position 2).
+        s = symCode.substring(1, 2);
+        if (SymbologyConstants.STANDARD_IDENTITY_ALL.contains(s.toUpperCase()))
+            this.setStandardIdentity(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
+
+        // Category (position 3).
+        s = symCode.substring(2, 3);
+        if (SymbologyConstants.CATEGORY_ALL_TACTICAL_GRAPHICS.contains(s.toUpperCase()))
+            this.setCategory(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.category"));
+
+        // Status/Operational Condition (position 4).
+        s = symCode.substring(3, 4);
+        if (SymbologyConstants.STATUS_ALL_TACTICAL_GRAPHICS_METOC.contains(s.toUpperCase()))
+            this.setStatus(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
+
+        // Function ID (positions 5-10).
+        s = symCode.substring(4, 10);
+        if (!"-----".equals(s)) // Just validate that the function id is not null.
+            this.setFunctionId(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
+
+        // Echelon (positions 11-12, position 11 is unused in MIL-STD-2525C).
+        s = symCode.substring(11, 12);
+        if (SymbologyConstants.ECHELON_ALL.contains(s.toUpperCase()))
+            this.setEchelon(s);
+        else if (!UNUSED_POSITION_CODE.equals(s)) // "-" is accepted and indicates a null echelon.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.echelon"));
+
+        // Country Code (positions 13-14).
+        s = symCode.substring(12, 14);
+        if (!"--".equals(s)) // "--" is accepted and indicates a null country code. We don't validate country codes.
+            this.setCountryCode(s);
+
+        // Order Of Battle (position 15).
+        s = symCode.substring(14, 15);
+        if (SymbologyConstants.ORDER_OF_BATTLE_ALL_TACTICAL_GRAPHICS.contains(s.toUpperCase()))
+            this.setOrderOfBattle(s);
+        else if (!"-".equals(s)) // "-" is accepted and indicates a null order of battle.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
+
+        return sb.length() > 0
+            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+    }
+
+    protected String parseMetocSymCode(String symCode)
+    {
+        // TODO: See MIL-STD-2525C, Appendix C
+        // Causes constructor to throw a WWUnsupportedException.
+        String scheme = symCode.substring(0, 1);
+        return Logging.getMessage("Symbology.SymbolCodeSchemeUnrecognized", scheme, symCode);
+    }
+
+    protected String parseIntelligenceSymCode(String symCode)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        // Coding Scheme (position 1).
+        String s = symCode.substring(0, 1);
+        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE))
+            this.setScheme(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.scheme"));
+
+        // Standard Identity/Exercise Amplifying Descriptor (position 2).
+        s = symCode.substring(1, 2);
+        if (SymbologyConstants.STANDARD_IDENTITY_ALL.contains(s.toUpperCase()))
+            this.setStandardIdentity(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
+
+        // Battle Dimension (position 3).
+        s = symCode.substring(2, 3);
+        if (SymbologyConstants.BATTLE_DIMENSION_ALL_INTELLIGENCE.contains(s.toUpperCase()))
+            this.setBattleDimension(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.battleDimension"));
+
+        // Status/Operational Condition (position 4)
+        s = symCode.substring(3, 4);
+        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO.contains(s.toUpperCase()))
+            this.setStatus(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
+
+        // Function ID (positions 5-10)
+        s = symCode.substring(4, 10);
+        if (!"-----".equals(s)) // Just validate that the function id is not null.
+            this.setFunctionId(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
+
+        // Not Used (positions 11-12).
+        s = symCode.substring(10, 12);
+        if (!"--".equals(s)) // "--" is the only accepted string in positions 11-12.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.symbolModifier"));
+
+        // Country Code (positions 13-14).
+        s = symCode.substring(12, 14);
+        if (!"--".equals(s)) // "--" is accepted and indicates a null country code.
+            this.setCountryCode(s);
+
+        // Order of Battle (position 15).
+        s = symCode.substring(14, 15);
+        if (SymbologyConstants.ORDER_OF_BATTLE_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
+            this.setOrderOfBattle(s);
+        else if (!"-".equals(s)) // "-" is accepted and indicates a null order of battle.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
+
+        return sb.length() > 0
+            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+    }
+
+    protected String parseStabilityOperationsSymCode(String symCode)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        // Coding Scheme (position 1).
+        String s = symCode.substring(0, 1);
+        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS))
+            this.setScheme(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.scheme"));
+
+        // Standard Identity/Exercise Amplifying Descriptor (position 2).
+        s = symCode.substring(1, 2);
+        if (SymbologyConstants.STANDARD_IDENTITY_ALL.contains(s.toUpperCase()))
+            this.setStandardIdentity(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
+
+        // Category (position 3).
+        s = symCode.substring(2, 3);
+        if (SymbologyConstants.CATEGORY_ALL_STABILITY_OPERATIONS.contains(s.toUpperCase()))
+            this.setCategory(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.battleDimension"));
+
+        // Status/Operational Condition (position 4).
+        s = symCode.substring(3, 4);
+        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO.contains(s.toUpperCase()))
+            this.setStatus(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
+
+        // Function ID (positions 5-10).
+        s = symCode.substring(4, 10);
+        if (!"-----".equals(s)) // Just validate that the function id is not null.
+            this.setFunctionId(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
+
+        // Symbol Modifier (positions 11-12).
+        s = symCode.substring(10, 12);
+        if (this.isUnitSymbolModifier(s) || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase()))
+            this.setSymbolModifier(s);
+        else if (!"--".equals(s)) // "--" is accepted and indicates a null symbol modifier.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.symbolModifier"));
+
+        // Country Code (positions 13-14).
+        s = symCode.substring(12, 14);
+        if (!"--".equals(s)) // "--" is accepted and indicates a null country code.
+            this.setCountryCode(s);
+
+        // Order Of Battle (position 15).
+        s = symCode.substring(14, 15);
+        if (SymbologyConstants.ORDER_OF_BATTLE_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
+            this.setOrderOfBattle(s);
+        else if (!"-".equals(s)) // "-" is accepted and indicates a null order of battle.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
+
+        return sb.length() > 0
+            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+    }
+
+    protected String parseEmergencyManagementSymCode(String symCode)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        // Coding Scheme (position 1).
+        String s = symCode.substring(0, 1);
+        if (s != null && s.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT))
+            this.setScheme(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.scheme"));
+
+        // Standard Identity/Exercise Amplifying Descriptor (position 2).
+        s = symCode.substring(1, 2);
+        if (SymbologyConstants.STANDARD_IDENTITY_ALL.contains(s.toUpperCase()))
+            this.setStandardIdentity(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
+
+        // Category (position 3).
+        s = symCode.substring(2, 3);
+        if (SymbologyConstants.CATEGORY_ALL_EMERGENCY_MANAGEMENT.contains(s.toUpperCase()))
+            this.setCategory(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.battleDimension"));
+
+        // Status/Operational Condition (position 4).
+        s = symCode.substring(3, 4);
+        if (SymbologyConstants.STATUS_ALL_EMERGENCY_MANAGEMENT.contains(s.toUpperCase()))
+            this.setStatus(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
+
+        // Function ID (positions 5-10).
+        s = symCode.substring(4, 10);
+        if (!"-----".equals(s)) // Just validate that the function id is not null.
+            this.setFunctionId(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
+
+        // Symbol Modifier (positions 11-12).
+        s = symCode.substring(10, 12);
+        if (SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase())
+            || SymbologyConstants.MOBILITY_ALL.contains(s.toUpperCase()))
+        {
+            this.setSymbolModifier(s);
+        }
+        else if (!"--".equals(s)) // "--" is accepted and indicates a null symbol modifier.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.symbolModifier"));
+
+        // Country Code (positions 13-14).
+        s = symCode.substring(12, 14);
+        if (!"--".equals(s)) // "--" is accepted and indicates a null country code.
+            this.setCountryCode(s);
+
+        // Order Of Battle (position 15).
+        s = symCode.substring(14, 15);
+        if (SymbologyConstants.ORDER_OF_BATTLE_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
+            this.setOrderOfBattle(s);
+        else if (!"-".equals(s)) // "-" is accepted and indicates a null order of battle.
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
+
+        return sb.length() > 0
+            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+    }
+
+    protected boolean isUnitSymbolModifier(String value)
+    {
+        String firstChar = value.substring(0, 1).toUpperCase();
+        String secondChar = value.substring(1, 2).toUpperCase();
+
+        return (UNUSED_POSITION_CODE.equals(firstChar) || SymbologyConstants.UNIT_EQUIPMENT_ALL.contains(firstChar))
+            && SymbologyConstants.ECHELON_ALL.contains(secondChar.toUpperCase());
+    }
+
+    protected String composeSymCode()
+    {
         String scheme = this.getScheme();
-        if (SCHEME_TACTICAL_GRAPHICS.equals(scheme))
+
+        if (SymbologyConstants.SCHEME_WARFIGHTING.equalsIgnoreCase(scheme))
         {
-            sb.append(scheme);
-            sb.append(this.getStandardIdentity());
-            sb.append(this.getCategory());
-            sb.append(this.getStatus());
-            sb.append(this.getFunctionId());
-            sb.append(this.getEchelon());
-            sb.append(this.getCountryCode());
-            sb.append(this.getOrderOfBattle());
+            return this.composeWarfightingSymCode();
         }
-        else if (SCHEME_WARFIGHTING.equals(scheme) ||
-            SCHEME_SIGNALS_INTELLIGENCE.equals(scheme))
+        else if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equalsIgnoreCase(scheme))
         {
-            sb.append(scheme);
-            sb.append(this.getStandardIdentity());
-            sb.append(this.getBattleDimension());
-            sb.append(this.getStatus());
-            sb.append(this.getFunctionId());
-            sb.append(this.getSymbolModifier());
-            sb.append(this.getCountryCode());
-            sb.append(this.getOrderOfBattle());
+            return this.composeTacticalGraphicsSymCode();
         }
-        else if (SCHEME_STABILITY_OPERATIONS.equals(scheme) ||
-            SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+        else if (SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(scheme))
         {
-            sb.append(scheme);
-            sb.append(this.getStandardIdentity());
-            sb.append(this.getCategory());
-            sb.append(this.getStatus());
-            sb.append(this.getFunctionId());
-            sb.append(this.getSymbolModifier());
-            sb.append(this.getCountryCode());
-            sb.append(this.getOrderOfBattle());
+            return this.composeMetocSymCode();
         }
+        else if (SymbologyConstants.SCHEME_INTELLIGENCE.equalsIgnoreCase(scheme))
+        {
+            return this.composeIntelligenceSymCode();
+        }
+        else if (SymbologyConstants.SCHEME_STABILITY_OPERATIONS.equalsIgnoreCase(scheme))
+        {
+            return this.composeStabilityOperationsSymCode();
+        }
+        else if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equalsIgnoreCase(scheme))
+        {
+            return this.composeEmergencyManagementSymCode();
+        }
+        else
+        {
+            return this.composeUnrecognizedSymCode();
+        }
+    }
+
+    protected String composeUnrecognizedSymCode()
+    {
+        return null;
+    }
+
+    protected String composeWarfightingSymCode()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        this.appendCode(sb, this.getScheme(), 1); // Position 1.
+        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendCode(sb, this.getBattleDimension(), 1); // Position 3.
+        this.appendCode(sb, this.getStatus(), 1); // Position 4.
+        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendCode(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
+    }
+
+    protected String composeTacticalGraphicsSymCode()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        this.appendCode(sb, this.getScheme(), 1); // Position 1.
+        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendCode(sb, this.getCategory(), 1); // Position 3.
+        this.appendCode(sb, this.getStatus(), 1); // Position 4.
+        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
+        sb.append(UNUSED_POSITION_CODE); // Position 11. Unused because the echelon code uses only position 12.
+        this.appendCode(sb, this.getEchelon(), 1); // Position 12.
+        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+
+        return sb.toString();
+    }
+
+    protected String composeMetocSymCode()
+    {
+        // TODO: See MIL-STD-2525C, Appendix C
+        return null;
+    }
+
+    protected String composeIntelligenceSymCode()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        this.appendCode(sb, this.getScheme(), 1); // Position 1.
+        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendCode(sb, this.getBattleDimension(), 1); // Position 3.
+        this.appendCode(sb, this.getStatus(), 1); // Position 4.
+        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
+        sb.append(UNUSED_POSITION_CODE).append(UNUSED_POSITION_CODE); // Positions 11-12 are not used.
+        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+
+        return sb.toString();
+    }
+
+    protected String composeStabilityOperationsSymCode()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        this.appendCode(sb, this.getScheme(), 1); // Position 1.
+        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendCode(sb, this.getCategory(), 1); // Position 3.
+        this.appendCode(sb, this.getStatus(), 1); // Position 4.
+        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendCode(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+
+        return sb.toString();
+    }
+
+    protected String composeEmergencyManagementSymCode()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        this.appendCode(sb, this.getScheme(), 1); // Position 1.
+        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendCode(sb, this.getCategory(), 1); // Position 3.
+        this.appendCode(sb, this.getStatus(), 1); // Position 4.
+        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendCode(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+
+        return sb.toString();
+    }
+
+    protected void appendCode(StringBuilder sb, String code, int length)
+    {
+        // Append the code's characters, starting at character 0 and stopping after the number of character positions
+        // assigned to the code have been reached or the code's characters are exhausted, whichever comes first. This
+        // does nothing if the code is null or empty. If the code contains fewer characters then its assigned length,
+        // then only those characters are appended.
+        if (code != null && code.length() > 0)
+            sb.append(code, 0, code.length() < length ? code.length() : length);
+
+        // Append the "unused" character for each unused character position assigned to the code. We encounter unused
+        // positions when the code is null or its length is less than the number of assigned character positions.
+        for (int i = (code != null ? code.length() : 0); i < length; i++)
+        {
+            sb.append(UNUSED_POSITION_CODE);
+        }
     }
 }

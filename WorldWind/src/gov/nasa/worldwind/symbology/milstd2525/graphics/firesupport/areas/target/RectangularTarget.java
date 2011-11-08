@@ -9,7 +9,8 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.targe
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -37,7 +38,7 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
     /** {@inheritDoc} */
     public String getCategory()
     {
-        return SymbolCode.CATEGORY_FIRE_SUPPORT_COMBAT_SERVICE_SUPPORT;
+        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
     /** {@inheritDoc} */

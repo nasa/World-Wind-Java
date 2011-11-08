@@ -7,11 +7,12 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines;
 
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;
 import java.util.Iterator;
@@ -43,7 +44,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
     /** {@inheritDoc} */
     public String getCategory()
     {
-        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */
@@ -129,9 +130,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         return path;
     }
 
-    /**
-     * Create labels for the start and end of the path.
-     */
+    /** Create labels for the start and end of the path. */
     protected void createLabels()
     {
         StringBuilder sb = new StringBuilder();

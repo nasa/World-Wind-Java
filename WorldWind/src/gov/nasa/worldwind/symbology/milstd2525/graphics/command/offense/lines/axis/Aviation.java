@@ -8,7 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.a
 
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
 
 import java.util.*;
@@ -44,7 +44,7 @@ public class Aviation extends AbstractOffenseArrow
     /** {@inheritDoc} */
     public String getCategory()
     {
-        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */

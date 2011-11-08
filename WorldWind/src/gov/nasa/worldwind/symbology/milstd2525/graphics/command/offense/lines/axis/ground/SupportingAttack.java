@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground;
 
-import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
 
 /**
@@ -23,7 +23,7 @@ public class SupportingAttack extends AbstractOffenseArrow
     /** {@inheritDoc} */
     public String getCategory()
     {
-        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */

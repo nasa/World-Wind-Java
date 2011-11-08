@@ -8,10 +8,11 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
@@ -36,7 +37,7 @@ public class Dummy extends MilStd2525TacticalGraphic
     /** {@inheritDoc} */
     public String getCategory()
     {
-        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */
@@ -53,7 +54,7 @@ public class Dummy extends MilStd2525TacticalGraphic
 
     /**
      * {@inheritDoc}
-     *
+     * <p/>
      * The dummy graphic requires exactly three control points. Any positions beyond the first three will be ignored.
      *
      * @throws IllegalArgumentException if less than three control points are provided.

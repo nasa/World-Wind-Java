@@ -8,7 +8,8 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 
 import java.awt.*;
 import java.util.*;
@@ -39,7 +40,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     /** {@inheritDoc} */
     public String getCategory()
     {
-        return SymbolCode.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */
@@ -118,7 +119,8 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.determineActiveAttributes();
         this.determineLabelAttributes();
 
-        if (this.identityLabels == null && SymbolCode.IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
+        if (this.identityLabels == null
+            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
         {
             this.determineIdentityLabelPosition();
         }
@@ -175,7 +177,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
     protected void determineIdentityLabelPosition()
     {
-        if (SymbolCode.IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
+        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
         {
             this.identityLabels = new ArrayList<SurfaceText>();
 

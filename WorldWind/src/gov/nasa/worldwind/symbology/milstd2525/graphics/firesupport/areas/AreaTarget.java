@@ -6,12 +6,12 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
-import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
 
 /**
  * Implementation of the Circular Target graphic (hierarchy 2.X.4.3.1, SIDC: G*FPAT----****X).
-
+ *
  * @author pabercrombie
  * @version $Id$
  */
@@ -31,7 +31,7 @@ public class AreaTarget extends GeneralArea
     @Override
     public String getCategory()
     {
-        return SymbolCode.CATEGORY_FIRE_SUPPORT_COMBAT_SERVICE_SUPPORT;
+        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
     /** {@inheritDoc} */
