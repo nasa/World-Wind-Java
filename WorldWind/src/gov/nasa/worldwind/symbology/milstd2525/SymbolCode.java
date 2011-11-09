@@ -362,7 +362,7 @@ public class SymbolCode extends AVListImpl
         String uppercaseSecondChar = secondChar.toUpperCase();
 
         if (UNUSED_POSITION_CODE.equals(uppercaseFirstChar)
-            || SymbologyConstants.UNIT_EQUIPMENT_ALL.contains(uppercaseFirstChar))
+            || SymbologyConstants.UNITS_EQUIPMENT_ALL.contains(uppercaseFirstChar))
         {
             // The symbol modifier code indicates units and equipment modifiers. The first character is either unused or
             // indicates the symbol's headquarters, task force, and feint/dummy status. MIL-STD-2525 supports any
@@ -372,13 +372,13 @@ public class SymbolCode extends AVListImpl
             if (SymbologyConstants.ECHELON_ALL.contains(uppercaseSecondChar))
                 params.setValue(SymbologyConstants.ECHELON, secondChar);
 
-            if (SymbologyConstants.UNIT_EQUIPMENT_ALL_HEADQUARTERS.contains(uppercaseFirstChar))
+            if (SymbologyConstants.UNITS_EQUIPMENT_ALL_HEADQUARTERS.contains(uppercaseFirstChar))
                 params.setValue(SymbologyConstants.HEADQUARTERS, Boolean.TRUE);
 
-            if (SymbologyConstants.UNIT_EQUIPMENT_ALL_TASK_FORCE.contains(uppercaseFirstChar))
+            if (SymbologyConstants.UNITS_EQUIPMENT_ALL_TASK_FORCE.contains(uppercaseFirstChar))
                 params.setValue(SymbologyConstants.TASK_FORCE, Boolean.TRUE);
 
-            if (SymbologyConstants.UNIT_EQUIPMENT_ALL_FEINT_DUMMY.contains(uppercaseFirstChar))
+            if (SymbologyConstants.UNITS_EQUIPMENT_ALL_FEINT_DUMMY.contains(uppercaseFirstChar))
                 params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
         }
         else if (SymbologyConstants.INSTALLATION_ALL.contains(uppercaseCode))
@@ -626,7 +626,7 @@ public class SymbolCode extends AVListImpl
 
         // Symbol Modifier (positions 11-12).
         s = symCode.substring(10, 12);
-        if (this.isUnitsAndEqupmentSymbolModifier(s)
+        if (this.isUnitsAndEquipmentSymbolModifier(s)
             || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase())
             || SymbologyConstants.MOBILITY_ALL.contains(s.toUpperCase())
             || SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(s.toUpperCase()))
@@ -728,7 +728,7 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Parses a symbol code encoded in the Meterorological and Oceanographic coding scheme. METOC symbol codes are not
+     * Parses a symbol code encoded in the Meteorological and Oceanographic coding scheme. METOC symbol codes are not
      * currently supported, and this returns a string indicating that the scheme is unrecognized.
      *
      * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
@@ -872,7 +872,7 @@ public class SymbolCode extends AVListImpl
 
         // Symbol Modifier (positions 11-12).
         s = symCode.substring(10, 12);
-        if (this.isUnitsAndEqupmentSymbolModifier(s) || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase()))
+        if (this.isUnitsAndEquipmentSymbolModifier(s) || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase()))
             this.setSymbolModifier(s);
         else if (!"--".equals(s)) // "--" is accepted and indicates a null symbol modifier.
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.symbolModifier"));
@@ -982,12 +982,12 @@ public class SymbolCode extends AVListImpl
      * @return <code>true</code> if the specified code represents a units and equipment modifier code, and
      *         <code>false</code> otherwise.
      */
-    protected boolean isUnitsAndEqupmentSymbolModifier(String value)
+    protected boolean isUnitsAndEquipmentSymbolModifier(String value)
     {
         String firstChar = value.substring(0, 1).toUpperCase();
         String secondChar = value.substring(1, 2).toUpperCase();
 
-        return (UNUSED_POSITION_CODE.equals(firstChar) || SymbologyConstants.UNIT_EQUIPMENT_ALL.contains(firstChar))
+        return (UNUSED_POSITION_CODE.equals(firstChar) || SymbologyConstants.UNITS_EQUIPMENT_ALL.contains(firstChar))
             && SymbologyConstants.ECHELON_ALL.contains(secondChar.toUpperCase());
     }
 
@@ -1101,9 +1101,9 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Composes a 15-character symbol identification code (SIDC) for the Meterorological and Oceanographic coding
-     * scheme. METOC symbol codes are not currently supported, and this returns <code>null</code> indicating that the
-     * scheme is unrecognized.
+     * Composes a 15-character symbol identification code (SIDC) for the Meteorological and Oceanographic coding scheme.
+     * METOC symbol codes are not currently supported, and this returns <code>null</code> indicating that the scheme is
+     * unrecognized.
      *
      * @return <code>null</code>.
      */

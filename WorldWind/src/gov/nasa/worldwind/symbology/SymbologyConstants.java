@@ -865,76 +865,76 @@ public interface SymbologyConstants
      * The MIL-STD-2525 feint/dummy units and equipment symbol modifier code. Indicates a symbol that is a feint/dummy.
      * Appears in SIDC position 11. See {@link #FEINT_DUMMY}.
      */
-    final String UNIT_EQUIPMENT_FEINT_DUMMY = "F";
+    final String UNITS_EQUIPMENT_FEINT_DUMMY = "F";
     /**
      * The MIL-STD-2525 feint/dummy headquarters units and equipment symbol modifier code. Indicates a symbol that is a
      * feint/dummy and a headquarters. Appears in SIDC position 11. See {@link #FEINT_DUMMY} and {@link #HEADQUARTERS}.
      */
-    final String UNIT_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS = "C";
+    final String UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS = "C";
     /**
      * The MIL-STD-2525 feint/dummy task force units and equipment symbol modifier code. Indicates a symbol that is a
      * feint/dummy and a task force. Appears in SIDC position 11. See {@link #FEINT_DUMMY} and {@link #TASK_FORCE}.
      */
-    final String UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE = "G";
+    final String UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE = "G";
     /**
      * The MIL-STD-2525 feint/dummy task force headquarters units and equipment symbol modifier code. Indicates a symbol
      * that is a feint/dummy, a task force, and a headquarters. Appears in SIDC position 11. See {@link #FEINT_DUMMY},
      * {@link #TASK_FORCE}, and {@link #HEADQUARTERS}.
      */
-    final String UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS = "D";
+    final String UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS = "D";
     /**
      * The MIL-STD-2525 headquarters units and equipment symbol modifier code. Indicates a symbol that is a
      * headquarters. Appears in SIDC position 11. See {@link #HEADQUARTERS}.
      */
-    final String UNIT_EQUIPMENT_HEADQUARTERS = "A";
+    final String UNITS_EQUIPMENT_HEADQUARTERS = "A";
     /**
      * The MIL-STD-2525 task force units and equipment symbol modifier code. Indicates a symbol that is a task force.
      * Appears in SIDC position 11. See {@link #TASK_FORCE}.
      */
-    final String UNIT_EQUIPMENT_TASK_FORCE = "E";
+    final String UNITS_EQUIPMENT_TASK_FORCE = "E";
     /**
      * The MIL-STD-2525 task force headquarters units and equipment symbol modifier code. Indicates a symbol that is a
      * task force and a headquarters. Appears in SIDC position 11. See {@link #TASK_FORCE} and {@link #HEADQUARTERS}.
      */
-    final String UNIT_EQUIPMENT_TASK_FORCE_HEADQUARTERS = "B";
+    final String UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS = "B";
     /** List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes. */
-    final List<String> UNIT_EQUIPMENT_ALL = Arrays.asList(
-        UNIT_EQUIPMENT_HEADQUARTERS,
-        UNIT_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
-        UNIT_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
-        UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        UNIT_EQUIPMENT_TASK_FORCE,
-        UNIT_EQUIPMENT_FEINT_DUMMY,
-        UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
+    final List<String> UNITS_EQUIPMENT_ALL = Arrays.asList(
+        UNITS_EQUIPMENT_HEADQUARTERS,
+        UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
+        UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
+        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        UNITS_EQUIPMENT_TASK_FORCE,
+        UNITS_EQUIPMENT_FEINT_DUMMY,
+        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
     );
     /**
      * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
      * feint/dummy.
      */
-    final List<String> UNIT_EQUIPMENT_ALL_FEINT_DUMMY = Arrays.asList(
-        UNIT_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
-        UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        UNIT_EQUIPMENT_FEINT_DUMMY,
-        UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
+    final List<String> UNITS_EQUIPMENT_ALL_FEINT_DUMMY = Arrays.asList(
+        UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
+        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        UNITS_EQUIPMENT_FEINT_DUMMY,
+        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
     );
     /**
      * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
      * headquarters.
      */
-    final List<String> UNIT_EQUIPMENT_ALL_HEADQUARTERS = Arrays.asList(
-        UNIT_EQUIPMENT_HEADQUARTERS,
-        UNIT_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
-        UNIT_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
-        UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS
+    final List<String> UNITS_EQUIPMENT_ALL_HEADQUARTERS = Arrays.asList(
+        UNITS_EQUIPMENT_HEADQUARTERS,
+        UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
+        UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
+        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS
     );
     /**
      * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a task
      * force.
      */
-    final List<String> UNIT_EQUIPMENT_ALL_TASK_FORCE = Arrays.asList(
-        UNIT_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
-        UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        UNIT_EQUIPMENT_TASK_FORCE,
-        UNIT_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
+    final List<String> UNITS_EQUIPMENT_ALL_TASK_FORCE = Arrays.asList(
+        UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
+        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        UNITS_EQUIPMENT_TASK_FORCE,
+        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
     );
 }
