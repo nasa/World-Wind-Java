@@ -195,7 +195,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             else if
                 (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
             {
-                if ("E".equalsIgnoreCase(functionID.substring(0, 1)))   // special case of Ground Equipment
+                if (functionID != null
+                    && "E".equalsIgnoreCase(functionID.substring(0, 1)))   // special case of Ground Equipment
                 {
                     // 4. circle
                     filename = "circle_overlay.png";
@@ -240,7 +241,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
         // handle the special case of overlays for installations (Ground battle dimension only)
         if (battleDim != null && battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
-            && "I".equalsIgnoreCase(functionID.substring(0, 1)))
+            && functionID != null && "I".equalsIgnoreCase(functionID.substring(0, 1)))
         {
             filename = "installation_" + filename;
         }
@@ -325,9 +326,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             pos3 = code.getCategory();
         }
 
+        String functionId = code.getFunctionId();
+        if (functionId == null)
+            functionId = "------";
+
         return Integer.toString(prefix) + '.' + code.getScheme().toLowerCase()
             + stdid + pos3.toLowerCase()
-            + 'p' + code.getFunctionId().toLowerCase()
+            + 'p' + functionId.toLowerCase()
             //+ code.getValue(SymbolCode.SYMBOL_MODIFIER).toString().toLowerCase()
             + padding + ".png";
     }

@@ -574,7 +574,7 @@ public class SymbolCode extends AVListImpl
     /**
      * Parses a symbol code encoded in the Warfighting coding scheme. Warfighting symbol codes contain the following
      * fields: Coding Scheme, Standard Identity, Battle Dimension, Status, Function ID, Symbol Modifier, Country Code,
-     * Order of Battle. All fields except Symbol Modifier, Country Code and Order of Battle must be
+     * Order of Battle. All fields except Function ID, Symbol Modifier, Country Code and Order of Battle must be
      * non-<code>null</code>.
      * <p/>
      * The Warfighting coding scheme is defined in MIL-STD-2525C table A-I (page 51).
@@ -619,10 +619,8 @@ public class SymbolCode extends AVListImpl
 
         // Function ID (positions 5-10).
         s = symCode.substring(4, 10);
-        if (!"-----".equals(s)) // Just validate that the function id is not null.
+        if (!"------".equals(s)) // "------" is accepted and indicates a null function ID.
             this.setFunctionId(s);
-        else
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
 
         // Symbol Modifier (positions 11-12).
         s = symCode.substring(10, 12);
@@ -655,7 +653,8 @@ public class SymbolCode extends AVListImpl
     /**
      * Parses a symbol code encoded in the Tactical Graphics coding scheme. Tactical Graphic symbol codes contain the
      * following fields: Coding Scheme, Standard Identity, Category, Status, Function ID, Echelon, Country Code, Order
-     * of Battle. All fields except Echelon, Country Code and Order of Battle must be non-<code>null</code>.
+     * of Battle. All fields except Function ID, Echelon, Country Code and Order of Battle must be
+     * non-<code>null</code>.
      * <p/>
      * The Tactical Graphics coding scheme is defined in MIL-STD-2525C table B-I (page 305).
      *
@@ -699,12 +698,10 @@ public class SymbolCode extends AVListImpl
 
         // Function ID (positions 5-10).
         s = symCode.substring(4, 10);
-        if (!"-----".equals(s)) // Just validate that the function id is not null.
+        if (!"------".equals(s)) // "------" is accepted and indicates a null function ID.
             this.setFunctionId(s);
-        else
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
 
-        // Echelon (positions 11-12, position 11 is unused in MIL-STD-2525C).
+        // Echelon (position 12, position 11 is unused).
         s = symCode.substring(11, 12);
         if (SymbologyConstants.ECHELON_ALL.contains(s.toUpperCase()))
             this.setEchelon(s);
@@ -747,7 +744,7 @@ public class SymbolCode extends AVListImpl
     /**
      * Parses symbol codes encoded for the Signals Intelligence coding scheme. Signals Intelligence symbol codes contain
      * the following fields: Scheme, Standard Identity, Battle Dimension, Status, Function ID, Country Code, Order of
-     * Battle. All fields except Country Code and Order of Battle must be non-<code>null</code>.
+     * Battle. All fields except Function ID, Country Code and Order of Battle must be non-<code>null</code>.
      * <p/>
      * The Signals Intelligence coding scheme is defined in MIL-STD-2525C table D-I (page 964).
      *
@@ -791,10 +788,8 @@ public class SymbolCode extends AVListImpl
 
         // Function ID (positions 5-10)
         s = symCode.substring(4, 10);
-        if (!"-----".equals(s)) // Just validate that the function id is not null.
+        if (!"------".equals(s)) // "------" is accepted and indicates a null function ID.
             this.setFunctionId(s);
-        else
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
 
         // Not Used (positions 11-12).
         s = symCode.substring(10, 12);
@@ -820,7 +815,7 @@ public class SymbolCode extends AVListImpl
     /**
      * Parses a symbol code encoded in the Stability Operations coding scheme. Stability Operations symbol codes contain
      * the following fields: Scheme, Standard Identity, Category, Status, Function ID, Symbol Modifier, Country Code,
-     * Order of Battle. All fields except Symbol Modifier, Country Code and Order of Battle must be
+     * Order of Battle. All fields except Function ID, Symbol Modifier, Country Code and Order of Battle must be
      * non-<code>null</code>.
      * <p/>
      * The Stability Operations coding scheme is defined in MIL-STD-2525C table E-I (page 991).
@@ -865,10 +860,8 @@ public class SymbolCode extends AVListImpl
 
         // Function ID (positions 5-10).
         s = symCode.substring(4, 10);
-        if (!"-----".equals(s)) // Just validate that the function id is not null.
+        if (!"------".equals(s)) // "------" is accepted and indicates a null function ID.
             this.setFunctionId(s);
-        else
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
 
         // Symbol Modifier (positions 11-12).
         s = symCode.substring(10, 12);
@@ -896,7 +889,7 @@ public class SymbolCode extends AVListImpl
     /**
      * Parses a symbol code encoded in the Emergency Management coding scheme. Emergency Management symbol codes contain
      * the following fields: Scheme, Standard Identity, Category, Status, Function ID, Symbol Modifier, Country Code,
-     * Order of Battle. All fields except Symbol Modifier, Country Code and Order of Battle must be
+     * Order of Battle. All fields except Function ID, Symbol Modifier, Country Code and Order of Battle must be
      * non-<code>null</code>.
      * <p/>
      * The Emergency Management coding scheme is defined in MIL-STD-2525C table G-I (page 1032).
@@ -941,10 +934,8 @@ public class SymbolCode extends AVListImpl
 
         // Function ID (positions 5-10).
         s = symCode.substring(4, 10);
-        if (!"-----".equals(s)) // Just validate that the function id is not null.
+        if (!"------".equals(s)) // "------" is accepted and indicates a null function ID.
             this.setFunctionId(s);
-        else
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.functionID"));
 
         // Symbol Modifier (positions 11-12).
         s = symCode.substring(10, 12);
@@ -1065,7 +1056,7 @@ public class SymbolCode extends AVListImpl
         this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
         this.appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
         this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
         this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
         this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
         this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
@@ -1091,7 +1082,7 @@ public class SymbolCode extends AVListImpl
         this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
         this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
         this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
         sb.append(UNUSED_POSITION_CODE); // Position 11. Unused because the echelon code uses only position 12.
         this.appendFieldValue(sb, this.getEchelon(), 1); // Position 12.
         this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
@@ -1131,7 +1122,7 @@ public class SymbolCode extends AVListImpl
         this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
         this.appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
         this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
         sb.append(UNUSED_POSITION_CODE).append(UNUSED_POSITION_CODE); // Positions 11-12 are not used.
         this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
         this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
@@ -1157,7 +1148,7 @@ public class SymbolCode extends AVListImpl
         this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
         this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
         this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
         this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
         this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
         this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
@@ -1183,7 +1174,7 @@ public class SymbolCode extends AVListImpl
         this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
         this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
         this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
         this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
         this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
         this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
