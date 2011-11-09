@@ -6,22 +6,22 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.PenetrationBox;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.AreaTarget;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Graphic factory to create tactical graphics for the MIL-STD-2525 symbol set.
@@ -127,6 +127,6 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
     protected Class getClassForCode(SymbolCode symbolCode)
     {
         String key = symbolCode.getFunctionId();
-        return this.classMap.get(key);
+        return key != null ? this.classMap.get(key) : null;
     }
 }
