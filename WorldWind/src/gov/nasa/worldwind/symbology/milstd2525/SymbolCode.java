@@ -12,15 +12,31 @@ import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.Logging;
 
 /**
- * Class to parse and manipulate MIL-STD-2525 symbol identification codes (SIDC). Different sections of the 2525
- * specification use different types of symbol codes, so not all fields will be defined in every code.
+ * SymbolCode provides a utility for parsing and representing the individual fields of a MIL-STD-2525 symbol
+ * identification code (SIDC). A SymbolCode can either be created by parsing a 15-character symbol code string or by
+ * creating an empty SymbolCode and manually specifying its fields.
  * <p/>
- * Fields in a parsed symbol code can be accessed using explicit get and set methods, or using String keys. The possible
- * keys are: <ul><li>SymbologyConstants.SCHEME</li> <li>SymbologyConstants.STANDARD_IDENTITY</li>
- * <li>SymbologyConstants.CATEGORY</li> <li>SymbologyConstants.BATTLE_DIMENSION</li>
- * <li>SymbologyConstants.FUNCTION_ID</li> <li>SymbologyConstants.ECHELON</li> <li>SymbologyConstants.SYMBOL_MODIFIER</li>
- * <li>SymbologyConstants.STATUS</li> <li>SymbologyConstants.COUNTRY_CODE</li> <li>SymbologyConstants.ORDER_OF_BATTLE</li>
+ * To parse a symbol code string, construct a new SymbolCode passing in the identifier string as the sole argument.
+ * SymbolCode validates and parses the string, and populates its fields according to the contents of the string. If any
+ * field in the code is unrecognized SymbolCode throws an exception and indicates the problematic fields in the
+ * exception's message. After parsing, each field can be accessed by calling the appropriate accessor methods (for
+ * example: getScheme/setScheme). SymbolCodes supports the following fields:
+ * <p/>
+ * <ul> <li>Coding Scheme</li> <li>Standard Identity</li> <li>Battle Dimension</li> <li>Category</li> <li>Function
+ * ID</li> <li>Symbol Modifier</li> <li>Echelon</li> <li>Status</li> <li>Country Code</li> <li>Order of Battle</li>
  * </ul>
+ * <p/>
+ * Which fields are populated after parsing a symbol code depends on the MIL-STD-2525 symbology set the symbol code
+ * belongs to:
+ * <p/>
+ * <table border="1"> <tr><th>Symbology Set</th><th>Coding Scheme</th><th>Standard Identity</th><th>Battle
+ * Dimension</th><th>Category</th><th>Status</th><th>Function ID</th><th>Symbol Modifier</th><th>Echelon</th><th>Country
+ * Code</th><th>Order of Battle</th></tr> <tr><td>Warfighting</td><td>YES</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td></tr>
+ * <tr><td>Tactical Graphics</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td><td>YES</td></tr>
+ * <tr><td>Signals Intelligence</td><td>YES</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td><td>NO</td><td>NO</td><td>YES</td><td>YES</td></tr>
+ * <tr><td>Stability Operations</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td></tr>
+ * <tr><td>Emergency Management</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td><td>YES</td><td>YES</td><td>NO</td><td>YES</td><td>YES</td></tr>
+ * </table>
  *
  * @author pabercrombie
  * @version $Id$
@@ -34,22 +50,27 @@ public class SymbolCode extends AVListImpl
     public static final int COLOR_HOSTILE = 0;        // red
     public static final int COLOR_CIVILIAN = 300;     // purple   TODO:  Sat = 37, not 50
 
-    /** Indicates the character for an unused position in a MIL-STD-2525 symbol identification code */
+    /** Indicates the string value for an unused position in a MIL-STD-2525 symbol identification code. */
     protected static final String UNUSED_POSITION_CODE = "-";
 
-    /** Create a new symbol code. All fields will be null. */
+    /** Creates a new symbol code, but otherwise does nothing. All fields are initialized to <code>null</code>. */
     public SymbolCode()
     {
-        // Intentionally blank
+        // Intentionally left blank. All symbol code fields are null by default.
     }
 
     /**
-     * Creates a new SymCode by parsing the fields of the specified MIL-STD-2525 15-character alphanumeric symbol
-     * identification code (SIDC).
+     * Creates a new SymbolCode by parsing the fields of the specified MIL-STD-2525 15-character alphanumeric symbol
+     * identification code (SIDC). This populates the new SymbolCode's fields according to the contents of the string.
+     * This throws an exception if any field in the symbol code is unrecognized, and indicates the problematic fields in
+     * the exception's message. After construction, each field can be accessed by calling the appropriate accessor
+     * methods (for example: getScheme/setScheme)
+     * <p/>
+     * See SymbolCode's class-level documentation for an overview of the supported MIL-STD-2525 symbol code fields.
      *
      * @param symCode the symbol identification code to parse.
      *
-     * @throws IllegalArgumentException if the symCode is null or has length other than 15.
+     * @throws IllegalArgumentException if the symCode is <code>null</code> or has a length other than 15.
      * @throws WWUnrecognizedException  if any field in the symCode is invalid or cannot be recognized.
      */
     public SymbolCode(String symCode)
@@ -71,15 +92,19 @@ public class SymbolCode extends AVListImpl
         String s = this.parseSymCode(symCode);
         if (s != null)
         {
+            // A non-null return value indicates the symCode is unrecognized, and contains a message indicating the
+            // problematic fields.
             Logging.logger().severe(s);
             throw new WWUnrecognizedException(s);
         }
     }
 
     /**
-     * Retrieves the Coding Scheme field of the symbol code.
+     * Indicates this symbol code's Coding Scheme field.
      *
-     * @return The value of the coding scheme field. May be null.
+     * @return the value of the Coding Scheme field. May be <code>null</code>.
+     *
+     * @see #setScheme(String)
      */
     public String getScheme()
     {
@@ -87,19 +112,25 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Coding Scheme field.
+     * Specifies this symbol code's Coding Scheme field.  A symbol code's Coding Scheme defines the specific
+     * MIL-STD-2525 symbology set that it belongs to. The value must be <code>null</code> or one of the following:
+     * <p/>
+     * <ul> <li>SCHEME_WARFIGHTING</li> <li>SCHEME_TACTICAL_GRAPHICS</li> <li>SCHEME_METOC</li>
+     * <li>SCHEME_INTELLIGENCE</li> <li>SCHEME_STABILITY_OPERATIONS</li> <li>SCHEME_EMERGENCY_MANAGEMENT</li> </ul>
      *
-     * @param scheme New value for the coding scheme field. May be null.
+     * @param value the new value for the Coding Scheme field. May be <code>null</code>.
      */
-    public void setScheme(String scheme)
+    public void setScheme(String value)
     {
-        this.setValue(SymbologyConstants.SCHEME, scheme);
+        this.setValue(SymbologyConstants.SCHEME, value);
     }
 
     /**
-     * Retrieves the StandardIdentity field of the symbol code.
+     * Indicates this symbol code's Standard Identity field.
      *
-     * @return The value of the standard identity field. May be null.
+     * @return the value of the Standard Identity field. May be <code>null</code>.
+     *
+     * @see #setStandardIdentity(String)
      */
     public String getStandardIdentity()
     {
@@ -107,9 +138,17 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Standard Identity field.
+     * Specifies this symbol code's Standard Identity field. A symbol code's Standard Identity defines the threat posed
+     * by the object being represented. The value must be <code>null</code> or one of the following:
+     * <p/>
+     * <ul> <li>STANDARD_IDENTITY_PENDING</li> <li>STANDARD_IDENTITY_UNKNOWN</li> <li>STANDARD_IDENTITY_ASSUMED_FRIEND</li>
+     * <li>STANDARD_IDENTITY_FRIEND</li> <li>STANDARD_IDENTITY_NEUTRAL</li> <li>STANDARD_IDENTITY_SUSPECT</li>
+     * <li>STANDARD_IDENTITY_HOSTILE</li> <li>STANDARD_IDENTITY_EXERCISE_PENDING</li>
+     * <li>STANDARD_IDENTITY_EXERCISE_UNKNOWN</li> <li>STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND</li>
+     * <li>STANDARD_IDENTITY_EXERCISE_FRIEND</li> <li>STANDARD_IDENTITY_EXERCISE_NEUTRAL</li>
+     * <li>STANDARD_IDENTITY_JOKER</li> <li>STANDARD_IDENTITY_FAKER</li> </ul>
      *
-     * @param value New value for the coding scheme field. May be null.
+     * @param value the new value for the Standard Identity field. May be <code>null</code>.
      */
     public void setStandardIdentity(String value)
     {
@@ -117,9 +156,11 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Retrieves the Battle Dimension field of the symbol code.
+     * Indicates this symbol code's Battle Dimension field.
      *
-     * @return The value of the battle dimension field. May be null.
+     * @return the value of the Battle Dimension field. May be <code>null</code>.
+     *
+     * @see #setBattleDimension(String)
      */
     public String getBattleDimension()
     {
@@ -127,9 +168,14 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Battle Dimension field.
+     * Specifies this symbol code's Battle Dimension field. A symbol code's Battle Dimension defines the primary mission
+     * area for the object being represented. The value must be <code>null</code> or one of the following:
+     * <p/>
+     * <ul> <li>BATTLE_DIMENSION_SPACE</li> <li>BATTLE_DIMENSION_AIR</li> <li>BATTLE_DIMENSION_GROUND</li>
+     * <li>BATTLE_DIMENSION_SEA_SURFACE</li> <li>BATTLE_DIMENSION_SEA_SUBSURFACE</li> <li>BATTLE_DIMENSION_SOF</li>
+     * <li>BATTLE_DIMENSION_OTHER</li> </ul>
      *
-     * @param value New value for the Battle Dimension field. May be null.
+     * @param value the new value for the Battle Dimension field. May be <code>null</code>.
      */
     public void setBattleDimension(String value)
     {
@@ -137,9 +183,11 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Retrieves the Category field of the symbol code.
+     * Indicates this symbol code's Category field.
      *
-     * @return The value of the category field. May be null.
+     * @return the value of the Category field. May be <code>null</code>.
+     *
+     * @see #setCategory(String)
      */
     public String getCategory()
     {
@@ -147,9 +195,27 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Category field.
+     * Specifies this symbol code's Category field. The meaning of a symbol code's Category and the recognized values
+     * depend on the specific MIL-STD-2525 symbology scheme the symbol code belongs to:
+     * <p/>
+     * <strong>Tactical Graphics</strong>
+     * <p/>
+     * <ul> <li>CATEGORY_TASKS</li> <li>CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER</li>
+     * <li>CATEGORY_MOBILITY_SURVIVABILITY</li> <li>CATEGORY_FIRE_SUPPORT</li> <li>CATEGORY_COMBAT_SERVICE_SUPPORT</li>
+     * <li>CATEGORY_OTHER</li> </ul>
+     * <p/>
+     * <strong>Stability Operations</strong>
+     * <p/>
+     * <ul> <li>CATEGORY_VIOLENT_ACTIVITIES</li> <li>CATEGORY_LOCATIONS</li> <li>CATEGORY_OPERATIONS</li>
+     * <li>CATEGORY_ITEMS</li> <li>CATEGORY_INDIVIDUAL</li> <li>CATEGORY_NONMILITARY_GROUP_ORGANIZATION</li>
+     * <li>CATEGORY_RAPE</li> </ul>
+     * <p/>
+     * <strong>Emergency Management</strong>
+     * <p/>
+     * <ul> <li>CATEGORY_INCIDENT</li> <li>CATEGORY_NATURAL_EVENTS</li> <li>CATEGORY_OPERATIONS</li>
+     * <li>CATEGORY_INFRASTRUCTURE</li> </ul>
      *
-     * @param value New value for the coding scheme field. May be null.
+     * @param value the new value for the Category field. May be <code>null</code>.
      */
     public void setCategory(String value)
     {
@@ -157,9 +223,11 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Retrieves the Status/Operation Condition field of the symbol code.
+     * Indicates this symbol code's Status/Operational Condition field.
      *
-     * @return The value of the Status field. May be null.
+     * @return the value of the Status/Operational Condition field. May be <code>null</code>.
+     *
+     * @see #setStatus(String)
      */
     public String getStatus()
     {
@@ -167,9 +235,25 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Status field.
+     * Specifies this symbol code's Status/Operational Condition field. A symbol code's Status defines whether the
+     * represented object exists at the time the symbol was generated, or is anticipated to exist in the future.
+     * Additionally, a symbol code's Status can define its operational condition. The recognized values depend on the
+     * specific MIL-STD-2525 symbology scheme the symbol code belongs to:
+     * <p/>
+     * <strong>Warfighting, Signals Intelligence, Stability Operations</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> <li>STATUS_PRESENT_FULLY_CAPABLE</li>
+     * <li>STATUS_PRESENT_DAMAGED</li> <li>STATUS_PRESENT_DESTROYED</li> <li>STATUS_PRESENT_FULL_TO_CAPACITY</li> </ul>
+     * <p/>
+     * <strong>Tactical Graphics</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_SUSPECTED</li> <li>STATUS_PRESENT</li> <li>STATUS_KNOWN</li> </ul>
+     * <p/>
+     * <strong>Emergency Management</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> </ul>
      *
-     * @param value New value for the Status field. May be null.
+     * @param value the new value for the Status/Operational Condition field. May be <code>null</code>.
      */
     public void setStatus(String value)
     {
@@ -177,9 +261,11 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Retrieves the Function ID field of the symbol code.
+     * Indicates this symbol code's Function ID field.
      *
-     * @return The value of the function ID field. May be null.
+     * @return the value of the Function ID field. May be <code>null</code>.
+     *
+     * @see #setFunctionId(String)
      */
     public String getFunctionId()
     {
@@ -187,9 +273,16 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Function ID field.
+     * Specifies this symbol code's Function ID field. The Function IDs are unique to each symbology schemes that uses
+     * them, and are defined in each appendix of the MIL-STD-2525C specification:
+     * <p/>
+     * <ul> <li>Warfighting - section A.5.2.1.e (page 51) and table A-I (page 51)</li> <li>Tactical Graphics - section
+     * B.5.2.1.e (page 304) and table B-I (page 305)</li> <li>Meteorological and Oceanographic - section C.5.2.1.d (page
+     * 763) and table C-I (page 763)</li> <li>Signals Intelligence - section D.5.2.1.e (page 964) and table D-I (page
+     * 964)</li> <li>Stability Operations - section E.5.2.1.e (page 991) and table E-I (page 991)</li> <li>Emergency
+     * Management - table G-I (page 1032)</li> </ul>
      *
-     * @param value New value for the Function ID field. May be null.
+     * @param value the new value for the Function ID field. May be <code>null</code>.
      */
     public void setFunctionId(String value)
     {
@@ -197,29 +290,11 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Retrieves the Echelon field of the symbol code.
+     * Indicates this symbol code's Symbol Modifier field.
      *
-     * @return The value of the echelon field. May be null.
-     */
-    public String getEchelon()
-    {
-        return this.getStringValue(SymbologyConstants.ECHELON);
-    }
-
-    /**
-     * Sets the value of the Echelon field.
+     * @return the value of the Symbol Modifier field. May be <code>null</code>.
      *
-     * @param value New value for the Echelon field. May be null.
-     */
-    public void setEchelon(String value)
-    {
-        this.setValue(SymbologyConstants.ECHELON, value);
-    }
-
-    /**
-     * Retrieves the Symbol Modifier field of the symbol code.
-     *
-     * @return The value of the Symbol Modifier field. May be null.
+     * @see #setSymbolModifier(String)
      */
     public String getSymbolModifier()
     {
@@ -227,15 +302,49 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Symbol Modifier field.
+     * Specifies this symbol code's Symbol Modifier field. The Symbol Modifier defines what graphic symbol modifiers
+     * should be displayed around the symbol's icon such as echelon, headquarters, task force, feint/dummy,
+     * installation, equipment mobility, and auxiliary equipment. The recognized values depend on the specific
+     * MIL-STD-2525 symbology scheme the symbol code belongs to, and are defined in each appendix of the MIL-STD-2525C
+     * specification:
+     * <p/>
+     * <ul> <li>Warfighting - section A.5.2.1.f (page 51) and table A-II (pages 52-54)</li> <li>Stability Operations -
+     * section E.5.2.1.f (page 991) and table E-II (pages 992-994)</li> <li>Emergency Management - section G.5.5 (page
+     * 1029) and table EG-II (page 1032)</li> </ul>
      *
-     * @param value New value for the Symbol Modifier field. May be null.
+     * @param value the new value for the Symbol Modifier field. May be <code>null</code>.
      */
     public void setSymbolModifier(String value)
     {
         this.setValue(SymbologyConstants.SYMBOL_MODIFIER, value);
     }
 
+    /**
+     * Computes and returns the modifier key-value pairs associated with this SymbolCode's SymbolModifier field. This
+     * recognizes modifier codes used by the Warfighting, Stability Operations, and Emergency Management symbology
+     * schemes: echelon, headquarters, task force, feint/dummy, installation, equipment mobility, and auxiliary
+     * equipment. This adds modifier keys only for those modifiers present in the SymbolModifier field. Any modifiers
+     * not in the SymbolModifier field are ignored. The following key-value pairs are used to indicate each modifier:
+     * <p/>
+     * <table border="1"> <tr><th>Modifier</th><th>Key</th><th>Value</th></tr> <tr><td>Echelon</td><td>SymbologyConstants.ECHELON</td><td>See
+     * {@link SymbologyConstants#ECHELON}</td></tr> <tr><td>Headquarters</td><td>SymbologyConstants.HEADQUARTERS</td><td>Boolean.TRUE
+     * or <code>null</code></td></tr> <tr><td>Task Force</td><td>SymbologyConstants.TASK_FORCE</td><td>Boolean.TRUE or
+     * <code>null</code></td></tr> <tr><td>Feint/Dummy</td><td>SymbologyConstants.FEINT_DUMMY</td><td>Boolean.TRUE or
+     * <code>null</code></td></tr> <tr><td>Installation</td><td>SymbologyConstants.INSTALLATION</td><td>See {@link
+     * SymbologyConstants#INSTALLATION}</td></tr> <tr><td>Equipment Mobility</td><td>SymbologyConstants.MOBILITY</td><td>See
+     * {@link SymbologyConstants#MOBILITY}</td></tr> <tr><td>Auxiliary Equipment</td><td>SymbologyConstants.AUXILIARY_EQUIPMENT</td><td>See
+     * {@link SymbologyConstants#AUXILIARY_EQUIPMENT}</td></tr> </table>
+     * <p/>
+     * Note that the installation modifier code indicates that an installation is either a normal installation or a
+     * feint/dummy installation. In the latter case, this also sets the modifier key SymbologyConstants.FEINT_DUMMY to
+     * Boolean.TRUE. This provides a consistent way to identify feint/dummy modifier status for both units/equipment and
+     * installations.
+     *
+     * @param params a parameter list in which to place the modifier key-value pairs, or <code>null</code> to allocate
+     *               and return a new parameter list.
+     *
+     * @return a parameter list containing the modifier key-value pairs.
+     */
     public AVList getSymbolModifierParams(AVList params)
     {
         String code = this.getSymbolModifier();
@@ -255,6 +364,11 @@ public class SymbolCode extends AVListImpl
         if (UNUSED_POSITION_CODE.equals(uppercaseFirstChar)
             || SymbologyConstants.UNIT_EQUIPMENT_ALL.contains(uppercaseFirstChar))
         {
+            // The symbol modifier code indicates units and equipment modifiers. The first character is either unused or
+            // indicates the symbol's headquarters, task force, and feint/dummy status. MIL-STD-2525 supports any
+            // combination of the headquarters, task force, and feint/dummy states, so we check for each independently.
+            // The second character is either unused or indicates the symbol's echelon.
+
             if (SymbologyConstants.ECHELON_ALL.contains(uppercaseSecondChar))
                 params.setValue(SymbologyConstants.ECHELON, secondChar);
 
@@ -269,6 +383,11 @@ public class SymbolCode extends AVListImpl
         }
         else if (SymbologyConstants.INSTALLATION_ALL.contains(uppercaseCode))
         {
+            // The symbol modifier code indicates an installation modifier. Currently, this must either be a normal
+            // installation or a feint/dummy installation. Though the installation modifier code indicates that an
+            // installation is a feint/dummy, we check for this case and set the FEINT_DUMMY modifier key to TRUE. This
+            // provides a consistent modifier key for feint/dummy status across for units/equipment and installations.
+
             params.setValue(SymbologyConstants.INSTALLATION, code);
 
             if (SymbologyConstants.INSTALLATION_FEINT_DUMMY.equalsIgnoreCase(code))
@@ -276,10 +395,13 @@ public class SymbolCode extends AVListImpl
         }
         else if (SymbologyConstants.MOBILITY_ALL.contains(uppercaseCode))
         {
+            // The symbol modifier code indicates an equipment mobility modifier.
             params.setValue(SymbologyConstants.MOBILITY, code);
         }
         else if (SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(uppercaseCode))
         {
+            // The symbol modifier code indicates an auxiliary equipment modifier. Currently, this is limited to the
+            // towed sonar array modifier.
             params.setValue(SymbologyConstants.AUXILIARY_EQUIPMENT, code);
         }
 
@@ -287,9 +409,40 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Retrieves the Country Code field of the symbol code.
+     * Indicates this symbol code's Echelon field.
      *
-     * @return The value of the Country Code field. May be null.
+     * @return the value of the Echelon field. May be <code>null</code>.
+     *
+     * @see #setEchelon(String)
+     */
+    public String getEchelon()
+    {
+        return this.getStringValue(SymbologyConstants.ECHELON);
+    }
+
+    /**
+     * Specifies this symbol code's Echelon field. A symbol code's Echelon defines the command level of a unit
+     * represented by the symbol. The value must be <code>null</code> or one of the following:
+     * <p/>
+     * <ul> <li>ECHELON_TEAM_CREW</li> <li>ECHELON_SQUAD</li> <li>ECHELON_SECTION</li>
+     * <li>ECHELON_PLATOON_DETACHMENT</li> <li>ECHELON_COMPANY_BATTERY_TROOP</li> <li>ECHELON_BATTALION_SQUADRON</li>
+     * <li>ECHELON_REGIMENT_GROUP</li> <li>ECHELON_BRIGADE</li> <li>ECHELON_DIVISION</li> <li>ECHELON_CORPS</li>
+     * <li>ECHELON_ARMY</li> <li>ECHELON_ARMY_GROUP_FRONT</li> <li>ECHELON_REGION</li> <li>ECHELON_COMMAND</li> </ul>
+     * <p/>
+     *
+     * @param value the new value for the Echelon field. May be <code>null</code>.
+     */
+    public void setEchelon(String value)
+    {
+        this.setValue(SymbologyConstants.ECHELON, value);
+    }
+
+    /**
+     * Indicates this symbol code's Country Code field.
+     *
+     * @return the value of the Country Code field. May be <code>null</code>.
+     *
+     * @see #setCountryCode(String)
      */
     public String getCountryCode()
     {
@@ -297,9 +450,11 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Country Code field.
+     * Specifies this symbol code's Country Code field. See <a href="http://www.iso.org/iso/country_codes.htm"
+     * target="_blank">ISO 3166-1</a> for a definition of valid Country Codes. The Country Codes are the same for all
+     * symbology schemes that use them.
      *
-     * @param value New value for the Country Code field. May be null.
+     * @param value the new value for the Country Code field. May be <code>null</code>.
      */
     public void setCountryCode(String value)
     {
@@ -307,9 +462,11 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Retrieves the Order of Battle field of the symbol code.
+     * Indicates this symbol code's Order of Battle field.
      *
-     * @return The value of the Order of Battle field. May be null.
+     * @return the value of the Order of Battle field. May be <code>null</code>.
+     *
+     * @see #setOrderOfBattle(String)
      */
     public String getOrderOfBattle()
     {
@@ -317,20 +474,54 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Sets the value of the Order of Battle field.
+     * Specifies this symbol code's Order of Battle field. A symbol code's Order of Battle provides additional
+     * information about the symbol in the operational environment. The recognized values depend on the specific
+     * MIL-STD-2525 symbology scheme the symbol code belongs to:
+     * <p/>
+     * <strong>Warfighting, Signals Intelligence, Stability Operations, Emergency Management</strong>
+     * <p/>
+     * <ul> <li>ORDER_OF_BATTLE_AIR</li> <li>ORDER_OF_BATTLE_ELECTRONIC</li> <li>ORDER_OF_BATTLE_CIVILIAN</li>
+     * <li>ORDER_OF_BATTLE_GROUND</li> <li>ORDER_OF_BATTLE_MARITIME</li> <li>ORDER_OF_BATTLE_STRATEGIC_FORCE_RELATED</li>
+     * </ul>
+     * <p/>
+     * <strong>Tactical Graphics</strong>
+     * <p/>
+     * <ul> <li>ORDER_OF_BATTLE_CONTROL_MARKINGS</li> </ul>
      *
-     * @param value New value for the Order of Battle field. May be null.
+     * @param value the new value for the Order of Battle field. May be <code>null</code>.
      */
     public void setOrderOfBattle(String value)
     {
         this.setValue(SymbologyConstants.ORDER_OF_BATTLE, value);
     }
 
+    /**
+     * Returns the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode's
+     * current field values. Fields that are not part of this SymbolCode's current Coding Scheme are ignored. Fields
+     * that are unspecified or null are replaced with the MIL-STD-2525 unused position character "-". Field values are
+     * either padded or trimmed to fit their portion of the symbol code, adding unused characters to pad or ignoring
+     * extra characters to trim.
+     * <p/>
+     * This returns <code>null</code> if this SymbolCode's Coding Scheme is <code>null</code> or unrecognized.
+     *
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode, or
+     *         <code>null</code> if the Coding Scheme is unrecognized.
+     */
     public String toString()
     {
         return this.composeSymCode();
     }
 
+    /**
+     * Parses a symbol code encoded into its individual fields, populating this SymbolCode's fields with the value of
+     * each field. Fields that are either not part of the specified symbol code or are unspecified are left unchanged.
+     *
+     * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
+     *                characters after the 15th character are ignored.
+     *
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-<code>null</code> string listing the
+     *         unrecognized symbol code fields.
+     */
     protected String parseSymCode(String symCode)
     {
         // Coding Scheme (position 1).
@@ -366,24 +557,33 @@ public class SymbolCode extends AVListImpl
         }
     }
 
+    /**
+     * Returns a error string indicating that the symbol code's scheme is not recognized.
+     *
+     * @param symCode the unknown symbol code.
+     *
+     * @return an error string.
+     */
     protected String parseUnrecognizedSymCode(String symCode)
     {
-        // The scheme code is not recognized. Throw an exception indicating that the symCode is invalid. Note that
-        // MIL-STD-2525C, Appendix F does not specify a symbology scheme. Instead, it provides guidelines for
-        // displaying symbology in 3D displays.
+        // Return a message indicating that the symCode's scheme is not recognized.
         String scheme = symCode.substring(0, 1);
         return Logging.getMessage("Symbology.SymbolCodeSchemeUnrecognized", scheme, symCode);
     }
 
     /**
-     * Parses symbol codes encoded for the Warfighting coding scheme. The Warfighting coding scheme is defined in
-     * MIL-STD-2525C, Appendix A, table A-I (p. 51).
+     * Parses a symbol code encoded in the Warfighting coding scheme. Warfighting symbol codes contain the following
+     * fields: Coding Scheme, Standard Identity, Battle Dimension, Status, Function ID, Symbol Modifier, Country Code,
+     * Order of Battle. All fields except Symbol Modifier, Country Code and Order of Battle must be
+     * non-<code>null</code>.
+     * <p/>
+     * The Warfighting coding scheme is defined in MIL-STD-2525C table A-I (page 51).
      *
-     * @param symCode the symbol code to parse. Must be non-null and have length of 15 or greater. Characters beyond the
-     *                15th are ignored.
+     * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
+     *                characters after the 15th character are ignored.
      *
-     * @return <code>null</code> if the symbol code is recognized, otherwise a non-null string listing the unrecognized
-     *         symbol elements.
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-<code>null</code> string listing the
+     *         unrecognized symbol code fields.
      */
     protected String parseWarfightingSymCode(String symCode)
     {
@@ -426,7 +626,7 @@ public class SymbolCode extends AVListImpl
 
         // Symbol Modifier (positions 11-12).
         s = symCode.substring(10, 12);
-        if (this.isUnitSymbolModifier(s)
+        if (this.isUnitsAndEqupmentSymbolModifier(s)
             || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase())
             || SymbologyConstants.MOBILITY_ALL.contains(s.toUpperCase())
             || SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(s.toUpperCase()))
@@ -449,18 +649,21 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
 
         return sb.length() > 0
-            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+            ? Logging.getMessage("Symbology.SymbolCodeFieldsUnrecognized", sb.toString(), symCode) : null;
     }
 
     /**
-     * Parses symbol codes encoded for the Tactical Graphics coding scheme. The Tactical Graphics coding scheme is
-     * defined in MIL-STD-2525C, Appendix B, table B-I (p. 305).
+     * Parses a symbol code encoded in the Tactical Graphics coding scheme. Tactical Graphic symbol codes contain the
+     * following fields: Coding Scheme, Standard Identity, Category, Status, Function ID, Echelon, Country Code, Order
+     * of Battle. All fields except Echelon, Country Code and Order of Battle must be non-<code>null</code>.
+     * <p/>
+     * The Tactical Graphics coding scheme is defined in MIL-STD-2525C table B-I (page 305).
      *
-     * @param symCode the symbol code to parse. Must be non-null and have length of 15 or greater. Characters beyond the
-     *                15th are ignored.
+     * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
+     *                characters after the 15th character are ignored.
      *
-     * @return <code>null</code> if the symbol code is recognized, otherwise a non-null string listing the unrecognized
-     *         symbol elements.
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-<code>null</code> string listing the
+     *         unrecognized symbol elements.
      */
     protected String parseTacticalGraphicsSymCode(String symCode)
     {
@@ -521,17 +724,39 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
 
         return sb.length() > 0
-            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+            ? Logging.getMessage("Symbology.SymbolCodeFieldsUnrecognized", sb.toString(), symCode) : null;
     }
 
+    /**
+     * Parses a symbol code encoded in the Meterorological and Oceanographic coding scheme. METOC symbol codes are not
+     * currently supported, and this returns a string indicating that the scheme is unrecognized.
+     *
+     * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
+     *                characters after the 15th character are ignored.
+     *
+     * @return an error string.
+     */
     protected String parseMetocSymCode(String symCode)
     {
-        // TODO: See MIL-STD-2525C, Appendix C
+        // TODO: Implement parsing of METOC symbol codes. See MIL-STD-2525C, Appendix C
         // Causes constructor to throw a WWUnsupportedException.
         String scheme = symCode.substring(0, 1);
         return Logging.getMessage("Symbology.SymbolCodeSchemeUnrecognized", scheme, symCode);
     }
 
+    /**
+     * Parses symbol codes encoded for the Signals Intelligence coding scheme. Signals Intelligence symbol codes contain
+     * the following fields: Scheme, Standard Identity, Battle Dimension, Status, Function ID, Country Code, Order of
+     * Battle. All fields except Country Code and Order of Battle must be non-<code>null</code>.
+     * <p/>
+     * The Signals Intelligence coding scheme is defined in MIL-STD-2525C table D-I (page 964).
+     *
+     * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
+     *                characters after the 15th character are ignored.
+     *
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-<code>null</code> string listing the
+     *         unrecognized symbol elements.
+     */
     protected String parseIntelligenceSymCode(String symCode)
     {
         StringBuilder sb = new StringBuilder();
@@ -589,9 +814,23 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
 
         return sb.length() > 0
-            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+            ? Logging.getMessage("Symbology.SymbolCodeFieldsUnrecognized", sb.toString(), symCode) : null;
     }
 
+    /**
+     * Parses a symbol code encoded in the Stability Operations coding scheme. Stability Operations symbol codes contain
+     * the following fields: Scheme, Standard Identity, Category, Status, Function ID, Symbol Modifier, Country Code,
+     * Order of Battle. All fields except Symbol Modifier, Country Code and Order of Battle must be
+     * non-<code>null</code>.
+     * <p/>
+     * The Stability Operations coding scheme is defined in MIL-STD-2525C table E-I (page 991).
+     *
+     * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
+     *                characters after the 15th character are ignored.
+     *
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-<code>null</code> string listing the
+     *         unrecognized symbol elements.
+     */
     protected String parseStabilityOperationsSymCode(String symCode)
     {
         StringBuilder sb = new StringBuilder();
@@ -633,7 +872,7 @@ public class SymbolCode extends AVListImpl
 
         // Symbol Modifier (positions 11-12).
         s = symCode.substring(10, 12);
-        if (this.isUnitSymbolModifier(s) || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase()))
+        if (this.isUnitsAndEqupmentSymbolModifier(s) || SymbologyConstants.INSTALLATION_ALL.contains(s.toUpperCase()))
             this.setSymbolModifier(s);
         else if (!"--".equals(s)) // "--" is accepted and indicates a null symbol modifier.
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.symbolModifier"));
@@ -651,9 +890,23 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
 
         return sb.length() > 0
-            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+            ? Logging.getMessage("Symbology.SymbolCodeFieldsUnrecognized", sb.toString(), symCode) : null;
     }
 
+    /**
+     * Parses a symbol code encoded in the Emergency Management coding scheme. Emergency Management symbol codes contain
+     * the following fields: Scheme, Standard Identity, Category, Status, Function ID, Symbol Modifier, Country Code,
+     * Order of Battle. All fields except Symbol Modifier, Country Code and Order of Battle must be
+     * non-<code>null</code>.
+     * <p/>
+     * The Emergency Management coding scheme is defined in MIL-STD-2525C table G-I (page 1032).
+     *
+     * @param symCode the symbol code to parse. Must be non-<code>null</code> and have length of 15 or greater. Any
+     *                characters after the 15th character are ignored.
+     *
+     * @return <code>null</code> if the symbol code is recognized, otherwise a non-<code>null</code> string listing the
+     *         unrecognized symbol elements.
+     */
     protected String parseEmergencyManagementSymCode(String symCode)
     {
         StringBuilder sb = new StringBuilder();
@@ -716,10 +969,20 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.orderOfBattle"));
 
         return sb.length() > 0
-            ? Logging.getMessage("Symbology.SymbolCodeElementsUnrecognized", sb.toString(), symCode) : null;
+            ? Logging.getMessage("Symbology.SymbolCodeFieldsUnrecognized", sb.toString(), symCode) : null;
     }
 
-    protected boolean isUnitSymbolModifier(String value)
+    /**
+     * Indicates whether the specified 2-character Symbol Modifier code represents a units and equipment symbol modifier
+     * code.
+     *
+     * @param value the modifier code to test.  Must be non-<code>null</code> and have length of 2 or greater. Any
+     *              characters after the 2nd character are ignored.
+     *
+     * @return <code>true</code> if the specified code represents a units and equipment modifier code, and
+     *         <code>false</code> otherwise.
+     */
+    protected boolean isUnitsAndEqupmentSymbolModifier(String value)
     {
         String firstChar = value.substring(0, 1).toUpperCase();
         String secondChar = value.substring(1, 2).toUpperCase();
@@ -728,6 +991,18 @@ public class SymbolCode extends AVListImpl
             && SymbologyConstants.ECHELON_ALL.contains(secondChar.toUpperCase());
     }
 
+    /**
+     * Composes and returns a MIL-STD-2525 15-character symbol identification code (SIDC) from this SymbolCode's current
+     * field values. Fields that are not part of this SymbolCode's current Coding Scheme are ignored. Fields that are
+     * unspecified or null are replaced with the MIL-STD-2525 unused position character "-". Field values are either
+     * padded or trimmed to fit their portion of the symbol code, adding unused characters to pad or ignoring extra
+     * characters to trim.
+     * <p/>
+     * This returns <code>null</code> if this SymbolCode's Coding Scheme is <code>null</code> or unrecognized.
+     *
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode, or
+     *         <code>null</code> if the Coding Scheme is unrecognized.
+     */
     protected String composeSymCode()
     {
         String scheme = this.getScheme();
@@ -762,110 +1037,183 @@ public class SymbolCode extends AVListImpl
         }
     }
 
+    /**
+     * Returns <code>null</code> indicating that this SymbolCode's Coding Scheme is not recognized.
+     *
+     * @return <code>null</code>.
+     */
     protected String composeUnrecognizedSymCode()
     {
         return null;
     }
 
+    /**
+     * Composes a 15-character symbol identification code (SIDC) for the Warfighting coding scheme. Warfighting symbol
+     * codes contain the following fields: Coding Scheme, Standard Identity, Battle Dimension, Status, Function ID,
+     * Symbol Modifier, Country Code, Order of Battle.
+     * <p/>
+     * The Warfighting coding scheme is defined in MIL-STD-2525C table A-I (page 51).
+     *
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode,
+     *         according to the Warfighting coding scheme.
+     */
     protected String composeWarfightingSymCode()
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendCode(sb, this.getScheme(), 1); // Position 1.
-        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendCode(sb, this.getBattleDimension(), 1); // Position 3.
-        this.appendCode(sb, this.getStatus(), 1); // Position 4.
-        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
-        this.appendCode(sb, this.getSymbolModifier(), 2); // Positions 11-12.
-        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
+        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
 
+    /**
+     * Composes a 15-character symbol identification code (SIDC) for the Tactical Graphics coding scheme. Tactical
+     * Graphics symbol codes contain the following fields: Coding Scheme, Standard Identity, Category, Status, Function
+     * ID, Echelon, Country Code, Order of Battle.
+     * <p/>
+     * The Tactical Graphics coding scheme is defined in MIL-STD-2525C table B-I (page 305).
+     *
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode,
+     *         according to the Tactical Graphics coding scheme.
+     */
     protected String composeTacticalGraphicsSymCode()
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendCode(sb, this.getScheme(), 1); // Position 1.
-        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendCode(sb, this.getCategory(), 1); // Position 3.
-        this.appendCode(sb, this.getStatus(), 1); // Position 4.
-        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
+        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
         sb.append(UNUSED_POSITION_CODE); // Position 11. Unused because the echelon code uses only position 12.
-        this.appendCode(sb, this.getEchelon(), 1); // Position 12.
-        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+        this.appendFieldValue(sb, this.getEchelon(), 1); // Position 12.
+        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
 
+    /**
+     * Composes a 15-character symbol identification code (SIDC) for the Meterorological and Oceanographic coding
+     * scheme. METOC symbol codes are not currently supported, and this returns <code>null</code> indicating that the
+     * scheme is unrecognized.
+     *
+     * @return <code>null</code>.
+     */
     protected String composeMetocSymCode()
     {
-        // TODO: See MIL-STD-2525C, Appendix C
+        // TODO: Implement composition of METOC symbol codes. See MIL-STD-2525C, Appendix C
         return null;
     }
 
+    /**
+     * Composes a 15-character symbol identification code (SIDC) for the Signals Intelligence coding scheme. Signals
+     * Intelligence symbol codes contain the following fields: Scheme, Standard Identity, Battle Dimension, Status,
+     * Function ID, Country Code, Order of Battle.
+     * <p/>
+     * The Signals Intelligence coding scheme is defined in MIL-STD-2525C table D-I (page 964).
+     *
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode,
+     *         according to the Signals Intelligence coding scheme.
+     */
     protected String composeIntelligenceSymCode()
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendCode(sb, this.getScheme(), 1); // Position 1.
-        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendCode(sb, this.getBattleDimension(), 1); // Position 3.
-        this.appendCode(sb, this.getStatus(), 1); // Position 4.
-        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
+        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
         sb.append(UNUSED_POSITION_CODE).append(UNUSED_POSITION_CODE); // Positions 11-12 are not used.
-        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
 
+    /**
+     * Composes a 15-character symbol identification code (SIDC) for the Stability Operations coding scheme. Stability
+     * Operations symbol codes contain the following fields: Scheme, Standard Identity, Category, Status, Function ID,
+     * Symbol Modifier, Country Code, Order of Battle.
+     * <p/>
+     * The Stability Operations coding scheme is defined in MIL-STD-2525C table E-I (page 991).
+     *
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode,
+     *         according to the Stability Operations coding scheme.
+     */
     protected String composeStabilityOperationsSymCode()
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendCode(sb, this.getScheme(), 1); // Position 1.
-        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendCode(sb, this.getCategory(), 1); // Position 3.
-        this.appendCode(sb, this.getStatus(), 1); // Position 4.
-        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
-        this.appendCode(sb, this.getSymbolModifier(), 2); // Positions 11-12.
-        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
+        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
 
+    /**
+     * Composes a 15-character symbol identification code (SIDC) for the Emergency Management coding scheme. Emergency
+     * Management symbol codes contain the following fields: Standard Identity, Category, Status, Function ID, Symbol
+     * Modifier, Country Code, Order of Battle.
+     * <p/>
+     * The Emergency Management coding scheme is defined in MIL-STD-2525C table G-I (page 1032).
+     *
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode,
+     *         according to the Emergency Management coding scheme.
+     */
     protected String composeEmergencyManagementSymCode()
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendCode(sb, this.getScheme(), 1); // Position 1.
-        this.appendCode(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendCode(sb, this.getCategory(), 1); // Position 3.
-        this.appendCode(sb, this.getStatus(), 1); // Position 4.
-        this.appendCode(sb, this.getFunctionId(), 5); // Positions 5-10.
-        this.appendCode(sb, this.getSymbolModifier(), 2); // Positions 11-12.
-        this.appendCode(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendCode(sb, this.getOrderOfBattle(), 1);// Position 15.
+        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
+        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        this.appendFieldValue(sb, this.getFunctionId(), 5); // Positions 5-10.
+        this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
 
-    protected void appendCode(StringBuilder sb, String code, int length)
+    /**
+     * Appends the specified field value to the specified StringBuilder, padding or trimming the value to fit its length
+     * in the symbol code as necessary. If the value is shorter than the specified length, this appends the MIL-STD-2525
+     * unused character "-" to fill the unused characters. If the value is longer than the specified length, this
+     * ignores the extra characters. If the value is <code>null</code> or empty, this appends unused characters to fill
+     * the entire space used by the field.
+     *
+     * @param sb     the StringBuilder representing a MIL-STD-2525 symbol identification code (SIDC).
+     * @param value  the field value to append.
+     * @param length the number of positions used by the field in the SIDC.
+     */
+    protected void appendFieldValue(StringBuilder sb, String value, int length)
     {
         // Append the code's characters, starting at character 0 and stopping after the number of character positions
         // assigned to the code have been reached or the code's characters are exhausted, whichever comes first. This
         // does nothing if the code is null or empty. If the code contains fewer characters then its assigned length,
         // then only those characters are appended.
-        if (code != null && code.length() > 0)
-            sb.append(code, 0, code.length() < length ? code.length() : length);
+        if (value != null && value.length() > 0)
+            sb.append(value, 0, value.length() < length ? value.length() : length);
 
         // Append the "unused" character for each unused character position assigned to the code. We encounter unused
         // positions when the code is null or its length is less than the number of assigned character positions.
-        for (int i = (code != null ? code.length() : 0); i < length; i++)
+        for (int i = (value != null ? value.length() : 0); i < length; i++)
         {
             sb.append(UNUSED_POSITION_CODE);
         }
