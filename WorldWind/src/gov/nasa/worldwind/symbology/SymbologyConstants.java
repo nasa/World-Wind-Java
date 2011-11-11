@@ -3,9 +3,12 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
+
 package gov.nasa.worldwind.symbology;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Defines constants used by the World Wind symbology classes, including symbolic constants and modifier keys for
@@ -244,6 +247,69 @@ public interface SymbologyConstants
         CATEGORY_NATURAL_EVENTS,
         CATEGORY_OPERATIONS,
         CATEGORY_INFRASTRUCTURE
+    );
+
+    /** The MIL-STD-2525 allowable colors for filled symbols. See MIL-STD-2525C 5.7.2 */
+    final Color COLOR_DARK_RED = new Color(200, 0, 0);
+    final Color COLOR_MEDIUM_RED = new Color(255, 48, 49);
+    final Color COLOR_LIGHT_RED = new Color(255, 128, 128);
+
+    final Color COLOR_DARK_BLUE = new Color(0, 107, 140);
+    final Color COLOR_MEDIUM_BLUE = new Color(0, 168, 220);
+    final Color COLOR_LIGHT_BLUE = new Color(128, 224, 255);
+
+    final Color COLOR_DARK_GREEN = new Color(0, 160, 0);
+    final Color COLOR_MEDIUM_GREEN = new Color(0, 226, 0);
+    final Color COLOR_LIGHT_GREEN = new Color(170, 255, 170);
+
+    final Color COLOR_DARK_YELLOW = new Color(225, 220, 0);
+    final Color COLOR_MEDIUM_YELLOW = new Color(255, 255, 0);
+    final Color COLOR_LIGHT_YELLOW = new Color(255, 255, 128);
+
+    final Color COLOR_DARK_PURPLE = new Color(80, 0, 80);
+    final Color COLOR_MEDIUM_PURPLE = new Color(128, 0, 128);
+    final Color COLOR_LIGHT_PURPLE = new Color(255, 161, 255);
+
+    final List<Color> COLOR_DARK_ALL = Arrays.asList(
+        COLOR_DARK_RED,
+        COLOR_DARK_BLUE,
+        COLOR_DARK_GREEN,
+        COLOR_DARK_YELLOW,
+        COLOR_DARK_PURPLE
+    );
+
+    final List<Color> COLOR_MEDIUM_ALL = Arrays.asList(
+        COLOR_MEDIUM_RED,
+        COLOR_MEDIUM_BLUE,
+        COLOR_MEDIUM_GREEN,
+        COLOR_MEDIUM_YELLOW,
+        COLOR_MEDIUM_PURPLE
+    );
+
+    final List<Color> COLOR_LIGHT_ALL = Arrays.asList(
+        COLOR_LIGHT_RED,
+        COLOR_LIGHT_BLUE,
+        COLOR_LIGHT_GREEN,
+        COLOR_LIGHT_YELLOW,
+        COLOR_LIGHT_PURPLE
+    );
+    /** List containing all allowable MIL-STD-2525 fill colors. * */
+    final List<Color> COLOR_ALL = Arrays.asList(
+        COLOR_DARK_RED,
+        COLOR_DARK_BLUE,
+        COLOR_DARK_GREEN,
+        COLOR_DARK_YELLOW,
+        COLOR_DARK_PURPLE,
+        COLOR_MEDIUM_RED,
+        COLOR_MEDIUM_BLUE,
+        COLOR_MEDIUM_GREEN,
+        COLOR_MEDIUM_YELLOW,
+        COLOR_MEDIUM_PURPLE,
+        COLOR_LIGHT_RED,
+        COLOR_LIGHT_BLUE,
+        COLOR_LIGHT_GREEN,
+        COLOR_LIGHT_YELLOW,
+        COLOR_LIGHT_PURPLE
     );
 
     /**
