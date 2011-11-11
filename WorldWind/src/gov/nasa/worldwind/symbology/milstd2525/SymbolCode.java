@@ -11,6 +11,8 @@ import gov.nasa.worldwind.exception.WWUnrecognizedException;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
+
 /**
  * SymbolCode provides a utility for parsing and representing the individual fields of a MIL-STD-2525 symbol
  * identification code (SIDC). A SymbolCode can either be created by parsing a 15-character symbol code string or by
@@ -43,14 +45,7 @@ import gov.nasa.worldwind.util.Logging;
  */
 public class SymbolCode extends AVListImpl
 {
-    // fill colors (hue, out of 360)
-    public static final int COLOR_UNKNOWN = 60;       // yellow
-    public static final int COLOR_FRIEND = 195;       // blue
-    public static final int COLOR_NEUTRAL = 120;      // green  TODO: not quite the correct green, Sat = 33, not 50
-    public static final int COLOR_HOSTILE = 0;        // red
-    public static final int COLOR_CIVILIAN = 300;     // purple   TODO:  Sat = 37, not 50
-
-    /** Indicates the string value for an unused position in a MIL-STD-2525 symbol identification code. */
+    /** Indicates the character for an unused position in a MIL-STD-2525 symbol identification code */
     protected static final String UNUSED_POSITION_CODE = "-";
 
     /** Creates a new symbol code, but otherwise does nothing. All fields are initialized to <code>null</code>. */
@@ -97,6 +92,26 @@ public class SymbolCode extends AVListImpl
             Logging.logger().severe(s);
             throw new WWUnrecognizedException(s);
         }
+
+        // initialize default standard identity fill colors
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN, Color.YELLOW);  //yellow
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN, Color.YELLOW);  //yellow
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_PENDING, Color.YELLOW);  //yellow
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING, Color.YELLOW);  //yellow
+
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_FRIEND, Color.CYAN);  // cyan
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND, Color.CYAN);  // cyan
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND, Color.CYAN);  // cyan
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND,
+            Color.CYAN);  // cyan
+
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL, Color.GREEN);  // green
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL, Color.GREEN);  // green
+
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_HOSTILE, Color.RED);  // red
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_SUSPECT, Color.RED);  // red
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_JOKER, Color.RED);  // red
+        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_FAKER, Color.RED);  // red
     }
 
     /**
@@ -493,6 +508,20 @@ public class SymbolCode extends AVListImpl
     public void setOrderOfBattle(String value)
     {
         this.setValue(SymbologyConstants.ORDER_OF_BATTLE, value);
+    }
+
+    /** Returns the MIL-STD-2525 color currently assigned to the given standard identity. */
+    public Color getStandardIdentityColor(String standardIdentity)
+    {
+        return (Color) this.getValue(standardIdentity);
+    }
+
+    /** Sets the MIL-STD-2525 color for the given standard identity. */
+    public void setStandardIdentityColor(String standardIdentity, Color value)
+    {
+        SymbologyConstants.STANDARD_IDENTITY_ALL.contains(standardIdentity);
+
+        this.setValue(standardIdentity, value);
     }
 
     /**

@@ -50,11 +50,13 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             throw new IllegalArgumentException(msg);
         }
 
+        Boolean showFrame = (Boolean) params.getValue(SymbologyConstants.SHOW_FRAME);
+
         // retrieve desired symbol and convert to bufferedImage
         SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
 
         BufferedImage img = null;
-        String filename = getFilename(symbolCode);
+        String filename = getFilename(symbolCode, params);
 
         img = retrieveImageFromURL(filename, img);
 
@@ -65,6 +67,55 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
         }
 
+        // if unframed, remove frame where necessary
+        if (showFrame != null && !showFrame)
+        {
+            // Check if image actually does have a frame to remove, i.e. the prefix # is < 4.
+            // Ignore special cases of <Warfighting, Sea Surface, Own Track> and <Warfighting, Subsurface, Non-submarine Diver> icons,
+            // which have no fill or black outline
+            if (Integer.parseInt(filename.substring(0, 1)) < 4 &&
+                !(symbolCode.getScheme().equals("S") &&
+                    symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE) &&
+                    symbolCode.getFunctionId().equals("O-----")) &&
+                !(symbolCode.getScheme().equals("S") &&
+                    symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE) &&
+                    symbolCode.getFunctionId().equals("ND----")))
+            {
+                // remove the frame
+                // 1. retrieve the relevant overlay to use as a transparency mask
+                BufferedImage mask = retrieveOverlay(symbolCode, params);
+
+                // 2. make the icon border transparent
+                img = applyInverseTransparencyMask(img, mask);
+
+                // handle the special cases of <Warfighting, Subsurface, Sea Mine>,
+                // <Warfighting, Subsurface, Underwater Decoy, Sea Mine Decoy>, and S*UPE, S*UPV, S*UPX
+                // which have a standard identity-colored frame and no fill color.
+                if (symbolCode.getScheme().equals("S") &&
+                    symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE) &&
+                    (symbolCode.getFunctionId().substring(0, 2).equals("WM") ||
+                        symbolCode.getFunctionId().substring(0, 3).equals("WDM") ||
+                        symbolCode.getFunctionId().equals("E-----") ||
+                        symbolCode.getFunctionId().equals("V-----") ||
+                        symbolCode.getFunctionId().equals("X-----")))
+                {
+                    // 3. change the icon color to match the standard identity
+                    img = changeIconFillColor(img,
+                        symbolCode.getStandardIdentityColor(symbolCode.getStandardIdentity()));
+                }
+                else
+                {
+                    // 3. remove the icon fill (if present)
+                    img = removeIconFillColor(img);
+
+                    // 4. change the icon outline color to the color that corresponds
+                    // to its Standard Identity (usually the fill color, except when Joker or Faker)
+                    img = changeIconOutlineColor(img,
+                        symbolCode.getStandardIdentityColor(symbolCode.getStandardIdentity()));
+                }
+            }
+        }
+
         // apply dotted border where required by Standard Identity (cases P, A, S, G, M)
         String stdid = symbolCode.getStandardIdentity();
         if ("PASGMpasgm".indexOf(stdid.charAt(0)) > -1)
@@ -72,20 +123,33 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             BufferedImage dest = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = dest.createGraphics();
             g.setComposite(AlphaComposite.SrcOver);
-            g.setBackground(new Color(0, 0, 0, 0));
-            g.clearRect(0, 0, dest.getWidth(), dest.getHeight());
-            g.drawImage(img, 0, 0, null);
 
-            // now overlay dotted line
-            BufferedImage overlay = retrieveOverlay(symbolCode, params);
-            if (overlay == null)
+            if (showFrame != null && !showFrame)
             {
-                String msg = Logging.getMessage("Symbology.SymbolIconOverlayNotFound", symbolCode);
-                Logging.logger().severe(msg);
-                throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
+                // set background color to grey
+                g.setBackground(new Color(128, 128, 128, 255));
+                g.clearRect(0, 0, dest.getWidth(), dest.getHeight());
+                g.drawImage(img, 0, 0, null);
+                g.dispose();
             }
-            g.drawImage(overlay, 0, 0, null);
-            g.dispose();
+            else
+            {
+                // set background color to clear
+                g.setBackground(new Color(0, 0, 0, 0));
+                g.clearRect(0, 0, dest.getWidth(), dest.getHeight());
+                g.drawImage(img, 0, 0, null);
+
+                // now overlay dotted line
+                BufferedImage overlay = retrieveOverlay(symbolCode, params);
+                if (overlay == null)
+                {
+                    String msg = Logging.getMessage("Symbology.SymbolIconOverlayNotFound", symbolCode);
+                    Logging.logger().severe(msg);
+                    throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
+                }
+                g.drawImage(overlay, 0, 0, null);
+                g.dispose();
+            }
 
             img = dest;
         }
@@ -93,7 +157,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         // handle Joker and Faker, which should have a Friend frame, but with fill color red
         if ("JKjk".indexOf(stdid.charAt(0)) > -1)
         {
-            img = changeIconFillColor(img, SymbolCode.COLOR_HOSTILE);
+            img = changeIconFillColor(img, SymbologyConstants.COLOR_LIGHT_RED);
         }
 
         // TODO: remove this code
@@ -141,10 +205,10 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         String functionID = symbolCode.getFunctionId();
         String symbolModifier = symbolCode.getSymbolModifier();
 
-        // TODO: handle special case of installations with overlays
-
-        if (stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_PENDING) ||
-            stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING))
+        if (stdID.equals(SymbologyConstants.STANDARD_IDENTITY_PENDING) ||
+            stdID.equals(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING) ||
+            stdID.equals(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN) ||
+            stdID.equals(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN))
         {
             if (battleDim == null)
                 filename = "clover_overlay.png";
@@ -156,38 +220,49 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 // 1. clover
                 filename = "clover_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE) ||
-                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_AIR))
             {
                 // 2. cloverTop
                 filename = "clovertop_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SPACE))
+            {
+                // 2b. black-topped cloverTop
+                filename = "blacktop_clovertop_overlay.png";
+            }
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
             {
                 // 3. cloverBottom
                 filename = "cloverbottom_overlay.png";
             }
         }
         else if
-            (stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND) ||
-                stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND))
+            (stdID.equals(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND) ||
+                stdID.equals(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND) ||
+                stdID.equals(SymbologyConstants.STANDARD_IDENTITY_FRIEND) ||
+                stdID.equals(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND) ||
+                stdID.equals(SymbologyConstants.STANDARD_IDENTITY_JOKER) ||
+                stdID.equals(SymbologyConstants.STANDARD_IDENTITY_FAKER))
         {
             if (battleDim == null)
                 filename = "rectangle_overlay.png";
-            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN) ||
-                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE))
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN) ||
+                battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE))
             {
                 // 4. circle
                 filename = "circle_overlay.png";
             }
-            else if
-                (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE) ||
-                    battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_AIR))
             {
                 // 5. arch
                 filename = "arch_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SPACE))
+            {
+                // 5b. black-topped arch
+                filename = "blacktop_arch_overlay.png";
+            }
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
             {
                 // 6. smile
                 filename = "smile_overlay.png";
@@ -214,7 +289,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 filename = "rectangle_overlay.png";
             }
         }
-        else if (stdID.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_SUSPECT))
+        else if (stdID.equals(SymbologyConstants.STANDARD_IDENTITY_SUSPECT) ||
+            stdID.equals(SymbologyConstants.STANDARD_IDENTITY_HOSTILE))
         {
             if (battleDim == null)
                 filename = "diamond_overlay.png";
@@ -226,16 +302,49 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 // 8. diamond
                 filename = "diamond_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SPACE) ||
-                battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_AIR))
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_AIR))
             {
                 // 9. tent
                 filename = "tent_overlay.png";
             }
-            else if (battleDim.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SPACE))
+            {
+                // 9b. black-topped tent
+                filename = "blacktop_tent_overlay.png";
+            }
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
             {
                 // 10. top
                 filename = "top_overlay.png";
+            }
+        }
+        else if (stdID.equals(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL) ||
+            stdID.equals(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL))
+        {
+            if (battleDim == null)
+                filename = "square_overlay.png";
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_UNKNOWN) ||
+                battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_GROUND) ||
+                battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE) ||
+                battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SOF))
+            {
+                // 11. square
+                filename = "square_overlay.png";
+            }
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_AIR))
+            {
+                // 12. hat
+                filename = "hat_overlay.png";
+            }
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SPACE))
+            {
+                // 12b. black-topped hat
+                filename = "blacktop_hat_overlay.png";
+            }
+            else if (battleDim.equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE))
+            {
+                // 13. bucket
+                filename = "bucket_overlay.png";
             }
         }
 
@@ -264,15 +373,18 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         return img;
     }
 
-    protected static String getFilename(SymbolCode code)
+    protected static String getFilename(SymbolCode code, AVList params)
     {
         String scheme = code.getScheme();
+        String functionID = code.getFunctionId();
+        String battleDim = code.getBattleDimension();
         String standardID = code.getStandardIdentity();
         standardID = standardID.toLowerCase();
 
         int prefix = 0;
         char stdid = 'u';
-        // See Table I and TABLE II, p.15 of MIL-STD-2525C for standard identities that use similar shapes
+        // See Table I and TABLE II, p.15 of MIL-STD-2525C for standard identities that use
+        // similarly shaped frames.
         switch (standardID.charAt(0))
         {
             case 'p':      // PENDING
@@ -307,9 +419,27 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 throw new IllegalArgumentException(msg);
         }
 
-        String padding = "-----";
+        // Unframed icons:
+        Boolean showFrame = (Boolean) params.getValue(SymbologyConstants.SHOW_FRAME);
+        // Some icons already have an unframed version available. In these cases, you must
+        // add 4 to the prefix to get the unframed version of the icon.
+        // In all other cases, the unframed version must be derived later from the framed icon.
+        if (showFrame != null && !showFrame && functionID != null)
+        {
+            if (SymbologyConstants.SCHEME_WARFIGHTING.equals(scheme) &&
+                // Warfighting, Ground, Equipment (S*GPE)
+                ((SymbologyConstants.BATTLE_DIMENSION_GROUND.equals(battleDim) && functionID.charAt(0) == 'E') ||
+                    // Warfighting, Sea Surface, Nonmilitary (S*SPX)
+                    (SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE.equals(battleDim) && functionID.charAt(0) == 'X')))
+            {
+                prefix += 4;
+            }
+        }
 
-        // handle special case of installations, as indicated by a 'H' in position 11
+        // virtually all icon filenames have no Modifiers, Country Code or Order of Battle indicated
+        // and so their last 5 digits should just be padded with dashes.
+        String padding = "-----";
+        // installations are an exception to this rule, and are indicated by a 'H' in position 11
         // (except for Emergency Management icons, which do not have the 'H' in the filename)
         if (code.getSymbolModifier() != null && "Hh".indexOf((code.getSymbolModifier()).charAt(0)) > -1
             && !SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
@@ -317,7 +447,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             padding = "h----";
         }
 
-        String pos3 = code.getBattleDimension();
+        // position 3 in the filename indicates the icon's  Battle Dimension
+        String pos3 = battleDim;
         // Stability Operations and Emergency Management schemes
         // use Category instead of Battle Dimension
         if (SymbologyConstants.SCHEME_STABILITY_OPERATIONS.equalsIgnoreCase(scheme) ||
