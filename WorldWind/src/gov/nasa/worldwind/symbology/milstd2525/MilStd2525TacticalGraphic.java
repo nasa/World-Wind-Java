@@ -12,6 +12,8 @@ import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
+import java.text.*;
+import java.util.Date;
 
 /**
  * Base class for tactical graphics defined by <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a>.
@@ -27,7 +29,7 @@ import java.awt.*;
  * <tr><td>Q</td><td>AVKey.HEADING</td><td>{@link gov.nasa.worldwind.geom.Angle}</td><td>Direction indicator</td></tr>
  * <tr><td>S</td><td>AVKey.OFFSET</td><td>{@link gov.nasa.worldwind.render.Offset}</td><td>Offset location
  * indicator</td></tr> <tr><td>T</td><td>AVKey.TEXT</td><td>String</td><td>Unique designation</td></tr>
- * <tr><td>V</td><td>AVKey.TYPE</td><td>String</td><td>Type</td></tr> <tr><td>W</td><td>AVKey.DATE</td><td>Date</td><td>Date/time</td></tr>
+ * <tr><td>V</td><td>AVKey.TYPE</td><td>String</td><td>Type</td></tr> <tr><td>W</td><td>AVKey.DATE_TIME</td><td>Date</td><td>Date/time</td></tr>
  * <tr><td>X</td><td>AVKey.ALTITUDE</td><td>Double</td><td>Altitude/depth</td></tr>
  * <tr><td>Y</td><td>AVKey.SHOW_POSITION</td><td>Boolean</td><td>Show/hide position field</td></tr>
  * <tr><td>AM</td><td>AVKey.RADIUS, AVKey.WIDTH, AVKey.LENGTH</td><td>Double</td><td>Radius, length or width of
@@ -38,7 +40,7 @@ import java.awt.*;
  * <pre>
  * AVList modifiers = new AVListImpl();
  * modifiers.setValue(AVKey.TEXT, "X469"); // Field T
- * modifiers.setValue(AVKey.DATE, new Date()); // Field W
+ * modifiers.setValue(AVKey.DATE_TIME, new Date()); // Field W
  * modifiers.setValue(AVKey.ADDITIONAL_INFO, "Anthrax Suspected"); // Field H
  * modifiers.setValue(AVKey.HEADING, Angle.fromDegrees(30.0)); // Field Q
  *
@@ -56,7 +58,7 @@ import java.awt.*;
  * Date startDate = ...
  * Date endData = ...
  *
- * graphic.setModifier(AVKey.DATE, Arrays.asList(startDate, endDate));
+ * graphic.setModifier(AVKey.DATE_TIME, Arrays.asList(startDate, endDate));
  * </pre>
  * <p/>
  * <h1>Composite graphics</h1>
@@ -91,6 +93,9 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 {
     public final static String HOSTILE_INDICATOR = "ENY";
 
+    /** Default date pattern used to format dates. */
+    public final static String DEFAULT_DATE_PATTERN = "ddhhmmss'Z'MMMyyyy";
+
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
     /** Default font. */
@@ -108,6 +113,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected String echelon;
     protected String status;
     protected String countryCode;
+
+    protected AVList modifiers;
 
     protected long frameTimestamp = -1L;
 
@@ -187,7 +194,22 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         {
             return this.text;
         }
-        return null;
+        else if (SymbologyConstants.STANDARD_IDENTITY.equals(modifier))
+        {
+            return this.getStandardIdentity();
+        }
+        else if (SymbologyConstants.ECHELON.equals(modifier))
+        {
+            return this.getEchelon();
+        }
+        else if (SymbologyConstants.STATUS.equals(modifier))
+        {
+            return this.getStatus();
+        }
+        else
+        {
+            return this.modifiers.getValue(modifier);
+        }
     }
 
     /** {@inheritDoc} */
@@ -209,6 +231,13 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         {
             this.setStatus((String) value);
         }
+        else
+        {
+            if (this.modifiers == null)
+                this.modifiers = new AVListImpl();
+
+            this.modifiers.setValue(modifier, value);
+        }
     }
 
     /** {@inheritDoc} */
@@ -223,6 +252,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         this.showModifiers = showModifiers;
     }
 
+    /**
+     * Indicates the scheme portion of the graphic identifier.
+     *
+     * @return The scheme of this graphic.
+     */
     public String getScheme()
     {
         return SymbologyConstants.SCHEME_TACTICAL_GRAPHICS;
@@ -262,11 +296,21 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         this.echelon = echelon;
     }
 
+    /**
+     * Indicates the status portion of the graphic identifier.
+     *
+     * @return The status associated with this graphic.
+     */
     public String getStatus()
     {
         return this.status;
     }
 
+    /**
+     * Specifies the status portion of the graphic identifier.
+     *
+     * @param status The status associated with this graphic.
+     */
     public void setStatus(String status)
     {
         this.status = status;
@@ -335,10 +379,23 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected void doRenderModifiers(DrawContext dc)
     {
         // Do nothing
+    }
+
+    /**
+     * Format a date to a string.
+     *
+     * @param d Date to format.
+     *
+     * @return The formatted date.
+     */
+    protected String formatDate(Date d)
+    {
+        DateFormat format = new SimpleDateFormat(DEFAULT_DATE_PATTERN);
+        return format.format(d);
     }
 
     /** Determine active attributes for this frame. */

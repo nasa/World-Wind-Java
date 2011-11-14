@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 
 import java.awt.image.*;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Demonstrates how to create and render symbols from the MIL-STD-2525 symbol set. See the <a title="Symbology Usage
@@ -147,6 +147,20 @@ public class Symbology extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Dummy (Deception/Decoy)");
             layer.addRenderable(graphic);
 
+            // Create a Restricted Operation Zone
+            positions = new ArrayList<Position>();
+            positions.add(Position.fromDegrees(34.9442, -117.5815, 0));
+            positions.add(Position.fromDegrees(34.8581, -117.5842, 0));
+            positions.add(Position.fromDegrees(34.8676, -117.4088, 0));
+            positions.add(Position.fromDegrees(34.9112, -117.3972, 0));
+            positions.add(Position.fromDegrees(34.9522, -117.4658, 0));
+            graphic = factory.createGraphic("GFGPAAR----AUSX", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Restricted Operations Zone (ROZ)");
+            graphic.setText("(Unit ID)");
+            graphic.setModifier(AVKey.DATE_TIME, Arrays.asList(new Date(), new Date()));
+            graphic.setModifier(AVKey.ALTITUDE, Arrays.asList("100 FT AGL", "1000 FT AGL"));
+            layer.addRenderable(graphic);
+
             // Create a Main Attack graphic
             positions = new ArrayList<Position>();
             positions.add(Position.fromDegrees(34.4643, -117.7323, 0)); // Pt. 1: Tip of the arrow
@@ -217,7 +231,7 @@ public class Symbology extends ApplicationTemplate
     {
         Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.64);
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.73);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 80000);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 100000);
 
         ApplicationTemplate.start("World Wind Symbology", AppFrame.class);
     }

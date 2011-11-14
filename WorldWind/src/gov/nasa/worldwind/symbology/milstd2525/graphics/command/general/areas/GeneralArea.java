@@ -29,6 +29,8 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     protected SurfaceText label;
     protected List<SurfaceText> identityLabels;
 
+    protected boolean showIdentityLabels = true;
+
     public GeneralArea()
     {
         this.polygon = new SurfacePolygon();
@@ -106,6 +108,26 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         }
     }
 
+    /**
+     * Indicates whether or not "ENY" labels will be displayed on hostile entities.
+     *
+     * @return {@code true} if the identity labels will be displayed.
+     */
+    public boolean isShowIdentityLabels()
+    {
+        return showIdentityLabels;
+    }
+
+    /**
+     * Specifies whether or not to display "ENY" labels on hostile entities.
+     *
+     * @param showIdentityLabels {@code true} if the identity labels will be displayed.
+     */
+    public void setShowIdentityLabels(boolean showIdentityLabels)
+    {
+        this.showIdentityLabels = showIdentityLabels;
+    }
+
     /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {
@@ -119,7 +141,8 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.determineActiveAttributes();
         this.determineLabelAttributes();
 
-        if (this.identityLabels == null
+        if (this.isShowIdentityLabels()
+            && this.identityLabels == null
             && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
         {
             this.determineIdentityLabelPosition();
