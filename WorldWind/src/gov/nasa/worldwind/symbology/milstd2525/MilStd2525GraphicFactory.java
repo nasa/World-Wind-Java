@@ -18,6 +18,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.Pe
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.AreaTarget;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.command.TerminallyGuidedMunitionFootprint;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -38,10 +39,20 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
     /** Create a new factory. */
     public MilStd2525GraphicFactory()
     {
+        this.populateClassMap();
+    }
+
+    /** Populate the map that maps function IDs to implementation classes. */
+    protected void populateClassMap()
+    {
         this.classMap.put(PhaseLine.FUNCTION_ID, PhaseLine.class);
         this.classMap.put(GeneralArea.FUNCTION_ID, GeneralArea.class);
         this.classMap.put(AssemblyArea.FUNCTION_ID, AssemblyArea.class);
         this.classMap.put(EngagementArea.FUNCTION_ID, EngagementArea.class);
+        this.classMap.put(DropZone.FUNCTION_ID, DropZone.class);
+        this.classMap.put(ExtractionZone.FUNCTION_ID, ExtractionZone.class);
+        this.classMap.put(LandingZone.FUNCTION_ID, LandingZone.class);
+        this.classMap.put(PickupZone.FUNCTION_ID, PickupZone.class);
         this.classMap.put(AirfieldZone.FUNCTION_ID, AirfieldZone.class);
         this.classMap.put(RestrictedOperationsZone.FUNCTION_ID, RestrictedOperationsZone.class);
         this.classMap.put(ShortRangeAirDefenseEngagementZone.FUNCTION_ID, ShortRangeAirDefenseEngagementZone.class);
@@ -59,6 +70,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.classMap.put(CircularTarget.FUNCTION_ID, CircularTarget.class);
         this.classMap.put(RectangularTarget.FUNCTION_ID, RectangularTarget.class);
         this.classMap.put(Bomb.FUNCTION_ID, Bomb.class);
+        this.classMap.put(Smoke.FUNCTION_ID, Smoke.class);
+        this.classMap.put(TerminallyGuidedMunitionFootprint.FUNCTION_ID, TerminallyGuidedMunitionFootprint.class);
     }
 
     /**

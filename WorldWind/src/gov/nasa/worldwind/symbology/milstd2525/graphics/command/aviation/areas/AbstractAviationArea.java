@@ -118,51 +118,6 @@ abstract public class AbstractAviationArea extends GeneralArea
         return new Object[] {alt1, alt2};
     }
 
-    /**
-     * Get the date range from the graphic's modifiers. This method looks at the value of the
-     * <code>AVKey.DATE_TIME</code> modifier, and returns the results as a two element array. If either value is an
-     * instance of {@link Date}, the date will be formatted to a String using the active date format. If the value of
-     * the modifier is an <code>Iterable</code>, then this method returns the first two values of the iteration. If the
-     * value of the modifier is a single object, this method returns an array containing that object and
-     * <code>null</code>.
-     *
-     * @return A two element array containing the altitude modifiers. One or both elements may be null.
-     */
-    protected Object[] getDateRange()
-    {
-        Object date1 = null;
-        Object date2 = null;
-
-        Object o = this.getModifier(AVKey.DATE_TIME);
-        if (o instanceof Iterable)
-        {
-            Iterator iterator = ((Iterable) o).iterator();
-            if (iterator.hasNext())
-            {
-                o = iterator.next();
-                if (o instanceof Date)
-                    date1 = this.formatDate((Date) o);
-                else
-                    date1 = o;
-            }
-
-            if (iterator.hasNext())
-            {
-                o = iterator.next();
-                if (o instanceof Date)
-                    date2 = this.formatDate((Date) o);
-                else
-                    date2 = o;
-            }
-        }
-        else
-        {
-            date1 = o;
-        }
-
-        return new Object[] {date1, date2};
-    }
-
     @Override
     protected LatLon computeLabelLocation(DrawContext dc)
     {

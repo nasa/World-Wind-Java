@@ -4,23 +4,23 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.command;
 
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
 
 /**
- * Implementation of the Circular Target graphic (hierarchy 2.X.4.3.1.5, SIDC: G*FPATB---****X).
+ * Implementation of the Terminally Guided Munition Footprint graphic (SIDC: G*FPACT---****X).
  *
  * @author pabercrombie
  * @version $Id$
  */
-public class Bomb extends GeneralArea
+public class TerminallyGuidedMunitionFootprint extends GeneralArea
 {
     /** Function ID of this graphic. */
-    public final static String FUNCTION_ID = "ATB---";
+    public final static String FUNCTION_ID = "ACT---";
 
-    public Bomb()
+    public TerminallyGuidedMunitionFootprint()
     {
         // Do not draw "ENY" labels for hostile entities
         this.setShowIdentityLabels(false);
@@ -30,7 +30,7 @@ public class Bomb extends GeneralArea
     @Override
     protected String createLabelText()
     {
-        return "BOMB";
+        return "TGMF";
     }
 
     /** {@inheritDoc} */
