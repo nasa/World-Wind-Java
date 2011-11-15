@@ -51,6 +51,30 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         Boolean showFrame = (Boolean) params.getValue(SymbologyConstants.SHOW_FRAME);
+        Boolean showFill = (Boolean) params.getValue(SymbologyConstants.SHOW_FILL);
+        Boolean showIcon = (Boolean) params.getValue(SymbologyConstants.SHOW_ICON);
+
+        // return null if neither frame nor icon are showing
+        if (showFrame != null && showIcon != null && showFrame == false && showIcon == false)
+            return null;
+
+        // if Icon visibility is OFF, use symbolIdentifier sans function ID
+        // TODO: opportunity for optimization here
+        if (showIcon != null && !showIcon)
+        {
+            char battleDim = symbolIdentifier.charAt(2);
+            if (battleDim == 'g' || battleDim == 'G')   // Ground Battle Dimension
+            {
+                symbolIdentifier = symbolIdentifier.substring(0, 5) + "----------";
+                // add 'H' modifier to indicate an installation
+                if (symbolIdentifier.charAt(4) == 'i' || symbolIdentifier.charAt(4) == 'I')
+                    symbolIdentifier = symbolIdentifier.substring(0, 5) + "-----H----";
+            }
+            else
+            {
+                symbolIdentifier = symbolIdentifier.substring(0, 4) + "-----------";
+            }
+        }
 
         // retrieve desired symbol and convert to bufferedImage
         SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
@@ -74,6 +98,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             // Ignore special cases of <Warfighting, Sea Surface, Own Track> and <Warfighting, Subsurface, Non-submarine Diver> icons,
             // which have no fill or black outline
             if (Integer.parseInt(filename.substring(0, 1)) < 4 &&
+                symbolCode.getFunctionId() != null &&
                 !(symbolCode.getScheme().equals("S") &&
                     symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE) &&
                     symbolCode.getFunctionId().equals("O-----")) &&
@@ -93,6 +118,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                 // which have a standard identity-colored frame and no fill color.
                 if (symbolCode.getScheme().equals("S") &&
                     symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE) &&
+                    symbolCode.getFunctionId() != null &&
                     (symbolCode.getFunctionId().substring(0, 2).equals("WM") ||
                         symbolCode.getFunctionId().substring(0, 3).equals("WDM") ||
                         symbolCode.getFunctionId().equals("E-----") ||
@@ -113,6 +139,33 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
                     img = changeIconOutlineColor(img,
                         symbolCode.getStandardIdentityColor(symbolCode.getStandardIdentity()));
                 }
+            }
+        }       // Framed, but no Fill
+        // handle special cases of S*UPE, S*UPV, and S*UPX
+        // ignore special case S*SPO.
+        else if (showFill != null && !showFill)
+        {
+            if (symbolCode.getScheme().equals("S") &&
+                symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE) &&
+                symbolCode.getFunctionId() != null &&
+                (symbolCode.getFunctionId().equals("E-----") ||
+                    symbolCode.getFunctionId().equals("V-----") ||
+                    symbolCode.getFunctionId().equals("X-----")))
+            {
+                img = changeIconFillColor(img,
+                    symbolCode.getStandardIdentityColor(symbolCode.getStandardIdentity()));
+            }
+            else if (!(symbolCode.getScheme().equals("S") &&
+                symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SURFACE) &&
+                symbolCode.getFunctionId() != null &&
+                symbolCode.getFunctionId().equals("O-----")))
+            {
+                // 1. remove fill color
+                img = removeIconFillColor(img);
+
+                // 2. change frame & icon to fill color
+                img = changeIconOutlineColor(img,
+                    symbolCode.getStandardIdentityColor(symbolCode.getStandardIdentity()));
             }
         }
 
