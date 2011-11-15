@@ -1257,35 +1257,41 @@ public class Path extends AbstractShape
     protected void doDrawOutlineVBO(DrawContext dc, int[] vboIds, PathData pathData)
     {
         GL gl = dc.getGL();
-        int stride = pathData.hasExtrusionPoints ? 2 * pathData.vertexStride : pathData.vertexStride;
-        int count = pathData.hasExtrusionPoints ? pathData.vertexCount / 2 : pathData.vertexCount;
-        boolean useVertexColors = !dc.isPickingMode() && pathData.tessellatedColors != null;
-
-        // Convert stride from number of elements to number of bytes.
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[0]);
-        gl.glVertexPointer(3, GL.GL_FLOAT, 4 * stride, 0);
-
-        // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
-        // positionColors is non-null.
-        if (useVertexColors)
+        try
         {
-            // Convert stride and offset from number of elements to number of bytes.
-            gl.glEnableClientState(GL.GL_COLOR_ARRAY);
-            gl.glColorPointer(4, GL.GL_FLOAT, 4 * stride, 4 * pathData.colorOffset);
+            int stride = pathData.hasExtrusionPoints ? 2 * pathData.vertexStride : pathData.vertexStride;
+            int count = pathData.hasExtrusionPoints ? pathData.vertexCount / 2 : pathData.vertexCount;
+            boolean useVertexColors = !dc.isPickingMode() && pathData.tessellatedColors != null;
+
+            // Convert stride from number of elements to number of bytes.
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vboIds[0]);
+            gl.glVertexPointer(3, GL.GL_FLOAT, 4 * stride, 0);
+
+            // Apply this path's per-position colors if we're in normal rendering mode (not picking) and this path's
+            // positionColors is non-null.
+            if (useVertexColors)
+            {
+                // Convert stride and offset from number of elements to number of bytes.
+                gl.glEnableClientState(GL.GL_COLOR_ARRAY);
+                gl.glColorPointer(4, GL.GL_FLOAT, 4 * stride, 4 * pathData.colorOffset);
+            }
+
+            gl.glDrawArrays(GL.GL_LINE_STRIP, 0, count);
+
+            if (useVertexColors)
+                gl.glDisableClientState(GL.GL_COLOR_ARRAY);
+
+            if (pathData.hasExtrusionPoints && this.isDrawVerticals())
+                this.drawVerticalOutlineVBO(dc, vboIds, pathData);
+
+            if (this.isShowPositions())
+                this.drawPointsVBO(dc, vboIds, pathData);
         }
-
-        gl.glDrawArrays(GL.GL_LINE_STRIP, 0, count);
-
-        if (useVertexColors)
-            gl.glDisableClientState(GL.GL_COLOR_ARRAY);
-
-        if (pathData.hasExtrusionPoints && this.isDrawVerticals())
-            this.drawVerticalOutlineVBO(dc, vboIds, pathData);
-
-        if (this.isShowPositions())
-            this.drawPointsVBO(dc, vboIds, pathData);
-
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+        finally
+        {
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
     }
 
     protected void doDrawOutlineVA(DrawContext dc, PathData pathData)
