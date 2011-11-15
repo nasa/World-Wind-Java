@@ -18,7 +18,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.Pe
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.AreaTarget;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.command.TerminallyGuidedMunitionFootprint;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.command.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target.*;
 import gov.nasa.worldwind.util.Logging;
 
@@ -72,6 +72,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.classMap.put(Bomb.FUNCTION_ID, Bomb.class);
         this.classMap.put(Smoke.FUNCTION_ID, Smoke.class);
         this.classMap.put(TerminallyGuidedMunitionFootprint.FUNCTION_ID, TerminallyGuidedMunitionFootprint.class);
+        this.classMap.put(IrregularAirspaceCoordinationArea.FUNCTION_ID, IrregularAirspaceCoordinationArea.class);
     }
 
     /**

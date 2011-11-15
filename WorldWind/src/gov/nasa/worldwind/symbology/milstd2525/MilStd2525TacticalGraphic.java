@@ -576,4 +576,40 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
         return new Object[] {date1, date2};
     }
+
+    /**
+     * Get the altitude range from the graphic's modifiers. This method looks at the value of the
+     * <code>AVKey.ALTITUDE</code> modifier, and returns the results as a two element array. If the value of the
+     * modifier is an <code>Iterable</code>, then this method returns the first two values of the iteration. If the
+     * value of the modifier is a single object, this method returns an array containing that object and
+     * <code>null</code>.
+     *
+     * @return A two element array containing the altitude modifiers. One or both elements may be null.
+     */
+    protected Object[] getAltitudeRange()
+    {
+        Object alt1 = null;
+        Object alt2 = null;
+
+        Object o = this.getModifier(AVKey.ALTITUDE);
+        if (o instanceof Iterable)
+        {
+            Iterator iterator = ((Iterable) o).iterator();
+            if (iterator.hasNext())
+            {
+                alt1 = iterator.next();
+            }
+
+            if (iterator.hasNext())
+            {
+                alt2 = iterator.next();
+            }
+        }
+        else
+        {
+            alt1 = o;
+        }
+
+        return new Object[] {alt1, alt2};
+    }
 }
