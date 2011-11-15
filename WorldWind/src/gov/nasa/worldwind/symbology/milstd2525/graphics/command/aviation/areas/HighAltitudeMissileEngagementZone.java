@@ -23,8 +23,7 @@ public class HighAltitudeMissileEngagementZone extends AbstractAviationArea
         return FUNCTION_ID;
     }
 
-    @Override
-    protected String createText(String text)
+    protected String getGraphicLabel()
     {
         return "HIMEZ";
     }

@@ -17,9 +17,9 @@ public class EngagementArea extends GeneralArea
     public final static String FUNCTION_ID = "GAE---";
 
     @Override
-    protected String createText(String text)
+    protected String createLabelText()
     {
-        return "EA " + text;
+        return "EA\n" + text;
     }
 
     @Override

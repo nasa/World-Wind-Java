@@ -59,10 +59,10 @@ public class AirfieldZone extends GeneralArea
      * @return null, Airfield Zone does not support text modifiers.
      */
     @Override
-    protected String createText(String text)
+    protected String createLabelText()
     {
         // Text modifier not supported
-        return null;
+        return "";
     }
 
     /**

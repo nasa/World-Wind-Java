@@ -22,7 +22,7 @@ public class Bomb extends GeneralArea
 
     /** {@inheritDoc} */
     @Override
-    protected String createText(String text)
+    protected String createLabelText()
     {
         return "BOMB";
     }

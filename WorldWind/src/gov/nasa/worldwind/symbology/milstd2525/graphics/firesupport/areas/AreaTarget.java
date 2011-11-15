@@ -22,13 +22,6 @@ public class AreaTarget extends GeneralArea
 
     /** {@inheritDoc} */
     @Override
-    protected String createText(String text)
-    {
-        return text;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String getCategory()
     {
         return SymbologyConstants.CATEGORY_FIRE_SUPPORT;

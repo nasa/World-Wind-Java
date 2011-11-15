@@ -26,7 +26,12 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     public final static String FUNCTION_ID = "GAG---";
 
     protected SurfacePolygon polygon;
-    protected SurfaceText label;
+
+    /** Text for the main label. */
+    protected String labelText;
+    /** SurfaceText used to draw the main label. This list contains one element for each line of text. */
+    protected List<SurfaceText> labels;
+    /** SurfaceText used to draw "ENY" labels to indicate a hostile identity. */
     protected List<SurfaceText> identityLabels;
 
     protected boolean showIdentityLabels = true;
@@ -36,7 +41,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.polygon = new SurfacePolygon();
         this.polygon.setDelegateOwner(this);
         this.polygon.setAttributes(this.getActiveShapeAttributes());
-        this.setText("");
     }
 
     /** {@inheritDoc} */
@@ -92,22 +96,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.polygon.moveTo(position);
     }
 
-    @Override
-    public void setText(String text)
-    {
-        super.setText(text);
-
-        String fullText = this.createText(text);
-        if (fullText != null)
-        {
-            this.label = new SurfaceText(fullText, Position.ZERO);
-        }
-        else
-        {
-            this.label = null;
-        }
-    }
-
     /**
      * Indicates whether or not "ENY" labels will be displayed on hostile entities.
      *
@@ -138,6 +126,11 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
         this.makeShapes(dc);
 
+        if (this.labels == null && this.labelText == null)
+        {
+            this.createLabels();
+        }
+
         this.determineActiveAttributes();
         this.determineLabelAttributes();
 
@@ -148,10 +141,13 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
             this.determineIdentityLabelPosition();
         }
 
-        if (this.label != null)
+        if (this.labels != null)
         {
-            this.determineLabelPosition(dc);
-            this.label.preRender(dc);
+            this.determineLabelPositions(dc);
+            for (SurfaceText text : this.labels)
+            {
+                text.preRender(dc);
+            }
         }
 
         if (this.identityLabels != null)
@@ -180,22 +176,85 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         this.polygon.render(dc);
     }
 
-    protected String createText(String text)
+    /**
+     * Create the text for the main label on this graphic.
+     *
+     * @return Text for the main label. May return null if there is no text.
+     */
+    protected String createLabelText()
     {
-        return text;
+        return this.getText();
     }
 
-    protected void determineLabelPosition(DrawContext dc)
+    protected Offset getLabelOffset()
+    {
+        return SurfaceText.DEFAULT_OFFSET;
+    }
+
+    protected void createLabels()
+    {
+        this.labelText = this.createLabelText();
+        if (this.labelText == null)
+        {
+            // No label. Set the text to an empty string so we won't try to generate it again.
+            this.labelText = "";
+            return;
+        }
+
+        String[] lines = this.labelText.split("\n");
+
+        this.labels = new ArrayList<SurfaceText>(lines.length);
+
+        Offset offset = this.getLabelOffset();
+
+        for (String line : lines)
+        {
+            SurfaceText text = new SurfaceText(line, Position.ZERO);
+            text.setOffset(offset);
+            this.labels.add(text);
+        }
+    }
+
+    /**
+     * Determine the appropriate position for the graphic's labels.
+     *
+     * @param dc Current draw context.
+     */
+    protected void determineLabelPositions(DrawContext dc)
+    {
+        if (this.labels == null)
+            return;
+
+        Angle textHeight = Angle.fromRadians(
+            SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS * 1.25 / dc.getGlobe().getRadius());
+
+        Position position = new Position(this.computeLabelLocation(dc), 0);
+
+        for (SurfaceText label : this.labels)
+        {
+            label.setPosition(position);
+            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
+        }
+    }
+
+    /**
+     * Compute the position for the area's main label. This position indicates the position of the first line of the
+     * label. If there are more lines, they will be arranged South of the first line.
+     *
+     * @param dc Current draw context.
+     *
+     * @return Position of the first line of the main label.
+     */
+    protected LatLon computeLabelLocation(DrawContext dc)
     {
         List<Sector> sectors = this.polygon.getSectors(dc);
         if (sectors != null)
         {
             // TODO: centroid of bounding sector is not always a good choice for label position
             Sector sector = sectors.get(0);
-            LatLon centroid = sector.getCentroid();
-
-            this.label.setPosition(new Position(centroid, 0));
+            return sector.getCentroid();
         }
+        return null;
     }
 
     protected void determineIdentityLabelPosition()
@@ -248,10 +307,13 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         if (font == null)
             font = DEFAULT_FONT;
 
-        if (this.label != null)
+        if (this.labels != null)
         {
-            this.label.setColor(color);
-            this.label.setFont(font);
+            for (SurfaceText text : this.labels)
+            {
+                text.setColor(color);
+                text.setFont(font);
+            }
         }
 
         if (this.identityLabels != null)

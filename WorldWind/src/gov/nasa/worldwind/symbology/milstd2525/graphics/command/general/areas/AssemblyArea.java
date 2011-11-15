@@ -19,9 +19,9 @@ public class AssemblyArea extends GeneralArea
 
     /** {@inheritDoc} */
     @Override
-    protected String createText(String text)
+    protected String createLabelText()
     {
-        return "AA " + text;
+        return "AA\n" + text;
     }
 
     /** {@inheritDoc} */

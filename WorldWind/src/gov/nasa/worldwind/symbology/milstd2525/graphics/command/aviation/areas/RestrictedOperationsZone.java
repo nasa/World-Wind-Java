@@ -25,7 +25,7 @@ public class RestrictedOperationsZone extends AbstractAviationArea
     }
 
     @Override
-    protected String createText(String text)
+    protected String getGraphicLabel()
     {
         return "ROZ";
     }

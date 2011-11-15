@@ -24,7 +24,7 @@ public class ShortRangeAirDefenseEngagementZone extends AbstractAviationArea
     }
 
     @Override
-    protected String createText(String text)
+    protected String getGraphicLabel()
     {
         return "SHORADEZ";
     }

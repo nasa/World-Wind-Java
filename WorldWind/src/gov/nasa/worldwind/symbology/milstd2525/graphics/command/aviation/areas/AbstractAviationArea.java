@@ -11,7 +11,6 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
 
-import java.awt.*;
 import java.util.*;
 
 /**
@@ -22,11 +21,7 @@ import java.util.*;
  */
 abstract public class AbstractAviationArea extends GeneralArea
 {
-    protected SurfaceText textLabel;
-    protected SurfaceText timeFromLabel;
-    protected SurfaceText timeToLabel;
-    protected SurfaceText minAltLabel;
-    protected SurfaceText maxAltLabel;
+    protected abstract String getGraphicLabel();
 
     /** Create a new aviation area. */
     public AbstractAviationArea()
@@ -35,72 +30,56 @@ abstract public class AbstractAviationArea extends GeneralArea
         this.setShowIdentityLabels(false);
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void preRender(DrawContext dc)
+    protected Offset getLabelOffset()
     {
-        if (this.textLabel == null) // TODO text modifier may not be set, need to look at other modifiers too
-            this.createLabels();
-
-        super.preRender(dc);
-
-        if (this.textLabel != null)
-            this.textLabel.preRender(dc);
-
-        if (this.minAltLabel != null)
-            this.minAltLabel.preRender(dc);
-
-        if (this.maxAltLabel != null)
-            this.maxAltLabel.preRender(dc);
-
-        if (this.timeFromLabel != null)
-            this.timeFromLabel.preRender(dc);
-
-        if (this.timeToLabel != null)
-            this.timeToLabel.preRender(dc);
+        return new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION); // Left align
     }
 
-    protected void createLabels()
+    @Override
+    protected String createLabelText()
     {
-        Offset offset = new Offset(0.0, 0.0, AVKey.PIXELS, AVKey.PIXELS);
-
-        if (this.label != null)
-        {
-            this.label.setOffset(offset);
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getGraphicLabel()); // TODO consider renaming
+        sb.append("\n");
 
         Object o = this.getModifier(AVKey.TEXT);
-        if (o instanceof String)
+        if (o != null)
         {
-            this.textLabel = new SurfaceText((String) o, Position.ZERO);
-            this.textLabel.setOffset(offset);
+            sb.append(o);
+            sb.append("\n");
         }
 
         Object[] altitudes = this.getAltitudeRange();
         if (altitudes[0] != null)
         {
-            this.minAltLabel = new SurfaceText("MIN ALT: " + o, Position.ZERO);
-            this.minAltLabel.setOffset(offset);
+            sb.append("MIN ALT: ");
+            sb.append(altitudes[0]);
+            sb.append("\n");
         }
 
         if (altitudes[1] != null)
         {
-            this.maxAltLabel = new SurfaceText("MAX ALT: " + o, Position.ZERO);
-            this.maxAltLabel.setOffset(offset);
+            sb.append("MAX ALT: ");
+            sb.append(altitudes[1]);
+            sb.append("\n");
         }
 
         Object[] dates = this.getDateRange();
         if (dates[0] != null)
         {
-            this.timeFromLabel = new SurfaceText("TIME FROM: " + dates[0], Position.ZERO);
-            this.timeFromLabel.setOffset(offset);
+            sb.append("TIME FROM: ");
+            sb.append(dates[0]);
+            sb.append("\n");
         }
 
         if (dates[1] != null)
         {
-            this.timeToLabel = new SurfaceText("TIME TO: " + dates[1], Position.ZERO);
-            this.timeToLabel.setOffset(offset);
+            sb.append("TIME TO: ");
+            sb.append(dates[1]);
         }
+
+        return sb.toString();
     }
 
     /**
@@ -185,7 +164,7 @@ abstract public class AbstractAviationArea extends GeneralArea
     }
 
     @Override
-    protected void determineLabelPosition(DrawContext dc)
+    protected LatLon computeLabelLocation(DrawContext dc)
     {
         Position northWest = Position.fromDegrees(-90.0, 180.0);
 
@@ -202,87 +181,10 @@ abstract public class AbstractAviationArea extends GeneralArea
         Angle textHeight = Angle.fromRadians(
             SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS * 1.25 / dc.getGlobe().getRadius());
 
-        Position position = northWest;
+        // Shift south east, away from the western border
+        LatLon ll = Position.greatCircleEndPosition(northWest, Angle.POS90, textHeight);
 
-        position = new Position(
-            Position.greatCircleEndPosition(position, Angle.fromDegrees(135.0) /* South east */, textHeight), 0);
-        position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-
-        if (this.label != null)
-        {
-            this.label.setPosition(position);
-        }
-
-        if (this.textLabel != null)
-        {
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-            textLabel.setPosition(position);
-        }
-
-        if (this.minAltLabel != null)
-        {
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-            minAltLabel.setPosition(position);
-        }
-
-        if (this.maxAltLabel != null)
-        {
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-            maxAltLabel.setPosition(position);
-        }
-
-        if (this.timeFromLabel != null)
-        {
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-            timeFromLabel.setPosition(position);
-        }
-
-        if (this.timeToLabel != null)
-        {
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-            timeToLabel.setPosition(position);
-        }
-    }
-
-    @Override
-    protected void determineLabelAttributes()
-    {
-        super.determineLabelAttributes();
-
-        Color color = this.getLabelMaterial().getDiffuse();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        if (this.textLabel != null)
-        {
-            this.textLabel.setColor(color);
-            this.textLabel.setFont(font);
-        }
-
-        if (this.minAltLabel != null)
-        {
-            this.minAltLabel.setColor(color);
-            this.minAltLabel.setFont(font);
-        }
-
-        if (this.maxAltLabel != null)
-        {
-            this.maxAltLabel.setColor(color);
-            this.maxAltLabel.setFont(font);
-        }
-
-        if (this.timeFromLabel != null)
-        {
-            this.timeFromLabel.setColor(color);
-            this.timeFromLabel.setFont(font);
-        }
-
-        if (this.timeToLabel != null)
-        {
-            this.timeToLabel.setColor(color);
-            this.timeToLabel.setFont(font);
-        }
+        // Shift south, away from the northern border
+        return Position.greatCircleEndPosition(ll, Angle.POS180, textHeight);
     }
 }
