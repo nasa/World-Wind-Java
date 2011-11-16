@@ -204,8 +204,16 @@ public class Symbology extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack");
             layer.addRenderable(graphic);
 
+            // Create an Air Control Point graphic
+            Position position = (Position.fromDegrees(34.6112, -117.3794, 0));
+            graphic = factory.createGraphic("GHFPAPP-------X", position, null);
+            graphic.setText("8");
+            graphic.setModifier(AVKey.RADIUS, 2000.0); // Radius of the circle
+            graphic.setValue(AVKey.DISPLAY_NAME, "Air Control Point");
+            layer.addRenderable(graphic);
+
             // Create a Circular Target graphic
-            Position position = (Position.fromDegrees(34.7202, -117.4278, 0));
+            position = (Position.fromDegrees(34.7202, -117.4278, 0));
             graphic = factory.createGraphic("GHFPATC-------X", position, null);
             graphic.setText("AG9999");
             graphic.setModifier(AVKey.RADIUS, 5000.0); // Radius of the circle
