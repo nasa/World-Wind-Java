@@ -93,13 +93,13 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                         // handle double tap here
 
                         // play sound to test
-                        tg.startTone(ToneGenerator.TONE_CDMA_CONFIRM);
+                        //tg.startTone(ToneGenerator.TONE_CDMA_CONFIRM);
 
                         eventSource.invokeInRenderingThread(new Runnable()
                         {
                             public void run()
                             {
-                                handleGoToLocation(x, y);
+                                //handleGoToLocation(x, y);
                                 //updateLatLonDisplay();
                             }
                         });
@@ -112,7 +112,7 @@ public class BasicInputHandler extends WWObjectImpl implements InputHandler
                         // handle single tap here
 
                         // play a beep to test
-                        tg.startTone(ToneGenerator.TONE_PROP_BEEP);
+                        // tg.startTone(ToneGenerator.TONE_PROP_BEEP);
 
                         mLastTap = curTime;      // last tap is now this tap
                     }
