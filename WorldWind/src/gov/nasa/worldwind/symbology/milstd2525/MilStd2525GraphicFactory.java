@@ -11,7 +11,8 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.areas.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points.AirControlPoint;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.lines.MinimumRiskRoute;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
@@ -62,6 +63,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.classMap.put(LowAltitudeMissileEngagementZone.FUNCTION_ID, LowAltitudeMissileEngagementZone.class);
         this.classMap.put(HighAltitudeMissileEngagementZone.FUNCTION_ID, HighAltitudeMissileEngagementZone.class);
         this.classMap.put(AirControlPoint.FUNCTION_ID, AirControlPoint.class);
+        this.classMap.put(CommunicationsCheckpoint.FUNCTION_ID, CommunicationsCheckpoint.class);
+        this.classMap.put(MinimumRiskRoute.FUNCTION_ID, MinimumRiskRoute.class);
         this.classMap.put(Dummy.FUNCTION_ID, Dummy.class);
         this.classMap.put(PenetrationBox.FUNCTION_ID, PenetrationBox.class);
         this.classMap.put(SupportingAttack.FUNCTION_ID, SupportingAttack.class);
@@ -104,7 +107,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
 
         if (!MilStd2525TacticalGraphic.class.isAssignableFrom(clazz))
         {
-            String msg = Logging.getMessage("Symbology.StringIsNull");
+            String msg = Logging.getMessage("Symbology.CannotCast", clazz,
+                MilStd2525TacticalGraphic.class);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }

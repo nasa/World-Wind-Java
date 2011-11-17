@@ -7,14 +7,14 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points;
 
 /**
- * Implementation of the Air Control Point graphic (hierarchy 2.X.2.2.1.1, SIDC: G*GPAPP---****X).
+ * Implementation of the Communications Checkpoint Point graphic (hierarchy 2.X.2.2.1.2, SIDC: G*GPAPC---****X).
  *
  * @author pabercrombie
  * @version $Id$
  */
-public class AirControlPoint extends AbstractRoutePoint
+public class CommunicationsCheckpoint extends AbstractRoutePoint
 {
-    public final static String FUNCTION_ID = "APP---";
+    public final static String FUNCTION_ID = "APC---";
 
     /** {@inheritDoc} */
     public String getFunctionId()
@@ -24,6 +24,6 @@ public class AirControlPoint extends AbstractRoutePoint
 
     public String getGraphicLabel()
     {
-        return "ACP";
+        return "CCP";
     }
 }
