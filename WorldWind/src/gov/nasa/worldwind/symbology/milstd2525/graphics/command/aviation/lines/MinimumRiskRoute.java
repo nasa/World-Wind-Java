@@ -17,7 +17,9 @@ import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points.AbstractRoutePoint;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Implementation of the Minimum Risk Route graphic (hierarchy 2.X.2.2.2.2, SIDC: G*GPALM---****X).
@@ -41,6 +43,11 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
 
     /** Graphics drawn at the route control points. */
     protected List<TacticalGraphic> children;
+
+    /** Text for the main label. */
+    protected String labelText;
+    /** SurfaceText used to draw the main label. This list contains one element for each line of text. */
+    protected List<SurfaceText> labels;
 
     /** Create a route graphic. */
     public MinimumRiskRoute()
@@ -91,8 +98,7 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         }
     }
 
-    /**
-     * {@inheritDoc} Overridden to apply the highlight state to child graphics. */
+    /** {@inheritDoc} Overridden to apply the highlight state to child graphics. */
     @Override
     public void setHighlighted(boolean highlighted)
     {
@@ -232,6 +238,28 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
     /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {
+        if (!this.isVisible())
+        {
+            return;
+        }
+
+        if (this.labels == null && this.labelText == null)
+        {
+            this.createLabels();
+        }
+
+        this.determineActiveAttributes();
+        this.determineLabelAttributes();
+
+        if (this.labels != null)
+        {
+            this.determineLabelPositions(dc);
+            for (SurfaceText text : this.labels)
+            {
+                text.preRender(dc);
+            }
+        }
+
         if (this.children != null)
         {
             for (TacticalGraphic child : this.children)
@@ -319,6 +347,152 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
     }
 
     /**
+     * Create the text for the main label on this graphic.
+     *
+     * @return Text for the main label. May return null if there is no text.
+     */
+    protected String createLabelText()
+    {
+        StringBuilder sb = new StringBuilder();
+
+        Object o = this.getModifier(AVKey.TEXT);
+        if (o != null)
+        {
+            sb.append("Name: ");
+            sb.append(o);
+            sb.append("\n");
+        }
+
+        o = this.getModifier(AVKey.WIDTH);
+        if (o != null)
+        {
+            sb.append("Width: ");
+            sb.append(o);
+            sb.append(" m"); // TODO safe to assume meters?
+            sb.append("\n");
+        }
+
+        Object[] altitudes = this.getAltitudeRange();
+        if (altitudes[0] != null)
+        {
+            sb.append("Min Alt: ");
+            sb.append(altitudes[0]);
+            sb.append("\n");
+        }
+
+        if (altitudes[1] != null)
+        {
+            sb.append("Max Alt: ");
+            sb.append(altitudes[1]);
+            sb.append("\n");
+        }
+
+        Object[] dates = this.getDateRange();
+        if (dates[0] != null)
+        {
+            sb.append("DTG Start: ");
+            sb.append(dates[0]);
+            sb.append("\n");
+        }
+
+        if (dates[1] != null)
+        {
+            sb.append("DTG End: ");
+            sb.append(dates[1]);
+        }
+
+        return sb.toString();
+    }
+
+    protected Offset getLabelOffset()
+    {
+        return new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION); // Left align
+    }
+
+    protected void createLabels()
+    {
+        this.labelText = this.createLabelText();
+        if (this.labelText == null)
+        {
+            // No label. Set the text to an empty string so we won't try to generate it again.
+            this.labelText = "";
+            return;
+        }
+
+        String[] lines = this.labelText.split("\n");
+
+        this.labels = new ArrayList<SurfaceText>(lines.length);
+
+        Offset offset = this.getLabelOffset();
+
+        for (String line : lines)
+        {
+            SurfaceText text = new SurfaceText(line, Position.ZERO);
+            text.setOffset(offset);
+            this.labels.add(text);
+        }
+    }
+
+    /**
+     * Determine the appropriate position for the graphic's labels.
+     *
+     * @param dc Current draw context.
+     */
+    protected void determineLabelPositions(DrawContext dc)
+    {
+        if (this.labels == null)
+            return;
+
+        Angle textHeight = Angle.fromRadians(
+            SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS * 1.25 / dc.getGlobe().getRadius());
+
+        Position position = new Position(this.computeLabelLocation(dc), 0);
+
+        for (SurfaceText label : this.labels)
+        {
+            label.setPosition(position);
+            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
+        }
+    }
+
+    /**
+     * Compute the position for the area's main label. This position indicates the position of the first line of the
+     * label. If there are more lines, they will be arranged South of the first line. This method places the label
+     * between the first to control points on the route, and to the side of the route.
+     *
+     * @param dc Current draw context.
+     *
+     * @return Position of the first line of the main label.
+     */
+    protected LatLon computeLabelLocation(DrawContext dc)
+    {
+        Iterator<? extends Position> iterator = this.getPositions().iterator();
+
+        Globe globe = dc.getGlobe();
+
+        Position posA = iterator.next();
+        Position posB = iterator.next();
+
+        Position midpoint = Position.interpolate(0.5, posA, posB);
+
+        Vec4 pMid = globe.computePointFromPosition(midpoint);
+        Vec4 pB = globe.computePointFromPosition(posB);
+        Vec4 normal = globe.computeSurfaceNormalAtPoint(pMid);
+
+        Vec4 vMB = pB.subtract3(pMid);
+
+        // Compute a vector perpendicular to the route, at the midpoint of the first two control points
+        Vec4 perpendicular = vMB.cross3(normal);
+        perpendicular = perpendicular.normalize3().multiply3(
+            DEFAULT_WIDTH * 2); // TODO arbitrary offset, should be based on size of label
+
+        // Position the label to the side of the route
+        Vec4 pLabel = pMid.add3(perpendicular);
+
+        return globe.computePositionFromPoint(pLabel);
+    }
+
+    /**
      * Create between two points and configure the Path.
      *
      * @param start First position
@@ -335,5 +509,23 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         path.setDelegateOwner(this);
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
+    }
+
+    protected void determineLabelAttributes()
+    {
+        Color color = this.getLabelMaterial().getDiffuse();
+
+        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
+        if (font == null)
+            font = DEFAULT_FONT;
+
+        if (this.labels != null)
+        {
+            for (SurfaceText text : this.labels)
+            {
+                text.setColor(color);
+                text.setFont(font);
+            }
+        }
     }
 }

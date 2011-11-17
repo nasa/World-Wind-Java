@@ -244,6 +244,9 @@ public class Symbology extends ApplicationTemplate
             // Now create the route itself
             graphic = factory.createGraphic("GFGPALM-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Minimum Risk Route");
+            graphic.setText("KNIGHT");
+            graphic.setModifier(AVKey.WIDTH, 2000.0);
+            graphic.setModifier(AVKey.ALTITUDE, Arrays.asList("50 FT AGL", "200 FT AGL"));
 
             // Set the control points as child graphics of the route
             graphic.setModifier(AVKey.GRAPHIC, controlPoints);
