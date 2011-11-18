@@ -31,9 +31,10 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
     /** Path used to render the line. */
     protected Path path;
     /** Label rendered at the start of the line. */
-    protected SurfaceText labelStart;
+    protected PointPlacemark labelStart;
     /** Label rendered at the end of the line. */
-    protected SurfaceText labelEnd;
+    protected PointPlacemark labelEnd;
+    protected PointPlacemarkAttributes labelAttributes;
 
     /** Create a new Phase Line. */
     public PhaseLine()
@@ -102,9 +103,6 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
 
             this.determineLabelPositions(dc);
             this.determineLabelAttributes();
-
-            this.labelStart.preRender(dc);
-            this.labelEnd.preRender(dc);
         }
     }
 
@@ -112,6 +110,9 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
     public void doRenderGraphic(DrawContext dc)
     {
         this.path.render(dc);
+
+        this.labelStart.render(dc);
+        this.labelEnd.render(dc);
     }
 
     /**
@@ -142,8 +143,16 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
 
         String fullText = sb.toString();
 
-        this.labelStart = new SurfaceText(fullText, Position.ZERO);
-        this.labelEnd = new SurfaceText(fullText, Position.ZERO);
+        this.labelAttributes = new PointPlacemarkAttributes();
+        this.labelAttributes.setUsePointAsDefaultImage(true);
+
+        this.labelStart = new PointPlacemark(Position.ZERO);
+        this.labelStart.setLabelText(fullText);
+        this.labelStart.setAttributes(this.labelAttributes);
+
+        this.labelEnd = new PointPlacemark(Position.ZERO);
+        this.labelEnd.setLabelText(fullText);
+        this.labelEnd.setAttributes(this.labelAttributes);
     }
 
     /**
@@ -187,10 +196,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         if (font == null)
             font = DEFAULT_FONT;
 
-        this.labelStart.setColor(color);
-        this.labelStart.setFont(font);
-
-        this.labelEnd.setColor(color);
-        this.labelEnd.setFont(font);
+        this.labelAttributes.setImageColor(color);
+        this.labelAttributes.setLabelMaterial(this.getLabelMaterial());
     }
 }

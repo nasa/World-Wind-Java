@@ -27,7 +27,8 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     public final static String FUNCTION_ID = "ATC---";
 
     protected SurfaceCircle circle;
-    protected SurfaceText label;
+    protected PointPlacemark label;
+    protected PointPlacemarkAttributes labelAttributes;
 
     public CircularTarget()
     {
@@ -124,7 +125,12 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         String fullText = this.createText(text);
         if (fullText != null)
         {
-            this.label = new SurfaceText(fullText, Position.ZERO);
+            this.labelAttributes = new PointPlacemarkAttributes();
+            this.labelAttributes.setUsePointAsDefaultImage(true);
+
+            this.label = new PointPlacemark(Position.ZERO);
+            this.label.setAttributes(this.labelAttributes);
+            this.label.setLabelText(fullText);
         }
         else
         {
@@ -146,7 +152,6 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         {
             this.determineLabelPosition();
             this.determineLabelAttributes();
-            this.label.preRender(dc);
         }
 
         this.circle.preRender(dc);
@@ -160,6 +165,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     public void doRenderGraphic(DrawContext dc)
     {
         this.circle.render(dc);
+        this.label.render(dc);
     }
 
     protected String createText(String text)
@@ -174,14 +180,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
 
     protected void determineLabelAttributes()
     {
-        Color color = this.getLabelMaterial().getDiffuse();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        this.label.setColor(color);
-        this.label.setFont(font);
+        this.labelAttributes.setLabelMaterial(this.getLabelMaterial());
     }
 
     protected SurfaceCircle createShape()

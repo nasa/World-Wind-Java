@@ -29,8 +29,9 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
     /** Text for the main label. */
     protected String labelText;
+    protected PointPlacemarkAttributes labelAttributes;
     /** SurfaceText used to draw the main label. This list contains one element for each line of text. */
-    protected List<SurfaceText> labels;
+    protected List<PointPlacemark> labels;
     /** SurfaceText used to draw "ENY" labels to indicate a hostile identity. */
     protected List<SurfaceText> identityLabels;
 
@@ -144,10 +145,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         if (this.labels != null)
         {
             this.determineLabelPositions(dc);
-            for (SurfaceText text : this.labels)
-            {
-                text.preRender(dc);
-            }
         }
 
         if (this.identityLabels != null)
@@ -174,6 +171,11 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     public void doRenderGraphic(DrawContext dc)
     {
         this.polygon.render(dc);
+
+        for (PointPlacemark placemark : this.labels)
+        {
+            placemark.render(dc);
+        }
     }
 
     /**
@@ -203,14 +205,16 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
         String[] lines = this.labelText.split("\n");
 
-        this.labels = new ArrayList<SurfaceText>(lines.length);
+        this.labels = new ArrayList<PointPlacemark>(lines.length);
 
-        Offset offset = this.getLabelOffset();
+        this.labelAttributes = new PointPlacemarkAttributes();
+        this.labelAttributes.setUsePointAsDefaultImage(true);
 
         for (String line : lines)
         {
-            SurfaceText text = new SurfaceText(line, Position.ZERO);
-            text.setOffset(offset);
+            PointPlacemark text = new PointPlacemark(Position.ZERO);
+            text.setLabelText(line);
+            text.setAttributes(this.labelAttributes);
             this.labels.add(text);
         }
     }
@@ -230,7 +234,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
         Position position = new Position(this.computeLabelLocation(dc), 0);
 
-        for (SurfaceText label : this.labels)
+        for (PointPlacemark label : this.labels)
         {
             label.setPosition(position);
             position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
@@ -306,15 +310,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
         Font font = this.getActiveOverrideAttributes().getTextModifierFont();
         if (font == null)
             font = DEFAULT_FONT;
-
-        if (this.labels != null)
-        {
-            for (SurfaceText text : this.labels)
-            {
-                text.setColor(color);
-                text.setFont(font);
-            }
-        }
 
         if (this.identityLabels != null)
         {
