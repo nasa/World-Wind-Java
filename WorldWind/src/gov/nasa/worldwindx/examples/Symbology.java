@@ -122,16 +122,16 @@ public class Symbology extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             // Create a General Area
-//            positions = Arrays.asList(
-//                Position.fromDegrees(34.8193, -117.6454, 0),
-//                Position.fromDegrees(34.8043, -117.5682, 0),
-//                Position.fromDegrees(34.7800, -117.6040, 0),
-//                Position.fromDegrees(34.7819, -117.6687, 0)
-//            );
-//            graphic = factory.createGraphic("GHGPGAG----AUSX", positions, null);
-//            graphic.setValue(AVKey.DISPLAY_NAME, "General Area");
-//            graphic.setText("Area");
-//            layer.addRenderable(graphic);
+            positions = Arrays.asList(
+                Position.fromDegrees(34.8193, -117.6454, 0),
+                Position.fromDegrees(34.8043, -117.5682, 0),
+                Position.fromDegrees(34.7800, -117.6040, 0),
+                Position.fromDegrees(34.7819, -117.6687, 0)
+            );
+            graphic = factory.createGraphic("GHGPGAG----AUSX", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "General Area");
+            graphic.setText("Area");
+            layer.addRenderable(graphic);
 
             // Create an Airfield Zone
             positions = Arrays.asList(

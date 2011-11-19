@@ -11,11 +11,9 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Abstract base class for Air Control Point and Communications Checkpoint graphics.
@@ -26,11 +24,6 @@ import java.util.List;
 public abstract class AbstractRoutePoint extends MilStd2525TacticalGraphic implements PreRenderable
 {
     public final double DEFAULT_RADIUS = 1000; // TODO: what should default be?
-
-    /** Text for the main label. */
-    protected String labelText;
-    /** SurfaceText used to draw the main label. This list contains one element for each line of text. */
-    protected List<SurfaceText> labels;
 
     protected SurfaceCircle circle;
 
@@ -129,20 +122,7 @@ public abstract class AbstractRoutePoint extends MilStd2525TacticalGraphic imple
             return;
         }
 
-        if (this.labels == null && this.labelText == null)
-        {
-            this.createLabels();
-        }
-
         this.determineActiveAttributes();
-
-        this.determineLabelAttributes();
-        this.determineLabelPositions(dc);
-
-        for (SurfaceText label : this.labels)
-        {
-            label.preRender(dc);
-        }
 
         this.circle.preRender(dc);
     }
@@ -154,7 +134,11 @@ public abstract class AbstractRoutePoint extends MilStd2525TacticalGraphic imple
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        this.circle.render(dc);
+        // SurfaceCircle is not an ordered renderable
+        if (!dc.isOrderedRenderingMode())
+        {
+            this.circle.render(dc);
+        }
     }
 
     /**
@@ -172,32 +156,13 @@ public abstract class AbstractRoutePoint extends MilStd2525TacticalGraphic imple
         return sb.toString();
     }
 
-    protected Offset getLabelOffset()
-    {
-        return SurfaceText.DEFAULT_OFFSET;
-    }
-
+    @Override
     protected void createLabels()
     {
-        this.labelText = this.createLabelText();
-        if (this.labelText == null)
+        String labelText = this.createLabelText();
+        if (!WWUtil.isEmpty(labelText))
         {
-            // No label. Set the text to an empty string so we won't try to generate it again.
-            this.labelText = "";
-            return;
-        }
-
-        String[] lines = this.labelText.split("\n");
-
-        this.labels = new ArrayList<SurfaceText>(lines.length);
-
-        Offset offset = this.getLabelOffset();
-
-        for (String line : lines)
-        {
-            SurfaceText text = new SurfaceText(line, Position.ZERO);
-            text.setOffset(offset);
-            this.labels.add(text);
+            this.addLabel(labelText);
         }
     }
 
@@ -206,37 +171,11 @@ public abstract class AbstractRoutePoint extends MilStd2525TacticalGraphic imple
      *
      * @param dc Current draw context.
      */
+    @Override
     protected void determineLabelPositions(DrawContext dc)
     {
-        if (this.labels == null)
-            return;
-
-        Angle textHeight = Angle.fromRadians(
-            SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS * 1.25 / dc.getGlobe().getRadius());
-
         LatLon center = this.circle.getCenter();
-        Position position = new Position(Position.greatCircleEndPosition(center, Angle.ZERO, textHeight.divide(2.0)), 0);
-
-        for (SurfaceText label : this.labels)
-        {
-            label.setPosition(position);
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-        }
-    }
-
-    protected void determineLabelAttributes()
-    {
-        Color color = this.getLabelMaterial().getDiffuse();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        for (SurfaceText text : this.labels)
-        {
-            text.setColor(color);
-            text.setFont(font);
-        }
+        this.labels.get(0).setPosition(new Position(center, 0));
     }
 
     public Object getDelegateOwner()

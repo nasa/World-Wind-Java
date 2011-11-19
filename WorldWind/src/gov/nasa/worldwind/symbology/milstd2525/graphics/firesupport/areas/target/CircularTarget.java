@@ -11,9 +11,8 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
-import java.awt.*;
 import java.util.*;
 
 /**
@@ -27,8 +26,6 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     public final static String FUNCTION_ID = "ATC---";
 
     protected SurfaceCircle circle;
-    protected PointPlacemark label;
-    protected PointPlacemarkAttributes labelAttributes;
 
     public CircularTarget()
     {
@@ -117,27 +114,6 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         this.circle.moveTo(position);
     }
 
-    @Override
-    public void setText(String text)
-    {
-        super.setText(text);
-
-        String fullText = this.createText(text);
-        if (fullText != null)
-        {
-            this.labelAttributes = new PointPlacemarkAttributes();
-            this.labelAttributes.setUsePointAsDefaultImage(true);
-
-            this.label = new PointPlacemark(Position.ZERO);
-            this.label.setAttributes(this.labelAttributes);
-            this.label.setLabelText(fullText);
-        }
-        else
-        {
-            this.label = null;
-        }
-    }
-
     /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {
@@ -147,12 +123,6 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         }
 
         this.determineActiveAttributes();
-
-        if (this.label != null)
-        {
-            this.determineLabelPosition();
-            this.determineLabelAttributes();
-        }
 
         this.circle.preRender(dc);
     }
@@ -164,23 +134,28 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        this.circle.render(dc);
-        this.label.render(dc);
+        // SurfaceCircle is not an ordered renderable
+        if (!dc.isOrderedRenderingMode())
+        {
+            this.circle.render(dc);
+        }
     }
 
-    protected String createText(String text)
+    /** Create labels for the start and end of the path. */
+    @Override
+    protected void createLabels()
     {
-        return text;
+        String text = this.getText();
+        if (!WWUtil.isEmpty(text))
+        {
+            this.addLabel(this.getText());
+        }
     }
 
-    protected void determineLabelPosition()
+    @Override
+    protected void determineLabelPositions(DrawContext dc)
     {
-        this.label.setPosition(new Position(this.circle.getCenter(), 0));
-    }
-
-    protected void determineLabelAttributes()
-    {
-        this.labelAttributes.setLabelMaterial(this.getLabelMaterial());
+        this.labels.get(0).setPosition(new Position(this.circle.getCenter(), 0));
     }
 
     protected SurfaceCircle createShape()

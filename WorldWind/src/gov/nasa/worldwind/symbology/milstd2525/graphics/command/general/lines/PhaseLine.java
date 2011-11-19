@@ -12,9 +12,8 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
 
-import java.awt.*;
 import java.util.Iterator;
 
 /**
@@ -23,18 +22,13 @@ import java.util.Iterator;
  * @author pabercrombie
  * @version $Id$
  */
-public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderable
+public class PhaseLine extends MilStd2525TacticalGraphic
 {
     /** Function ID for the Phase Line. */
     public final static String FUNCTION_ID = "GLP---";
 
     /** Path used to render the line. */
     protected Path path;
-    /** Label rendered at the start of the line. */
-    protected PointPlacemark labelStart;
-    /** Label rendered at the end of the line. */
-    protected PointPlacemark labelEnd;
-    protected PointPlacemarkAttributes labelAttributes;
 
     /** Create a new Phase Line. */
     public PhaseLine()
@@ -85,34 +79,9 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
     }
 
     /** {@inheritDoc} */
-    public void preRender(DrawContext dc)
-    {
-        if (!this.isVisible())
-        {
-            return;
-        }
-
-        this.determineActiveAttributes();
-
-        if (this.isShowModifiers())
-        {
-            if (this.labelStart == null)
-            {
-                this.createLabels();
-            }
-
-            this.determineLabelPositions(dc);
-            this.determineLabelAttributes();
-        }
-    }
-
-    /** {@inheritDoc} */
     public void doRenderGraphic(DrawContext dc)
     {
         this.path.render(dc);
-
-        this.labelStart.render(dc);
-        this.labelEnd.render(dc);
     }
 
     /**
@@ -132,6 +101,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
     }
 
     /** Create labels for the start and end of the path. */
+    @Override
     protected void createLabels()
     {
         StringBuilder sb = new StringBuilder();
@@ -143,16 +113,8 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
 
         String fullText = sb.toString();
 
-        this.labelAttributes = new PointPlacemarkAttributes();
-        this.labelAttributes.setUsePointAsDefaultImage(true);
-
-        this.labelStart = new PointPlacemark(Position.ZERO);
-        this.labelStart.setLabelText(fullText);
-        this.labelStart.setAttributes(this.labelAttributes);
-
-        this.labelEnd = new PointPlacemark(Position.ZERO);
-        this.labelEnd.setLabelText(fullText);
-        this.labelEnd.setAttributes(this.labelAttributes);
+        this.addLabel(fullText); // Start label
+        this.addLabel(fullText); // End label
     }
 
     /**
@@ -181,22 +143,10 @@ public class PhaseLine extends MilStd2525TacticalGraphic implements PreRenderabl
         // TODO: figure better rules for positioning and sizing the labels
         Angle azimuth = LatLon.greatCircleAzimuth(second, first);
         LatLon ll = LatLon.greatCircleEndPosition(first, azimuth.radians, 500d / dc.getGlobe().getRadius());
-        this.labelStart.setPosition(new Position(ll, 0));
+        this.labels.get(0).setPosition(new Position(ll, 0));
 
         azimuth = LatLon.greatCircleAzimuth(nextToLast, last);
         ll = LatLon.greatCircleEndPosition(last, azimuth.radians, 500d / dc.getGlobe().getRadius());
-        this.labelEnd.setPosition(new Position(ll, 0));
-    }
-
-    protected void determineLabelAttributes()
-    {
-        Color color = this.getLabelMaterial().getDiffuse();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        this.labelAttributes.setImageColor(color);
-        this.labelAttributes.setLabelMaterial(this.getLabelMaterial());
+        this.labels.get(1).setPosition(new Position(ll, 0));
     }
 }

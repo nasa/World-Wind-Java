@@ -11,9 +11,8 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
-import java.awt.*;
 import java.util.*;
 
 /**
@@ -28,7 +27,6 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
     public final static String FUNCTION_ID = "ATR---";
 
     protected SurfaceQuad quad;
-    protected SurfaceText label;
 
     public RectangularTarget()
     {
@@ -129,22 +127,6 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
         this.quad.moveTo(position);
     }
 
-    @Override
-    public void setText(String text)
-    {
-        super.setText(text);
-
-        String fullText = this.createText(text);
-        if (fullText != null)
-        {
-            this.label = new SurfaceText(fullText, Position.ZERO);
-        }
-        else
-        {
-            this.label = null;
-        }
-    }
-
     /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {
@@ -154,14 +136,6 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
         }
 
         this.determineActiveAttributes();
-
-        if (this.label != null)
-        {
-            this.determineLabelPosition();
-            this.determineLabelAttributes();
-            this.label.preRender(dc);
-        }
-
         this.quad.preRender(dc);
     }
 
@@ -172,29 +146,28 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        this.quad.render(dc);
+        // SurfaceQuad is not an ordered renderable
+        if (!dc.isOrderedRenderingMode())
+        {
+            this.quad.render(dc);
+        }
     }
 
-    protected String createText(String text)
+    /** Create labels for the start and end of the path. */
+    @Override
+    protected void createLabels()
     {
-        return text;
+        String text = this.getText();
+        if (!WWUtil.isEmpty(text))
+        {
+            this.addLabel(this.getText());
+        }
     }
 
-    protected void determineLabelPosition()
+    @Override
+    protected void determineLabelPositions(DrawContext dc)
     {
-        this.label.setPosition(new Position(this.quad.getCenter(), 0));
-    }
-
-    protected void determineLabelAttributes()
-    {
-        Color color = this.getLabelMaterial().getDiffuse();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        this.label.setColor(color);
-        this.label.setFont(font);
+        this.labels.get(0).setPosition(new Position(this.quad.getCenter(), 0));
     }
 
     protected SurfaceQuad createShape()

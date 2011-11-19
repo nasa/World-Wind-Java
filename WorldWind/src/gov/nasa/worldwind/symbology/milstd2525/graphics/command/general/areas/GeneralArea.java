@@ -6,12 +6,13 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.util.WWUtil;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -26,14 +27,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     public final static String FUNCTION_ID = "GAG---";
 
     protected SurfacePolygon polygon;
-
-    /** Text for the main label. */
-    protected String labelText;
-    protected PointPlacemarkAttributes labelAttributes;
-    /** SurfaceText used to draw the main label. This list contains one element for each line of text. */
-    protected List<PointPlacemark> labels;
-    /** SurfaceText used to draw "ENY" labels to indicate a hostile identity. */
-    protected List<SurfaceText> identityLabels;
 
     protected boolean showIdentityLabels = true;
 
@@ -127,33 +120,7 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
         this.makeShapes(dc);
 
-        if (this.labels == null && this.labelText == null)
-        {
-            this.createLabels();
-        }
-
         this.determineActiveAttributes();
-        this.determineLabelAttributes();
-
-        if (this.isShowIdentityLabels()
-            && this.identityLabels == null
-            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
-        {
-            this.determineIdentityLabelPosition();
-        }
-
-        if (this.labels != null)
-        {
-            this.determineLabelPositions(dc);
-        }
-
-        if (this.identityLabels != null)
-        {
-            for (SurfaceText text : this.identityLabels)
-            {
-                text.preRender(dc);
-            }
-        }
 
         this.polygon.preRender(dc);
     }
@@ -170,11 +137,10 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        this.polygon.render(dc);
-
-        for (PointPlacemark placemark : this.labels)
+        // SurfacePolygon is not an ordered renderable
+        if (!dc.isOrderedRenderingMode())
         {
-            placemark.render(dc);
+            this.polygon.render(dc);
         }
     }
 
@@ -190,32 +156,31 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
 
     protected Offset getLabelOffset()
     {
-        return SurfaceText.DEFAULT_OFFSET;
+        return DEFAULT_OFFSET;
     }
 
+    protected String getLabelAlignment()
+    {
+        return AVKey.CENTER;
+    }
+
+    @Override
     protected void createLabels()
     {
-        this.labelText = this.createLabelText();
-        if (this.labelText == null)
+        String labelText = this.createLabelText();
+        if (WWUtil.isEmpty(labelText))
         {
-            // No label. Set the text to an empty string so we won't try to generate it again.
-            this.labelText = "";
             return;
         }
+        Label mainLabel = this.addLabel(labelText);
+        mainLabel.setTextAlign(this.getLabelAlignment());
 
-        String[] lines = this.labelText.split("\n");
+        mainLabel.setOffset(this.getLabelOffset());
 
-        this.labels = new ArrayList<PointPlacemark>(lines.length);
-
-        this.labelAttributes = new PointPlacemarkAttributes();
-        this.labelAttributes.setUsePointAsDefaultImage(true);
-
-        for (String line : lines)
+        if (this.mustCreateIdentityLabels())
         {
-            PointPlacemark text = new PointPlacemark(Position.ZERO);
-            text.setLabelText(line);
-            text.setAttributes(this.labelAttributes);
-            this.labels.add(text);
+            this.addLabel(HOSTILE_INDICATOR);
+            this.addLabel(HOSTILE_INDICATOR);
         }
     }
 
@@ -224,20 +189,14 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
      *
      * @param dc Current draw context.
      */
+    @Override
     protected void determineLabelPositions(DrawContext dc)
     {
-        if (this.labels == null)
-            return;
+        this.determineMainLabelPosition(dc);
 
-        Angle textHeight = Angle.fromRadians(
-            SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS * 1.25 / dc.getGlobe().getRadius());
-
-        Position position = new Position(this.computeLabelLocation(dc), 0);
-
-        for (PointPlacemark label : this.labels)
+        if (this.mustCreateIdentityLabels())
         {
-            label.setPosition(position);
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
+            this.determineIdentityLabelPositions();
         }
     }
 
@@ -246,50 +205,48 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
      * label. If there are more lines, they will be arranged South of the first line.
      *
      * @param dc Current draw context.
-     *
-     * @return Position of the first line of the main label.
      */
-    protected LatLon computeLabelLocation(DrawContext dc)
+    protected void determineMainLabelPosition(DrawContext dc)
     {
         List<Sector> sectors = this.polygon.getSectors(dc);
         if (sectors != null)
         {
             // TODO: centroid of bounding sector is not always a good choice for label position
             Sector sector = sectors.get(0);
-            return sector.getCentroid();
+            Position position = new Position(sector.getCentroid(), 0);
+
+            this.labels.get(0).setPosition(position);
         }
-        return null;
     }
 
-    protected void determineIdentityLabelPosition()
+    protected void determineIdentityLabelPositions()
     {
-        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.getStandardIdentity()))
+        // Position the first label between the first and second control points.
+        Iterator<? extends Position> iterator = this.getPositions().iterator();
+        Position first = iterator.next();
+        Position second = iterator.next();
+
+        LatLon midpoint = LatLon.interpolate(0.5, first, second);
+        this.labels.get(1).setPosition(new Position(midpoint, 0));
+
+        // Position the second label between the middle two control points in the position list. If the control
+        // points are more or less evenly distributed, this will be about half way around the shape.
+        int count = this.getPositionCount();
+        iterator = this.getPositions().iterator();
+        for (int i = 0; i < count / 2 + 1; i++)
         {
-            this.identityLabels = new ArrayList<SurfaceText>();
-
-            // Position the first label between the first and second control points.
-            Iterator<? extends Position> iterator = this.getPositions().iterator();
-            Position first = iterator.next();
-            Position second = iterator.next();
-
-            LatLon midpoint = LatLon.interpolate(0.5, first, second);
-            SurfaceText idLabel = new SurfaceText(HOSTILE_INDICATOR, new Position(midpoint, 0));
-            this.identityLabels.add(idLabel);
-
-            // Position the second label between the middle two control points in the position list. If the control
-            // points are more or less evenly distributed, this will be about half way around the shape.
-            int count = this.getPositionCount();
-            iterator = this.getPositions().iterator();
-            for (int i = 0; i < count / 2 + 1; i++)
-            {
-                first = iterator.next();
-            }
-            second = iterator.next();
-
-            midpoint = LatLon.interpolate(0.5, first, second);
-            SurfaceText idLabel2 = new SurfaceText(HOSTILE_INDICATOR, new Position(midpoint, 0));
-            this.identityLabels.add(idLabel2);
+            first = iterator.next();
         }
+        second = iterator.next();
+
+        midpoint = LatLon.interpolate(0.5, first, second);
+        this.labels.get(2).setPosition(new Position(midpoint, 0));
+    }
+
+    protected boolean mustCreateIdentityLabels()
+    {
+        return this.showIdentityLabels && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(
+            this.getStandardIdentity());
     }
 
     protected int getPositionCount()
@@ -301,23 +258,5 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
             count++;
         }
         return count;
-    }
-
-    protected void determineLabelAttributes()
-    {
-        Color color = this.getLabelMaterial().getDiffuse();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        if (this.identityLabels != null)
-        {
-            for (SurfaceText text : this.identityLabels)
-            {
-                text.setColor(color);
-                text.setFont(font);
-            }
-        }
     }
 }

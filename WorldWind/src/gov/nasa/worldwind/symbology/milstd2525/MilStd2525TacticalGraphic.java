@@ -6,14 +6,19 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
+import com.sun.opengl.util.j2d.TextRenderer;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
+import javax.media.opengl.GL;
 import java.awt.*;
+import java.awt.geom.*;
 import java.text.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Base class for tactical graphics defined by <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a>.
@@ -89,7 +94,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic
+public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic, OrderedRenderable
 {
     public final static String HOSTILE_INDICATOR = "ENY";
 
@@ -99,7 +104,62 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
     /** Default font. */
-    public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-24");
+    public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-16");
+
+    /** Default offset. The default offset centers the text on its geographic position both horizontally and vertically. */
+    public static final Offset DEFAULT_OFFSET = new Offset(0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+
+    protected class Label
+    {
+        String text;
+        Position position;
+        Vec4 screenPoint;
+        Offset offset = DEFAULT_OFFSET;
+        String textAlign = AVKey.CENTER;
+
+        Rectangle2D bounds;
+
+        public String getText()
+        {
+            return this.text;
+        }
+
+        public void setText(String text)
+        {
+            this.text = text;
+            this.bounds = null; // Need to recompute
+        }
+
+        public Position getPosition()
+        {
+            return this.position;
+        }
+
+        public void setPosition(Position position)
+        {
+            this.position = position;
+        }
+
+        public String getTextAlign()
+        {
+            return this.textAlign;
+        }
+
+        public void setTextAlign(String textAlign)
+        {
+            this.textAlign = textAlign;
+        }
+
+        public Offset getOffset()
+        {
+            return offset;
+        }
+
+        public void setOffset(Offset offset)
+        {
+            this.offset = offset;
+        }
+    }
 
     protected String text;
 
@@ -116,10 +176,18 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     protected AVList modifiers;
 
+    protected List<Label> labels;
+
     protected long frameTimestamp = -1L;
+    protected double eyeDistance;
 
     protected TacticalGraphicAttributes activeOverrides = new BasicTacticalGraphicAttributes();
     protected ShapeAttributes activeShapeAttributes = new BasicShapeAttributes();
+
+    protected OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
+
+    /** Flag to indicate that labels must be recreated before the graphic is rendered. */
+    protected boolean mustCreateLabels = true;
 
     public abstract String getFunctionId();
 
@@ -356,6 +424,10 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         this.text = text;
     }
 
+    /////////////
+    // Rendering
+    /////////////
+
     /** {@inheritDoc} */
     public void render(DrawContext dc)
     {
@@ -368,21 +440,244 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         if (this.frameTimestamp != timeStamp)
         {
             this.determineActiveAttributes();
+            this.computeGeometry(dc);
             this.frameTimestamp = timeStamp;
         }
 
         this.doRenderGraphic(dc);
 
-        if (!this.isShowModifiers())
+        if (this.isShowModifiers())
         {
             this.doRenderModifiers(dc);
         }
     }
 
-    @SuppressWarnings({"UnusedParameters"})
-    protected void doRenderModifiers(DrawContext dc)
+    /**
+     * Establish the OpenGL state needed to draw text.
+     *
+     * @param dc the current draw context.
+     */
+    protected void beginDrawing(DrawContext dc)
     {
-        // Do nothing
+        GL gl = dc.getGL();
+
+        int attrMask =
+            GL.GL_DEPTH_BUFFER_BIT // for depth test, depth mask and depth func
+                | GL.GL_TRANSFORM_BIT // for modelview and perspective
+                | GL.GL_VIEWPORT_BIT // for depth range
+                | GL.GL_CURRENT_BIT // for current color
+                | GL.GL_COLOR_BUFFER_BIT // for alpha test func and ref, and blend
+                | GL.GL_DEPTH_BUFFER_BIT // for depth func
+                | GL.GL_ENABLE_BIT; // for enable/disable changes
+
+        this.BEogsh.pushAttrib(gl, attrMask);
+
+        if (!dc.isPickingMode())
+        {
+            gl.glEnable(GL.GL_BLEND);
+            OGLUtil.applyBlending(gl, false);
+        }
+
+        // The image is drawn using a parallel projection.
+        this.BEogsh.pushProjectionIdentity(gl);
+        gl.glOrtho(0d, dc.getView().getViewport().width, 0d, dc.getView().getViewport().height, -1d, 1d);
+    }
+
+    /**
+     * Pop the state set in beginDrawing.
+     *
+     * @param dc the current draw context.
+     */
+    protected void endDrawing(DrawContext dc)
+    {
+        this.BEogsh.pop(dc.getGL());
+    }
+
+    /** {@inheritDoc} */
+    public double getDistanceFromEye()
+    {
+        return this.eyeDistance;
+    }
+
+    /** {@inheritDoc} */
+    public void pick(DrawContext dc, Point pickPoint)
+    {
+        // Do nothing. We don't pick via the labels.
+    }
+
+    /**
+     * Determine positions for the start and end labels.
+     *
+     * @param dc Current draw context.
+     */
+    protected void determineLabelPositions(DrawContext dc)
+    {
+        // Do nothing, but allow subclasses to override
+    }
+
+    protected void createLabels()
+    {
+        // Do nothing, but allow subclasses to override
+    }
+
+    protected Label addLabel(String text)
+    {
+        if (this.labels == null)
+            this.labels = new ArrayList<Label>();
+
+        Label label = new Label();
+        label.setText(text);
+        this.labels.add(label);
+
+        return label;
+    }
+
+    protected void computeGeometry(DrawContext dc)
+    {
+        Vec4 placePoint;
+        Position pos;
+
+        pos = this.getReferencePosition();
+        placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+
+        this.eyeDistance = placePoint.distanceTo3(dc.getView().getEyePoint());
+
+        // Allow the subclass to create labels, if necessary
+        if (this.mustCreateLabels)
+        {
+            this.createLabels();
+            this.mustCreateLabels = false;
+        }
+
+        // If there are no labels then there's nothing more to do
+        if (this.labels == null || this.labels.isEmpty())
+        {
+            return;
+        }
+
+        // Allow the subclass to decide where to put the labels
+        this.determineLabelPositions(dc);
+
+        // Project label positions onto the viewport
+        for (Label label : this.labels)
+        {
+            pos = label.getPosition();
+            if (pos != null)
+            {
+                placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+                label.screenPoint = dc.getView().project(placePoint);
+            }
+        }
+    }
+
+    public void doRenderModifiers(DrawContext dc)
+    {
+        if (this.labels != null && !dc.isPickingMode())
+        {
+            if (dc.isOrderedRenderingMode())
+                this.drawOrderedRenderable(dc);
+            else
+                dc.addOrderedRenderable(this);
+        }
+    }
+
+    /**
+     * Draws the graphic as an ordered renderable.
+     *
+     * @param dc the current draw context.
+     */
+    protected void drawOrderedRenderable(DrawContext dc)
+    {
+        this.beginDrawing(dc);
+        try
+        {
+            this.doDrawOrderedRenderable(dc);
+        }
+        finally
+        {
+            this.endDrawing(dc);
+        }
+    }
+
+    protected void doDrawOrderedRenderable(DrawContext dc)
+    {
+        this.drawLabels(dc);
+    }
+
+    /**
+     * Draws all of the labels for this graphic.
+     *
+     * @param dc the current draw context.
+     */
+    // TODO cull labels that are not visible
+    protected void drawLabels(DrawContext dc)
+    {
+        Color color = this.getLabelMaterial().getDiffuse();
+        Color backgroundColor = this.computeBackgroundColor(color);
+
+        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
+        if (font == null)
+            font = DEFAULT_FONT;
+
+        javax.media.opengl.GL gl = dc.getGL();
+
+        gl.glMatrixMode(GL.GL_MODELVIEW);
+        gl.glLoadIdentity();
+
+        // Do not depth buffer the label. (Labels beyond the horizon are culled above.)
+        gl.glDisable(GL.GL_DEPTH_TEST);
+        gl.glDepthMask(false);
+
+        TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
+        MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
+        mltr.setLineSpacing(5); // TODO compute something reasonable based on font size
+
+        textRenderer.begin3DRendering();
+        try
+        {
+            for (Label label : this.labels)
+            {
+                if (label.screenPoint == null)
+                {
+                    continue;
+                }
+
+                mltr.setTextAlign(label.textAlign);
+
+                // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
+                // calculation if necessary.
+                if (label.bounds == null)
+                {
+                    label.bounds = mltr.getBounds(label.text);
+                }
+
+                Offset offset = label.getOffset();
+                Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null, null);
+
+                int x = (int) (label.screenPoint.x + offsetPoint.getX());
+                int y = (int) (label.screenPoint.y - offsetPoint.getY());
+
+                textRenderer.setColor(backgroundColor);
+                mltr.draw(label.text, x + 1, y - 1);
+                textRenderer.setColor(color);
+                mltr.draw(label.text, x, y);
+            }
+        }
+        finally
+        {
+            textRenderer.end3DRendering();
+        }
+    }
+
+    protected Color computeBackgroundColor(Color color)
+    {
+        float[] colorArray = new float[4];
+        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
+
+        if (colorArray[2] > 0.5)
+            return  new Color(0, 0, 0, 0.7f);
+        else
+            return new Color(1, 1, 1, 0.7f);
     }
 
     /**

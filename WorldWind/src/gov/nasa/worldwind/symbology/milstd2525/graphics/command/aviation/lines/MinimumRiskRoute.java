@@ -17,7 +17,6 @@ import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points.AbstractRoutePoint;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -43,11 +42,6 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
 
     /** Graphics drawn at the route control points. */
     protected List<TacticalGraphic> children;
-
-    /** Text for the main label. */
-    protected String labelText;
-    /** SurfaceText used to draw the main label. This list contains one element for each line of text. */
-    protected List<SurfaceText> labels;
 
     /** Create a route graphic. */
     public MinimumRiskRoute()
@@ -243,22 +237,7 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
             return;
         }
 
-        if (this.labels == null && this.labelText == null)
-        {
-            this.createLabels();
-        }
-
         this.determineActiveAttributes();
-        this.determineLabelAttributes();
-
-        if (this.labels != null)
-        {
-            this.determineLabelPositions(dc);
-            for (SurfaceText text : this.labels)
-            {
-                text.preRender(dc);
-            }
-        }
 
         if (this.children != null)
         {
@@ -404,55 +383,18 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         return sb.toString();
     }
 
-    protected Offset getLabelOffset()
-    {
-        return new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION); // Left align
-    }
-
+    @Override
     protected void createLabels()
     {
-        this.labelText = this.createLabelText();
-        if (this.labelText == null)
+        String labelText = this.createLabelText();
+        if (labelText == null)
         {
-            // No label. Set the text to an empty string so we won't try to generate it again.
-            this.labelText = "";
             return;
         }
 
-        String[] lines = this.labelText.split("\n");
-
-        this.labels = new ArrayList<SurfaceText>(lines.length);
-
-        Offset offset = this.getLabelOffset();
-
-        for (String line : lines)
-        {
-            SurfaceText text = new SurfaceText(line, Position.ZERO);
-            text.setOffset(offset);
-            this.labels.add(text);
-        }
-    }
-
-    /**
-     * Determine the appropriate position for the graphic's labels.
-     *
-     * @param dc Current draw context.
-     */
-    protected void determineLabelPositions(DrawContext dc)
-    {
-        if (this.labels == null)
-            return;
-
-        Angle textHeight = Angle.fromRadians(
-            SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS * 1.25 / dc.getGlobe().getRadius());
-
-        Position position = new Position(this.computeLabelLocation(dc), 0);
-
-        for (SurfaceText label : this.labels)
-        {
-            label.setPosition(position);
-            position = new Position(Position.greatCircleEndPosition(position, Angle.POS180, textHeight), 0);
-        }
+        Label label = this.addLabel(labelText);
+        label.setTextAlign(AVKey.LEFT);
+        label.setOffset(new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION));
     }
 
     /**
@@ -461,10 +403,9 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
      * between the first to control points on the route, and to the side of the route.
      *
      * @param dc Current draw context.
-     *
-     * @return Position of the first line of the main label.
      */
-    protected LatLon computeLabelLocation(DrawContext dc)
+    @Override
+    protected void determineLabelPositions(DrawContext dc)
     {
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
@@ -489,7 +430,8 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         // Position the label to the side of the route
         Vec4 pLabel = pMid.add3(perpendicular);
 
-        return globe.computePositionFromPoint(pLabel);
+        Position position = globe.computePositionFromPoint(pLabel);
+        this.labels.get(0).setPosition(position);
     }
 
     /**
@@ -509,23 +451,5 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         path.setDelegateOwner(this);
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
-    }
-
-    protected void determineLabelAttributes()
-    {
-        Color color = this.getLabelMaterial().getDiffuse();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        if (this.labels != null)
-        {
-            for (SurfaceText text : this.labels)
-            {
-                text.setColor(color);
-                text.setFont(font);
-            }
-        }
     }
 }

@@ -35,10 +35,16 @@ abstract public class AbstractAviationArea extends GeneralArea
     }
 
     @Override
+    protected String getLabelAlignment()
+    {
+        return AVKey.LEFT;
+    }
+
+    @Override
     protected String createLabelText()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append(this.getGraphicLabel()); // TODO consider renaming
+        sb.append(this.getGraphicLabel());
         sb.append("\n");
 
         Object o = this.getModifier(AVKey.TEXT);
@@ -81,7 +87,7 @@ abstract public class AbstractAviationArea extends GeneralArea
     }
 
     @Override
-    protected LatLon computeLabelLocation(DrawContext dc)
+    protected void determineMainLabelPosition(DrawContext dc)
     {
         Position northWest = Position.fromDegrees(-90.0, 180.0);
 
@@ -102,6 +108,7 @@ abstract public class AbstractAviationArea extends GeneralArea
         LatLon ll = Position.greatCircleEndPosition(northWest, Angle.POS90, textHeight);
 
         // Shift south, away from the northern border
-        return Position.greatCircleEndPosition(ll, Angle.POS180, textHeight);
+        LatLon latLon = Position.greatCircleEndPosition(ll, Angle.POS180, textHeight);
+        this.labels.get(0).setPosition(new Position(latLon, 0));
     }
 }
