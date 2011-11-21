@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.command;
 
 import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
 /**
  * Implementation of the Terminally Guided Munition Footprint graphic (SIDC: G*FPACT---****X).
@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.Ge
  * @author pabercrombie
  * @version $Id$
  */
-public class TerminallyGuidedMunitionFootprint extends GeneralArea
+public class TerminallyGuidedMunitionFootprint extends BasicArea
 {
     /** Function ID of this graphic. */
     public final static String FUNCTION_ID = "ACT---";

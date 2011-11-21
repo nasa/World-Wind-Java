@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
 
 import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
 /**
  * Implementation of the Smoke graphic (hierarchy 2.X.4.3.1.4, SIDC: G*FPATS---****X).
@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.Ge
  * @author pabercrombie
  * @version $Id$
  */
-public class Smoke extends GeneralArea
+public class Smoke extends BasicArea
 {
     /** Function ID of this graphic. */
     public final static String FUNCTION_ID = "ATS---";

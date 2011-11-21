@@ -193,6 +193,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
 
+    protected String functionId;
     protected String standardIdentity;
     protected String echelon;
     protected String status;
@@ -212,8 +213,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     /** Flag to indicate that labels must be recreated before the graphic is rendered. */
     protected boolean mustCreateLabels = true;
-
-    public abstract String getFunctionId();
 
     public abstract String getCategory();
 
@@ -286,6 +285,10 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         {
             return this.text;
         }
+        else if (SymbologyConstants.FUNCTION_ID.equals(modifier))
+        {
+            return this.getFunctionId();
+        }
         else if (SymbologyConstants.STANDARD_IDENTITY.equals(modifier))
         {
             return this.getStandardIdentity();
@@ -310,6 +313,10 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         if (AVKey.TEXT.equals(modifier) && (value instanceof String))
         {
             this.setText((String) value);
+        }
+        else if (SymbologyConstants.FUNCTION_ID.equals(modifier) && (value instanceof String))
+        {
+            this.setFunctionId((String) value);
         }
         else if (SymbologyConstants.STANDARD_IDENTITY.equals(modifier) && (value instanceof String))
         {
@@ -352,6 +359,26 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public String getScheme()
     {
         return SymbologyConstants.SCHEME_TACTICAL_GRAPHICS;
+    }
+
+    /**
+     * Indicates the function ID of this graphic.
+     *
+     * @return The graphic's function ID.
+     */
+    public String getFunctionId()
+    {
+        return this.functionId;
+    }
+
+    /**
+     * Specifies the function ID of this graphic. This may cause the graphic to change how it draws itself.
+     *
+     * @param functionId New function ID.
+     */
+    public void setFunctionId(String functionId)
+    {
+        this.functionId = functionId;
     }
 
     public String getStandardIdentity()

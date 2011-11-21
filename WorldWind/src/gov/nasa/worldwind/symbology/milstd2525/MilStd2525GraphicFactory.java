@@ -10,9 +10,7 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.areas.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.lines.MinimumRiskRoute;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
@@ -47,37 +45,65 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
     /** Populate the map that maps function IDs to implementation classes. */
     protected void populateClassMap()
     {
-        this.classMap.put(PhaseLine.FUNCTION_ID, PhaseLine.class);
-        this.classMap.put(GeneralArea.FUNCTION_ID, GeneralArea.class);
-        this.classMap.put(AssemblyArea.FUNCTION_ID, AssemblyArea.class);
-        this.classMap.put(EngagementArea.FUNCTION_ID, EngagementArea.class);
-        this.classMap.put(DropZone.FUNCTION_ID, DropZone.class);
-        this.classMap.put(ExtractionZone.FUNCTION_ID, ExtractionZone.class);
-        this.classMap.put(LandingZone.FUNCTION_ID, LandingZone.class);
-        this.classMap.put(PickupZone.FUNCTION_ID, PickupZone.class);
-        this.classMap.put(AirfieldZone.FUNCTION_ID, AirfieldZone.class);
-        this.classMap.put(RestrictedOperationsZone.FUNCTION_ID, RestrictedOperationsZone.class);
-        this.classMap.put(ShortRangeAirDefenseEngagementZone.FUNCTION_ID, ShortRangeAirDefenseEngagementZone.class);
-        this.classMap.put(HighDensityAirspaceControlZone.FUNCTION_ID, HighDensityAirspaceControlZone.class);
-        this.classMap.put(MissileEngagementZone.FUNCTION_ID, MissileEngagementZone.class);
-        this.classMap.put(LowAltitudeMissileEngagementZone.FUNCTION_ID, LowAltitudeMissileEngagementZone.class);
-        this.classMap.put(HighAltitudeMissileEngagementZone.FUNCTION_ID, HighAltitudeMissileEngagementZone.class);
-        this.classMap.put(AirControlPoint.FUNCTION_ID, AirControlPoint.class);
-        this.classMap.put(CommunicationsCheckpoint.FUNCTION_ID, CommunicationsCheckpoint.class);
-        this.classMap.put(MinimumRiskRoute.FUNCTION_ID, MinimumRiskRoute.class);
-        this.classMap.put(Dummy.FUNCTION_ID, Dummy.class);
-        this.classMap.put(PenetrationBox.FUNCTION_ID, PenetrationBox.class);
-        this.classMap.put(SupportingAttack.FUNCTION_ID, SupportingAttack.class);
-        this.classMap.put(Aviation.FUNCTION_ID, Aviation.class);
-        this.classMap.put(MainAttack.FUNCTION_ID, MainAttack.class);
-        this.classMap.put(AttackRotaryWing.FUNCTION_ID, AttackRotaryWing.class);
-        this.classMap.put(AreaTarget.FUNCTION_ID, AreaTarget.class);
-        this.classMap.put(CircularTarget.FUNCTION_ID, CircularTarget.class);
-        this.classMap.put(RectangularTarget.FUNCTION_ID, RectangularTarget.class);
-        this.classMap.put(Bomb.FUNCTION_ID, Bomb.class);
-        this.classMap.put(Smoke.FUNCTION_ID, Smoke.class);
-        this.classMap.put(TerminallyGuidedMunitionFootprint.FUNCTION_ID, TerminallyGuidedMunitionFootprint.class);
-        this.classMap.put(IrregularAirspaceCoordinationArea.FUNCTION_ID, IrregularAirspaceCoordinationArea.class);
+        this.mapClass(PhaseLine.class, PhaseLine.FUNCTION_ID);
+
+        this.mapClass(BasicArea.class,
+            BasicArea.FUNCTION_ID_GENERAL,
+            BasicArea.FUNCTION_ID_ASSEMBLY,
+            BasicArea.FUNCTION_ID_ENGAGEMENT,
+            BasicArea.FUNCTION_ID_DROP,
+            BasicArea.FUNCTION_ID_EXTRACTION,
+            BasicArea.FUNCTION_ID_LANDING,
+            BasicArea.FUNCTION_ID_PICKUP);
+
+        this.mapClass(AirfieldZone.class, AirfieldZone.FUNCTION_ID);
+
+        this.mapClass(AviationZone.class,
+            AviationZone.FUNCTION_ID_RESTRICTED_OPERATIONS_ZONE,
+            AviationZone.FUNCTION_ID_SHORT_RANGE_AIR_DEFENSE,
+            AviationZone.FUNCTION_ID_HI_DENSITY_AIRSPACE,
+            AviationZone.FUNCTION_ID_MISSILE_ZONE,
+            AviationZone.FUNCTION_ID_LO_ALT_MISSILE_ZONE,
+            AviationZone.FUNCTION_ID_HI_ALT_MISSILE_ZONE);
+
+        this.mapClass(RoutePoint.class,
+            RoutePoint.FUNCTION_ID_AIR_CONTROL,
+            RoutePoint.FUNCTION_ID_COMMUNICATIONS_CHECKPOINT);
+
+        this.mapClass(Route.class,
+            Route.FUNCTION_ID_AIR_CORRIDOR,
+            Route.FUNCTION_ID_MINIMUM_RISK,
+            Route.FUNCTION_ID_LOW_LEVEL_TRANSIT,
+            Route.FUNCTION_ID_STANDARD_FLIGHT,
+            Route.FUNCTION_ID_UNMANNED_AIRCRAFT);
+
+        this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
+        this.mapClass(PenetrationBox.class, PenetrationBox.FUNCTION_ID);
+        this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
+        this.mapClass(Aviation.class, Aviation.FUNCTION_ID);
+        this.mapClass(MainAttack.class, MainAttack.FUNCTION_ID);
+        this.mapClass(AttackRotaryWing.class, AttackRotaryWing.FUNCTION_ID);
+        this.mapClass(AreaTarget.class, AreaTarget.FUNCTION_ID);
+        this.mapClass(CircularTarget.class, CircularTarget.FUNCTION_ID);
+        this.mapClass(RectangularTarget.class, RectangularTarget.FUNCTION_ID);
+        this.mapClass(Bomb.class, Bomb.FUNCTION_ID);
+        this.mapClass(Smoke.class, Smoke.FUNCTION_ID);
+        this.mapClass(TerminallyGuidedMunitionFootprint.class, TerminallyGuidedMunitionFootprint.FUNCTION_ID);
+        this.mapClass(IrregularAirspaceCoordinationArea.class, IrregularAirspaceCoordinationArea.FUNCTION_ID);
+    }
+
+    /**
+     * Associate an implementation class with one or more function IDs.
+     *
+     * @param clazz       Class that implements one or more tactical graphics.
+     * @param functionIds Function IDs of the graphics implemented by {@code clazz}.
+     */
+    protected void mapClass(Class clazz, String... functionIds)
+    {
+        for (String functionId : functionIds)
+        {
+            this.classMap.put(functionId, clazz);
+        }
     }
 
     /**

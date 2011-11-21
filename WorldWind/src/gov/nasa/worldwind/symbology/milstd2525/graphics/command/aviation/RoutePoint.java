@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
@@ -16,23 +16,29 @@ import gov.nasa.worldwind.util.*;
 import java.util.*;
 
 /**
- * Abstract base class for Air Control Point and Communications Checkpoint graphics.
+ * Implementation of aviation route control point graphics. This class implements the following graphics:
+ * <p/>
+ * <ul> <li>Air Control Point (2.X.2.2.1.1)</li> <li>Communications Checkpoint (2.X.2.2.1.2)</li> </ul>
  *
  * @author pabercrombie
  * @version $Id$
  */
-public abstract class AbstractRoutePoint extends MilStd2525TacticalGraphic implements PreRenderable
+public class RoutePoint extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    public final double DEFAULT_RADIUS = 1000; // TODO: what should default be?
+    /** Function ID for Air Control Point (2.X.2.2.1.1). */
+    public final static String FUNCTION_ID_AIR_CONTROL = "APP---";
+    /** Function ID for Communications Checkpoint (2.X.2.2.1.2). */
+    public final static String FUNCTION_ID_COMMUNICATIONS_CHECKPOINT = "APC---";
+
+    /** Radius of the point if no radius is specified in the modifiers. */
+    public final double DEFAULT_RADIUS = 2000;
 
     protected SurfaceCircle circle;
 
     protected Object delegateOwner;
 
-    protected abstract String getGraphicLabel();
-
     /** Create a new control point. */
-    public AbstractRoutePoint()
+    public RoutePoint()
     {
         this.circle = this.createShape();
         this.circle.setRadius(DEFAULT_RADIUS);
@@ -154,6 +160,18 @@ public abstract class AbstractRoutePoint extends MilStd2525TacticalGraphic imple
         sb.append(this.getText());
 
         return sb.toString();
+    }
+
+    public String getGraphicLabel()
+    {
+        String functionId = this.getFunctionId();
+
+        if (FUNCTION_ID_AIR_CONTROL.equals(functionId))
+            return "ACP";
+        else if (FUNCTION_ID_COMMUNICATIONS_CHECKPOINT.equals(functionId))
+            return "CCP";
+
+        return "";
     }
 
     @Override

@@ -18,20 +18,13 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class AirfieldZone extends GeneralArea
+public class AirfieldZone extends BasicArea
 {
     /** Function ID for this graphic. */
     public final static String FUNCTION_ID = "GAZ---";
 
     /** Paths used to draw the airfield graphic. */
     protected List<Path> airfieldPaths;
-
-    /** {@inheritDoc} */
-    @Override
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
-    }
 
     /** {@inheritDoc} */
     @Override

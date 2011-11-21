@@ -8,15 +8,15 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.comma
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.areas.AbstractAviationArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.AviationZone;
 
 /**
- * Implementation of the Smoke graphic (hierarchy 2.X.4.3.2.2.1, SIDC: G*FPACAI--****X).
+ * Implementation of the Irregular Airspace Coordination Area graphic (hierarchy 2.X.4.3.2.2.1, SIDC: G*FPACAI--****X).
  *
  * @author pabercrombie
  * @version $Id$
  */
-public class IrregularAirspaceCoordinationArea extends AbstractAviationArea
+public class IrregularAirspaceCoordinationArea extends AviationZone
 {
     /** Function ID of this graphic. */
     public final static String FUNCTION_ID = "ACAI--";

@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.lines;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -14,27 +14,36 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.points.AbstractRoutePoint;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 import java.util.List;
 
 /**
- * Implementation of the Minimum Risk Route graphic (hierarchy 2.X.2.2.2.2, SIDC: G*GPALM---****X).
+ * Implementation of the aviation route graphics. This class implements the following graphics: <ul> <li>Air Corridor
+ * (2.X.2.2.2.1)</li> <li>Minimum Risk Route (2.X.2.2.2.2)</li> <li>Standard Flight Route (2.X.2.2.2.3)</li>
+ * <li>Unmanned Aircraft Route (2.X.2.2.2.4)</li> <li>Low Level Transit Route (2.X.2.2.2.5)</li> </ul>
  *
  * @author pabercrombie
  * @version $Id$
  */
-public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRenderable
+public class Route extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    /** Function ID for the Phase Line. */
-    public final static String FUNCTION_ID = "ALM---";
+    /** Function ID for Air Corridor (2.X.2.2.2.1). */
+    public final static String FUNCTION_ID_AIR_CORRIDOR = "ALC---";
+    /** Function ID for Minimum Risk Route (2.X.2.2.2.2). */
+    public final static String FUNCTION_ID_MINIMUM_RISK = "ALM---";
+    /** Function ID for Standard Flight Route (2.X.2.2.2.3). */
+    public final static String FUNCTION_ID_STANDARD_FLIGHT = "ALS---";
+    /** Function ID for Unmanned Aircraft Route (2.X.2.2.2.4). */
+    public final static String FUNCTION_ID_UNMANNED_AIRCRAFT = "ALU---";
+    /** Function ID for Low Level Transit Route (2.X.2.2.2.5). */
+    public final static String FUNCTION_ID_LOW_LEVEL_TRANSIT = "ALL---";
 
-    // TODO how wide should the route be?
+    /** Width of the route if no width is specified in the modifiers. */
     public static final double DEFAULT_WIDTH = 2000;
 
-    /** Path used to render the line. */
+    /** Path used to render the route. */
     protected List<Path> paths;
 
     /** Control points that define the shape. */
@@ -43,21 +52,10 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
     /** Graphics drawn at the route control points. */
     protected List<TacticalGraphic> children;
 
-    /** Create a route graphic. */
-    public MinimumRiskRoute()
-    {
-    }
-
     /** {@inheritDoc} */
     public String getCategory()
     {
         return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
-    }
-
-    /** {@inheritDoc} */
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
     }
 
     /** {@inheritDoc} */
@@ -122,9 +120,9 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         // Go through the list and pull out all the valid children.
         for (Object o : graphics)
         {
-            if (o instanceof AbstractRoutePoint)
+            if (o instanceof RoutePoint)
             {
-                AbstractRoutePoint child = (AbstractRoutePoint) o;
+                RoutePoint child = (RoutePoint) o;
 
                 // Set the circle's radius to the width of the route
                 child.setModifier(AVKey.RADIUS, DEFAULT_WIDTH); // TODO how to set width
@@ -417,9 +415,32 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
             // Add a label if this is not the last control point
             if (iterator.hasNext())
             {
-                this.addLabel("MRR " + this.getText());
+                this.addLabel(this.getGraphicLabel() + " " + this.getText());
             }
         }
+    }
+
+    /**
+     * Return the string that identifies this type of route.
+     *
+     * @return The string the determines the type of route, such as "AC" for "Air Corridor".
+     */
+    protected String getGraphicLabel()
+    {
+        String functionId = this.getFunctionId();
+
+        if (FUNCTION_ID_AIR_CORRIDOR.equals(functionId))
+            return "AC";
+        else if (FUNCTION_ID_MINIMUM_RISK.equals(functionId))
+            return "MRR";
+        else if (FUNCTION_ID_STANDARD_FLIGHT.equals(functionId))
+            return "SAAFR";
+        else if (FUNCTION_ID_LOW_LEVEL_TRANSIT.equals(functionId))
+            return "LLTR";
+        else if (FUNCTION_ID_UNMANNED_AIRCRAFT.equals(functionId))
+            return "UA";
+
+        return "";
     }
 
     /**

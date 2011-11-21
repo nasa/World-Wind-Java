@@ -22,15 +22,21 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public class GeneralArea extends MilStd2525TacticalGraphic implements PreRenderable
+public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    public final static String FUNCTION_ID = "GAG---";
+    public final static String FUNCTION_ID_GENERAL = "GAG---";
+    public final static String FUNCTION_ID_ASSEMBLY = "GAA---";
+    public final static String FUNCTION_ID_DROP = "GAD---";
+    public final static String FUNCTION_ID_ENGAGEMENT = "GAE---";
+    public final static String FUNCTION_ID_EXTRACTION = "GAX---";
+    public final static String FUNCTION_ID_LANDING = "GAL---";
+    public final static String FUNCTION_ID_PICKUP = "GAP---";
 
     protected SurfacePolygon polygon;
 
     protected boolean showIdentityLabels = true;
 
-    public GeneralArea()
+    public BasicArea()
     {
         this.polygon = new SurfacePolygon();
         this.polygon.setDelegateOwner(this);
@@ -41,12 +47,6 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
     public String getCategory()
     {
         return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
-    }
-
-    /** {@inheritDoc} */
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
     }
 
     /** {@inheritDoc} */
@@ -151,7 +151,29 @@ public class GeneralArea extends MilStd2525TacticalGraphic implements PreRendera
      */
     protected String createLabelText()
     {
-        return this.getText();
+        return this.getGraphicLabel() + "\n" + this.getText();
+    }
+
+    protected String getGraphicLabel()
+    {
+        String functionId = this.getFunctionId();
+
+        if (FUNCTION_ID_GENERAL.equals(functionId))
+            return "";
+        else if (FUNCTION_ID_ASSEMBLY.equals(functionId))
+            return "AA";
+        else if (FUNCTION_ID_DROP.equals(functionId))
+            return "DZ";
+        else if (FUNCTION_ID_ENGAGEMENT.equals(functionId))
+            return "EA";
+        else if (FUNCTION_ID_EXTRACTION.equals(functionId))
+            return "EZ";
+        else if (FUNCTION_ID_LANDING.equals(functionId))
+            return "LZ";
+        else if (FUNCTION_ID_PICKUP.equals(functionId))
+            return "PZ";
+
+        return "";
     }
 
     protected Offset getLabelOffset()

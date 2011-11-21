@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas;
 
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
 /**
  * Implementation of the Penetration Box graphic (hierarchy 2.X.2.5.3.6, SIDC: G*GPOAP---****X).
@@ -14,7 +14,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.Ge
  * @author pabercrombie
  * @version $Id$
  */
-public class PenetrationBox extends GeneralArea
+public class PenetrationBox extends BasicArea
 {
     /** Function ID for this graphic. */
     public final static String FUNCTION_ID = "OAP---";

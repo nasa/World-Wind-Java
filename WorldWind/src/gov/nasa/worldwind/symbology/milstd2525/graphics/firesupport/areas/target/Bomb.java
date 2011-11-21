@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
 
 import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.GeneralArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
 /**
  * Implementation of the Circular Target graphic (hierarchy 2.X.4.3.1.5, SIDC: G*FPATB---****X).
@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.Ge
  * @author pabercrombie
  * @version $Id$
  */
-public class Bomb extends GeneralArea
+public class Bomb extends BasicArea
 {
     /** Function ID of this graphic. */
     public final static String FUNCTION_ID = "ATB---";
