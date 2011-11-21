@@ -282,7 +282,18 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
     {
         Globe globe = dc.getGlobe();
 
-        this.paths = new ArrayList<Path>(); // TODO could set size here
+        this.paths = new ArrayList<Path>();
+
+        double width;
+        Object widthModifier = this.getModifier(AVKey.WIDTH);
+        if (widthModifier instanceof Double)
+        {
+            width = (Double) widthModifier;
+        }
+        else
+        {
+            width = DEFAULT_WIDTH;
+        }
 
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
@@ -301,7 +312,7 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
             Vec4 vAB = pB.subtract3(pA);
 
             Vec4 perpendicular = vAB.cross3(normal);
-            perpendicular = perpendicular.normalize3().multiply3(DEFAULT_WIDTH); // TODO what to use for width?
+            perpendicular = perpendicular.normalize3().multiply3(width);
 
             Vec4 pStart = pA.add3(perpendicular);
             Vec4 pEnd = pB.add3(perpendicular);
@@ -395,6 +406,20 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         Label label = this.addLabel(labelText);
         label.setTextAlign(AVKey.LEFT);
         label.setOffset(new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION));
+
+        Iterator<? extends Position> iterator = this.getPositions().iterator();
+
+        // Create a label for each segment of the route
+        while (iterator.hasNext())
+        {
+            iterator.next();
+
+            // Add a label if this is not the last control point
+            if (iterator.hasNext())
+            {
+                this.addLabel("MRR " + this.getText());
+            }
+        }
     }
 
     /**
@@ -409,12 +434,48 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
     {
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
-        Globe globe = dc.getGlobe();
-
         Position posA = iterator.next();
-        Position posB = iterator.next();
 
-        Position midpoint = Position.interpolate(0.5, posA, posB);
+        int i = 0;
+        while (iterator.hasNext())
+        {
+            Position posB = iterator.next();
+            Position midpoint = Position.interpolate(0.5, posA, posB);
+
+            // Compute the main label position on the first iteration
+            if (i == 0)
+            {
+                // Position the main label to the side of the first segment
+                this.labels.get(i).setPosition(this.computeMainLabelPosition(dc, midpoint, posB));
+                i += 1;
+            }
+
+            Label label = this.labels.get(i);
+
+            // Position segment label at the midpoint of the segment
+            label.setPosition(midpoint);
+
+            // Orient label along the line from A to B
+            label.setOrientationPosition(posB);
+
+            i += 1;
+            posA = posB;
+        }
+    }
+
+    /**
+     * Compute the position of the graphic's main label. This label is positioned to the side of the first segment along
+     * the route.
+     *
+     * @param dc       Current draw context.
+     * @param midpoint Midpoint of the first route segment.
+     * @param posB     End point of the first route segment.
+     *
+     * @return The position of the main label.
+     */
+    protected Position computeMainLabelPosition(DrawContext dc, Position midpoint, Position posB)
+    {
+        Globe globe = dc.getGlobe();
 
         Vec4 pMid = globe.computePointFromPosition(midpoint);
         Vec4 pB = globe.computePointFromPosition(posB);
@@ -430,8 +491,7 @@ public class MinimumRiskRoute extends MilStd2525TacticalGraphic implements PreRe
         // Position the label to the side of the route
         Vec4 pLabel = pMid.add3(perpendicular);
 
-        Position position = globe.computePositionFromPoint(pLabel);
-        this.labels.get(0).setPosition(position);
+        return globe.computePositionFromPoint(pLabel);
     }
 
     /**

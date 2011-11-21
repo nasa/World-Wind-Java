@@ -116,7 +116,9 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         Vec4 screenPoint;
         Offset offset = DEFAULT_OFFSET;
         String textAlign = AVKey.CENTER;
+        Position orientationPosition;
 
+        Angle rotation;
         Rectangle2D bounds;
 
         public String getText()
@@ -158,6 +160,28 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         public void setOffset(Offset offset)
         {
             this.offset = offset;
+        }
+
+        /**
+         * Indicates the orientation position. The label oriented on a line drawn from the label's position to the
+         * orientation position.
+         *
+         * @return Position used to orient the label. May be null.
+         */
+        public Position getOrientationPosition()
+        {
+            return this.orientationPosition;
+        }
+
+        /**
+         * Specifies the orientation position. The label is oriented on a line drawn from the label's position to the
+         * orientation position. If the orientation position is null then the label is drawn with no rotation.
+         *
+         * @param orientationPosition Draw label oriented toward this position.
+         */
+        public void setOrientationPosition(Position orientationPosition)
+        {
+            this.orientationPosition = orientationPosition;
         }
     }
 
@@ -566,7 +590,42 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             {
                 placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
                 label.screenPoint = dc.getView().project(placePoint);
+
+                if (label.orientationPosition != null)
+                {
+                    label.rotation = this.computeLabelRotation(dc, label);
+                }
             }
+        }
+    }
+
+    /**
+     * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
+     *
+     * @param dc    Current draw context.
+     * @param label Label for which to compute rotation.
+     *
+     * @return The rotation angle to apply when drawing the label.
+     */
+    protected Angle computeLabelRotation(DrawContext dc, Label label)
+    {
+        // Project the orientation point onto the screen
+        Vec4 placePoint = dc.computeTerrainPoint(label.orientationPosition.getLatitude(),
+            label.orientationPosition.getLongitude(), 0);
+        Vec4 orientationScreenPoint = dc.getView().project(placePoint);
+
+        // Determine delta between the orientation position and the label position
+        double deltaX = label.screenPoint.x - orientationScreenPoint.x;
+        double deltaY = label.screenPoint.y - orientationScreenPoint.y;
+
+        if (deltaX != 0)
+        {
+            double angle = Math.atan(deltaY / deltaX);
+            return Angle.fromRadians(angle);
+        }
+        else
+        {
+            return Angle.POS90; // Vertical label
         }
     }
 
@@ -632,12 +691,33 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
         mltr.setLineSpacing(5); // TODO compute something reasonable based on font size
 
+        // Draw rotated and non-rotated text. The JOGL text renderer doesn't allow us to apply matrix transformations
+        // between calls to begin/end3DRendering, so draw all text that doesn't require rotation in pass to minimize
+        // state switching.
+        this.drawNonRotatedText(dc, mltr, color, backgroundColor);
+        this.drawRotatedText(dc, mltr, color, backgroundColor);
+    }
+
+    /**
+     * Draw labels that do not require rotation.
+     *
+     * @param dc              Current draw context.
+     * @param mltr            Text renderer.
+     * @param color           Text color.
+     * @param backgroundColor Text background color (used to draw drop shadow).
+     */
+    protected void drawNonRotatedText(DrawContext dc, MultiLineTextRenderer mltr, Color color, Color backgroundColor)
+    {
+        TextRenderer textRenderer = mltr.getTextRenderer();
+
         textRenderer.begin3DRendering();
         try
         {
             for (Label label : this.labels)
             {
-                if (label.screenPoint == null)
+                // Skip this label if it doesn't have a location, or if has a heading. Labels with heading are drawn
+                // by drawRotatedText
+                if (label.screenPoint == null || label.rotation != null)
                 {
                     continue;
                 }
@@ -652,13 +732,15 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
                 }
 
                 Offset offset = label.getOffset();
-                Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null, null);
+                Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null,
+                    null);
 
                 int x = (int) (label.screenPoint.x + offsetPoint.getX());
                 int y = (int) (label.screenPoint.y - offsetPoint.getY());
 
                 textRenderer.setColor(backgroundColor);
                 mltr.draw(label.text, x + 1, y - 1);
+
                 textRenderer.setColor(color);
                 mltr.draw(label.text, x, y);
             }
@@ -669,13 +751,83 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
     }
 
+    /**
+     * Draw labels that require rotation.
+     *
+     * @param dc              Current draw context.
+     * @param mltr            Text renderer.
+     * @param color           Text color.
+     * @param backgroundColor Text background color (used to draw drop shadow).
+     */
+    protected void drawRotatedText(DrawContext dc, MultiLineTextRenderer mltr, Color color, Color backgroundColor)
+    {
+        GL gl = dc.getGL();
+        TextRenderer textRenderer = mltr.getTextRenderer();
+
+        for (Label label : this.labels)
+        {
+            // Skip this label if it doesn't have a location, or if doesn't have heading. Labels without heading are
+            // drawn by drawNonRotatedText
+            if (label.screenPoint == null || label.rotation == null)
+            {
+                continue;
+            }
+
+            mltr.setTextAlign(label.textAlign);
+
+            // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
+            // calculation if necessary.
+            if (label.bounds == null)
+            {
+                label.bounds = mltr.getBounds(label.text);
+            }
+
+            Offset offset = label.getOffset();
+            Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null,
+                null);
+
+            Angle heading = label.rotation;
+
+            int x = (int) (label.screenPoint.x + offsetPoint.getX());
+            int y = (int) (label.screenPoint.y - offsetPoint.getY());
+
+            double headingDegrees = heading.degrees; //dc.getView().getHeading().degrees - heading.degrees;
+
+            gl.glPushMatrix();
+            try
+            {
+                gl.glTranslated(x, y, 0);
+                gl.glRotated(headingDegrees, 0, 0, 1);
+                gl.glTranslated(-x, -y, 0);
+
+                textRenderer.begin3DRendering();
+                try
+                {
+                    textRenderer.setColor(backgroundColor);
+                    mltr.draw(label.text, x + 1, y - 1);
+
+                    textRenderer.setColor(color);
+                    mltr.draw(label.text, x, y);
+                }
+                finally
+                {
+                    textRenderer.end3DRendering();
+                }
+            }
+            finally
+            {
+                gl.glPopMatrix();
+            }
+        }
+    }
+
     protected Color computeBackgroundColor(Color color)
     {
         float[] colorArray = new float[4];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
 
         if (colorArray[2] > 0.5)
-            return  new Color(0, 0, 0, 0.7f);
+            return new Color(0, 0, 0, 0.7f);
         else
             return new Color(1, 1, 1, 0.7f);
     }
