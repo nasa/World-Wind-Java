@@ -14,7 +14,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.areas.PenetrationBox;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.OffenseArea;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.AreaTarget;
@@ -77,8 +77,13 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             Route.FUNCTION_ID_STANDARD_FLIGHT,
             Route.FUNCTION_ID_UNMANNED_AIRCRAFT);
 
+        this.mapClass(OffenseArea.class,
+            OffenseArea.FUNCTION_ID_ASSAULT_POSITION,
+            OffenseArea.FUNCTION_ID_ATTACK_POSITION,
+            OffenseArea.FUNCTION_ID_OBJECTIVE,
+            OffenseArea.FUNCTION_ID_PENETRATION_BOX);
+
         this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
-        this.mapClass(PenetrationBox.class, PenetrationBox.FUNCTION_ID);
         this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
         this.mapClass(Aviation.class, Aviation.FUNCTION_ID);
         this.mapClass(MainAttack.class, MainAttack.FUNCTION_ID);
