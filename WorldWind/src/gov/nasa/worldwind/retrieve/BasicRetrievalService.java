@@ -97,7 +97,7 @@ public final class BasicRetrievalService extends WWObjectImpl
                     return thisElapsedTime < thatElapsedTime ? -1 : 1;
             }
 
-            // The client-pecified priority is compared for requests submitted within the same granularity period.
+            // The client-specified priority is compared for requests submitted within the same granularity period.
             return this.priority == that.priority ? 0 : this.priority < that.priority ? -1 : 1;
         }
 
@@ -112,7 +112,7 @@ public final class BasicRetrievalService extends WWObjectImpl
 
             // Tasks are equal if their retrievers are equivalent
             return this.retriever.equals(that.retriever);
-            // Priority and submint time are not factors in equality
+            // Priority and submit time are not factors in equality
         }
 
         public int hashCode()

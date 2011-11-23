@@ -362,7 +362,7 @@ public class WMSTiledImageLayer extends BasicTiledImageLayer
     /**
      * Creates an attribute-value list from an xml document containing restorable state for this layer.
      *
-     * @param stateInXml an xml document specifed in a {@link String}.
+     * @param stateInXml an xml document specified in a {@link String}.
      *
      * @return an attribute-value list containing the parameters in the specified restorable state.
      *
