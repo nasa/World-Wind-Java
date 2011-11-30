@@ -151,7 +151,26 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
      */
     protected String createLabelText()
     {
-        return this.getGraphicLabel() + "\n" + this.getText();
+        String label = this.getGraphicLabel();
+        String text = this.getText();
+
+        if (label == null && text == null)
+        {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (label != null)
+        {
+            sb.append(label).append("\n");
+        }
+
+        if (text != null)
+        {
+            sb.append(text);
+        }
+
+        return sb.toString();
     }
 
     protected String getGraphicLabel()

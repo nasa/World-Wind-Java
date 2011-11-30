@@ -269,6 +269,21 @@ public class Symbology extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
+            // Fortified area (2.X.2.1.3.4)
+            /////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.7985, -117.1938, 0),
+                Position.fromDegrees(34.8358, -117.1282, 0),
+                Position.fromDegrees(34.8456, -117.0773, 0),
+                Position.fromDegrees(34.8159, -116.9723, 0),
+                Position.fromDegrees(34.7836, -117.1010, 0),
+                Position.fromDegrees(34.7985, -117.1938, 0));
+            graphic = factory.createGraphic("GHGPGAF----AUSX", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Fortified Area");
+            layer.addRenderable(graphic);
+
+            /////////////////////////////////////////////
             // Airfield zone (2.X.2.1.3.11)
             /////////////////////////////////////////////
 

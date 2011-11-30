@@ -57,6 +57,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             BasicArea.FUNCTION_ID_PICKUP);
 
         this.mapClass(AirfieldZone.class, AirfieldZone.FUNCTION_ID);
+        this.mapClass(FortifiedArea.class, FortifiedArea.FUNCTION_ID);
 
         this.mapClass(AviationZone.class,
             AviationZone.FUNCTION_ID_RESTRICTED_OPERATIONS_ZONE,
