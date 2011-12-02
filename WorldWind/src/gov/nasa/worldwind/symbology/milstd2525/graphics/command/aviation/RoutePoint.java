@@ -74,6 +74,14 @@ public class RoutePoint extends MilStd2525TacticalGraphic implements TacticalPoi
         this.delegateOwner = owner;
     }
 
+    protected Object getPickedObject()
+    {
+        if (this.delegateOwner != null)
+            return this.delegateOwner;
+        else
+            return this;
+    }
+
     /**
      * {@inheritDoc}
      *

@@ -81,7 +81,10 @@ public class PhaseLine extends MilStd2525TacticalGraphic
     /** {@inheritDoc} */
     public void doRenderGraphic(DrawContext dc)
     {
-        this.path.render(dc);
+        if (!dc.isOrderedRenderingMode())
+        {
+            this.path.render(dc);
+        }
     }
 
     /**

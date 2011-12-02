@@ -9,6 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525;
 import com.sun.opengl.util.j2d.TextRenderer;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
@@ -95,6 +96,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
         Angle rotation;
         Rectangle2D bounds;
+
+        Rectangle screenBounds;
 
         public String getText()
         {
@@ -185,6 +188,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected ShapeAttributes activeShapeAttributes = new BasicShapeAttributes();
 
     protected OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
+    protected PickSupport pickSupport = new PickSupport();
 
     /** Flag to indicate that labels must be recreated before the graphic is rendered. */
     protected boolean mustCreateLabels = true;
@@ -470,6 +474,30 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
     }
 
+    public void doRender(DrawContext dc, boolean drawGraphic)
+    {
+        if (!this.isVisible())
+        {
+            return;
+        }
+
+        long timeStamp = dc.getFrameTimeStamp();
+        if (this.frameTimestamp != timeStamp)
+        {
+            this.determineActiveAttributes();
+            this.computeGeometry(dc);
+            this.frameTimestamp = timeStamp;
+        }
+
+        if (drawGraphic)
+            this.doRenderGraphic(dc);
+
+        if (this.isShowModifiers())
+        {
+            this.doRenderModifiers(dc);
+        }
+    }
+
     /**
      * Establish the OpenGL state needed to draw text.
      *
@@ -520,7 +548,20 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** {@inheritDoc} */
     public void pick(DrawContext dc, Point pickPoint)
     {
-        // Do nothing. We don't pick via the labels.
+        // This method is called only when ordered renderables are being drawn.
+        // Arg checked within call to render.
+
+        this.pickSupport.clearPickList();
+        try
+        {
+            this.pickSupport.beginPicking(dc);
+            this.render(dc);
+        }
+        finally
+        {
+            this.pickSupport.endPicking(dc);
+            this.pickSupport.resolvePick(dc, pickPoint, dc.getCurrentLayer());
+        }
     }
 
     /**
@@ -629,7 +670,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     public void doRenderModifiers(DrawContext dc)
     {
-        if (this.labels != null && !dc.isPickingMode())
+        if (this.labels != null)
         {
             if (dc.isOrderedRenderingMode())
                 this.drawOrderedRenderable(dc);
@@ -662,6 +703,17 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     }
 
     /**
+     * Create a {@link gov.nasa.worldwind.pick.PickedObject} for this graphic. The PickedObject returned by this method
+     * will be added to the pick list to represent the current graphic.
+     *
+     * @return A new picked object.
+     */
+    protected Object getPickedObject()
+    {
+        return this;
+    }
+
+    /**
      * Draws all of the labels for this graphic.
      *
      * @param dc the current draw context.
@@ -669,14 +721,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     // TODO cull labels that are not visible
     protected void drawLabels(DrawContext dc)
     {
-        Color color = this.getLabelMaterial().getDiffuse();
-        Color backgroundColor = this.computeBackgroundColor(color);
+        GL gl = dc.getGL();
 
         Font font = this.getActiveOverrideAttributes().getTextModifierFont();
         if (font == null)
             font = DEFAULT_FONT;
-
-        javax.media.opengl.GL gl = dc.getGL();
 
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -689,11 +738,107 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
         mltr.setLineSpacing(5); // TODO compute something reasonable based on font size
 
-        // Draw rotated and non-rotated text. The JOGL text renderer doesn't allow us to apply matrix transformations
-        // between calls to begin/end3DRendering, so draw all text that doesn't require rotation in pass to minimize
-        // state switching.
-        this.drawNonRotatedText(mltr, color, backgroundColor);
-        this.drawRotatedText(dc, mltr, color, backgroundColor);
+        if (dc.isPickingMode())
+        {
+            this.pickLabels(dc, mltr);
+        }
+        else
+        {
+            Color color = this.getLabelMaterial().getDiffuse();
+            Color backgroundColor = this.computeBackgroundColor(color);
+
+            // Draw rotated and non-rotated text. The JOGL text renderer doesn't allow us to apply matrix transformations
+            // between calls to begin/end3DRendering, so draw all text that doesn't require rotation in pass to minimize
+            // state switching.
+            this.drawNonRotatedText(mltr, color, backgroundColor);
+            this.drawRotatedText(dc, mltr, color, backgroundColor);
+        }
+    }
+
+    /**
+     * Draw labels for picking.
+     *
+     * @param dc   Current draw context.
+     * @param mltr Text rendered used to draw the labels.
+     */
+    protected void pickLabels(DrawContext dc, MultiLineTextRenderer mltr)
+    {
+        GL gl = dc.getGL();
+
+        for (Label label : this.labels)
+        {
+            // Skip this label if it doesn't have a location.
+            if (label.screenPoint == null)
+            {
+                continue;
+            }
+
+            // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
+            // calculation if necessary.
+            if (label.bounds == null)
+            {
+                label.bounds = mltr.getBounds(label.text);
+            }
+
+            Offset offset = label.getOffset();
+            Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null,
+                null);
+
+            Angle heading = label.rotation;
+
+            int x = (int) (label.screenPoint.x + offsetPoint.getX());
+            int y = (int) (label.screenPoint.y - offsetPoint.getY());
+
+            // Do not draw label if it does not intersect the pick frustum.
+            Rectangle screenBounds = this.getTextBounds(label, x, y);
+            if (!dc.getPickFrustums().intersectsAny(screenBounds))
+                continue;
+
+            mltr.setTextAlign(label.textAlign);
+
+            double headingDegrees;
+            if (heading != null)
+                headingDegrees = heading.degrees;
+            else
+                headingDegrees = 0;
+
+            boolean matrixPushed = false;
+            try
+            {
+                if (headingDegrees != 0)
+                {
+                    gl.glPushMatrix();
+                    matrixPushed = true;
+
+                    gl.glTranslated(x, y, 0);
+                    gl.glRotated(headingDegrees, 0, 0, 1);
+                    gl.glTranslated(-x, -y, 0);
+                }
+
+                mltr.pick(label.text, x, y, mltr.getLineHeight(), dc, this.pickSupport, this.getPickedObject(),
+                    this.getReferencePosition());
+            }
+            finally
+            {
+                if (matrixPushed)
+                {
+                    gl.glPopMatrix();
+                }
+            }
+        }
+    }
+
+    protected Rectangle getTextBounds(Label label, int x, int y)
+    {
+        int xAligned = x;
+        if (AVKey.CENTER.equals(label.textAlign))
+            xAligned = x - (int) (label.bounds.getWidth() / 2);
+        else if (AVKey.RIGHT.equals(label.textAlign))
+            xAligned = x - (int) (label.bounds.getWidth());
+
+        int yAligned = y - (int) label.bounds.getHeight();
+
+        return new Rectangle(xAligned, yAligned, (int) label.bounds.getWidth(), (int) label.bounds.getHeight());
     }
 
     /**
@@ -701,7 +846,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
      *
      * @param mltr            Text renderer.
      * @param color           Text color.
-     * @param backgroundColor Text background color (used to draw drop shadow).
+     * @param backgroundColor Text background color (used to draw drop shadow). May be null.
      */
     protected void drawNonRotatedText(MultiLineTextRenderer mltr, Color color, Color backgroundColor)
     {
@@ -735,8 +880,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
                 int x = (int) (label.screenPoint.x + offsetPoint.getX());
                 int y = (int) (label.screenPoint.y - offsetPoint.getY());
 
-                textRenderer.setColor(backgroundColor);
-                mltr.draw(label.text, x + 1, y - 1);
+                if (backgroundColor != null)
+                {
+                    textRenderer.setColor(backgroundColor);
+                    mltr.draw(label.text, x + 1, y - 1);
+                }
 
                 textRenderer.setColor(color);
                 mltr.draw(label.text, x, y);
@@ -800,8 +948,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
                 textRenderer.begin3DRendering();
                 try
                 {
-                    textRenderer.setColor(backgroundColor);
-                    mltr.draw(label.text, x + 1, y - 1);
+                    if (backgroundColor != null)
+                    {
+                        textRenderer.setColor(backgroundColor);
+                        mltr.draw(label.text, x + 1, y - 1);
+                    }
 
                     textRenderer.setColor(color);
                     mltr.draw(label.text, x, y);
