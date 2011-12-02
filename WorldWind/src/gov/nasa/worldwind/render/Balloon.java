@@ -115,7 +115,7 @@ public interface Balloon extends Renderable, Highlightable, AVList
     Object getDelegateOwner();
 
     /**
-     * Specifies the delegate owner of the surface object. If non-null, the delegate owner replaces the balloon as the
+     * Specifies the delegate owner of the balloon. If non-null, the delegate owner replaces the balloon as the
      * pickable object returned during picking. If null, the balloon itself is the pickable object returned during
      * picking.
      *
