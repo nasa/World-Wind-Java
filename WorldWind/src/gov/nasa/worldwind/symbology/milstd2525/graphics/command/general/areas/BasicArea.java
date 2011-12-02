@@ -61,6 +61,11 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         Iterable<? extends LatLon> locations = this.polygon.getLocations();
         ArrayList<Position> positions = new ArrayList<Position>();
 
+        if (locations == null)
+        {
+            return null;
+        }
+
         for (LatLon ll : locations)
         {
             if (ll instanceof Position)

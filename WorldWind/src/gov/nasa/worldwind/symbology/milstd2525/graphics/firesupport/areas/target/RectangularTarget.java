@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.targe
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.*;
 
@@ -21,13 +21,13 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-// TODO need to implement heading for SurfaceText
-public class RectangularTarget extends MilStd2525TacticalGraphic implements PreRenderable
+public class RectangularTarget extends MilStd2525TacticalGraphic implements TacticalQuad, PreRenderable
 {
     public final static String FUNCTION_ID = "ATR---";
 
     protected SurfaceQuad quad;
 
+    /** Create a new target. */
     public RectangularTarget()
     {
         this.quad = this.createShape();
@@ -40,9 +40,35 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getFunctionId()
     {
         return FUNCTION_ID;
+    }
+
+    /** {@inheritDoc} */
+    public double getWidth()
+    {
+        return this.quad.getHeight();
+    }
+
+    /** {@inheritDoc} */
+    public void setWidth(double width)
+    {
+        //noinspection SuspiciousNameCombination
+        this.quad.setHeight(width);
+    }
+
+    /** {@inheritDoc} */
+    public double getLength()
+    {
+        return this.quad.getWidth();
+    }
+
+    /** {@inheritDoc} */
+    public void setLength(double length)
+    {
+        this.quad.setWidth(length);
     }
 
     /**
@@ -75,12 +101,10 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
     @Override
     public void setModifier(String modifier, Object value)
     {
-        // Map Length modifier to the width field of the quad, and Width modifier to height. MIL-STD-2525 uses different
-        // names for these dimensions than SurfaceQuad.
         if (AVKey.LENGTH.equals(modifier) && (value instanceof Double))
-            this.quad.setWidth((Double) value);
+            this.setLength((Double) value);
         else if (AVKey.WIDTH.equals(modifier) && (value instanceof Double))
-            this.quad.setHeight((Double) value);
+            this.setWidth((Double) value);
         else if (AVKey.HEADING.equals(modifier) && (value instanceof Angle))
             this.quad.setHeading((Angle) value);
         else
@@ -91,12 +115,10 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
     @Override
     public Object getModifier(String modifier)
     {
-        // Map Length modifier to the width field of the quad, and Width modifier to height. MIL-STD-2525 uses different
-        // names for these dimensions than SurfaceQuad.
         if (AVKey.WIDTH.equals(modifier))
-            return this.quad.getHeight();
+            return this.getWidth();
         else if (AVKey.LENGTH.equals(modifier))
-            return this.quad.getWidth();
+            return this.getLength();
         else if (AVKey.HEADING.equals(modifier))
             return this.quad.getHeading();
         else
@@ -140,7 +162,7 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
     }
 
     /**
-     * Render the polygon.
+     * Render the quad.
      *
      * @param dc Current draw context.
      */
@@ -153,7 +175,7 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements PreR
         }
     }
 
-    /** Create labels for the start and end of the path. */
+    /** Create labels for the graphic. */
     @Override
     protected void createLabels()
     {

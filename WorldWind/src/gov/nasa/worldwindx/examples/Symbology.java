@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.SurfaceImage;
-import gov.nasa.worldwind.symbology.TacticalGraphic;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
@@ -212,41 +212,34 @@ public class Symbology extends ApplicationTemplate
 
             // Create a Minimum Risk Route graphic
             // First create some Air Control Points to place along the route
-            List<TacticalGraphic> controlPoints = new ArrayList<TacticalGraphic>();
-
-            positions = Arrays.asList(
-                Position.fromDegrees(34.8802, -117.9773, 0),
-                Position.fromDegrees(35.0947, -117.9578, 0),
-                Position.fromDegrees(35.1739, -117.6957, 0));
+            List<TacticalPoint> controlPoints = new ArrayList<TacticalPoint>();
 
             // Create an Air Control Point
-            graphic = factory.createGraphic("GFFPAPP-------X", positions.get(0), null);
-            graphic.setText("1");
-            controlPoints.add(graphic);
+            TacticalPoint point = factory.createPoint("GFFPAPP-------X", Position.fromDegrees(34.8802, -117.9773, 0),
+                null);
+            point.setText("1");
+            controlPoints.add(point);
 
             // And another Air Control Point
-            graphic = factory.createGraphic("GFFPAPP-------X", positions.get(1), null);
-            graphic.setText("2");
-            controlPoints.add(graphic);
+            point = factory.createPoint("GFFPAPP-------X", Position.fromDegrees(35.0947, -117.9578, 0), null);
+            point.setText("2");
+            controlPoints.add(point);
 
             // And a Communication Checkpoint
-            graphic = factory.createGraphic("GFFPAPC-------X", positions.get(2), null);
-            graphic.setText("3");
-            controlPoints.add(graphic);
+            point = factory.createPoint("GFFPAPC-------X", Position.fromDegrees(35.1739, -117.6957, 0), null);
+            point.setText("3");
+            controlPoints.add(point);
 
             // Now create the route itself
-            graphic = factory.createGraphic("GFGPALM-------X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Minimum Risk Route");
-            graphic.setText("KNIGHT");
-            graphic.setModifier(AVKey.WIDTH, 2000.0);
-            graphic.setModifier(AVKey.ALTITUDE, Arrays.asList("50 FT AGL", "200 FT AGL"));
-
-            // Set the control points as child graphics of the route
-            graphic.setModifier(AVKey.GRAPHIC, controlPoints);
+            TacticalRoute route = factory.createRoute("GFGPALM-------X", controlPoints, null);
+            route.setValue(AVKey.DISPLAY_NAME, "Minimum Risk Route");
+            route.setText("KNIGHT");
+            route.setModifier(AVKey.WIDTH, 2000.0);
+            route.setModifier(AVKey.ALTITUDE, Arrays.asList("50 FT AGL", "200 FT AGL"));
 
             // And add the route to the layer. Note that we do not need to add the individual control points
             // to the layer because the route will take care of drawing them.
-            layer.addRenderable(graphic);
+            layer.addRenderable(route);
         }
 
         protected void createAreaGraphics(RenderableLayer layer)
@@ -318,27 +311,22 @@ public class Symbology extends ApplicationTemplate
             /////////////////////////////////////////////
 
             Position position = (Position.fromDegrees(35.1108, -117.0470, 0));
-            graphic = factory.createGraphic("GHFPATC-------X", position, null);
-            graphic.setText("AG9999");
-            graphic.setModifier(AVKey.RADIUS, 5000.0); // Radius of the circle
-            graphic.setValue(AVKey.DISPLAY_NAME, "Circular Target");
-            layer.addRenderable(graphic);
+            TacticalCircle circle = factory.createCircle("GHFPATC-------X", position, 5000.0, null);
+            circle.setModifier(AVKey.TEXT, "AG9999");
+            circle.setValue(AVKey.DISPLAY_NAME, "Circular Target");
+            layer.addRenderable(circle);
 
             /////////////////////////////////////////////
             // Rectangular target (2.X.4.3.1.1)
             /////////////////////////////////////////////
 
             position = (Position.fromDegrees(35.0295, -116.9290, 0));
-
-            AVListImpl modifiers = new AVListImpl();
-            // Length and width of the rectangle are specified as distance modifiers
-            modifiers.setValue(AVKey.WIDTH, 4000.0);
-            modifiers.setValue(AVKey.LENGTH, 8000.0);
-
-            graphic = factory.createGraphic("GHFPATR-------X", position, modifiers);
-            graphic.setText("AB0176");
-            graphic.setValue(AVKey.DISPLAY_NAME, "Rectangular Target");
-            layer.addRenderable(graphic);
+            TacticalQuad quad = factory.createQuad("GHFPATR-------X", Arrays.asList(position), null);
+            quad.setLength(8000.0);
+            quad.setWidth(4000.0);
+            quad.setText("AB0176");
+            quad.setValue(AVKey.DISPLAY_NAME, "Rectangular Target");
+            layer.addRenderable(quad);
         }
     }
 

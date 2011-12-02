@@ -150,7 +150,6 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String GET_MAP_URL = "gov.nasa.worldwind.avkey.GetMapURL";
     final String GLOBE = "gov.nasa.worldwind.avkey.GlobeObject";
     final String GLOBE_CLASS_NAME = "gov.nasa.worldwind.avkey.GlobeClassName";
-    final String GRAPHIC = "gov.nasa.worldwind.avkey.Graphic";
     final String GRAYSCALE = "gov.nasa.worldwind.avkey.Grayscale";
     final String GREAT_CIRCLE = "gov.nasa.worldwind.avkey.GreatCircle";
 

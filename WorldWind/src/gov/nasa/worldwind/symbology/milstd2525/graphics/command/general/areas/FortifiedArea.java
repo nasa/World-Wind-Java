@@ -45,6 +45,13 @@ public class FortifiedArea extends BasicArea
         this.positions = positions;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Iterable<? extends Position> getPositions()
+    {
+        return this.positions;
+    }
+
     /**
      * Indicates the wavelength of the square wave that forms the graphic's boundary. This is the length from the start
      * of one square "tooth" to the start of the next.
@@ -78,7 +85,7 @@ public class FortifiedArea extends BasicArea
     @Override
     public void computeGeometry(DrawContext dc)
     {
-        if (this.computedPositions == null)
+        if (this.computedPositions == null && this.positions != null)
         {
             this.generateIntermediatePositions(dc, this.positions);
             this.polygon.setLocations(this.computedPositions);

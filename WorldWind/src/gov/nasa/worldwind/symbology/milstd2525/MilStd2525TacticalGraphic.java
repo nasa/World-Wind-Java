@@ -65,31 +65,6 @@ import java.util.List;
  *
  * graphic.setModifier(AVKey.DATE_TIME, Arrays.asList(startDate, endDate));
  * </pre>
- * <p/>
- * <h1>Composite graphics</h1>
- * <p/>
- * Some tactical graphics can include other graphics. For example, a Minimum Risk Route (MRR) can include Air Control
- * Point or Communications Checkpoint graphics along the route. These child graphics can be specified using the {@code
- * AVKey.GRAPHIC} modifier. Here's an example of how to create a Minimum Risk Route:
- * <p/>
- * <pre>
- * List&lt;Position&gt; positions = ... // Positions that define the route
- *
- * // Create the Minimum Risk Route graphic
- * TacticalGraphic parent = factory.createGraphic("GFGPALM-------X", positions, null);
- *
- * // Create the child graphics that will appear at the control points of the route
- * List&lt;TacticalGraphic&gt; childGraphics = new ArrayList&lt;TacticalGraphic&gt;();
- * for (Position position : positions)
- * {
- *     // Create an Air Control Point graphic
- *     TacticalGraphic child = factory.createGraphic("GFGPAPP-------X", position, null); // Create
- *     childGraphics.add(child);
- * }
- *
- * // Set the child graphics
- * parent.setModifier(AVKey.GRAPHIC, childGraphics);
- * </pre>
  *
  * @author pabercrombie
  * @version $Id$
@@ -455,21 +430,13 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         this.countryCode = countryCode;
     }
 
-    /**
-     * Indicates a string of descriptive text for this graphic.
-     *
-     * @return Descriptive text for this graphic.
-     */
+    /** {@inheritDoc} */
     public String getText()
     {
         return this.text;
     }
 
-    /**
-     * Specifies a string of descriptive text for this graphic.
-     *
-     * @param text Descriptive text for this graphic.
-     */
+    /** {@inheritDoc} */
     public void setText(String text)
     {
         this.text = text;
@@ -589,8 +556,12 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         Position pos;
 
         pos = this.getReferencePosition();
-        placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+        if (pos == null)
+        {
+            return;
+        }
 
+        placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
         this.eyeDistance = placePoint.distanceTo3(dc.getView().getEyePoint());
 
         // Allow the subclass to create labels, if necessary
@@ -721,19 +692,18 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         // Draw rotated and non-rotated text. The JOGL text renderer doesn't allow us to apply matrix transformations
         // between calls to begin/end3DRendering, so draw all text that doesn't require rotation in pass to minimize
         // state switching.
-        this.drawNonRotatedText(dc, mltr, color, backgroundColor);
+        this.drawNonRotatedText(mltr, color, backgroundColor);
         this.drawRotatedText(dc, mltr, color, backgroundColor);
     }
 
     /**
      * Draw labels that do not require rotation.
      *
-     * @param dc              Current draw context.
      * @param mltr            Text renderer.
      * @param color           Text color.
      * @param backgroundColor Text background color (used to draw drop shadow).
      */
-    protected void drawNonRotatedText(DrawContext dc, MultiLineTextRenderer mltr, Color color, Color backgroundColor)
+    protected void drawNonRotatedText(MultiLineTextRenderer mltr, Color color, Color backgroundColor)
     {
         TextRenderer textRenderer = mltr.getTextRenderer();
 

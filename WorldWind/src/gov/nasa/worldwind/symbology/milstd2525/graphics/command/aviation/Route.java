@@ -27,7 +27,7 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public class Route extends MilStd2525TacticalGraphic implements PreRenderable
+public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, PreRenderable
 {
     /** Function ID for Air Corridor (2.X.2.2.2.1). */
     public final static String FUNCTION_ID_AIR_CORRIDOR = "ALC---";
@@ -50,44 +50,12 @@ public class Route extends MilStd2525TacticalGraphic implements PreRenderable
     protected Iterable<? extends Position> positions;
 
     /** Graphics drawn at the route control points. */
-    protected List<TacticalGraphic> children;
+    protected Iterable<? extends TacticalPoint> children;
 
     /** {@inheritDoc} */
     public String getCategory()
     {
         return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Object getModifier(String modifier)
-    {
-        if (AVKey.GRAPHIC.equals(modifier))
-        {
-            return this.children;
-        }
-        return super.getModifier(modifier);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setModifier(String modifier, Object value)
-    {
-        if (AVKey.GRAPHIC.equals(modifier))
-        {
-            if (value instanceof Iterable)
-            {
-                this.setChildGraphics((Iterable) value);
-            }
-            else if (value instanceof TacticalGraphic)
-            {
-                this.setChildGraphics(Arrays.asList((TacticalGraphic) value));
-            }
-        }
-        else
-        {
-            super.setModifier(modifier, value);
-        }
     }
 
     /** {@inheritDoc} Overridden to apply the highlight state to child graphics. */
@@ -106,34 +74,31 @@ public class Route extends MilStd2525TacticalGraphic implements PreRenderable
         }
     }
 
-    /**
-     * Set child graphics that will be drawn at the route control points. Child graphics may be Air Control Points
-     * (2.X.2.2.1.1) or Communications Checkpoints (2.X.2.2.1.2).
-     *
-     * @param graphics Iterable of child graphics. Any members which are not Air Control Points or Communications
-     *                 Checkpoints will be ignored.
-     */
-    public void setChildGraphics(Iterable graphics)
+    /** {@inheritDoc} */
+    public Iterable<? extends TacticalPoint> getControlPoints()
     {
-        this.children = new ArrayList<TacticalGraphic>();
+        return this.children;
+    }
 
-        // Go through the list and pull out all the valid children.
-        for (Object o : graphics)
+    /** {@inheritDoc} */
+    public void setControlPoints(Iterable<? extends TacticalPoint> points)
+    {
+        this.children = points;
+
+        List<Position> newPositions = new ArrayList<Position>();
+
+        for (TacticalPoint p : points)
         {
-            if (o instanceof RoutePoint)
-            {
-                RoutePoint child = (RoutePoint) o;
+            // Set the circle's radius to the width of the route
+            p.setModifier(AVKey.RADIUS, DEFAULT_WIDTH); // TODO how to set width
 
-                // Set the circle's radius to the width of the route
-                child.setModifier(AVKey.RADIUS, DEFAULT_WIDTH); // TODO how to set width
-
-                // Assign the route as the point's delegate owner so that the entire route will highlight
-                // as a unit.
-                child.setDelegateOwner(this);
-
-                this.children.add(child);
-            }
+            // Assign the route as the point's delegate owner so that the entire route will highlight
+            // as a unit.
+            p.setDelegateOwner(this);
+            newPositions.add(p.getPosition());
         }
+
+        this.positions = newPositions;
     }
 
     /**
@@ -528,7 +493,7 @@ public class Route extends MilStd2525TacticalGraphic implements PreRenderable
         Path path = new Path(start, end);
         path.setFollowTerrain(true);
         path.setPathType(AVKey.GREAT_CIRCLE);
-        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
+        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
         path.setDelegateOwner(this);
         path.setAttributes(this.getActiveShapeAttributes());
         return path;

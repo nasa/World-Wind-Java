@@ -12,19 +12,17 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 
 /**
- * TacticalGraphic provides a common interface for displaying a graphic from a symbology sets. A graphic can be an icon
+ * TacticalGraphic provides a common interface for displaying a graphic from a symbology set. A graphic can be an icon
  * that is drawn a geographic position, a vector graphic that is positioned using one or more control points, or a line
- * or polygon that is styled according to the symbol set's specification. See the TacticalGraphic <a title="Tactical Graphic Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-graphics/"
+ * or polygon that is styled according to the symbol set's specification. See the TacticalGraphic <a title="Tactical
+ * Graphic Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-graphics/"
  * target="_blank">Usage Guide</a> for instructions on using TacticalGraphic in an application.
  * <p/>
  * <h1>Construction</h1>
  * <p/>
- * TacticalGraphics are typically created by an instance of {@link TacticalGraphicFactory}. Tactical graphics fall into
- * two basic categories: graphics that are positioned with a single point, and graphics that are positioned by multiple
- * points.
- * <p/>
- * Each graphic within a symbol set is identified by a string identifier. The format of this identifier depends on the
- * symbol set. For example, a MIL-STD-2525 Symbol Identification Code (SIDC) is a string of 15 characters.
+ * TacticalGraphics are typically created by an instance of {@link TacticalGraphicFactory}. Each graphic within a symbol
+ * set is identified by a string identifier. The format of this identifier depends on the symbol set. For example, a
+ * MIL-STD-2525 Symbol Identification Code (SIDC) is a string of 15 characters.
  * <p/>
  * You will need to instantiate the appropriate factory for the symbol set that you intend to use.  For example, {@link
  * gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory} creates graphics for the MIL-STD-2525 symbology
@@ -123,6 +121,16 @@ import gov.nasa.worldwind.render.*;
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GFGPSLA----AUSX", positions, null);
  * </pre>
  *
+ * <h1>Categories of graphics</h1>
+ *
+ * There are a few common categories of tactical graphics. Each of these is described by a subinterface:
+ * <ul>
+ *     <li>{@link TacticalPoint}- Graphics positioned by a single point.</li>
+ *     <li>{@link TacticalCircle} - Graphics positioned by a center point and radius.</li>
+ *     <li>{@link TacticalQuad} - Rectangles with a length and width.</li>
+ *     <li>{@link TacticalRoute} - A series of point graphics connected by lines and treated as a single graphic.</li>
+ * </ul>
+ *
  * @author pabercrombie
  * @version $Id$
  * @see TacticalGraphicFactory
@@ -183,6 +191,21 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     String getIdentifier();
 
     /**
+     * Convenience method to specify a text modifier for the graphic. Calling this method is equivalent to calling
+     * <pre>setModifier(AVKey.TEXT, text)</pre>
+     *
+     * @param text New text modifier. May be null.
+     */
+    void setText(String text);
+
+    /**
+     * Convenience method to access the text modifier of the graphic.
+     *
+     * @return Descriptive text for this graphic.
+     */
+    String getText();
+
+    /**
      * Indicates the positions of the control points that place and orient the graphic.
      *
      * @return positions that orient the graphic. How many positions are returned depends on the type of graphic. Some
@@ -210,8 +233,8 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     /**
      * Specifies attributes for this graphic in the normal (as opposed to highlighted) state. If any fields in the
      * attribute bundle are null, the default attribute will be used instead. For example, if the attribute bundle
-     * includes a setting for outline material but not for interior material the new outline material will override
-     * the default outline material, but the interior material will remain the default.
+     * includes a setting for outline material but not for interior material the new outline material will override the
+     * default outline material, but the interior material will remain the default.
      *
      * @param attributes new attributes. May be null, in which case default attributes are used.
      */

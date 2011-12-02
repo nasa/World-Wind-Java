@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.*;
 
@@ -23,7 +23,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class RoutePoint extends MilStd2525TacticalGraphic implements PreRenderable
+public class RoutePoint extends MilStd2525TacticalGraphic implements TacticalPoint, PreRenderable
 {
     /** Function ID for Air Control Point (2.X.2.2.1.1). */
     public final static String FUNCTION_ID_AIR_CONTROL = "APP---";
@@ -48,6 +48,30 @@ public class RoutePoint extends MilStd2525TacticalGraphic implements PreRenderab
     public String getCategory()
     {
         return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+    }
+
+    /** {@inheritDoc} */
+    public Position getPosition()
+    {
+        return this.getReferencePosition();
+    }
+
+    /** {@inheritDoc} */
+    public void setPosition(Position position)
+    {
+        this.move(position);
+    }
+
+    /** {@inheritDoc} */
+    public Object getDelegateOwner()
+    {
+        return this.delegateOwner;
+    }
+
+    /** {@inheritDoc} */
+    public void setDelegateOwner(Object owner)
+    {
+        this.delegateOwner = owner;
     }
 
     /**
@@ -133,6 +157,21 @@ public class RoutePoint extends MilStd2525TacticalGraphic implements PreRenderab
         this.circle.preRender(dc);
     }
 
+    /** {@inheritDoc} Overridden to apply the delegate owner to shapes used to draw the route point. */
+    @Override
+    protected void determineActiveAttributes()
+    {
+        super.determineActiveAttributes();
+
+        // Apply the delegate owner to the circle, if an owner has been set. If no owner is set, make this graphic the
+        // circle's owner. This allows
+        Object owner = this.getDelegateOwner();
+        if (owner != null)
+            this.circle.setDelegateOwner(owner);
+        else
+            this.circle.setDelegateOwner(this);
+    }
+
     /**
      * Render the polygon.
      *
@@ -194,17 +233,6 @@ public class RoutePoint extends MilStd2525TacticalGraphic implements PreRenderab
     {
         LatLon center = this.circle.getCenter();
         this.labels.get(0).setPosition(new Position(center, 0));
-    }
-
-    public Object getDelegateOwner()
-    {
-        return this.delegateOwner;
-    }
-
-    public void setDelegateOwner(Object owner)
-    {
-        this.delegateOwner = owner;
-        this.circle.setDelegateOwner(owner);
     }
 
     protected SurfaceCircle createShape()

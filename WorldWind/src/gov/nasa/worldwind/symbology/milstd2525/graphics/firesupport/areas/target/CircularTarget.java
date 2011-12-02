@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.targe
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.*;
 
@@ -21,11 +21,12 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class CircularTarget extends MilStd2525TacticalGraphic implements PreRenderable
+public class CircularTarget extends MilStd2525TacticalGraphic implements TacticalCircle, PreRenderable
 {
     public final static String FUNCTION_ID = "ATC---";
 
     protected SurfaceCircle circle;
+    protected Object delegateOwner;
 
     public CircularTarget()
     {
@@ -39,9 +40,46 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     }
 
     /** {@inheritDoc} */
+    @Override
     public String getFunctionId()
     {
         return FUNCTION_ID;
+    }
+
+    /** {@inheritDoc} */
+    public double getRadius()
+    {
+        return this.circle.getRadius();
+    }
+
+    /** {@inheritDoc} */
+    public void setRadius(double radius)
+    {
+        this.circle.setRadius(radius);
+    }
+
+    /** {@inheritDoc} */
+    public Position getPosition()
+    {
+        return this.getReferencePosition();
+    }
+
+    /** {@inheritDoc} */
+    public void setPosition(Position position)
+    {
+        this.move(position);
+    }
+
+    /** {@inheritDoc} */
+    public Object getDelegateOwner()
+    {
+        return this.delegateOwner;
+    }
+
+    /** {@inheritDoc} */
+    public void setDelegateOwner(Object owner)
+    {
+        this.delegateOwner = owner;
     }
 
     /**
@@ -75,7 +113,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     public void setModifier(String modifier, Object value)
     {
         if (AVKey.RADIUS.equals(modifier) && (value instanceof Double))
-            this.circle.setRadius((Double) value);
+            this.setRadius((Double) value);
         else
             super.setModifier(modifier, value);
     }
@@ -85,7 +123,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
     public Object getModifier(String modifier)
     {
         if (AVKey.RADIUS.equals(modifier))
-            return this.circle.getRadius();
+            return this.getRadius();
         else
             return super.getModifier(modifier);
     }
@@ -139,6 +177,21 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements PreRend
         {
             this.circle.render(dc);
         }
+    }
+
+    /** {@inheritDoc} Overridden to apply the delegate owner to shapes used to draw the route point. */
+    @Override
+    protected void determineActiveAttributes()
+    {
+        super.determineActiveAttributes();
+
+        // Apply the delegate owner to the circle, if an owner has been set. If no owner is set, make this graphic the
+        // circle's owner. This allows
+        Object owner = this.getDelegateOwner();
+        if (owner != null)
+            this.circle.setDelegateOwner(owner);
+        else
+            this.circle.setDelegateOwner(this);
     }
 
     /** Create labels for the start and end of the path. */

@@ -117,17 +117,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      *
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
-    public MilStd2525TacticalGraphic createGraphic(String sidc, Position position, AVList params)
-    {
-        return this.createGraphic(sidc, Arrays.asList(position), params);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param sidc MIL-STD-2525 symbol identification code (SIDC).
-     */
-    public MilStd2525TacticalGraphic createGraphic(String sidc, Iterable<Position> positions, AVList modifiers)
+    public MilStd2525TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions, AVList modifiers)
     {
         SymbolCode symbolCode = new SymbolCode(sidc);
 
@@ -149,7 +139,10 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         try
         {
             graphic = (MilStd2525TacticalGraphic) clazz.newInstance();
-            graphic.setPositions(positions);
+            if (positions != null)
+            {
+                graphic.setPositions(positions);
+            }
         }
         catch (Exception e)
         {
@@ -166,6 +159,83 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         }
 
         return graphic;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param sidc MIL-STD-2525 symbol identification code (SIDC).
+     */
+    public TacticalPoint createPoint(String sidc, Position position, AVList params)
+    {
+        TacticalGraphic graphic = this.createGraphic(sidc, Arrays.asList(position), params);
+        if (graphic instanceof TacticalPoint)
+        {
+            return (TacticalPoint) graphic;
+        }
+        else
+        {
+            String className = graphic != null ? graphic.getClass().getName() : null;
+            String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalPoint.class.getName());
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public TacticalCircle createCircle(String sidc, Position center, double radius, AVList modifiers)
+    {
+        TacticalGraphic graphic = this.createPoint(sidc, center, modifiers);
+        if (graphic instanceof TacticalCircle)
+        {
+            TacticalCircle circle = (TacticalCircle) graphic;
+            circle.setRadius(radius);
+            return circle;
+        }
+        else
+        {
+            String className = graphic != null ? graphic.getClass().getName() : null;
+            String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalCircle.class.getName());
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public TacticalQuad createQuad(String sidc, Iterable<? extends Position> positions, AVList modifiers)
+    {
+        TacticalGraphic graphic = this.createGraphic(sidc, positions, modifiers);
+        if (graphic instanceof TacticalQuad)
+        {
+            return (TacticalQuad) graphic;
+        }
+        else
+        {
+            String className = graphic != null ? graphic.getClass().getName() : null;
+            String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalQuad.class.getName());
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+    }
+
+    /** {@inheritDoc} */
+    public TacticalRoute createRoute(String sidc, Iterable<? extends TacticalPoint> controlPoints,
+        AVList modifiers)
+    {
+        TacticalGraphic graphic = this.createGraphic(sidc, null, modifiers);
+        if (graphic instanceof TacticalRoute)
+        {
+            TacticalRoute route = (TacticalRoute) graphic;
+            route.setControlPoints(controlPoints);
+            return route;
+        }
+        else
+        {
+            String className = graphic != null ? graphic.getClass().getName() : null;
+            String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalRoute.class.getName());
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     protected void setModifiers(TacticalGraphic graphic, AVList props)
