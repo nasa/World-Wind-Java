@@ -168,11 +168,7 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements Tact
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        // SurfaceQuad is not an ordered renderable
-        if (!dc.isOrderedRenderingMode())
-        {
-            this.quad.render(dc);
-        }
+        this.quad.render(dc);
     }
 
     /** Create labels for the graphic. */

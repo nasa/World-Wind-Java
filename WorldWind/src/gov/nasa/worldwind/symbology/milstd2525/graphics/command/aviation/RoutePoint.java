@@ -194,11 +194,7 @@ public class RoutePoint extends MilStd2525TacticalGraphic implements TacticalPoi
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        // SurfaceCircle is not an ordered renderable
-        if (!dc.isOrderedRenderingMode())
-        {
-            this.circle.render(dc);
-        }
+        this.circle.render(dc);
     }
 
     /**

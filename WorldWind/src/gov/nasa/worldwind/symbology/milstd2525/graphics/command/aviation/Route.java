@@ -222,13 +222,9 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             this.createPaths(dc);
         }
 
-        // Path is its own ordered renderable.
-        if (!dc.isOrderedRenderingMode())
+        for (Path path : this.paths)
         {
-            for (Path path : this.paths)
-            {
-                path.render(dc);
-            }
+            path.render(dc);
         }
 
         if (this.children != null)

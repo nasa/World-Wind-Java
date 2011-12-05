@@ -172,11 +172,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements Tactica
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        // SurfaceCircle is not an ordered renderable
-        if (!dc.isOrderedRenderingMode())
-        {
-            this.circle.render(dc);
-        }
+        this.circle.render(dc);
     }
 
     /** {@inheritDoc} Overridden to apply the delegate owner to shapes used to draw the route point. */

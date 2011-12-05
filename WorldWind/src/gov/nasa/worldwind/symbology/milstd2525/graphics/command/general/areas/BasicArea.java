@@ -153,11 +153,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
      */
     public void doRenderGraphic(DrawContext dc)
     {
-        // SurfacePolygon is not an ordered renderable
-        if (!dc.isOrderedRenderingMode())
-        {
-            this.polygon.render(dc);
-        }
+        this.polygon.render(dc);
     }
 
     /**
