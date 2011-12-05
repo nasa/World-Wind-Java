@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -174,10 +174,17 @@ public class RoutePoint extends MilStd2525TacticalGraphic implements TacticalPoi
         // Apply the delegate owner to the circle, if an owner has been set. If no owner is set, make this graphic the
         // circle's owner. This allows
         Object owner = this.getDelegateOwner();
-        if (owner != null)
-            this.circle.setDelegateOwner(owner);
-        else
-            this.circle.setDelegateOwner(this);
+        if (owner == null)
+            owner = this;
+
+        this.circle.setDelegateOwner(owner);
+        if (this.labels != null)
+        {
+            for (Label label : this.labels)
+            {
+                label.setDelegateOwner(owner);
+            }
+        }
     }
 
     /**

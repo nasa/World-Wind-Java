@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import com.sun.opengl.util.j2d.TextRenderer;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.pick.*;
@@ -14,9 +13,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
 
-import javax.media.opengl.GL;
 import java.awt.*;
-import java.awt.geom.*;
 import java.text.*;
 import java.util.*;
 import java.util.List;
@@ -70,7 +67,7 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic, OrderedRenderable
+public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic, Renderable
 {
     public final static String HOSTILE_INDICATOR = "ENY";
 
@@ -79,89 +76,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
-    /** Default font. */
-    public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-16");
-
-    /** Default offset. The default offset centers the text on its geographic position both horizontally and vertically. */
-    public static final Offset DEFAULT_OFFSET = new Offset(0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
-
-    protected class Label
-    {
-        String text;
-        Position position;
-        Vec4 screenPoint;
-        Offset offset = DEFAULT_OFFSET;
-        String textAlign = AVKey.CENTER;
-        Position orientationPosition;
-
-        Angle rotation;
-        Rectangle2D bounds;
-
-        Rectangle screenBounds;
-
-        public String getText()
-        {
-            return this.text;
-        }
-
-        public void setText(String text)
-        {
-            this.text = text;
-            this.bounds = null; // Need to recompute
-        }
-
-        public Position getPosition()
-        {
-            return this.position;
-        }
-
-        public void setPosition(Position position)
-        {
-            this.position = position;
-        }
-
-        public String getTextAlign()
-        {
-            return this.textAlign;
-        }
-
-        public void setTextAlign(String textAlign)
-        {
-            this.textAlign = textAlign;
-        }
-
-        public Offset getOffset()
-        {
-            return offset;
-        }
-
-        public void setOffset(Offset offset)
-        {
-            this.offset = offset;
-        }
-
-        /**
-         * Indicates the orientation position. The label oriented on a line drawn from the label's position to the
-         * orientation position.
-         *
-         * @return Position used to orient the label. May be null.
-         */
-        public Position getOrientationPosition()
-        {
-            return this.orientationPosition;
-        }
-
-        /**
-         * Specifies the orientation position. The label is oriented on a line drawn from the label's position to the
-         * orientation position. If the orientation position is null then the label is drawn with no rotation.
-         *
-         * @param orientationPosition Draw label oriented toward this position.
-         */
-        public void setOrientationPosition(Position orientationPosition)
-        {
-            this.orientationPosition = orientationPosition;
-        }
-    }
 
     protected String text;
 
@@ -474,93 +388,14 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
     }
 
-    public void doRender(DrawContext dc, boolean drawGraphic)
+    public void doRenderModifiers(DrawContext dc)
     {
-        if (!this.isVisible())
+        if (this.labels != null)
         {
-            return;
-        }
-
-        long timeStamp = dc.getFrameTimeStamp();
-        if (this.frameTimestamp != timeStamp)
-        {
-            this.determineActiveAttributes();
-            this.computeGeometry(dc);
-            this.frameTimestamp = timeStamp;
-        }
-
-        if (drawGraphic)
-            this.doRenderGraphic(dc);
-
-        if (this.isShowModifiers())
-        {
-            this.doRenderModifiers(dc);
-        }
-    }
-
-    /**
-     * Establish the OpenGL state needed to draw text.
-     *
-     * @param dc the current draw context.
-     */
-    protected void beginDrawing(DrawContext dc)
-    {
-        GL gl = dc.getGL();
-
-        int attrMask =
-            GL.GL_DEPTH_BUFFER_BIT // for depth test, depth mask and depth func
-                | GL.GL_TRANSFORM_BIT // for modelview and perspective
-                | GL.GL_VIEWPORT_BIT // for depth range
-                | GL.GL_CURRENT_BIT // for current color
-                | GL.GL_COLOR_BUFFER_BIT // for alpha test func and ref, and blend
-                | GL.GL_DEPTH_BUFFER_BIT // for depth func
-                | GL.GL_ENABLE_BIT; // for enable/disable changes
-
-        this.BEogsh.pushAttrib(gl, attrMask);
-
-        if (!dc.isPickingMode())
-        {
-            gl.glEnable(GL.GL_BLEND);
-            OGLUtil.applyBlending(gl, false);
-        }
-
-        // The image is drawn using a parallel projection.
-        this.BEogsh.pushProjectionIdentity(gl);
-        gl.glOrtho(0d, dc.getView().getViewport().width, 0d, dc.getView().getViewport().height, -1d, 1d);
-    }
-
-    /**
-     * Pop the state set in beginDrawing.
-     *
-     * @param dc the current draw context.
-     */
-    protected void endDrawing(DrawContext dc)
-    {
-        this.BEogsh.pop(dc.getGL());
-    }
-
-    /** {@inheritDoc} */
-    public double getDistanceFromEye()
-    {
-        return this.eyeDistance;
-    }
-
-    /** {@inheritDoc} */
-    public void pick(DrawContext dc, Point pickPoint)
-    {
-        // This method is called only when ordered renderables are being drawn.
-        // Arg checked within call to render.
-
-        this.pickSupport.clearPickList();
-        try
-        {
-            this.pickSupport.beginPicking(dc);
-            this.render(dc);
-        }
-        finally
-        {
-            this.pickSupport.endPicking(dc);
-            this.pickSupport.resolvePick(dc, pickPoint, dc.getCurrentLayer());
+            for (Label label : this.labels)
+            {
+                label.render(dc);
+            }
         }
     }
 
@@ -586,6 +421,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
         Label label = new Label();
         label.setText(text);
+        label.setDelegateOwner(this);
+        label.setTextAlign(AVKey.CENTER);
         this.labels.add(label);
 
         return label;
@@ -620,364 +457,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
         // Allow the subclass to decide where to put the labels
         this.determineLabelPositions(dc);
-
-        // Project label positions onto the viewport
-        for (Label label : this.labels)
-        {
-            pos = label.getPosition();
-            if (pos != null)
-            {
-                placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
-                label.screenPoint = dc.getView().project(placePoint);
-
-                if (label.orientationPosition != null)
-                {
-                    label.rotation = this.computeLabelRotation(dc, label);
-                }
-            }
-        }
-    }
-
-    /**
-     * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
-     *
-     * @param dc    Current draw context.
-     * @param label Label for which to compute rotation.
-     *
-     * @return The rotation angle to apply when drawing the label.
-     */
-    protected Angle computeLabelRotation(DrawContext dc, Label label)
-    {
-        // Project the orientation point onto the screen
-        Vec4 placePoint = dc.computeTerrainPoint(label.orientationPosition.getLatitude(),
-            label.orientationPosition.getLongitude(), 0);
-        Vec4 orientationScreenPoint = dc.getView().project(placePoint);
-
-        // Determine delta between the orientation position and the label position
-        double deltaX = label.screenPoint.x - orientationScreenPoint.x;
-        double deltaY = label.screenPoint.y - orientationScreenPoint.y;
-
-        if (deltaX != 0)
-        {
-            double angle = Math.atan(deltaY / deltaX);
-            return Angle.fromRadians(angle);
-        }
-        else
-        {
-            return Angle.POS90; // Vertical label
-        }
-    }
-
-    public void doRenderModifiers(DrawContext dc)
-    {
-        if (this.labels != null)
-        {
-            if (dc.isOrderedRenderingMode())
-                this.drawOrderedRenderable(dc);
-            else
-                dc.addOrderedRenderable(this);
-        }
-    }
-
-    /**
-     * Draws the graphic as an ordered renderable.
-     *
-     * @param dc the current draw context.
-     */
-    protected void drawOrderedRenderable(DrawContext dc)
-    {
-        this.beginDrawing(dc);
-        try
-        {
-            this.doDrawOrderedRenderable(dc);
-        }
-        finally
-        {
-            this.endDrawing(dc);
-        }
-    }
-
-    protected void doDrawOrderedRenderable(DrawContext dc)
-    {
-        this.drawLabels(dc);
-    }
-
-    /**
-     * Create a {@link gov.nasa.worldwind.pick.PickedObject} for this graphic. The PickedObject returned by this method
-     * will be added to the pick list to represent the current graphic.
-     *
-     * @return A new picked object.
-     */
-    protected Object getPickedObject()
-    {
-        return this;
-    }
-
-    /**
-     * Draws all of the labels for this graphic.
-     *
-     * @param dc the current draw context.
-     */
-    // TODO cull labels that are not visible
-    protected void drawLabels(DrawContext dc)
-    {
-        GL gl = dc.getGL();
-
-        Font font = this.getActiveOverrideAttributes().getTextModifierFont();
-        if (font == null)
-            font = DEFAULT_FONT;
-
-        gl.glMatrixMode(GL.GL_MODELVIEW);
-        gl.glLoadIdentity();
-
-        // Do not depth buffer the label. (Labels beyond the horizon are culled above.)
-        gl.glDisable(GL.GL_DEPTH_TEST);
-        gl.glDepthMask(false);
-
-        TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-        MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
-        mltr.setLineSpacing(5); // TODO compute something reasonable based on font size
-
-        if (dc.isPickingMode())
-        {
-            this.pickLabels(dc, mltr);
-        }
-        else
-        {
-            Color color = this.getLabelMaterial().getDiffuse();
-            Color backgroundColor = this.computeBackgroundColor(color);
-
-            // Draw rotated and non-rotated text. The JOGL text renderer doesn't allow us to apply matrix transformations
-            // between calls to begin/end3DRendering, so draw all text that doesn't require rotation in pass to minimize
-            // state switching.
-            this.drawNonRotatedText(mltr, color, backgroundColor);
-            this.drawRotatedText(dc, mltr, color, backgroundColor);
-        }
-    }
-
-    /**
-     * Draw labels for picking.
-     *
-     * @param dc   Current draw context.
-     * @param mltr Text rendered used to draw the labels.
-     */
-    protected void pickLabels(DrawContext dc, MultiLineTextRenderer mltr)
-    {
-        GL gl = dc.getGL();
-
-        for (Label label : this.labels)
-        {
-            // Skip this label if it doesn't have a location.
-            if (label.screenPoint == null)
-            {
-                continue;
-            }
-
-            // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
-            // calculation if necessary.
-            if (label.bounds == null)
-            {
-                label.bounds = mltr.getBounds(label.text);
-            }
-
-            Offset offset = label.getOffset();
-            Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null,
-                null);
-
-            Angle heading = label.rotation;
-
-            int x = (int) (label.screenPoint.x + offsetPoint.getX());
-            int y = (int) (label.screenPoint.y - offsetPoint.getY());
-
-            // Do not draw label if it does not intersect the pick frustum.
-            Rectangle screenBounds = this.getTextBounds(label, x, y);
-            if (!dc.getPickFrustums().intersectsAny(screenBounds))
-                continue;
-
-            mltr.setTextAlign(label.textAlign);
-
-            double headingDegrees;
-            if (heading != null)
-                headingDegrees = heading.degrees;
-            else
-                headingDegrees = 0;
-
-            boolean matrixPushed = false;
-            try
-            {
-                if (headingDegrees != 0)
-                {
-                    gl.glPushMatrix();
-                    matrixPushed = true;
-
-                    gl.glTranslated(x, y, 0);
-                    gl.glRotated(headingDegrees, 0, 0, 1);
-                    gl.glTranslated(-x, -y, 0);
-                }
-
-                mltr.pick(label.text, x, y, mltr.getLineHeight(), dc, this.pickSupport, this.getPickedObject(),
-                    this.getReferencePosition());
-            }
-            finally
-            {
-                if (matrixPushed)
-                {
-                    gl.glPopMatrix();
-                }
-            }
-        }
-    }
-
-    protected Rectangle getTextBounds(Label label, int x, int y)
-    {
-        int xAligned = x;
-        if (AVKey.CENTER.equals(label.textAlign))
-            xAligned = x - (int) (label.bounds.getWidth() / 2);
-        else if (AVKey.RIGHT.equals(label.textAlign))
-            xAligned = x - (int) (label.bounds.getWidth());
-
-        int yAligned = y - (int) label.bounds.getHeight();
-
-        return new Rectangle(xAligned, yAligned, (int) label.bounds.getWidth(), (int) label.bounds.getHeight());
-    }
-
-    /**
-     * Draw labels that do not require rotation.
-     *
-     * @param mltr            Text renderer.
-     * @param color           Text color.
-     * @param backgroundColor Text background color (used to draw drop shadow). May be null.
-     */
-    protected void drawNonRotatedText(MultiLineTextRenderer mltr, Color color, Color backgroundColor)
-    {
-        TextRenderer textRenderer = mltr.getTextRenderer();
-
-        textRenderer.begin3DRendering();
-        try
-        {
-            for (Label label : this.labels)
-            {
-                // Skip this label if it doesn't have a location, or if has a heading. Labels with heading are drawn
-                // by drawRotatedText
-                if (label.screenPoint == null || label.rotation != null)
-                {
-                    continue;
-                }
-
-                mltr.setTextAlign(label.textAlign);
-
-                // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
-                // calculation if necessary.
-                if (label.bounds == null)
-                {
-                    label.bounds = mltr.getBounds(label.text);
-                }
-
-                Offset offset = label.getOffset();
-                Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null,
-                    null);
-
-                int x = (int) (label.screenPoint.x + offsetPoint.getX());
-                int y = (int) (label.screenPoint.y - offsetPoint.getY());
-
-                if (backgroundColor != null)
-                {
-                    textRenderer.setColor(backgroundColor);
-                    mltr.draw(label.text, x + 1, y - 1);
-                }
-
-                textRenderer.setColor(color);
-                mltr.draw(label.text, x, y);
-            }
-        }
-        finally
-        {
-            textRenderer.end3DRendering();
-        }
-    }
-
-    /**
-     * Draw labels that require rotation.
-     *
-     * @param dc              Current draw context.
-     * @param mltr            Text renderer.
-     * @param color           Text color.
-     * @param backgroundColor Text background color (used to draw drop shadow).
-     */
-    protected void drawRotatedText(DrawContext dc, MultiLineTextRenderer mltr, Color color, Color backgroundColor)
-    {
-        GL gl = dc.getGL();
-        TextRenderer textRenderer = mltr.getTextRenderer();
-
-        for (Label label : this.labels)
-        {
-            // Skip this label if it doesn't have a location, or if doesn't have heading. Labels without heading are
-            // drawn by drawNonRotatedText
-            if (label.screenPoint == null || label.rotation == null)
-            {
-                continue;
-            }
-
-            mltr.setTextAlign(label.textAlign);
-
-            // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
-            // calculation if necessary.
-            if (label.bounds == null)
-            {
-                label.bounds = mltr.getBounds(label.text);
-            }
-
-            Offset offset = label.getOffset();
-            Point2D offsetPoint = offset.computeOffset(label.bounds.getWidth(), label.bounds.getHeight(), null,
-                null);
-
-            Angle heading = label.rotation;
-
-            int x = (int) (label.screenPoint.x + offsetPoint.getX());
-            int y = (int) (label.screenPoint.y - offsetPoint.getY());
-
-            double headingDegrees = heading.degrees; //dc.getView().getHeading().degrees - heading.degrees;
-
-            gl.glPushMatrix();
-            try
-            {
-                gl.glTranslated(x, y, 0);
-                gl.glRotated(headingDegrees, 0, 0, 1);
-                gl.glTranslated(-x, -y, 0);
-
-                textRenderer.begin3DRendering();
-                try
-                {
-                    if (backgroundColor != null)
-                    {
-                        textRenderer.setColor(backgroundColor);
-                        mltr.draw(label.text, x + 1, y - 1);
-                    }
-
-                    textRenderer.setColor(color);
-                    mltr.draw(label.text, x, y);
-                }
-                finally
-                {
-                    textRenderer.end3DRendering();
-                }
-            }
-            finally
-            {
-                gl.glPopMatrix();
-            }
-        }
-    }
-
-    protected Color computeBackgroundColor(Color color)
-    {
-        float[] colorArray = new float[4];
-        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
-
-        if (colorArray[2] > 0.5)
-            return new Color(0, 0, 0, 0.7f);
-        else
-            return new Color(1, 1, 1, 0.7f);
     }
 
     /**
@@ -1027,6 +506,22 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             {
                 this.activeOverrides.copy(normalAttributes);
                 this.applyOverrideAttributes(normalAttributes, this.activeShapeAttributes);
+            }
+        }
+
+        if (this.labels != null)
+        {
+            Material labelMaterial = this.getLabelMaterial();
+
+            Font font = this.activeOverrides.getTextModifierFont();
+            if (font == null)
+                font = Label.DEFAULT_FONT;
+
+            // TODO offset
+            for (Label label : this.labels)
+            {
+                label.setMaterial(labelMaterial);
+                label.setFont(font);
             }
         }
     }

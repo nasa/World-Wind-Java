@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
@@ -202,7 +202,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
 
     protected Offset getLabelOffset()
     {
-        return DEFAULT_OFFSET;
+        return Label.DEFAULT_OFFSET;
     }
 
     protected String getLabelAlignment()
