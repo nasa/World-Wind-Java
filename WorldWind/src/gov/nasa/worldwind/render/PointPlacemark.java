@@ -338,7 +338,7 @@ public class PointPlacemark extends WWObjectImpl
     }
 
     /**
-     * Specifies whether adjacent Polygons in the ordered renderable list may be rendered together if they are contained
+     * Specifies whether adjacent PointPlacemarks in the ordered renderable list may be rendered together if they are contained
      * in the same layer. This increases performance and there is seldom a reason to disable it.
      *
      * @param enableBatchRendering true to enable batch rendering, otherwise false.
@@ -391,9 +391,9 @@ public class PointPlacemark extends WWObjectImpl
     }
 
     /**
-     * Specifies whether adjacent Polygons in the ordered renderable list may be pick-tested together if they are
-     * contained in the same layer. This increases performance but allows only the top-most of the polygons to be
-     * reported in a {@link gov.nasa.worldwind.event.SelectEvent} even if several of the polygons are at the pick
+     * Specifies whether adjacent PointPlacemarks in the ordered renderable list may be pick-tested together if they are
+     * contained in the same layer. This increases performance but allows only the top-most of the placemarks to be
+     * reported in a {@link gov.nasa.worldwind.event.SelectEvent} even if several of the placemarks are at the pick
      * position.
      * <p/>
      * Batch rendering ({@link #setEnableBatchRendering(boolean)}) must be enabled in order for batch picking to occur.
