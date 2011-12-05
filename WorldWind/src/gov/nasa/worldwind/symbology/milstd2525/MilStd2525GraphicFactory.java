@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.combatsupport.CombatSupportArea;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
@@ -45,7 +46,16 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
     /** Populate the map that maps function IDs to implementation classes. */
     protected void populateClassMap()
     {
-        this.mapClass(PhaseLine.class, PhaseLine.FUNCTION_ID);
+        this.mapClass(PhaseLine.class,
+            PhaseLine.FUNCTION_ID_PHASE,
+            PhaseLine.FUNCTION_ID_LIGHT,
+            PhaseLine.FUNCTION_ID_FINAL,
+            PhaseLine.FUNCTION_ID_ADVANCE,
+            PhaseLine.FUNCTION_ID_DEPARTURE,
+            PhaseLine.FUNCTION_ID_DEPARTURE_CONTACT,
+            PhaseLine.FUNCTION_ID_DEPLOYMENT,
+            PhaseLine.FUNCTION_ID_RELEASE,
+            PhaseLine.FUNCTION_ID_NO_FIRE);
 
         this.mapClass(BasicArea.class,
             BasicArea.FUNCTION_ID_GENERAL,
@@ -83,6 +93,15 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             OffenseArea.FUNCTION_ID_ATTACK_POSITION,
             OffenseArea.FUNCTION_ID_OBJECTIVE,
             OffenseArea.FUNCTION_ID_PENETRATION_BOX);
+
+        this.mapClass(CombatSupportArea.class,
+            CombatSupportArea.FUNCTION_ID_DETAINEE,
+            CombatSupportArea.FUNCTION_ID_EPW,
+            CombatSupportArea.FUNCTION_ID_FARP,
+            CombatSupportArea.FUNCTION_ID_REFUGEE,
+            CombatSupportArea.FUNCTION_ID_SUPPORT_BRIGADE,
+            CombatSupportArea.FUNCTION_ID_SUPPORT_DIVISION,
+            CombatSupportArea.FUNCTION_ID_SUPPORT_REGIMENTAL);
 
         this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
         this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);

@@ -17,19 +17,30 @@ import java.util.*;
 import java.util.List;
 
 /**
- * Implementation of the General Area graphic (hierarchy 2.X.2.1.3, SIDC: G*GPGAG---****X).
+ * Implementation of general area graphics. This class implements the following graphics:
+ * <p/>
+ * <ul> <li>General Area (2.X.2.1.3.1)</li> <li>Assembly Area (2.X.2.1.3.2)</li> <li>Engagement Area (2.X.2.1.3.3)</li>
+ * <li>Drop Zone (2.X.2.1.3.5)</li> <li>Extraction Zone (2.X.2.1.3.6)</li> </li><li>Landing Zone (2.X.2.1.3.7)</li>
+ * <li>Pickup Zone (2.X.2.1.3.8)</li> <li>Forward Arming and Refueling Area (FARP) (2.X.5.3.3)</li></ul>
  *
  * @author pabercrombie
  * @version $Id$
  */
 public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderable
 {
+    /** Function ID for General Area (2.X.2.1.3.1). */
     public final static String FUNCTION_ID_GENERAL = "GAG---";
+    /** Function ID for Assembly Area (2.X.2.1.3.2). */
     public final static String FUNCTION_ID_ASSEMBLY = "GAA---";
+    /** Function ID for Drop Zone (2.X.2.1.3.5). */
     public final static String FUNCTION_ID_DROP = "GAD---";
+    /** Function ID for Engagement Area (2.X.2.1.3.3). */
     public final static String FUNCTION_ID_ENGAGEMENT = "GAE---";
+    /** Function ID for Extraction Zone (2.X.2.1.3.6). */
     public final static String FUNCTION_ID_EXTRACTION = "GAX---";
+    /** Function ID for Landing Zone (2.X.2.1.3.7). */
     public final static String FUNCTION_ID_LANDING = "GAL---";
+    /** Function ID for Pickup Zone (2.X.2.1.3.8). */
     public final static String FUNCTION_ID_PICKUP = "GAP---";
 
     protected SurfacePolygon polygon;
@@ -102,7 +113,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
      */
     public boolean isShowIdentityLabels()
     {
-        return showIdentityLabels;
+        return this.showIdentityLabels;
     }
 
     /**
