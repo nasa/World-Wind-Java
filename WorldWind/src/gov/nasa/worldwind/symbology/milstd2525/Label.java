@@ -655,8 +655,8 @@ public class Label implements OrderedRenderable
     }
 
     /**
-     * Draw the label's text. This method sets up the text renderer, and then calls {@link #doDrawText} to actually draw
-     * the text.
+     * Draw the label's text. This method sets up the text renderer, and then calls {@link
+     * #doDrawText(gov.nasa.worldwind.render.MultiLineTextRenderer) doDrawText} to actually draw the text.
      *
      * @param dc   Current draw context.
      * @param mltr Text renderer.
@@ -732,11 +732,12 @@ public class Label implements OrderedRenderable
 
     /**
      * Draws this ordered renderable and all subsequent Label ordered renderables in the ordered renderable list. This
-     * method differs from {@link #drawBatchedText} in that this method re-initializes the text renderer to draw the
-     * next label, while {@code drawBatchedText} re-uses the active text renderer context. That is, {@code
-     * drawBatchedText} attempts to draw as many labels as possible that share same text renderer configuration as this
-     * label, and this method attempts to draw as many labels as possible regardless of the text renderer configuration
-     * of the subsequent labels.
+     * method differs from {@link #drawBatchedText(gov.nasa.worldwind.render.DrawContext,
+     * gov.nasa.worldwind.render.MultiLineTextRenderer) drawBatchedText} in that this method re-initializes the text
+     * renderer to draw the next label, while {@code drawBatchedText} re-uses the active text renderer context. That is,
+     * {@code drawBatchedText} attempts to draw as many labels as possible that share same text renderer configuration
+     * as this label, and this method attempts to draw as many labels as possible regardless of the text renderer
+     * configuration of the subsequent labels.
      *
      * @param dc the current draw context.
      */

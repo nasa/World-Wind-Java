@@ -7,7 +7,6 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
@@ -47,7 +46,7 @@ public class AviationZone extends BasicArea
     @Override
     protected Offset getLabelOffset()
     {
-        return new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION); // Left align
+        return new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION); // Center text block on label position.
     }
 
     @Override
@@ -58,6 +57,19 @@ public class AviationZone extends BasicArea
 
     @Override
     protected String createLabelText()
+    {
+        return doCreateLabelText(true);
+    }
+
+    /**
+     * Create text for the area's label.
+     *
+     * @param includeAltitude Indicates whether to include altitude information in the label (if the AVKey.ALTITUDE
+     *                        modifier is set). Not all aviation area graphics support the altitude modifier.
+     *
+     * @return Text for the label, based on the active modifiers.
+     */
+    protected String doCreateLabelText(boolean includeAltitude)
     {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getGraphicLabel());
@@ -70,19 +82,22 @@ public class AviationZone extends BasicArea
             sb.append("\n");
         }
 
-        Object[] altitudes = this.getAltitudeRange();
-        if (altitudes[0] != null)
+        if (includeAltitude)
         {
-            sb.append("MIN ALT: ");
-            sb.append(altitudes[0]);
-            sb.append("\n");
-        }
+            Object[] altitudes = this.getAltitudeRange();
+            if (altitudes[0] != null)
+            {
+                sb.append("MIN ALT: ");
+                sb.append(altitudes[0]);
+                sb.append("\n");
+            }
 
-        if (altitudes[1] != null)
-        {
-            sb.append("MAX ALT: ");
-            sb.append(altitudes[1]);
-            sb.append("\n");
+            if (altitudes[1] != null)
+            {
+                sb.append("MAX ALT: ");
+                sb.append(altitudes[1]);
+                sb.append("\n");
+            }
         }
 
         Object[] dates = this.getDateRange();
@@ -120,31 +135,5 @@ public class AviationZone extends BasicArea
             return "LOMEZ";
 
         return "";
-    }
-
-    @Override
-    protected void determineMainLabelPosition(DrawContext dc)
-    {
-        Position northWest = Position.fromDegrees(-90.0, 180.0);
-
-        // TODO this algorithm works ok for a rectangular-ish area, but it's won't work for a circular area
-        Iterable<? extends Position> positions = this.getPositions();
-        for (Position p : positions)
-        {
-            if (p.latitude.compareTo(northWest.latitude) > 0 && p.longitude.compareTo(northWest.longitude) < 0)
-            {
-                northWest = p;
-            }
-        }
-
-        Angle textHeight = Angle.fromRadians(
-            SurfaceText.DEFAULT_TEXT_SIZE_IN_METERS * 1.25 / dc.getGlobe().getRadius());
-
-        // Shift south east, away from the western border
-        LatLon ll = Position.greatCircleEndPosition(northWest, Angle.POS90, textHeight);
-
-        // Shift south, away from the northern border
-        LatLon latLon = Position.greatCircleEndPosition(ll, Angle.POS180, textHeight);
-        this.labels.get(0).setPosition(new Position(latLon, 0));
     }
 }

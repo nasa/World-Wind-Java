@@ -73,6 +73,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     /** Default date pattern used to format dates. */
     public final static String DEFAULT_DATE_PATTERN = "ddhhmmss'Z'MMMyyyy";
+    public final static String TIME_PATTERN = "hhmmss'Z'";
 
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
@@ -468,7 +469,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
      */
     protected String formatDate(Date d)
     {
-        DateFormat format = new SimpleDateFormat(DEFAULT_DATE_PATTERN);
+        DateFormat format = new SimpleDateFormat(TIME_PATTERN);
         return format.format(d);
     }
 
