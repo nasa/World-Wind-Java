@@ -327,6 +327,17 @@ public class Symbology extends ApplicationTemplate
             quad.setText("AB0176");
             quad.setValue(AVKey.DISPLAY_NAME, "Rectangular Target");
             layer.addRenderable(quad);
+
+            //////////////////////////////////////////////////
+            // Circular Weapon/Sensor Range Fan (2.X.4.3.4.1)
+            //////////////////////////////////////////////////
+
+            position = (Position.fromDegrees(34.6813, -116.9724, 0));
+            graphic = factory.createGraphic("GFFPAXC-------X", Arrays.asList(position), null);
+            graphic.setModifier(AVKey.RADIUS, Arrays.asList(1000.0, 6000.0, 11000.0));
+            graphic.setModifier(AVKey.ALTITUDE, Arrays.asList(100, 200, 300));
+            graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan");
+            layer.addRenderable(graphic);
         }
     }
 
