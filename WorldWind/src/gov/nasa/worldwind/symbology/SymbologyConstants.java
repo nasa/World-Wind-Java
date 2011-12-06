@@ -829,7 +829,7 @@ public interface SymbologyConstants
      * exist at the symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
      */
     final String STATUS_ANTICIPATED = "A";
-    /** The MIL-STD-2525 Known status code. See MIL-STD-2525C section 5.3.1.4 (pages 17-18). */
+    /** The MIL-STD-2525 Known status code. See MIL-STD-2525C table B-I (page 305). */
     final String STATUS_KNOWN = "K";
     /**
      * The MIL-STD-2525 Present/Fully Capable status code. Indicates a symbol who's represented object currently exists
