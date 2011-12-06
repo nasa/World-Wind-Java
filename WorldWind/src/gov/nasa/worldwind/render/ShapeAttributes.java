@@ -299,7 +299,7 @@ public interface ShapeAttributes extends Exportable
     /**
      * Indicates the image source that is applied as a texture to the shape's interior.
      *
-     * @return the source of the balloon's texture, either a {@link String} path, a {@link java.net.URL}, a {@link
+     * @return the source of the shape's texture, either a {@link String} path, a {@link java.net.URL}, a {@link
      *         java.awt.image.BufferedImage}, or <code>null</code>.
      *
      * @see #setImageSource(Object)
@@ -314,7 +314,7 @@ public interface ShapeAttributes extends Exportable
      * <li><code>null</code></li> </ul> If the image source is a file or a <code>URL</code>, it is read only when the
      * shape is rendered.
      *
-     * @param imageSource the source of the balloon's texture, either a <code>String</code> path, a <code>URL</code>, a
+     * @param imageSource the source of the shape's texture, either a <code>String</code> path, a <code>URL</code>, a
      *                    <code>BufferedImage</code>, or <code>null</code>.
      *
      * @see #getImageSource()
