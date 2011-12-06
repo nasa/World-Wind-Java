@@ -46,13 +46,21 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Indicates the center position of the range ran.
+     *
+     * @return The range fan center position.
+     */
     public Position getPosition()
     {
         return this.getReferencePosition();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Specifies the center position of the range ran.
+     *
+     * @param position The new center position.
+     */
     public void setPosition(Position position)
     {
         this.move(position);
