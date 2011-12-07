@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import com.sun.opengl.util.j2d.TextRenderer;
+import gov.nasa.worldwind.View;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.Layer;
@@ -62,6 +63,8 @@ public class Label implements OrderedRenderable
 
     // Computed each frame
     protected long frameTimestamp = -1L;
+    /** Geographic position in cartesian coordinates. */
+    protected Vec4 placePoint;
     /** Location of the place point projected onto the screen. */
     protected Vec4 screenPlacePoint;
     /**
@@ -377,7 +380,7 @@ public class Label implements OrderedRenderable
         Position pos = this.getPosition();
         if (pos != null)
         {
-            Vec4 placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+            this.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
             this.screenPlacePoint = dc.getView().project(placePoint);
 
             this.eyeDistance = placePoint.distanceTo3(dc.getView().getEyePoint());
@@ -418,10 +421,21 @@ public class Label implements OrderedRenderable
      */
     protected boolean intersectsFrustum(DrawContext dc)
     {
+        View view = dc.getView();
+        Frustum frustum = view.getFrustumInModelCoordinates();
+
+        // Test the label's model coordinate point against the near and far clipping planes.
+        if (this.placePoint != null
+            && (frustum.getNear().distanceTo(this.placePoint) < 0
+            || frustum.getFar().distanceTo(this.placePoint) < 0))
+        {
+            return false;
+        }
+
         if (dc.isPickingMode())
             return dc.getPickFrustums().intersectsAny(this.screenExtent);
         else
-            return dc.getView().getViewport().intersects(this.screenExtent);
+            return view.getViewport().intersects(this.screenExtent);
     }
 
     /**
