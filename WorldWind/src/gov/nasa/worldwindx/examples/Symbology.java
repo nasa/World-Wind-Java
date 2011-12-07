@@ -58,15 +58,6 @@ public class Symbology extends ApplicationTemplate
 
             this.getLayerPanel().update(this.getWwd());
 
-            this.getWwd().addMouseListener(new MouseAdapter()
-            {
-                public void mouseClicked(MouseEvent e)
-                {
-                    Position p = getWwd().getCurrentPosition();
-                    System.out.println("Position.fromDegrees(" + p.latitude + ", " + p.longitude + ", 0),");
-                }
-            });
-
             // Size the World Window to provide enough screen space for the graphics, and center the World Window
             // on the screen.
             Dimension size = new Dimension(1200, 800);
