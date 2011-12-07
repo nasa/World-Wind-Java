@@ -7,8 +7,6 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
@@ -67,8 +65,10 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
+// TODO give the app a way to control formatting of date/time
 public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic, Renderable
 {
+    /** Text modifier used to indicate hostile entities. */
     public final static String HOSTILE_INDICATOR = "ENY";
 
     /** Default date pattern used to format dates. */
@@ -97,20 +97,16 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected List<Label> labels;
 
     protected long frameTimestamp = -1L;
-    protected double eyeDistance;
 
     protected TacticalGraphicAttributes activeOverrides = new BasicTacticalGraphicAttributes();
     protected ShapeAttributes activeShapeAttributes = new BasicShapeAttributes();
-
-    protected OGLStackHandler BEogsh = new OGLStackHandler(); // used for beginDrawing/endDrawing state
-    protected PickSupport pickSupport = new PickSupport();
 
     /** Flag to indicate that labels must be recreated before the graphic is rendered. */
     protected boolean mustCreateLabels = true;
 
     public abstract String getCategory();
 
-    public abstract void doRenderGraphic(DrawContext dc);
+    protected abstract void doRenderGraphic(DrawContext dc);
 
     /** {@inheritDoc} */
     public String getIdentifier()
@@ -373,19 +369,37 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             return;
         }
 
-        long timeStamp = dc.getFrameTimeStamp();
-        if (this.frameTimestamp != timeStamp)
-        {
-            this.determineActiveAttributes();
-            this.computeGeometry(dc);
-            this.frameTimestamp = timeStamp;
-        }
+        this.determinePerFrameAttributes(dc);
 
         this.doRenderGraphic(dc);
 
         if (this.isShowModifiers())
         {
             this.doRenderModifiers(dc);
+        }
+    }
+
+    /**
+     * Determine geometry and attributes for this frame. This method only determines attributes the first time that it
+     * is called for each frame. Multiple calls in the same frame will have no effect.
+     *
+     * @param dc Current draw context.
+     */
+    protected void determinePerFrameAttributes(DrawContext dc)
+    {
+        long timeStamp = dc.getFrameTimeStamp();
+        if (this.frameTimestamp != timeStamp)
+        {
+            // Allow the subclass to create labels, if necessary
+            if (this.mustCreateLabels)
+            {
+                this.createLabels();
+                this.mustCreateLabels = false;
+            }
+
+            this.determineActiveAttributes();
+            this.computeGeometry(dc);
+            this.frameTimestamp = timeStamp;
         }
     }
 
@@ -431,31 +445,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     protected void computeGeometry(DrawContext dc)
     {
-        Vec4 placePoint;
-        Position pos;
-
-        pos = this.getReferencePosition();
-        if (pos == null)
-        {
-            return;
-        }
-
-        placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
-        this.eyeDistance = placePoint.distanceTo3(dc.getView().getEyePoint());
-
-        // Allow the subclass to create labels, if necessary
-        if (this.mustCreateLabels)
-        {
-            this.createLabels();
-            this.mustCreateLabels = false;
-        }
-
-        // If there are no labels then there's nothing more to do
-        if (this.labels == null || this.labels.isEmpty())
-        {
-            return;
-        }
-
         // Allow the subclass to decide where to put the labels
         this.determineLabelPositions(dc);
     }
@@ -510,21 +499,43 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             }
         }
 
-        if (this.labels != null)
+        this.applyLabelAttributes();
+    }
+
+    /** Apply the active attributes to the graphic's labels. */
+    protected void applyLabelAttributes()
+    {
+        if (this.labels == null || labels.isEmpty())
+            return;
+
+        Material labelMaterial = this.getLabelMaterial();
+
+        Font font = this.activeOverrides.getTextModifierFont();
+        if (font == null)
+            font = Label.DEFAULT_FONT;
+
+        for (Label label : this.labels)
         {
-            Material labelMaterial = this.getLabelMaterial();
-
-            Font font = this.activeOverrides.getTextModifierFont();
-            if (font == null)
-                font = Label.DEFAULT_FONT;
-
-            // TODO offset
-            for (Label label : this.labels)
-            {
-                label.setMaterial(labelMaterial);
-                label.setFont(font);
-            }
+            label.setMaterial(labelMaterial);
+            label.setFont(font);
         }
+
+        // Apply the offset to the main label.
+        Offset offset = this.activeOverrides.getLabelOffset();
+        if (offset == null)
+            offset = this.getDefaultLabelOffset();
+        this.labels.get(0).setOffset(offset);
+    }
+
+    /**
+     * Indicates the default offset applied to the graphic's main label. This offset may be overridden by the graphic
+     * attributes.
+     *
+     * @return Offset to apply to the main label.
+     */
+    protected Offset getDefaultLabelOffset()
+    {
+        return Label.DEFAULT_OFFSET;
     }
 
     /**

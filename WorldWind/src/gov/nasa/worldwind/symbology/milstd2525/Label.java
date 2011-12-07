@@ -395,7 +395,7 @@ public class Label implements OrderedRenderable
             // calculation if necessary.
             if (this.bounds == null)
             {
-                this.bounds = mltr.getBounds(this.text);
+                this.bounds = this.getMultilineTextBounds(this.text, textRenderer);
             }
 
             Offset offset = this.getOffset();
@@ -728,6 +728,36 @@ public class Label implements OrderedRenderable
 
         textRenderer.setColor(color);
         mltr.draw(this.text, x, y);
+    }
+
+    /**
+     * Get the bounds of a multi-line text string. Each newline character in the input string (\n) indicates the start
+     * of a new line.
+     *
+     * @param text         Text to find bounds of.
+     * @param textRenderer Text renderer to use to compute bounds.
+     *
+     * @return A rectangle that describes the node bounds. See com.sun.opengl.util.j2d.TextRenderer.getBounds for
+     *         information on how this rectangle should be interpreted.
+     */
+    protected Rectangle2D getMultilineTextBounds(String text, TextRenderer textRenderer)
+    {
+        int width = 0;
+        int maxLineHeight = 0;
+        String[] lines = text.split("\n");
+
+        for (String line : lines)
+        {
+            Rectangle2D lineBounds = textRenderer.getBounds(line);
+            width = (int) Math.max(lineBounds.getWidth(), width);
+
+            double thisLineHeight = Math.abs(lineBounds.getY());
+            maxLineHeight = (int) Math.max(thisLineHeight, maxLineHeight);
+        }
+
+        // Compute final height using maxLineHeight and number of lines
+        return new Rectangle(lines.length, maxLineHeight, width,
+            lines.length * maxLineHeight + lines.length * this.lineSpacing);
     }
 
     /**

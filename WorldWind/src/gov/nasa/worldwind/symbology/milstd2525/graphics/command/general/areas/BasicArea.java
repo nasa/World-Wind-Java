@@ -136,7 +136,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
 
         this.makeShapes(dc);
 
-        this.determineActiveAttributes();
+        this.determinePerFrameAttributes(dc);
 
         this.polygon.preRender(dc);
     }
@@ -151,7 +151,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
      *
      * @param dc Current draw context.
      */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         this.polygon.render(dc);
     }
@@ -207,11 +207,11 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         return "";
     }
 
-    protected Offset getLabelOffset()
-    {
-        return Label.DEFAULT_OFFSET;
-    }
-
+    /**
+     * Indicates the alignment of the graphic's main label.
+     *
+     * @return Alignment for the main label. One of AVKey.CENTER, AVKey.LEFT, or AVKey.RIGHT.
+     */
     protected String getLabelAlignment()
     {
         return AVKey.CENTER;
@@ -228,7 +228,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         Label mainLabel = this.addLabel(labelText);
         mainLabel.setTextAlign(this.getLabelAlignment());
 
-        mainLabel.setOffset(this.getLabelOffset());
+        mainLabel.setOffset(this.getDefaultLabelOffset());
 
         if (this.mustCreateIdentityLabels())
         {
@@ -245,7 +245,11 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     @Override
     protected void determineLabelPositions(DrawContext dc)
     {
-        this.determineMainLabelPosition(dc);
+        if (this.labels == null || this.labels.isEmpty())
+            return;
+
+        Position mainLabelPosition = this.determineMainLabelPosition(dc);
+        this.labels.get(0).setPosition(mainLabelPosition);
 
         if (this.mustCreateIdentityLabels())
         {
@@ -258,18 +262,19 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
      * label. If there are more lines, they will be arranged South of the first line.
      *
      * @param dc Current draw context.
+     *
+     * @return Position for the graphic's main label.
      */
-    protected void determineMainLabelPosition(DrawContext dc)
+    protected Position determineMainLabelPosition(DrawContext dc)
     {
         List<Sector> sectors = this.polygon.getSectors(dc);
         if (sectors != null)
         {
             // TODO: centroid of bounding sector is not always a good choice for label position
             Sector sector = sectors.get(0);
-            Position position = new Position(sector.getCentroid(), 0);
-
-            this.labels.get(0).setPosition(position);
+            return new Position(sector.getCentroid(), 0);
         }
+        return this.getReferencePosition();
     }
 
     protected void determineIdentityLabelPositions()

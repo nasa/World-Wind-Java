@@ -17,7 +17,6 @@ import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.*;
 import java.util.*;
 import java.util.List;
@@ -231,7 +230,7 @@ public class Symbology extends ApplicationTemplate
             point.setText("3");
             controlPoints.add(point);
 
-            // Now create the route itself
+            // Now create the route from the control points
             TacticalRoute route = factory.createRoute("GFGPALM-------X", controlPoints, null);
             route.setValue(AVKey.DISPLAY_NAME, "Minimum Risk Route (2.X.2.2.2.2)");
             route.setText("KNIGHT");
@@ -296,10 +295,10 @@ public class Symbology extends ApplicationTemplate
 
             positions = Arrays.asList(
                 Position.fromDegrees(35.2331, -117.6217, 0),
-                Position.fromDegrees(35.1911, -117.3469, 0),
+                Position.fromDegrees(35.2331, -117.3552, 0),
                 Position.fromDegrees(35.1998, -117.2560, 0),
-                Position.fromDegrees(35.0447, -117.2614, 0),
-                Position.fromDegrees(35.0338, -117.6387, 0));
+                Position.fromDegrees(35.0851, -117.3604, 0),
+                Position.fromDegrees(35.0857, -117.6261, 0));
             graphic = factory.createGraphic("GFGPAAR----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Restricted Operations Zone (2.X.2.2.3.1)");
             graphic.setText("(Unit ID)");
@@ -319,9 +318,7 @@ public class Symbology extends ApplicationTemplate
                 Position.fromDegrees(34.7506, -117.1436, 0));
             graphic = factory.createGraphic("GFGPAAW----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapons Free Zone (2.X.2.2.3.5)");
-            graphic.setModifier(AVKey.ALTITUDE, Arrays.asList("100 FT AGL", "1000 FT AGL"));
             graphic.setText("(Unit ID)");
-            graphic.setModifier(AVKey.DATE_TIME, Arrays.asList(new Date(), new Date()));
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////

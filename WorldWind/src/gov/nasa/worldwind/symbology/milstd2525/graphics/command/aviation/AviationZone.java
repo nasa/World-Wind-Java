@@ -44,7 +44,7 @@ public class AviationZone extends BasicArea
     }
 
     @Override
-    protected Offset getLabelOffset()
+    protected Offset getDefaultLabelOffset()
     {
         return new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION); // Center text block on label position.
     }
