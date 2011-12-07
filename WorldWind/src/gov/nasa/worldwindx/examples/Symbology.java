@@ -10,7 +10,7 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.SurfaceImage;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
@@ -149,6 +149,24 @@ public class Symbology extends ApplicationTemplate
             graphic = factory.createGraphic("GHGAGLP----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: hostile, anticipated (2.X.2.2.2.2)");
             graphic.setText("C");
+            layer.addRenderable(graphic);
+
+            // Create a line with a custom color and font
+            positions = Arrays.asList(
+                Position.fromDegrees(34.8703, -117.5525, 0),
+                Position.fromDegrees(34.9158, -117.5153, 0),
+                Position.fromDegrees(34.9238, -117.4600, 0));
+            graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
+            graphic.setText("D");
+            graphic.setValue(AVKey.DISPLAY_NAME, "Phase line: custom color and font (2.X.2.2.2.2)");
+
+            // Create a custom attributes bundle. Any fields set in this bundle will override the default attributes.
+            TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
+            attrs.setOutlineMaterial(Material.GRAY);
+            attrs.setTextModifierFont(Font.decode("Arial-12"));
+
+            // Apply the attributes to the graphic
+            graphic.setAttributes(attrs);
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
