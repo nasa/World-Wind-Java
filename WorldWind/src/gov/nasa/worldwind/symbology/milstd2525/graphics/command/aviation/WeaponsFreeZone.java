@@ -17,7 +17,7 @@ import gov.nasa.worldwind.render.*;
 public class WeaponsFreeZone extends AviationZone
 {
     /** Path to the image used for the polygon fill pattern. */
-    protected static final String DIAGONAL_FILL_PATH = "images/diagonal-fill-128x128.png";
+    protected static final String DIAGONAL_FILL_PATH = "images/diagonal-fill-16x16.png";
 
     /** Function ID for Weapons Free Zone (2.X.2.2.3.5). */
     public final static String FUNCTION_ID = "AAW---";
