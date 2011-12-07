@@ -71,6 +71,9 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** Text modifier used to indicate hostile entities. */
     public final static String HOSTILE_INDICATOR = "ENY";
 
+    public final static Material MATERIAL_FRIEND = Material.BLACK;
+    public final static Material MATERIAL_HOSTILE = Material.RED;
+
     /** Default date pattern used to format dates. */
     public final static String DEFAULT_DATE_PATTERN = "ddhhmmss'Z'MMMyyyy";
     public final static String TIME_PATTERN = "hhmmss'Z'";
@@ -576,18 +579,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     protected void applyDefaultAttributes(ShapeAttributes attributes)
     {
-        String identity = this.getStandardIdentity();
-        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(identity))
-        {
-            attributes.setOutlineMaterial(Material.RED);
-        }
-        else
-        {
-            attributes.setOutlineMaterial(Material.BLACK);
-        }
+        Material material = this.getDefaultOutlineMaterial();
+        attributes.setOutlineMaterial(material);
 
         String status = this.getStatus();
-        if (SymbologyConstants.STATUS_ANTICIPATED.equals(status))
+        if (!SymbologyConstants.STATUS_PRESENT.equals(status))
         {
             attributes.setOutlineStippleFactor(6);
             attributes.setOutlineStipplePattern((short) 0xAAAA);
@@ -595,6 +591,15 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
         // Most 2525 area graphic do not have a fill.
         attributes.setDrawInterior(false);
+    }
+
+    protected Material getDefaultOutlineMaterial()
+    {
+        String identity = this.getStandardIdentity();
+        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(identity))
+            return MATERIAL_HOSTILE;
+        else
+            return MATERIAL_FRIEND;
     }
 
     protected void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes, ShapeAttributes shapeAttributes)
