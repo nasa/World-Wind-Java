@@ -176,8 +176,8 @@ public class Symbology extends ApplicationTemplate
             positions = Arrays.asList(
                 Position.fromDegrees(34.4643, -117.7323, 0), // Pt. 1: Tip of the arrow
                 Position.fromDegrees(34.4962, -117.7808, 0), // Pt. 2: First path control point
-                Position.fromDegrees(34.4934, -117.8444, 0), // Pt. N - 1: Last path control point
-                Position.fromDegrees(34.4602, -117.8570, 0),
+                Position.fromDegrees(34.4934, -117.8444, 0),
+                Position.fromDegrees(34.4602, -117.8570, 0), // Pt. N - 1: Last path control point
                 Position.fromDegrees(34.4844, -117.7303, 0)); // Pt. N: Width of the arrow head
             graphic = factory.createGraphic("GFGPOLAGM-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Main Attack (2.X.2.5.2.1.4.1)");
@@ -258,6 +258,17 @@ public class Symbology extends ApplicationTemplate
             // And add the route to the layer. Note that we do not need to add the individual control points
             // to the layer because the route will take care of drawing them.
             layer.addRenderable(route);
+
+            ///////////////////////////////////////////////////
+            // Direction of Main Attack (2.X.2.5.2.2.2.1)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.0459, -117.5633, 0),
+                Position.fromDegrees(35.0459, -117.3795, 0));
+            graphic = factory.createGraphic("GFGPOLKGM-----X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Main Attack (2.X.2.5.2.2.2.1)");
+            layer.addRenderable(graphic);
         }
 
         protected void createAreaGraphics(RenderableLayer layer)

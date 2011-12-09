@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.OffenseArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.*;
@@ -103,6 +103,10 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             CombatSupportArea.FUNCTION_ID_SUPPORT_BRIGADE,
             CombatSupportArea.FUNCTION_ID_SUPPORT_DIVISION,
             CombatSupportArea.FUNCTION_ID_SUPPORT_REGIMENTAL);
+
+        this.mapClass(DirectionOfAttack.class,
+            DirectionOfAttack.FUNCTION_ID_MAIN,
+            DirectionOfAttack.FUNCTION_ID_SUPPORTING);
 
         this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
         this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
