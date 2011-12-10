@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--$Id$-->
+<MilStd2525SymbolModifierLayout>
+
+    <!--TODO: implement accepted schemes for each modifier.-->
+    <!--TODO: implement accepted values for each modifier.-->
+
+    <!--Layout for the Echelon, Task Force Indicator, Feint/Dummy Indicator, and Installation modifiers.-->
+    <ModifierLayout>
+        <!--
+        These modifiers are centered above the symbol frame with their bottom edge aligned to the frame's top. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="0.5" y="1.0" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.5" y="0.0" xunits="fraction" yunits="fraction"/>
+        <!--Field IDs for the Echelon, Task Force Indicator, Feint/Dummy Indicator, and Installation modifiers.-->
+        <AcceptedFieldIds>
+            <FieldId>B</FieldId>
+            <FieldId>D</FieldId>
+            <FieldId>AB</FieldId>
+            <FieldId>AC</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Mobility Indicator and Auxiliary Equipment Indicator modifiers.-->
+    <ModifierLayout>
+        <!--
+        These modifiers are centered below the symbol frame with their top edge aligned to the frame's bottom. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="0.5" y="0.0" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.5" y="1.0" xunits="fraction" yunits="fraction"/>
+        <!--Field IDs for the Mobility Indicator and Auxiliary Equipment Indicator modifiers.-->
+        <AcceptedFieldIds>
+            <FieldId>R</FieldId>
+            <FieldId>AG</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Operational Condition modifier.-->
+    <ModifierLayout>
+        <!--
+        The Operational Condition modifier is centered with the symbol frame. See MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Operational Condition modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>AL</FieldId>
+        </AcceptedFieldIds>
+        <!--
+        The Operational Condition (alternate) modifier is associated with the following schemes: Warfighting, Signals
+        Intelligence, and Stability Operations.
+        -->
+        <AcceptedSchemes>
+            <Scheme>S</Scheme>
+            <Scheme>I</Scheme>
+            <Scheme>O</Scheme>
+        </AcceptedSchemes>
+    </ModifierLayout>
+
+    <!--Layout for the Operational Condition (alternate) modifier.-->
+    <ModifierLayout>
+        <!--
+        The Operational Condition (alternate) modifier is centered either below the symbol frame, below the Mobility
+        indicator, or below the Auxiliary Equipment Indicator (if either exists) with its top edge aligned to its
+        location. See MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="0.5" y="0.0" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.5" y="1.0" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Operational Condition modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>AL</FieldId>
+        </AcceptedFieldIds>
+        <!--
+        The Operational Condition (alternate) modifier is associated with the following schemes: Emergency Management.
+        -->
+        <AcceptedSchemes>
+            <Scheme>E</Scheme>
+        </AcceptedSchemes>
+    </ModifierLayout>
+
+    <!--Layout for the Quantity text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located centered above the symbol frame with its bottom edge aligned to the frame's top.
+        See MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="0.5" y="1.1" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.5" y="0.0" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Quantity text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>C</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Special C2 Headquarters text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located centered with the frame. See MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Special C2 Headquarters text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>AA</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Frame Shape and Reinforced/Reduced text modifiers.-->
+    <ModifierLayout type="text">
+        <!--
+        These modifiers are located in the first row along the symbol frame's right side. There are five rows per side,
+        each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See MIL-STD-2525C
+        section 5.3.4, page 21.
+        -->
+        <Offset x="1.1" y="1.1" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field IDs for the Frame Shape and Reinforced/Reduced text modifiers.-->
+        <AcceptedFieldIds>
+            <FieldId>E</FieldId>
+            <FieldId>F</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Staff Comments text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located in the second row along the symbol frame's right side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="1.1" y="0.8" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Staff Comments text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>G</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Additional Information text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located in the third row along the symbol frame's right side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="1.1" y="0.5" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Staff Comments text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>H</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Higher Formation text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located in the fourth row along the symbol frame's right side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="1.1" y="0.2" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Higher Formation text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>M</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Evaluation Rating, Combat Effectiveness, Signature Equipment, Hostile (Enemy), and IFF/SIF text
+    modifiers.-->
+    <ModifierLayout type="text">
+        <!--
+        These modifiers are located in the fifth row along the symbol frame's right side. There are five rows per side,
+        each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See MIL-STD-2525C
+        section 5.3.4, page 21.
+        -->
+        <Offset x="1.1" y="-0.1" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="0.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field IDs for the Evaluation Rating, Combat Effectiveness, Signature Equipment, Hostile (Enemy), and IFF/SIF
+        text modifiers.-->
+        <AcceptedFieldIds>
+            <FieldId>J</FieldId>
+            <FieldId>K</FieldId>
+            <FieldId>L</FieldId>
+            <FieldId>N</FieldId>
+            <FieldId>P</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Date-Time-Group (DTG) text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located in the first row along the symbol frame's left side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="-0.1" y="1.1" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="1.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Date-Time-Group (DTG) text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>W</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Altitude/Depth and Location text modifiers.-->
+    <ModifierLayout type="text">
+        <!--
+        These text modifiers are located in the second row along the symbol frame's lseft side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="-0.1" y="0.8" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="1.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Altitude/Depth and Location text modifiers.-->
+        <AcceptedFieldIds>
+            <FieldId>X</FieldId>
+            <FieldId>Y</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Type text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located in the third row along the symbol frame's left side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="-0.1" y="0.5" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="1.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Type text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>V</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Unique Designation text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located in the fourth row along the symbol frame's left side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="-0.1" y="0.2" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="1.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Unique Designation text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>T</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+    <!--Layout for the Speed text modifier.-->
+    <ModifierLayout type="text">
+        <!--
+        This text modifier is located in the fifth row along the symbol frame's left side. There are five rows per
+        side, each row is 0.3x the symbol frame height, and the third row is centered with the symbol frame. See
+        MIL-STD-2525C section 5.3.4, page 21.
+        -->
+        <Offset x="-0.1" y="-0.1" xunits="fraction" yunits="fraction"/>
+        <Hotspot x="1.0" y="0.5" xunits="fraction" yunits="fraction"/>
+        <!--Field ID for the Speed text modifier.-->
+        <AcceptedFieldIds>
+            <FieldId>Z</FieldId>
+        </AcceptedFieldIds>
+    </ModifierLayout>
+
+</MilStd2525SymbolModifierLayout>
