@@ -20,6 +20,14 @@ import java.awt.*;
 public interface TacticalSymbolAttributes
 {
     /**
+     * Copies the specified TacticalSymbolAttributes' properties into this object's properties. This does nothing if the
+     * specified attributes is <code>null</code>.
+     *
+     * @param attributes the attributes to copy.
+     */
+    void copy(TacticalSymbolAttributes attributes);
+
+    /**
      * Indicates the symbol scale as a ratio of the symbol's original size. See {@link #setScale(Double)} for a
      * description of how scale is used.
      *
@@ -30,9 +38,12 @@ public interface TacticalSymbolAttributes
     /**
      * Specifies the symbol scale as a ratio of the symbol's original size. The specified scale is a floating point
      * number greater than 0.0: values less than 1.0 make the symbol smaller, while values greater than 1.0 make the
-     * symbol larger. The scale applies to both the symbol graphic and the symbol modifiers.
+     * symbol larger. The scale applies to both the symbol graphic and the symbol modifiers. The specified scale must be
+     * either <code>null</code> or greater than or equal to 0.0.
      *
      * @param scale the symbol's scale. May be <code>null</code>, indicating that the default scale should be used.
+     *
+     * @throws IllegalArgumentException if the scale is less than 0.0.
      */
     void setScale(Double scale);
 
@@ -47,9 +58,12 @@ public interface TacticalSymbolAttributes
     /**
      * Specifies the symbol opacity as a floating point number between 0.0 and 1.0 (inclusive). An opacity of 0.0 is
      * completely transparent and an opacity of 1.0 is completely opaque. The opacity applies to both the symbol graphic
-     * and the symbol modifiers.
+     * and the symbol modifiers. The specified opacity must either <code>null</code> or a value between 0.0 and 1.0
+     * (inclusive).
      *
      * @param opacity the symbol opacity. May be <code>null</code>, indicating that the default opacity should be used.
+     *
+     * @throws IllegalArgumentException if the opacity is less than 0.0 or greater than 1.0.
      */
     void setOpacity(Double opacity);
 
