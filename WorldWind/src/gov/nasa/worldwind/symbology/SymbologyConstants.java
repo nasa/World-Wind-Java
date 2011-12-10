@@ -20,9 +20,25 @@ import java.util.List;
 public interface SymbologyConstants
 {
     /**
-     * Indicates the auxiliary equipment code associated with a MIL-STD-2525 symbol (SIDC positions 11-12). A symbol's
-     * auxiliary equipment is currently used to define towed sonar arrays. See MIL-STD-2525C section 5.3.4.4 (page 27)
-     * and table VII (page 28). When used as a key, the corresponding value must be one of the following:
+     * The MIL-STD-2525 Additional Information modifier field ID.  The meaning of this field is implementation specific.
+     * See MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a
+     * key, the corresponding value must be a string containing up to 20 characters.
+     */
+    final String ADDITIONAL_INFORMATION = "H";
+
+    /**
+     * The MIL-STD-2525 Altitude/Depth modifier field ID. Indicates either altitude flight level, depth for submerged
+     * objects, or height of equipment or structures on the ground. See MIL-STD-2525 section 5.5.2.5 (page 40-41), table
+     * IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the corresponding value must be a string
+     * containing up to 14 characters.
+     */
+    final String ALTITUDE_DEPTH = "X";
+
+    /**
+     * The MIL-STD-2525 Auxiliary Equipment Indicator modifier field ID. Indicates the auxiliary equipment code
+     * associated with a MIL-STD-2525 symbol (SIDC positions 11-12). A symbol's auxiliary equipment is currently used to
+     * define towed sonar arrays. See MIL-STD-2525C section 5.3.4.4 (page 27) and table VII (page 28). When used as a
+     * key, the corresponding value must be one of the following:
      * <p/>
      * <ul> <li>AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_SHORT</li> <li>AUXILIARY_EQUIPMENT_TOWED_SONAR_ARRAY_LONG</li>
      * </ul>
@@ -32,7 +48,7 @@ public interface SymbologyConstants
      * <p/>
      * <ul> <li>Warfighting - section A.5.2.1.f (page 51) and table A-II (pages 52-54)</li> </ul>
      */
-    final String AUXILIARY_EQUIPMENT = "gov.nasa.worldwind.symbology.AuxiliaryEquipment";
+    final String AUXILIARY_EQUIPMENT = "AG";
     /**
      * The MIL-STD-2525 Towed Sonar Array (Long) auxiliary equipment code. See MIL-STD-2525C section 5.3.4.4 (page 27)
      * and table VII (page 28).
@@ -313,6 +329,13 @@ public interface SymbologyConstants
     );
 
     /**
+     * The MIL-STD-2525 Combat Effectiveness modifier field ID. Indicates a unit's effectiveness or an installation's
+     * capability. See MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When
+     * used as a key, the corresponding value must be a string containing up to 5 characters.
+     */
+    final String COMBAT_EFFECTIVENESS = "K";
+
+    /**
      * Indicates the country code associated with a MIL-STD-2525 symbol (SIDC positions 13-14). See <a
      * href="http://www.iso.org/iso/country_codes.htm" target="_blank">ISO 3166-1</a> for a definition of valid country
      * codes. The country codes are the same for all symbology schemes that use them:
@@ -325,10 +348,24 @@ public interface SymbologyConstants
     final String COUNTRY_CODE = "gov.nasa.worldwind.symbology.CountryCode";
 
     /**
-     * Indicates the echelon code associated with a MIL-STD-2525 symbol (SIDC position 12). A symbol's echelon defines
-     * the command level of a unit represented by the symbol. See MIL-STD-2525 section 5.3.4.2 (page 25), section
-     * 5.5.2.2 (page 40), and table V (pages 25-26). When used as a key, the corresponding value must be one of the
-     * following:
+     * The MIL-STD-2525 Date Time Group (DTG) modifier field ID. Displays a time in the DTG format "DDHHMMSSZMONYYYY" or
+     * "O/O" for on order.. See MIL-STD-2525 section 5.5.2.6 (page 41-42), table IV (pages 22-24) and table XIV (pages
+     * 46-47). When used as a key, the corresponding value must be a string containing up to 16 characters.
+     */
+    final String DATE_TIME_GROUP = "W";
+    /**
+     * The MIL-STD-2525 Direction of Movement Indicator modifier field ID. Indicates the direction of movement or
+     * intended movement of an object. See MIL-STD-2525 section 5.3.4.1 (page 25), table IV (pages 22-24) and table XIV
+     * (pages 46-47). When used as a key, the corresponding value must be an {@link gov.nasa.worldwind.geom.Angle}
+     * indicating the object's heading relative to true north.
+     */
+    final String DIRECTION_OF_MOVEMENT = "Q";
+
+    /**
+     * The MIL-STD-2525 Echelon modifier field ID. Indicates the echelon code associated with a MIL-STD-2525 symbol
+     * (SIDC position 12). A symbol's echelon defines the command level of a unit represented by the symbol. See
+     * MIL-STD-2525 section 5.3.4.2 (page 25), section 5.5.2.2 (page 40), and table V (pages 25-26). When used as a key,
+     * the corresponding value must be one of the following:
      * <p/>
      * <ul> <li>ECHELON_TEAM_CREW</li> <li>ECHELON_SQUAD</li> <li>ECHELON_SECTION</li>
      * <li>ECHELON_PLATOON_DETACHMENT</li> <li>ECHELON_COMPANY_BATTERY_TROOP</li> <li>ECHELON_BATTALION_SQUADRON</li>
@@ -342,7 +379,7 @@ public interface SymbologyConstants
      * section B.5.2.1.f (page 304) and table B-II (page 305)</li> <li>Stability Operations - section E.5.2.1.f (page
      * 991) and table E-II (pages 992-994)</li> </ul>
      */
-    final String ECHELON = "gov.nasa.worldwind.symbology.Echelon";
+    final String ECHELON = "B";
     /**
      * The MIL-STD-2525 Army echelon code. See MIL-STD-2525 section 5.3.4.2 (page 25), section 5.5.2.2 (page 40), and
      * table V (pages 25-26).
@@ -432,19 +469,37 @@ public interface SymbologyConstants
     );
 
     /**
-     * Symbol modifier key indicating whether a MIL-STD-2525 symbol's represented object is a feint/dummy. A feint/dummy
-     * symbol indicates a unit, equipment, or installation designed to draw the enemy's attention away from the area of
-     * the main attack. When a marked as a feint/dummy, a symbol's graphic is changed to include a dashed inverted "V"
-     * above its frame. See MIL-STD-2525 section 5.3.4.7 (page 28). When used as a key, the corresponding value must be
-     * a boolean value. The value is <code>true</code> if the symbol's represented object is a feint/dummy, and
-     * <code>false</code> otherwise.
+     * The MIL-STD-2525 Evaluation Rating modifier field ID. Indicates the reliability and credibility of a unit,
+     * equipment, or installation. When used as a key, the corresponding value must be a string containing two
+     * characters.
+     * <p/>
+     * The first character indicates the reliability rating, and must be one of the following: <ul> <li>"A" - completely
+     * reliable</li> <li>"B" - usually reliable</li> <li>"C" - fairly reliable</li> <li>"D" - not usually reliable</li>
+     * <li>"E" - unreliable</li> <li>"F" - reliability cannot be judged</li> </ul>
+     * <p/>
+     * The second character indicates the credibility rating, and must be one of the following: <ul> <li>"1" - confirmed
+     * by other sources</li> <li>"2" - probably true</li> <li>"3" - possibly true</li> <li>"4" - doubtfully true</li>
+     * <li>"5" - improbable</li> <li>"6" - truth cannot be judged</li> </ul>
+     * <p/>
+     * See FM 34-3, Intelligence Analysis, March 1990, pages 2-13 through 2-17 for complete definitions of evaluation
+     * ratings.
+     */
+    final String EVALUATION_RATING = "J";
+
+    /**
+     * The MIL-STD-2525 Feint/Dummy Indicator modifier field ID. Indicates whether a MIL-STD-2525 symbol's represented
+     * object is a feint/dummy. A feint/dummy symbol indicates a unit, equipment, or installation designed to draw the
+     * enemy's attention away from the area of the main attack. When a marked as a feint/dummy, a symbol's graphic is
+     * changed to include a dashed inverted "V" above its frame. See MIL-STD-2525 section 5.3.4.7 (page 28). When used
+     * as a key, the corresponding value must be a boolean value. The value is <code>true</code> if the symbol's
+     * represented object is a feint/dummy, and <code>false</code> otherwise.
      * <p/>
      * The following symbology schemes support the feint/dummy modifier:
      * <p/>
      * <ul> <li>Warfighting</li> <li>Stability Operations</li> </ul>
      * <p/>
      */
-    final String FEINT_DUMMY = "gov.nasa.worldwind.symbology.FeintDummy";
+    final String FEINT_DUMMY = "AB";
 
     /**
      * Indicates the function ID associated with a MIL-STD-2525 symbol (SIDC positions 5-10). The function IDs are
@@ -461,24 +516,45 @@ public interface SymbologyConstants
     final String FUNCTION_ID = "gov.nasa.worldwind.symbology.FunctionId";
 
     /**
-     * Symbol modifier key indicating whether a MIL-STD-2525 symbol's represented object is a headquarters. A
-     * headquarters symbol indicates the headquarters associated with a unit, equipment, or installation. When a marked
-     * as an headquarters, a symbol's graphic is changed to include a line extending downward from the left side of its
-     * frame. See MIL-STD-2525 section 5.3.4.8 (page 29). When used as a key, the corresponding value must be a boolean
-     * value. The value is <code>true</code> if the symbol's represented object is a headquarters, and
-     * <code>false</code> otherwise.
+     * The MIL-STD-2525 Headquarters modifier field ID. Indicates whether a MIL-STD-2525 symbol's represented object is
+     * a headquarters. A headquarters symbol indicates the headquarters associated with a unit, equipment, or
+     * installation. When a marked as an headquarters, a symbol's graphic is changed to include a line extending
+     * downward from the left side of its frame. See MIL-STD-2525 section 5.3.4.8 (page 29). When used as a key, the
+     * corresponding value must be a boolean value. The value is <code>true</code> if the symbol's represented object is
+     * a headquarters, and <code>false</code> otherwise.
      * <p/>
      * The following symbology schemes support the headquarters modifier:
      * <p/>
      * <ul> <li>Warfighting</li> <li>Stability Operations</li> </ul>
      */
-    final String HEADQUARTERS = "gov.nasa.worldwind.symbology.Headquarters";
+    final String HEADQUARTERS = "S";
 
     /**
-     * Symbol modifier key indicating the installation code associated with a MIL-STD-2525 symbol (SIDC positions
-     * 11-12). When a marked as an installation, a symbol's represented object is a military camp or base. See
-     * MIL-STD-2525 section 5.3.4.5 (page 28). When used as a key, the corresponding value must be one of the
-     * following:
+     * The MIL-STD-2525 Higher Formation modifier field ID. Indicates the number or title of higher echelon command. See
+     * MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key,
+     * the corresponding value must be the string containing up to 21 characters.
+     */
+    final String HIGHER_FORMATION = "M";
+
+    /**
+     * The MIL-STD-2525 Hostile (Enemy) modifier field ID. Indicates a hostile equipment symbol. See MIL-STD-2525
+     * section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the
+     * corresponding value must be the string "ENY".
+     */
+    final String HOSTILE_ENEMY = "N";
+
+    /**
+     * The MIL-STD-2525 IFF/SIF modifier field ID. Indicates an IFF/SIF identification mode or code. See MIL-STD-2525
+     * section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the
+     * corresponding value must be a string containing up to 5 characters.
+     */
+    final String IFF_SIF = "P";
+
+    /**
+     * The MIL-STD-2525 Installation modifier field ID. Indicates the installation code associated with a MIL-STD-2525
+     * symbol (SIDC positions 11-12). When a marked as an installation, a symbol's represented object is a military camp
+     * or base. See MIL-STD-2525 section 5.3.4.5 (page 28). When used as a key, the corresponding value must be one of
+     * the following:
      * <p/>
      * <ul> <li>INSTALLATION_NORMAL</li> <li>INSTALLATION_FEINT_DUMMY</li>  </ul>
      * <p/>
@@ -489,7 +565,7 @@ public interface SymbologyConstants
      * section E.5.2.1.f (page 991) and table E-II (pages 992-994)</li> <li>Emergency Management - section G.5.5.5 (page
      * 1030) and table G-II (page 1032)</li> </ul>
      */
-    final String INSTALLATION = "gov.nasa.worldwind.symbology.Installation";
+    final String INSTALLATION = "AC";
     /**
      * The MIL-STD-2525 Normal (as opposed to Feint/Dummy) installation code. See MIL-STD-2525 section 5.3.4.5 (page
      * 28).
@@ -504,11 +580,11 @@ public interface SymbologyConstants
     );
 
     /**
-     * Symbol modifier key indicating the equipment mobility code associated with a MIL-STD-2525 symbol (SIDC positions
-     * 11-12). A symbol's mobility defines the mobility feature of the represented object, other than mobility intrinsic
-     * to the represented object. Mobility codes are currently used only to describe mobility features of equipment. See
-     * MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27). When used as a key, the corresponding value
-     * must be one of the following:
+     * The MIL-STD-2525 Mobility Indicator modifier field ID. Indicates the equipment mobility code associated with a
+     * MIL-STD-2525 symbol (SIDC positions 11-12). A symbol's mobility defines the mobility feature of the represented
+     * object, other than mobility intrinsic to the represented object. Mobility codes are currently used only to
+     * describe mobility features of equipment. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI (pages 26-27).
+     * When used as a key, the corresponding value must be one of the following:
      * <p/>
      * <ul> <li>MOBILITY_WHEELED</li> <li>MOBILITY_CROSS_COUNTRY</li> <li>MOBILITY_TRACKED</li>
      * <li>MOBILITY_WHEELED_TRACKED_COMBINATION</li> <li>MOBILITY_TOWED</li> <li>MOBILITY_RAIL</li>
@@ -521,7 +597,7 @@ public interface SymbologyConstants
      * <ul> <li>Warfighting - section A.5.2.1.f (page 51) and table A-II (pages 52-54)</li> <li>Emergency Management -
      * section G.5.5.5 (page 1030) and table G-II (page 1032)</li> </ul>
      */
-    final String MOBILITY = "gov.nasa.worldwind.symbology.Mobility";
+    final String MOBILITY = "R";
     /**
      * The MIL-STD-2525 Amphibious Mobility mobility code. See MIL-STD-2525 section 5.3.4.3 (page 26) and table VI
      * (pages 26-27).
@@ -638,6 +714,22 @@ public interface SymbologyConstants
     );
 
     /**
+     * The MIL-STD-2525 Quantity modifier field ID. Indicates the number of items associated with a MIL-STD-2525 symbol.
+     * See MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a
+     * key, the corresponding value must be a numeric value indicating the number of items present.
+     */
+    final String QUANTITY = "C";
+
+    /**
+     * The MIL-STD-2525 Reinforced or Reduced modifier field ID. Indicates whether a unit is reinforced or reduced, or
+     * both. When used as a key, the corresponding value must be one of the following strings:
+     * <p/>
+     * <ul> <li>"R" to indicate that the unit is reinforced</li> <li>"D" to indicate that the unit is reduced</li>
+     * <li>"RD" to indicate that the unit is reinforced and reduced</li> </ul>
+     */
+    final String REINFORCED_REDUCED = "F";
+
+    /**
      * Indicates the scheme code associated with a MIL-STD-2525 symbol (SIDC position 1). A symbol's scheme defines the
      * specific MIL-STD-2525 symbology set that it belongs to. The scheme codes are defined in each appendix of the
      * MIL-STD-2525 specification. When used as a key, the corresponding value must be one of the following:
@@ -689,6 +781,63 @@ public interface SymbologyConstants
      * <code>true</code> if the symbol's icon should be displayed, and <code>false</code> otherwise.
      */
     final String SHOW_ICON = "gov.nasa.worldwind.symbology.ShowIcon";
+
+    /**
+     * Indicates whether to display a MIL-STD-2525 symbol's location. See MIL-STD-2525 section 5.3.4.10 (page 29), table
+     * IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the corresponding value must be a boolean
+     * value. The value is <code>true</code> if the symbol's location should be displayed, and <code>false</code>
+     * otherwise.
+     * <p/>
+     * /** The MIL-STD-2525 Additional Information modifier field ID.  The meaning of this field is implementation
+     * specific.
+     */
+    final String SHOW_LOCATION = "gov.nasa.worldwind.symbology.ShowLocation";
+
+    /**
+     * The MIL-STD-2525 Location modifier field ID. Indicates a symbol's location in any desired display format. See
+     * MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key,
+     * the corresponding value must be a string containing up to 19 characters.
+     */
+    final String LOCATION = "Y";
+
+    /**
+     * The MIL-STD-2525 Signature Equipment modifier field ID. Indicates detectable electronic signatures from hostile
+     * equipment. See MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When
+     * used as a key, the corresponding value must be the string "!".
+     */
+    final String SIGNATURE_EQUIPMENT = "L";
+
+    /**
+     * The MIL-STD-2525 Special C2 Headquarters modifier field ID. Indicates a the name of a special Command and Control
+     * Headquarters. The name is displayed inside the symbol's frame. See MIL-STD-2525 section 5.3.4.10 (page 29), table
+     * IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the corresponding value must be a string
+     * containing up to 9 characters.
+     */
+    final String SPECIAL_C2_HEADQUARTERS = "AA";
+
+    /**
+     * The MIL-STD-2525 Speed modifier field ID. Indicates a symbol's velocity as defined in MIL-STD-6040. See
+     * MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key,
+     * the corresponding value must be a string containing up to 8 characters.
+     */
+    final String SPEED = "Z";
+
+    /**
+     * The MIL-STD-2525 Speed Leader modifier field ID. Indicates the speed and direction of movement or intended
+     * movement of an object. See MIL-STD-2525 section 5.3.4.11.3 (page 30-31), table IV (pages 22-24) and table XIV
+     * (pages 46-47). When used as a key, the corresponding value must be a numeric value indicating an amount to scale
+     * the Direction of Movement modifier line as a ratio of the line's original length. The specified scale is a
+     * floating point number greater than 0.0: values less than 1.0 make the line shorter, while values greater than 1.0
+     * make the line longer.
+     */
+    final String SPEED_LEADER_SCALE = "AJ";
+
+    /**
+     * The MIL-STD-2525 Quantity modifier field ID. The meaning of this field is implementation specific. See
+     * MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key,
+     * the corresponding value must be a string containing up to 20 characters.
+     */
+    final String STAFF_COMMENTS = "G";
 
     /**
      * Indicates the standard identity code associated with a MIL-STD-2525 symbol (SIDC position 2). A symbol's standard
@@ -800,12 +949,12 @@ public interface SymbologyConstants
     );
 
     /**
-     * Indicates the status code associated with a MIL-STD-2525 symbol (SIDC position 4). A symbol's status defines
-     * whether the represented object exists at the time the symbol was generated, or is anticipated to exist in the
-     * future. Additionally, a symbol's status can define its operational condition. See MIL-STD-2525C section 3.2.41
-     * (page 10), section 5.3.1.4 (pages 17-18), and tables III and III-2 (pages 18-17). The recognized values depend on
-     * the specific MIL-STD-2525 symbology scheme the symbol belongs to, and are defined in each appendix of the
-     * MIL-STD-2525C specification:
+     * The MIL-STD-2525 Status / Operational Condition modifier field ID. Indicates the status code associated with a
+     * MIL-STD-2525 symbol (SIDC position 4). A symbol's status defines whether the represented object exists at the
+     * time the symbol was generated, or is anticipated to exist in the future. Additionally, a symbol's status can
+     * define its operational condition. See MIL-STD-2525C section 3.2.41 (page 10), section 5.3.1.4 (pages 17-18), and
+     * tables III and III-2 (pages 18-17). The recognized values depend on the specific MIL-STD-2525 symbology scheme
+     * the symbol belongs to, and are defined in each appendix of the MIL-STD-2525C specification:
      * <p/>
      * <strong>Warfighting, Signals Intelligence, Stability Operations</strong> <br/> See MIL-STD-2525C section
      * A.5.2.1.d (page 51), table A-I (page 51), section D.5.2.1.d (page 964), table D-I (page 964), section E.5.2.1.d
@@ -823,7 +972,7 @@ public interface SymbologyConstants
      * <p/>
      * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> </ul>
      */
-    final String STATUS = "gov.nasa.worldwind.symbology.Status";
+    final String STATUS = "AL";
     /**
      * The MIL-STD-2525 Anticipated/Planned status code. Indicates a symbol who's represented object is anticipated to
      * exist at the symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
@@ -916,16 +1065,32 @@ public interface SymbologyConstants
     final String SYMBOL_MODIFIER = "gov.nasa.worldwind.symbology.SymbolModifier";
 
     /**
-     * Symbol modifier key indicating whether a MIL-STD-2525 symbol's represented object is a task force. When a marked
-     * as a task force, a symbol's graphic is changed to include a bracket above its echelon. See MIL-STD-2525 section
-     * 5.3.4.6 (page 28). When used as a key, the corresponding value must be a boolean value. The value is
-     * <code>true</code> if the symbol's represented object is a task force, and <code>false</code> otherwise.
+     * The MIL-STD-2525 Task Force Indicator modifier field ID. Indicates whether a MIL-STD-2525 symbol's represented
+     * object is a task force. When a marked as a task force, a symbol's graphic is changed to include a bracket above
+     * its echelon. See MIL-STD-2525 section 5.3.4.6 (page 28). When used as a key, the corresponding value must be a
+     * boolean value. The value is <code>true</code> if the symbol's represented object is a task force, and
+     * <code>false</code> otherwise.
      * <p/>
      * The following symbology schemes support the task force modifier:
      * <p/>
      * <ul> <li>Warfighting</li> <li>Stability Operations</li> </ul>
      */
-    final String TASK_FORCE = "gov.nasa.worldwind.symbology.TaskForce";
+    final String TASK_FORCE = "D";
+
+    /**
+     * The MIL-STD-2525 Type modifier field ID. Indicates types of equipment. See MIL-STD-2525 section 5.3.4.1 (page
+     * 25), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the corresponding value must be a
+     * string containing up to 24 characters.
+     */
+    final String TYPE = "V";
+
+    /**
+     * The MIL-STD-2525 Unique Designation modifier field ID. Uniquely identifies a particular symbol or track number.
+     * Identifies acquisitions number when used with SIGINT symbology. See MIL-STD-2525 section 5.3.4.10 (page 29),
+     * table IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the corresponding value must be a string
+     * containing up to 21 characters.
+     */
+    final String UNIQUE_DESIGNATION = "T";
 
     /**
      * The MIL-STD-2525 feint/dummy units and equipment symbol modifier code. Indicates a symbol that is a feint/dummy.
