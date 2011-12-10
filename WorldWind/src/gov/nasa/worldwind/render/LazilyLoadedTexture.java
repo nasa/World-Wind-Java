@@ -252,7 +252,19 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
      */
     protected Texture getTexture(DrawContext dc)
     {
-        return this.getImageSource() != null ? dc.getTextureCache().getTexture(this.getImageSource()) : null;
+        if (this.getImageSource() == null)
+            return null;
+
+        Texture texture = dc.getTextureCache().getTexture(this.getImageSource());
+
+        if (this.width == null && texture != null)
+        {
+            this.width = texture.getWidth();
+            this.height = texture.getHeight();
+            this.texCoords = texture.getImageTexCoords();
+        }
+
+        return texture;
     }
 
     /**
@@ -366,15 +378,28 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
         if (WorldWind.getTaskService().isFull())
             return null;
 
-        RequestTask task = new RequestTask(this);
+        Runnable task = this.createRequestTask();
         if (WorldWind.getTaskService().contains(task))
             return null;
 
-        this.listener = dc.getCurrentLayer();
+        // Use either the current layer or the layer list as the listener to notify when the request completes. The
+        // latter is used when the image source is requested during ordered rendering and the current layer is null.
+        this.listener = dc.getCurrentLayer() != null ? dc.getCurrentLayer() : dc.getLayers();
 
         WorldWind.getTaskService().addTask(task);
 
         return null;
+    }
+
+    /**
+     * Returns an object that implements the Runnable interface, and who's <code>run</code> method retrieves and loads
+     * this texture's image source.
+     *
+     * @return a new request task that retrieves and loads this texture's image source.
+     */
+    protected Runnable createRequestTask()
+    {
+        return new RequestTask(this);
     }
 
     /**
@@ -507,7 +532,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
         }
     }
 
-    /** Attempts to find this shape's model file locally, and if that fails attempts to find it remotely. */
+    /** Attempts to find this texture's image file locally, and if that fails attempts to find it remotely. */
     protected static class RequestTask implements Runnable
     {
         /** The BasicWWTexture associated with this request. */
@@ -542,7 +567,6 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
                 if (this.wwTexture.loadTextureData(fileUrl))
                 {
                     this.wwTexture.notifyTextureLoaded();
-                    return;
                 }
             }
         }
@@ -626,6 +650,7 @@ public class LazilyLoadedTexture extends AVListImpl implements WWTexture
 
         LazilyLoadedTexture that = (LazilyLoadedTexture) o;
 
+        //noinspection RedundantIfStatement
         if (imageSource != null ? !imageSource.equals(that.imageSource) : that.imageSource != null)
             return false;
 
