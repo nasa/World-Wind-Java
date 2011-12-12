@@ -3,6 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
+
 package gov.nasa.worldwind.util;
 
 import com.sun.opengl.util.texture.TextureCoords;
@@ -17,12 +18,13 @@ import java.beans.*;
 import java.net.URL;
 
 /**
- * Represents a texture composed of a single element of a {@link TextureAtlas}.
+ * Represents a texture defined by a sub-image within a {@link TextureAtlas}.
  * <p/>
- * TextureAtlasElement performs lazy retrieval and loading, attempting to load the image source and add it to the atlas
- * ony when the {@link #load(gov.nasa.worldwind.render.DrawContext)} method is called. If the image source is a {@link
- * BufferedImage} it is added to the atlas immediately when <code>load</code> is called. If the image source is a local
- * file or a remote stream (URL), retrieval and loading is performed on a separate thread from the EDT.
+ * TextureAtlasElement performs lazy retrieval and loading of its image source into its texture atlas. This loads the
+ * image source and adds it to the atlas only when the {@link #load(gov.nasa.worldwind.render.DrawContext)} method is
+ * called. If the image source is a {@link BufferedImage} it is added to the atlas immediately when <code>load</code> is
+ * called. If the image source is a local file or a remote stream (URL), retrieval and loading is performed on a
+ * separate thread from the EDT.
  *
  * @author dcollins
  * @version $Id$
@@ -49,8 +51,8 @@ public class TextureAtlasElement implements Disposable
     /**
      * The object to notify when the image is eventually loaded in memory. This is either the current layer or the layer
      * list at the time the image source is requested. The latter is used when the image source is requested during
-     * ordered rendering mode, and the current layer is <code>null</code>. This set to <code>null</code> once the image
-     * is loaded into the texture atlas.
+     * ordered rendering mode, in which case the current layer is <code>null</code>. This set to <code>null</code> once
+     * the image is loaded into the texture atlas.
      */
     protected PropertyChangeListener listener;
 
@@ -144,7 +146,7 @@ public class TextureAtlasElement implements Disposable
      * calling this method to ensure that the element is loaded into its texture atlas.
      *
      * @return the image dimensions associated with this texture atlas element, or <code>null</code> if this texture
-     *         atlas element has not yet loaded, or has failed to load.
+     *         atlas element has not yet loaded or has failed to load.
      *
      * @see #load(gov.nasa.worldwind.render.DrawContext)
      */
@@ -156,9 +158,13 @@ public class TextureAtlasElement implements Disposable
     /**
      * Returns the OpenGL texture coordinates associated this texture atlas element. Always call <code>load</code>
      * before calling this method to ensure that the element is loaded into its texture atlas.
+     * <p/>
+     * The returned texture coordinates can change any time an element is added or removed from this element's texture
+     * atlas, and therefore should not be cached unless the caller has explicit knowledge of when this element's texture
+     * atlas has changed.
      *
      * @return the OpenGL texture coordinates corresponding this texture atlas element, or <code>null</code> if this
-     *         texture atlas element has not yet loaded, or has failed to load.
+     *         texture atlas element has not yet loaded or has failed to load.
      *
      * @see #load(gov.nasa.worldwind.render.DrawContext)
      */
@@ -178,14 +184,14 @@ public class TextureAtlasElement implements Disposable
     }
 
     /**
-     * Loads this element's image and adds it to the texture atlas once the image is loaded. If the image is not yet
-     * loaded this initiates image source retrieval in a separate thread. This does nothing if the texture atlas already
-     * contains this element, or if this element's image failed to load in an earlier attempt.
+     * Loads this element's image and adds it to the texture atlas. If the image is not yet loaded this initiates image
+     * source retrieval in a separate thread. This does nothing if the texture atlas already contains this element, or
+     * if this element's image failed to load in an earlier attempt.
      *
      * @param dc the current draw context. Used to generate a repaint event when the image source retrieval completes.
      *
-     * @return <code>true</code> if this element's image is loaded into the texture atlas, and <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if this element's image is successfully loaded and added to the texture atlas,
+     *         otherwise <code>false</code>.
      */
     public boolean load(DrawContext dc)
     {
@@ -209,7 +215,10 @@ public class TextureAtlasElement implements Disposable
         return this.requestImage(dc);
     }
 
-    /** Removes this element's image from its texture atlas, if necessary. */
+    /**
+     * Removes this element's image from its texture atlas and disposes of this element's image resource. This does
+     * nothing if this element's image has not yet been loaded.
+     */
     public void dispose()
     {
         if (this.getTextureAtlas().contains(this.getImageSource()))
@@ -224,8 +233,8 @@ public class TextureAtlasElement implements Disposable
      *
      * @param o the object to test.
      *
-     * @return <code>true</code> if the specified object is a TextureAtlasElement, and its image source is equivalent to
-     *         this element's image source.
+     * @return <code>true</code> if the specified object is a TextureAtlasElement and its image source is equivalent to
+     *         this element's image source, otherwise <code>false</code>.
      */
     @Override
     public boolean equals(Object o)
@@ -294,10 +303,10 @@ public class TextureAtlasElement implements Disposable
 
     /**
      * Adds this element's image source into its texture atlas. This throws an exception if this element's image source
-     * is not loaded.
+     * is not loaded and stored in the <code>image</code> property.
      *
-     * @return <code>true</code> if this element's image has been added to the texture atlas, and <code>false</code>
-     *         otherwise.
+     * @return <code>true</code> if this element's image is successfully added to the texture atlas, and
+     *         <code>false</code> otherwise.
      */
     protected boolean addAtlasImage()
     {
@@ -392,8 +401,8 @@ public class TextureAtlasElement implements Disposable
     }
 
     /**
-     * RequestTask is an  of the Runnable interface who's <code>run</code> method retrieves and loads this element's
-     * image source.
+     * RequestTask is an implementation of the Runnable interface who's <code>run</code> method retrieves and loads this
+     * element's image source.
      */
     protected static class RequestTask implements Runnable
     {

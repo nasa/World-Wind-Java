@@ -3,6 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
+
 package gov.nasa.worldwind.util;
 
 import com.sun.opengl.impl.packrect.*;
@@ -58,7 +59,7 @@ public class TextureAtlas
          * {@inheritDoc}
          * <p/>
          * Returns <code>false</code>, indicating that the rectangle packer should just expand. When configured to do
-         * so, texture atlas evicts old elements in <code>additionFailed</code>, when this texture atlas is full and the
+         * so, texture atlas evicts old elements in <code>additionFailed</code> if this texture atlas is full and the
          * addition would otherwise fail.
          */
         public boolean preExpand(Rect cause, int attemptNumber)
@@ -175,6 +176,8 @@ public class TextureAtlas
          *
          * @return -1, 0, or 1 if this entry's last used time is earlier than, the same as, or later than the specified
          *         entry's last used time.
+         *
+         * @throws IllegalArgumentException if the specified entry is <code>null</code>.
          */
         public int compareTo(Entry that)
         {
@@ -240,7 +243,7 @@ public class TextureAtlas
     protected Map<Object, Entry> entryMap = new HashMap<Object, Entry>();
     /**
      * Indicates the rectangle within this texture atlas' backing image that is currently out-of-sync with its
-     * corresponding OpenGL texture. The dirty rectangle is <code>null</code> when this texture atlas' backing images is
+     * corresponding OpenGL texture. The dirty rectangle is <code>null</code> when this texture atlas' backing image is
      * synchronized with its OpenGL texture. Initially <code>null</code>.
      */
     protected Rectangle dirtyRect;
@@ -263,13 +266,13 @@ public class TextureAtlas
     /**
      * Queue of texture keys corresponding to disposed backing images. These keys are disposed during the next call to
      * <code>bind</code>. While disposed backing textures would eventually be evicted by the GPU resource cache,
-     * explicitly disposing them avoids polluting the GPU resource cache with orphaned textures that correspond only to
+     * explicitly disposing them avoids polluting the GPU resource cache with orphaned textures that are used only by
      * this texture atlas.
      */
     protected Queue<Object> disposedTextureKeys = new ArrayDeque<Object>();
 
     /**
-     * Constructs a texture atlas with the specified initial and maximum dimensions. The dimensions must be greater than
+     * Constructs a texture atlas with the specified initial and maximum dimensions. All dimensions must be greater than
      * zero, and the maximum dimensions must be greater than or equal to the initial dimensions. The constructed texture
      * atlas generates mip-maps and applies an anisotropic filter to each element.
      *
@@ -289,7 +292,7 @@ public class TextureAtlas
     }
 
     /**
-     * Constructs a texture atlas with the specified initial and maximum dimensions. The dimensions must be greater than
+     * Constructs a texture atlas with the specified initial and maximum dimensions. All dimensions must be greater than
      * zero, and the maximum dimensions must be greater than or equal to the initial dimensions. This constructor
      * enables specification of whether the texture atlas generates mip-maps and applies an anisotropic filter to each
      * element.
@@ -490,7 +493,7 @@ public class TextureAtlas
      * @param key   an object used to reference the image.
      * @param image the image to add.
      *
-     * @throws IllegalArgumentException if either the key or image is <code>null</code>, if the image dimensions are
+     * @throws IllegalArgumentException if either the key or image is <code>null</code>, or if the image dimensions are
      *                                  greater than this texture atlas' maximum dimensions.
      * @throws WWRuntimeException       if this texture atlas is too full to fit the image in its layout.
      */
@@ -685,7 +688,10 @@ public class TextureAtlas
 
     /**
      * Returns the OpenGL texture coordinates associated with an element in this texture atlas. This returns
-     * <code>null</code> this texture atlas does not contain the element.
+     * <code>null</code> if this texture atlas does not contain the element.
+     * <p/>
+     * The returned texture coordinates can change any time an element is added or removed from this texture atlas, and
+     * therefore should not be cached unless the caller has explicit knowledge of when this texture atlas has changed.
      *
      * @param key the key which the element is referenced by.
      *
@@ -1102,8 +1108,8 @@ public class TextureAtlas
     /**
      * Removes textures corresponding to this texture atlas' disposed backing images from the draw context's GPU
      * resource cache. While disposed backing textures would eventually be evicted by the GPU resource cache, explicitly
-     * disposing them avoids polluting the GPU resource cache with orphaned textures that correspond only to this
-     * texture atlas.
+     * removing them avoids polluting the GPU resource cache with orphaned textures that are used only by this texture
+     * atlas.
      *
      * @param dc the draw context containing the GPU resource cache to remove textures from.
      */
@@ -1220,8 +1226,9 @@ public class TextureAtlas
     }
 
     /**
-     * Specifies the OpenGL texture parameters associated with this texture atlas' OpenGL texture. This is always called
-     * when the OpenGL texture is bound to the draw context's <code>GLContext</code>.
+     * Specifies the OpenGL texture parameters associated with this texture atlas' OpenGL texture. Called after updating
+     * this texture atlas' OpenGL texture, when the OpenGL texture is bound to the draw context's
+     * <code>GLContext</code>.
      *
      * @param dc the current draw context.
      */
