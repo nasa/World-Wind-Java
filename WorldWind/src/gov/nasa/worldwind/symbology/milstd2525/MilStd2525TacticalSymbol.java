@@ -655,7 +655,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         if (this.mustDrawGraphicModifiers(dc) && this.mustDrawDirectionOfMovement(dc)
             && this.directionOfMovementPoints != null)
         {
-            this.addToScreenRect(this.directionOfMovementPoints, 2);
+            this.addVerticesToScreenRect(this.directionOfMovementPoints, 2);
         }
     }
 

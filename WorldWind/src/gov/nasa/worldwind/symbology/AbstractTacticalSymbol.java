@@ -1157,32 +1157,19 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     {
         this.screenRect = null;
 
-        if (this.mustDrawIcon(dc) && this.iconVertices != null)
-            this.addToScreenRect(this.iconVertices, 4);
+        if (this.mustDrawIcon(dc) && this.iconTexture != null && this.iconTexture.frameRect != null)
+        {
+            this.screenRect = new Rectangle(this.iconTexture.frameRect);
+        }
 
         if (this.mustDrawGraphicModifiers(dc) && this.modifierVertices != null)
-            this.addToScreenRect(this.modifierVertices, 4);
-    }
-
-    protected void addToScreenRect(FloatBuffer points, int stride)
-    {
-        for (int i = 0; i < points.remaining(); i += stride)
         {
-            int x = (int) points.get(i);
-            int y = (int) points.get(i + 1);
-
-            if (this.screenRect == null)
-                this.screenRect = new Rectangle(x, y);
-            else
-                this.screenRect.add(x, y);
+            this.addVerticesToScreenRect(this.modifierVertices, 4);
         }
     }
 
     protected void computeOffset(DrawContext dc)
     {
-        this.dx = 0;
-        this.dy = 0;
-
         if (this.iconTexture != null && this.iconTexture.frameRect != null && this.screenRect != null
             && this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
         {
@@ -1193,6 +1180,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         {
             this.dy = -this.iconTexture.frameRect.getCenterY();
             this.dx = -this.iconTexture.frameRect.getCenterX();
+        }
+        else
+        {
+            this.dx = 0;
+            this.dy = 0;
         }
     }
 
@@ -1257,8 +1249,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         else if (verts.remaining() < 16)
         {
             FloatBuffer newBuffer = BufferUtil.newFloatBuffer(verts.capacity() + 16);
-            verts.rewind(); //  Rewind the vertex buffer so that all of its contents is copied into the new buffer.
-            newBuffer.put(verts);
+            verts.flip(); // Flip the vertex buffer so the elements between 0 and its current position are copied.
+            newBuffer.put(verts); // Copy the current data into the new buffer, and advances new buffer's position.
             verts = newBuffer;
         }
 
@@ -1272,6 +1264,20 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         verts.put(texCoords.left()).put(texCoords.top());
 
         return verts;
+    }
+
+    protected void addVerticesToScreenRect(FloatBuffer verts, int stride)
+    {
+        for (int i = verts.position(); i < verts.remaining(); i += stride)
+        {
+            int x = (int) verts.get(i);
+            int y = (int) verts.get(i + 1);
+
+            if (this.screenRect == null)
+                this.screenRect = new Rectangle(x, y, 0, 0);
+            else
+                this.screenRect.add(x, y);
+        }
     }
 
     protected PickedObject createPickedObject(int colorCode)
