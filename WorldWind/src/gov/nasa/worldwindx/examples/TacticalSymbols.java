@@ -59,6 +59,7 @@ public class TacticalSymbols extends ApplicationTemplate
             // with the appropriate key and value.
             TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSG",
                 Position.fromDegrees(32.4520, 63.44553, 3000));
+            airSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
             airSymbol.setAttributes(this.sharedAttrs);
             airSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
@@ -74,6 +75,7 @@ public class TacticalSymbols extends ApplicationTemplate
             // line segment. In this example, we've scaled the line to 50% of its original length.
             TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS-----",
                 Position.fromDegrees(32.4014, 63.3894, 0));
+            groundSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
             groundSymbol.setAttributes(this.sharedAttrs);
             groundSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             groundSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(90));
@@ -88,6 +90,7 @@ public class TacticalSymbols extends ApplicationTemplate
             // TacticalSymbol.setModifier with the appropriate keys and values.
             TacticalSymbol machineGunSymbol = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
                 Position.fromDegrees(32.3902, 63.4161, 0));
+            machineGunSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly Heavy Machine Gun");
             machineGunSymbol.setAttributes(this.sharedAttrs);
             machineGunSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             machineGunSymbol.setModifier(SymbologyConstants.QUANTITY, 200);
