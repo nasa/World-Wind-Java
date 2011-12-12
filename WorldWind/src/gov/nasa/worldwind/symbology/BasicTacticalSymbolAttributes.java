@@ -6,7 +6,6 @@
 package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.render.Material;
-import gov.nasa.worldwind.symbology.TacticalSymbolAttributes;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -26,7 +25,7 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
     protected Double scale;
     /**
      * Indicates the symbol opacity as a floating point number between 0.0 and 1.0 (inclusive), or <code>null</code> to
-     * use the symbol's default scale. Initially <code>null</code>.,
+     * use the symbol's default scale. Initially <code>null</code>.
      */
     protected Double opacity;
     /**

@@ -349,7 +349,7 @@ public interface SymbologyConstants
 
     /**
      * The MIL-STD-2525 Date Time Group (DTG) modifier field ID. Displays a time in the DTG format "DDHHMMSSZMONYYYY" or
-     * "O/O" for on order.. See MIL-STD-2525 section 5.5.2.6 (page 41-42), table IV (pages 22-24) and table XIV (pages
+     * "O/O" for on order. See MIL-STD-2525 section 5.5.2.6 (page 41-42), table IV (pages 22-24) and table XIV (pages
      * 46-47). When used as a key, the corresponding value must be a string containing up to 16 characters.
      */
     final String DATE_TIME_GROUP = "W";
@@ -386,7 +386,7 @@ public interface SymbologyConstants
      */
     final String ECHELON_ARMY = "K";
     /**
-     * The MIL-STD-2525 Army/Group/Front echelon code. See MIL-STD-2525 section 5.3.4.2 (page 25), section 5.5.2.2 (page
+     * The MIL-STD-2525 Army Group/Front echelon code. See MIL-STD-2525 section 5.3.4.2 (page 25), section 5.5.2.2 (page
      * 40), and table V (pages 25-26).
      */
     final String ECHELON_ARMY_GROUP_FRONT = "L";
@@ -578,6 +578,13 @@ public interface SymbologyConstants
         INSTALLATION_NORMAL,
         INSTALLATION_FEINT_DUMMY
     );
+
+    /**
+     * The MIL-STD-2525 Location modifier field ID. Indicates a symbol's location in any desired display format. See
+     * MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key,
+     * the corresponding value must be a string containing up to 19 characters.
+     */
+    final String LOCATION = "Y";
 
     /**
      * The MIL-STD-2525 Mobility Indicator modifier field ID. Indicates the equipment mobility code associated with a
@@ -787,18 +794,8 @@ public interface SymbologyConstants
      * IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the corresponding value must be a boolean
      * value. The value is <code>true</code> if the symbol's location should be displayed, and <code>false</code>
      * otherwise.
-     * <p/>
-     * /** The MIL-STD-2525 Additional Information modifier field ID.  The meaning of this field is implementation
-     * specific.
      */
     final String SHOW_LOCATION = "gov.nasa.worldwind.symbology.ShowLocation";
-
-    /**
-     * The MIL-STD-2525 Location modifier field ID. Indicates a symbol's location in any desired display format. See
-     * MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key,
-     * the corresponding value must be a string containing up to 19 characters.
-     */
-    final String LOCATION = "Y";
 
     /**
      * The MIL-STD-2525 Signature Equipment modifier field ID. Indicates detectable electronic signatures from hostile
@@ -833,7 +830,7 @@ public interface SymbologyConstants
     final String SPEED_LEADER_SCALE = "AJ";
 
     /**
-     * The MIL-STD-2525 Quantity modifier field ID. The meaning of this field is implementation specific. See
+     * The MIL-STD-2525 Staff Comments modifier field ID. The meaning of this field is implementation specific. See
      * MIL-STD-2525 section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key,
      * the corresponding value must be a string containing up to 20 characters.
      */

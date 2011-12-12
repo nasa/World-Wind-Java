@@ -3,6 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
+
 package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.WWObject;
@@ -236,9 +237,9 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
     void setModifier(String modifier, Object value);
 
     /**
-     * Returns this shape's normal (as opposed to highlight) attributes.
+     * Returns this symbol's normal (as opposed to highlight) attributes.
      *
-     * @return this shape's normal attributes. May be <code>null</code>, indicating that the default highlight
+     * @return this symbol's normal attributes. May be <code>null</code>, indicating that the default highlight
      *         attributes are used.
      */
     TacticalSymbolAttributes getAttributes();
@@ -251,15 +252,15 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
     void setAttributes(TacticalSymbolAttributes normalAttrs);
 
     /**
-     * Returns this shape's highlight attributes.
+     * Returns this symbol's highlight attributes.
      *
-     * @return this shape's highlight attributes. May be <code>null</code>, indicating that the default attributes are
+     * @return this symbol's highlight attributes. May be <code>null</code>, indicating that the default attributes are
      *         used.
      */
     TacticalSymbolAttributes getHighlightAttributes();
 
     /**
-     * Specifies this shape's highlight attributes.
+     * Specifies this symbol's highlight attributes.
      *
      * @param highlightAttrs the highlight attributes. May be <code>null</code>, in which case default highlight
      *                       attributes are used.
