@@ -3,6 +3,7 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
+
 package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.Configuration;
@@ -12,6 +13,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
+import gov.nasa.worldwind.util.WWUtil;
 
 import javax.swing.*;
 import javax.swing.Box;
@@ -20,7 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Demonstrates how to create and render MIL-STD-2525 tactical symbols. See the <a title="Symbology Usage Guide"
+ * Demonstrates how to create and render World Wind tactical symbols. See the <a title="Symbology Usage Guide"
  * href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Usage Guide</a> for more information on
  * symbology support in World Wind.
  *
@@ -37,32 +39,39 @@ public class TacticalSymbols extends ApplicationTemplate
 
         public AppFrame()
         {
-            // Create a renderable layer to display the tactical symbol. This example adds only two symbols, but many
+            // Create a renderable layer to display the tactical symbols. This example adds only three symbols, but many
             // symbols can be added to a single layer. Note that tactical symbols and tactical graphics can be combined
-            // in a single layer.
+            // in the same RenderableLayer, along with any World Wind object implementing the Renderable interface.
             this.symbolLayer = new RenderableLayer();
             this.symbolLayer.setName("Tactical Symbols");
 
-            // Create attribute bundles that are shared by all tactical symbols. Changes to these attribute bundles are
-            // reflected in all symbols.
+            // Create normal and highlight attribute bundles that are shared by all tactical symbols. Changes to these
+            // attribute bundles are reflected in all symbols.
             this.sharedAttrs = new BasicTacticalSymbolAttributes();
             this.sharedHighlightAttrs = new BasicTacticalSymbolAttributes();
 
             // Create an air tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies a
             // MIL-STD-2525 friendly Special Operations Forces Drone Aircraft. MilStd2525TacticalSymbol automatically
-            // sets the altitude mode to WorldWind.ABSOLUTE.
-            TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM-------",
+            // sets the altitude mode to WorldWind.ABSOLUTE. We've configured this symbol's modifiers to display the
+            // represented object's Echelon, Task Force Indicator, Feint/Dummy Indicator, and Direction of Movement.
+            // The Echelon, Task Force Indicator, and Feint/Dummy Indicator are specified in characters 11-12 of the
+            // symbol identifier ("GI"). The Direction of Movement is specified by calling TacticalSymbol.setModifier
+            // with the appropriate key and value.
+            TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSG",
                 Position.fromDegrees(32.4520, 63.44553, 3000));
             airSymbol.setAttributes(this.sharedAttrs);
             airSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
-            airSymbol.setModifier(SymbologyConstants.ECHELON, SymbologyConstants.ECHELON_DIVISION);
-            airSymbol.setModifier(SymbologyConstants.TASK_FORCE, Boolean.TRUE);
             airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
             this.symbolLayer.addRenderable(airSymbol);
 
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies
-            // multiple hostile Self-Propelled Rocket Launchers. MilStd2525TacticalSymbol automatically sets the
-            // altitude mode to WorldWind.CLAMP_TO_GROUND.
+            // multiple hostile Self-Propelled Rocket Launchers with a destroyed state. MilStd2525TacticalSymbol
+            // automatically sets the altitude mode to WorldWind.CLAMP_TO_GROUND. We've configured this symbol's
+            // modifiers to display the represented object's Operational Condition, Direction of Movement and Speed
+            // Leader. The Operational Condition is specified in character 4 of the symbol identifier ("X"). The
+            // Direction of Movement and Speed Leader are specified by calling TacticalSymbol.setModifier with the
+            // appropriate key and value.The Speed Leader modifier has the effect of scaling the Direction of Movement's
+            // line segment. In this example, we've scaled the line to 50% of its original length.
             TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS-----",
                 Position.fromDegrees(32.4014, 63.3894, 0));
             groundSymbol.setAttributes(this.sharedAttrs);
@@ -71,14 +80,16 @@ public class TacticalSymbols extends ApplicationTemplate
             groundSymbol.setModifier(SymbologyConstants.SPEED_LEADER_SCALE, 0.5);
             this.symbolLayer.addRenderable(groundSymbol);
 
-            // Create a heavy US machine gun tactical symbol with a friendly frame. This symbol is taken from the
-            // MIL-STD-2525C specification section 5.9.3 (page 49).
+            // Create a ground tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies a
+            // MIL-STD-2525 friendly Heavy Machine Gun that's currently mobilized via rail. This symbol is taken from
+            // the MIL-STD-2525C specification, section 5.9.3 (page 49). We've configured this symbol's modifiers to
+            // display the Mobility Indicator, and six text modifiers. The Mobility Indicator is specified in characters
+            // 11-12 of the symbol identifier ("MT"). The text modifiers are specified by calling
+            // TacticalSymbol.setModifier with the appropriate keys and values.
             TacticalSymbol machineGunSymbol = new MilStd2525TacticalSymbol("SFGPEWRH--MTUSG",
                 Position.fromDegrees(32.3902, 63.4161, 0));
             machineGunSymbol.setAttributes(this.sharedAttrs);
             machineGunSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
-            machineGunSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(300));
-            machineGunSymbol.setModifier(SymbologyConstants.SPEED_LEADER_SCALE, 0.5);
             machineGunSymbol.setModifier(SymbologyConstants.QUANTITY, 200);
             machineGunSymbol.setModifier(SymbologyConstants.STAFF_COMMENTS, "FOR REINFORCEMENTS");
             machineGunSymbol.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, "ADDED SUPPORT FOR JJ");
@@ -95,6 +106,13 @@ public class TacticalSymbols extends ApplicationTemplate
 
             // Create a Swing control panel that provides user control over the symbol's appearance.
             this.addSymbolControls();
+
+            // Size the World Window to provide enough screen space for the symbols and center the World Window on the
+            // screen.
+            Dimension size = new Dimension(1200, 800);
+            this.setPreferredSize(size);
+            this.pack();
+            WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
 
         protected void addSymbolControls()
@@ -102,17 +120,21 @@ public class TacticalSymbols extends ApplicationTemplate
             Box box = Box.createVerticalBox();
             box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+            // Create a slider that controls the scale factor of all symbols.
             JLabel label = new JLabel("Scale");
             JSlider slider = new JSlider(0, 100, 100);
             slider.addChangeListener(new ChangeListener()
             {
                 public void stateChanged(ChangeEvent changeEvent)
                 {
+                    // Scale both the normal and the highlight attributes for each symbol. This prevents the symbol
+                    // from suddenly appearing larger when highlighted. Changes in these attributes are reflected in all
+                    // symbols that use them.
                     JSlider slider = (JSlider) changeEvent.getSource();
                     double scale = (double) slider.getValue() / 100d;
                     sharedAttrs.setScale(scale);
                     sharedHighlightAttrs.setScale(scale);
-                    getWwd().redraw();
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                 }
             });
             label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
@@ -120,16 +142,19 @@ public class TacticalSymbols extends ApplicationTemplate
             box.add(label);
             box.add(slider);
 
+            // Create a slider that controls the opacity of all symbols.
             label = new JLabel("Opacity");
             slider = new JSlider(0, 100, 100);
             slider.addChangeListener(new ChangeListener()
             {
                 public void stateChanged(ChangeEvent changeEvent)
                 {
+                    // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
+                    // when highlighted. Changes in these attributes are reflected in all symbols that use them.
                     JSlider slider = (JSlider) changeEvent.getSource();
                     double opacity = (double) slider.getValue() / 100d;
                     sharedAttrs.setOpacity(opacity);
-                    getWwd().redraw();
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                 }
             });
             box.add(Box.createVerticalStrut(10));
@@ -138,6 +163,7 @@ public class TacticalSymbols extends ApplicationTemplate
             box.add(label);
             box.add(slider);
 
+            // Create a check box that toggles the visibility of graphic modifiers for all symbols.
             JCheckBox cb = new JCheckBox("Graphic Modifiers", true);
             cb.addActionListener(new ActionListener()
             {
@@ -149,7 +175,7 @@ public class TacticalSymbols extends ApplicationTemplate
                     {
                         if (r instanceof TacticalSymbol)
                             ((TacticalSymbol) r).setShowGraphicModifiers(tf);
-                        getWwd().redraw();
+                        getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                     }
                 }
             });
@@ -157,6 +183,7 @@ public class TacticalSymbols extends ApplicationTemplate
             box.add(Box.createVerticalStrut(10));
             box.add(cb);
 
+            // Create a check box that toggles the visibility of text modifiers for all symbols.
             cb = new JCheckBox("Text Modifiers", true);
             cb.addActionListener(new ActionListener()
             {
@@ -168,7 +195,7 @@ public class TacticalSymbols extends ApplicationTemplate
                     {
                         if (r instanceof TacticalSymbol)
                             ((TacticalSymbol) r).setShowTextModifiers(tf);
-                        getWwd().redraw();
+                        getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                     }
                 }
             });
@@ -182,9 +209,10 @@ public class TacticalSymbols extends ApplicationTemplate
 
     public static void main(String[] args)
     {
+        // Configure the initial view parameters so that this example starts looking at the symbols.
         Configuration.setValue(AVKey.INITIAL_LATITUDE, 32.49);
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, 63.455);
-        Configuration.setValue(AVKey.INITIAL_HEADING, 24);
+        Configuration.setValue(AVKey.INITIAL_HEADING, 22);
         Configuration.setValue(AVKey.INITIAL_PITCH, 80);
         Configuration.setValue(AVKey.INITIAL_ALTITUDE, 18000);
 
