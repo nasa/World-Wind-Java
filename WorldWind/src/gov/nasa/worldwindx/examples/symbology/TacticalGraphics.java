@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwindx.examples;
+package gov.nasa.worldwindx.examples.symbology;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
@@ -12,33 +12,29 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import java.awt.*;
-import java.awt.image.*;
 import java.util.*;
 import java.util.List;
 
 /**
- * Demonstrates how to create and render symbols from the MIL-STD-2525 symbol set. See the <a title="Symbology Usage
- * Guide" href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Usage Guide</a> for more information
- * on symbology support in World Wind.
+ * Demonstrates how to create and render World Wind tactical graphics. See the <a title="Symbology Usage Guide"
+ * href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Usage Guide</a> for more information on
+ * symbology support in World Wind.
  *
  * @author pabercrombie
  * @version $Id$
  */
-public class Symbology extends ApplicationTemplate
+public class TacticalGraphics extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
         public AppFrame()
         {
             super(true, true, false);
-
-            RenderableLayer symbolLayer = new RenderableLayer();
-            symbolLayer.setName("Tactical Symbols");
 
             RenderableLayer lineLayer = new RenderableLayer();
             lineLayer.setName("Tactical Graphics (Lines)");
@@ -47,11 +43,9 @@ public class Symbology extends ApplicationTemplate
             areaLayer.setName("Tactical Graphics (Areas)");
 
             // Create tactical symbols and graphics and add them to the layer
-            this.createSymbols(symbolLayer);
             this.createLineGraphics(lineLayer);
             this.createAreaGraphics(areaLayer);
 
-            insertBeforePlacenames(getWwd(), symbolLayer);
             insertBeforePlacenames(getWwd(), lineLayer);
             insertBeforePlacenames(getWwd(), areaLayer);
 
@@ -63,53 +57,6 @@ public class Symbology extends ApplicationTemplate
             this.setPreferredSize(size);
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER);
-        }
-
-        protected void createSymbols(RenderableLayer layer)
-        {
-            // Display a MIL-STD2525 tactical icon
-            //      Warfighting
-            String URL = "http://worldwindserver.net/milstd2525/";
-            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
-            AVListImpl params = new AVListImpl();
-            BufferedImage img = symGen.createIcon("SUGPIXH---H----", params);
-            //BufferedImage img = symGen.createIcon("SKGPUSTST------", params);
-            Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
-            SurfaceImage symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            //      Signals Intelligence
-            img = symGen.createIcon("IGAPSCO--------");
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
-                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            //      Stability Operations
-            img = symGen.createIcon("OHOPYT---------");
-            s = new Sector(Angle.fromDegrees(34.8), Angle.fromDegrees(34.7),
-                Angle.fromDegrees(-117.55), Angle.fromDegrees(-117.42));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            //      Emergency Management
-            img = symGen.createIcon("ESFPBB----H----");
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
-                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            // Display a MIL-STD1477 icon
-            URL = "http://worldwindserver.net/milstd1477/";
-            MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever(URL);
-            params = new AVListImpl();
-            // use temporary test values: Storage_Location, Tree, Building, Church, Tower, Mountain, Bridge
-            img = symGen1477.createIcon("Storage_Location", params);
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
         }
 
         protected void createLineGraphics(RenderableLayer layer)
@@ -174,11 +121,11 @@ public class Symbology extends ApplicationTemplate
             /////////////////////////////////////////////
 
             positions = Arrays.asList(
-                Position.fromDegrees(34.4643, -117.7323, 0), // Pt. 1: Tip of the arrow
-                Position.fromDegrees(34.4962, -117.7808, 0), // Pt. 2: First path control point
-                Position.fromDegrees(34.4934, -117.8444, 0),
-                Position.fromDegrees(34.4602, -117.8570, 0), // Pt. N - 1: Last path control point
-                Position.fromDegrees(34.4844, -117.7303, 0)); // Pt. N: Width of the arrow head
+                Position.fromDegrees(34.6643, -117.7323, 0), // Pt. 1: Tip of the arrow
+                Position.fromDegrees(34.6962, -117.7808, 0), // Pt. 2: First path control point
+                Position.fromDegrees(34.6934, -117.8444, 0),
+                Position.fromDegrees(34.6602, -117.8570, 0), // Pt. N - 1: Last path control point
+                Position.fromDegrees(34.6844, -117.7303, 0)); // Pt. N: Width of the arrow head
             graphic = factory.createGraphic("GFGPOLAGM-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Main Attack (2.X.2.5.2.1.4.1)");
             layer.addRenderable(graphic);
@@ -188,11 +135,11 @@ public class Symbology extends ApplicationTemplate
             /////////////////////////////////////////////
 
             positions = Arrays.asList(
-                Position.fromDegrees(34.5610, -117.4541, 0),
-                Position.fromDegrees(34.5614, -117.5852, 0),
-                Position.fromDegrees(34.5287, -117.6363, 0),
-                Position.fromDegrees(34.4726, -117.6363, 0),
-                Position.fromDegrees(34.5820, -117.4700, 0));
+                Position.fromDegrees(34.7610, -117.4541, 0),
+                Position.fromDegrees(34.7614, -117.5852, 0),
+                Position.fromDegrees(34.7287, -117.6363, 0),
+                Position.fromDegrees(34.6726, -117.6363, 0),
+                Position.fromDegrees(34.7820, -117.4700, 0));
             graphic = factory.createGraphic("GFGPOLAR------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Attack, Rotary Wing (2.X.2.5.2.1.3)");
             layer.addRenderable(graphic);
@@ -202,10 +149,10 @@ public class Symbology extends ApplicationTemplate
             /////////////////////////////////////////////
 
             positions = Arrays.asList(
-                Position.fromDegrees(34.5437, -117.8007, 0),
-                Position.fromDegrees(34.5535, -117.9256, 0),
-                Position.fromDegrees(34.6051, -117.9707, 0),
-                Position.fromDegrees(34.5643, -117.8219, 0));
+                Position.fromDegrees(34.7437, -117.8007, 0),
+                Position.fromDegrees(34.7535, -117.9256, 0),
+                Position.fromDegrees(34.8051, -117.9707, 0),
+                Position.fromDegrees(34.7643, -117.8219, 0));
             graphic = factory.createGraphic("GFGPOLAV------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Aviation (2.X.2.5.2.1.1)");
             layer.addRenderable(graphic);
@@ -215,11 +162,11 @@ public class Symbology extends ApplicationTemplate
             /////////////////////////////////////////////
 
             positions = Arrays.asList(
-                Position.fromDegrees(34.4980, -117.5541, 0),
-                Position.fromDegrees(34.4951, -117.4667, 0),
-                Position.fromDegrees(34.4733, -117.4303, 0),
-                Position.fromDegrees(34.4217, -117.4056, 0),
-                Position.fromDegrees(34.4780, -117.53, 0));
+                Position.fromDegrees(34.6980, -117.5541, 0),
+                Position.fromDegrees(34.6951, -117.4667, 0),
+                Position.fromDegrees(34.6733, -117.4303, 0),
+                Position.fromDegrees(34.6217, -117.4056, 0),
+                Position.fromDegrees(34.6780, -117.53, 0));
             graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack (2.X.2.5.2.1.4.2)");
             layer.addRenderable(graphic);
@@ -387,10 +334,10 @@ public class Symbology extends ApplicationTemplate
 
     public static void main(String[] args)
     {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.81);
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.90);
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.44);
         Configuration.setValue(AVKey.INITIAL_ALTITUDE, 140000);
 
-        ApplicationTemplate.start("World Wind Symbology", AppFrame.class);
+        ApplicationTemplate.start("World Wind Tactical Graphics", AppFrame.class);
     }
 }
