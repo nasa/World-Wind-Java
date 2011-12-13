@@ -52,18 +52,26 @@ public interface TacticalGraphicAttributes
     void copy(TacticalGraphicAttributes attributes);
 
     /**
-     * Indicates an offset used to position the graphic's label relative to the graphic's reference point.
+     * Indicates an offset used to position the graphic's main label relative to the label's geographic position. See
+     * comments on {@link #setTextModifierOffset(gov.nasa.worldwind.render.Offset) setTextModifierOffset} for more
+     * information.
      *
      * @return The offset that determines how the graphic's label is placed relative to the graphic.
      */
-    Offset getLabelOffset();
+    Offset getTextModifierOffset();
 
     /**
-     * Specifies an offset used to position the graphic's label relative to the graphic's reference point.
+     * Specifies an offset used to position the graphic's main label relative to the label's geographic position. The
+     * geographic position is determined by the type of graphic. For example, the label for an area graphic is typically
+     * placed at the center of the area polygon.
+     * <p/>
+     * The offset can specify an absolute pixel value, or a an offset relative to the size of the label. For example,
+     * an offset of (-0.5, -0.5) in fraction units will center the label on its geographic position both horizontally
+     * and vertically.
      *
      * @param offset The offset that determines how the graphic's label is placed relative to the graphic.
      */
-    void setLabelOffset(Offset offset);
+    void setTextModifierOffset(Offset offset);
 
     /**
      * Indicates the font used to render text modifiers.

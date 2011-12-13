@@ -113,7 +113,7 @@ public class WeaponsFreeZone extends AviationZone
 
         Rectangle bounds = this.annotation.getBounds(dc);
 
-        Offset offset = this.activeOverrides.getLabelOffset();
+        Offset offset = this.activeOverrides.getTextModifierOffset();
         if (offset == null)
             offset = this.getDefaultLabelOffset();
 

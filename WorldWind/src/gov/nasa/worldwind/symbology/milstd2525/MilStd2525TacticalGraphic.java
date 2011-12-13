@@ -524,7 +524,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
 
         // Apply the offset to the main label.
-        Offset offset = this.activeOverrides.getLabelOffset();
+        Offset offset = this.activeOverrides.getTextModifierOffset();
         if (offset == null)
             offset = this.getDefaultLabelOffset();
         this.labels.get(0).setOffset(offset);

@@ -56,7 +56,7 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
             throw new IllegalArgumentException(message);
         }
 
-        this.labelOffset = attributes.getLabelOffset();
+        this.labelOffset = attributes.getTextModifierOffset();
         this.font = attributes.getTextModifierFont();
         this.textMaterial = attributes.getTextModifierMaterial();
         this.interiorMaterial = attributes.getInteriorMaterial();
@@ -77,7 +77,7 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     {
         if (attributes != null)
         {
-            this.labelOffset = attributes.getLabelOffset();
+            this.labelOffset = attributes.getTextModifierOffset();
             this.font = attributes.getTextModifierFont();
             this.textMaterial = attributes.getTextModifierMaterial();
             this.interiorMaterial = attributes.getInteriorMaterial();
@@ -89,13 +89,13 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     }
 
     /** {@inheritDoc} */
-    public Offset getLabelOffset()
+    public Offset getTextModifierOffset()
     {
         return this.labelOffset;
     }
 
     /** {@inheritDoc} */
-    public void setLabelOffset(Offset offset)
+    public void setTextModifierOffset(Offset offset)
     {
         this.labelOffset = offset;
     }
