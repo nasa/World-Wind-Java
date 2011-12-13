@@ -48,7 +48,7 @@ public class Symbology extends ApplicationTemplate
 
             // Size the World Window to provide enough screen space for the graphics, and center the World Window
             // on the screen.
-            Dimension size = new Dimension(1200, 800);
+            Dimension size = new Dimension(1800, 1000);
             this.setPreferredSize(size);
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER);

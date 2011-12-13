@@ -115,7 +115,7 @@ public class TacticalSymbols extends ApplicationTemplate
 
             // Size the World Window to provide enough screen space for the symbols and center the World Window on the
             // screen.
-            Dimension size = new Dimension(1200, 800);
+            Dimension size = new Dimension(1800, 1000);
             this.setPreferredSize(size);
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER);
@@ -219,8 +219,8 @@ public class TacticalSymbols extends ApplicationTemplate
         Configuration.setValue(AVKey.INITIAL_LATITUDE, 32.49);
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, 63.455);
         Configuration.setValue(AVKey.INITIAL_HEADING, 22);
-        Configuration.setValue(AVKey.INITIAL_PITCH, 80);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 18000);
+        Configuration.setValue(AVKey.INITIAL_PITCH, 82);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 20000);
 
         start("World Wind Tactical Symbols", AppFrame.class);
     }
