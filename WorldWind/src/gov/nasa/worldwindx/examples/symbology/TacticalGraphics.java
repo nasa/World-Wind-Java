@@ -55,7 +55,7 @@ public class TacticalGraphics extends ApplicationTemplate
 
             // Size the World Window to provide enough screen space for the graphics, and center the World Window
             // on the screen.
-            Dimension size = new Dimension(1200, 800);
+            Dimension size = new Dimension(1800, 1000);
             this.setPreferredSize(size);
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER);
@@ -338,7 +338,7 @@ public class TacticalGraphics extends ApplicationTemplate
     {
         Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.90);
         Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.44);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 140000);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 155000);
 
         ApplicationTemplate.start("World Wind Tactical Graphics", AppFrame.class);
     }
