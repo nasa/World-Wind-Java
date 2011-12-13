@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwindx.examples;
+package gov.nasa.worldwindx.examples.symbology;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
@@ -14,6 +14,7 @@ import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import javax.swing.*;
 import javax.swing.Box;
