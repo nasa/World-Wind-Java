@@ -137,7 +137,7 @@ public interface ShapeAttributes extends Exportable
      * the interior's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light.
      * Otherwise, the material's diffuse color indicates the shape's constant interior color.
      *
-     * @return the material applied to the balloon's interior.
+     * @return the material applied to the shape's interior.
      *
      * @see #setInteriorMaterial(Material)
      */
@@ -148,7 +148,7 @@ public interface ShapeAttributes extends Exportable
      * the interior's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light.
      * Otherwise, the material's diffuse color specifies the shape's constant interior color.
      *
-     * @param material the material to apply to the balloon's interior.
+     * @param material the material to apply to the shape's interior.
      *
      * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getInteriorMaterial()
@@ -160,7 +160,7 @@ public interface ShapeAttributes extends Exportable
      * outline's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light. Otherwise,
      * the material's diffuse color indicates the shape's constant outline color.
      *
-     * @return the material applied to the balloon's outline.
+     * @return the material applied to the shape's outline.
      *
      * @see #setOutlineMaterial(Material)
      */
@@ -171,7 +171,7 @@ public interface ShapeAttributes extends Exportable
      * outline's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light. Otherwise,
      * the material's diffuse color specifies as the shape's constant outline color.
      *
-     * @param material the material to apply to the balloon's outline.
+     * @param material the material to apply to the shape's outline.
      *
      * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getOutlineMaterial()
@@ -322,9 +322,9 @@ public interface ShapeAttributes extends Exportable
     void setImageSource(Object imageSource);
 
     /**
-     * Indicates the amount the balloon's texture is scaled by as a floating-point value.
+     * Indicates the amount the shape's texture is scaled by as a floating-point value.
      *
-     * @return the amount the balloon's texture is scaled by as a floating-point value. This value is always greater
+     * @return the amount the shape's texture is scaled by as a floating-point value. This value is always greater
      *         than zero.
      *
      * @see #setImageScale(double)
@@ -332,12 +332,12 @@ public interface ShapeAttributes extends Exportable
     double getImageScale();
 
     /**
-     * Specifies the amount to scale the balloon's texture as a floating-point value. A value of 1.0 specifies that the
+     * Specifies the amount to scale the shape's texture as a floating-point value. A value of 1.0 specifies that the
      * texture should be applied without any scaling, a value greater than 1.0 specifies that the texture should be
      * magnified, and a value less than 1.0 specifies that the texture should be minified. For example, a scale of 2.0
      * magnifies the texture by a factor of 2x.
      *
-     * @param scale the amount to scale the balloon's texture as a floating-point value.
+     * @param scale the amount to scale the shape's texture as a floating-point value.
      *
      * @throws IllegalArgumentException if <code>scale</code> is less than or equal to zero.
      * @see #getImageScale()
