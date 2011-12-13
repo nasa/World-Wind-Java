@@ -23,9 +23,11 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Demonstrates how to create and render World Wind tactical symbols. See the <a title="Symbology Usage Guide"
+ * Demonstrates how to create and display World Wind tactical symbols. See the <a title="Symbology Usage Guide"
  * href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Symbology Usage Guide</a> for more
  * information on symbology support in World Wind.
+ * <p/>
+ * See the {@link TacticalGraphics} for a detailed example of using World Wind tactical graphics in an application.
  *
  * @author dcollins
  * @version $Id$
@@ -74,7 +76,7 @@ public class TacticalSymbols extends ApplicationTemplate
             // Direction of Movement and Speed Leader are specified by calling TacticalSymbol.setModifier with the
             // appropriate key and value.The Speed Leader modifier has the effect of scaling the Direction of Movement's
             // line segment. In this example, we've scaled the line to 50% of its original length.
-            TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS-----",
+            TacticalSymbol groundSymbol = new MilStd2525TacticalSymbol("SHGXUCFRMS----G",
                 Position.fromDegrees(32.4014, 63.3894, 0));
             groundSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Hostile Self-Propelled Rocket Launchers");
             groundSymbol.setAttributes(this.sharedAttrs);

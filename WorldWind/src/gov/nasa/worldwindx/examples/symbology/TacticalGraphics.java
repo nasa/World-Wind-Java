@@ -7,10 +7,10 @@
 package gov.nasa.worldwindx.examples.symbology;
 
 import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
@@ -21,9 +21,11 @@ import java.util.*;
 import java.util.List;
 
 /**
- * Demonstrates how to create and render World Wind tactical graphics. See the <a title="Symbology Usage Guide"
- * href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Usage Guide</a> for more information on
- * symbology support in World Wind.
+ * Demonstrates how to create and display World Wind tactical graphics. See the <a title="Symbology Usage Guide"
+ * href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Symbology Usage Guide</a> for more
+ * information on symbology support in World Wind.
+ * <p/>
+ * See the {@link TacticalSymbols} for a detailed example of using World Wind tactical symbols in an application.
  *
  * @author pabercrombie
  * @version $Id$

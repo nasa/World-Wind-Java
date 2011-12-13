@@ -7,25 +7,27 @@
 package gov.nasa.worldwindx.examples.symbology;
 
 import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd1477.MilStd1477IconRetriever;
+import gov.nasa.worldwind.symbology.TacticalSymbol;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import java.awt.*;
-import java.awt.image.*;
 import java.util.*;
 import java.util.List;
 
 /**
- * Demonstrates how to create and render symbols from the MIL-STD-2525 symbol set. See the <a title="Symbology Usage
- * Guide" href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Usage Guide</a> for more information
- * on symbology support in World Wind.
+ * Demonstrates the simplest possible usage of World Wind {@link TacticalSymbol} and {@link
+ * gov.nasa.worldwind.symbology.TacticalGraphic} to display symbols from the MIL-STD-2525 symbology set. See the <a
+ * title="Symbology Usage Guide" href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Symbology
+ * Usage Guide</a> for more information on symbology support in World Wind.
+ * <p/>
+ * For more detailed examples of how to use TacticalSymbol and TacticalGraphic in an application, see the {@link
+ * TacticalSymbols} example and the {@link TacticalGraphics} example.
  *
  * @author pabercrombie
  * @version $Id$
@@ -38,24 +40,11 @@ public class Symbology extends ApplicationTemplate
         {
             super(true, true, false);
 
-            RenderableLayer symbolLayer = new RenderableLayer();
-            symbolLayer.setName("Tactical Symbols");
+            // Create a layer that displays World Wind tactical symbols.
+            this.addTacticalSymbols();
 
-            RenderableLayer lineLayer = new RenderableLayer();
-            lineLayer.setName("Tactical Graphics");
-
-            RenderableLayer controlPointLayer = new RenderableLayer();
-            controlPointLayer.setName("Tactical Graphics Control Points");
-
-            // Create tactical symbols and graphics and add them to the layer
-            this.createSymbols(symbolLayer);
-            this.createLineGraphics(lineLayer, controlPointLayer);
-
-            insertBeforePlacenames(getWwd(), symbolLayer);
-            insertBeforePlacenames(getWwd(), lineLayer);
-            insertBeforePlacenames(getWwd(), controlPointLayer);
-
-            this.getLayerPanel().update(this.getWwd());
+            // Create a layer that displays World Wind tactical graphics.
+            this.addTacticalGraphics();
 
             // Size the World Window to provide enough screen space for the graphics, and center the World Window
             // on the screen.
@@ -65,95 +54,68 @@ public class Symbology extends ApplicationTemplate
             WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
 
-        protected void createSymbols(RenderableLayer layer)
+        protected void addTacticalSymbols()
         {
-            // Display a MIL-STD2525 tactical icon
-            //      Warfighting
-            String URL = "http://worldwindserver.net/milstd2525/";
-            MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
-            AVListImpl params = new AVListImpl();
-            BufferedImage img = symGen.createIcon("SUGPIXH---H----", params);
-            //BufferedImage img = symGen.createIcon("SKGPUSTST------", params);
-            Sector s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
-            SurfaceImage symbol = new SurfaceImage(img, s);
+            // Create a layer to display the tactical symbol. We add just one tactical symbol, but multiple tactical
+            // symbols and tactical graphics may be combined on the same RenderableLayer.
+            RenderableLayer layer = new RenderableLayer();
+            layer.setName("Tactical Symbols");
+
+            // Create a tactical symbol for the MIL-STD-2525 symbology set. The symbol identifier specifies a
+            // MIL-STD-2525 friendly Special Operations Forces Drone Aircraft. The position places the tactical symbol
+            // at 3km above mean sea level.
+            TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFAPMFQM------A",
+                Position.fromDegrees(34.4934, -117.6003, 3000));
+            symbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Symbol"); // Tool tip text.
             layer.addRenderable(symbol);
 
-            //      Signals Intelligence
-            img = symGen.createIcon("IGAPSCO--------");
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
-                Angle.fromDegrees(-117.7), Angle.fromDegrees(-117.57));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
+            // Add the symbol layer to the World Wind model.
+            this.getWwd().getModel().getLayers().add(layer);
 
-            //      Stability Operations
-            img = symGen.createIcon("OHOPYT---------");
-            s = new Sector(Angle.fromDegrees(34.8), Angle.fromDegrees(34.7),
-                Angle.fromDegrees(-117.55), Angle.fromDegrees(-117.42));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            //      Emergency Management
-            img = symGen.createIcon("ESFPBB----H----");
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.6),
-                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
-
-            // Display a MIL-STD1477 icon
-            URL = "http://worldwindserver.net/milstd1477/";
-            MilStd1477IconRetriever symGen1477 = new MilStd1477IconRetriever(URL);
-            params = new AVListImpl();
-            // use temporary test values: Storage_Location, Tree, Building, Church, Tower, Mountain, Bridge
-            img = symGen1477.createIcon("Storage_Location", params);
-            s = new Sector(Angle.fromDegrees(34.7), Angle.fromDegrees(34.8),
-                Angle.fromDegrees(-117.9), Angle.fromDegrees(-117.77));
-            symbol = new SurfaceImage(img, s);
-            layer.addRenderable(symbol);
+            // Update the layer panel to display the symbol layer.
+            this.getLayerPanel().update(this.getWwd());
         }
 
-        protected void createLineGraphics(RenderableLayer layer, RenderableLayer controlPointLayer)
+        protected void addTacticalGraphics()
         {
-            MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
-            MilStd2525TacticalGraphic graphic;
+            // Create a layer to display the tactical graphic. We add just one tactical graphic, but multiple tactical
+            // graphics and tactical symbols may be combined on the same RenderableLayer.
+            RenderableLayer layer = new RenderableLayer();
+            layer.setName("Tactical Graphics");
 
-            /////////////////////////////////////////////
-            // Supporting attack (2.X.2.5.2.1.4.2)
-            /////////////////////////////////////////////
-
+            // Define the control point positions for the tactical graphic we create below.
             List<Position> positions = Arrays.asList(
                 Position.fromDegrees(34.4980, -117.5541, 0),
                 Position.fromDegrees(34.4951, -117.4667, 0),
                 Position.fromDegrees(34.4733, -117.4303, 0),
                 Position.fromDegrees(34.4217, -117.4056, 0),
-                Position.fromDegrees(34.4780, -117.53, 0));
-            graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack (2.X.2.5.2.1.4.2)");
+                Position.fromDegrees(34.4780, -117.5300, 0));
+
+            // Create a tactical graphic for the MIL-STD-2525 symbology set. The graphic identifies a MIL-STD-2525
+            // friendly Supporting Attack.
+            MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
+            MilStd2525TacticalGraphic graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Graphic"); // Tool tip text.
             layer.addRenderable(graphic);
 
-            this.addControlPoints(controlPointLayer, positions);
+            // Create point placemarks to mark each of the control points used to define the tactical graphic. This
+            // provides a visualization of how the control point positions affect the displayed graphic.
+            this.addControlPoints(positions, layer);
 
-            /////////////////////////////////////////////
-            // Phase line (2.X.2.1.2.4)
-            /////////////////////////////////////////////
+            // Add the graphic layer to the World Wind model.
+            this.getWwd().getModel().getLayers().add(layer);
 
-            positions = Arrays.asList(
-                Position.fromDegrees(34.5643, -117.4918, 0),
-                Position.fromDegrees(34.5297, -117.3825, 0),
-                Position.fromDegrees(34.4487, -117.3381, 0));
-            graphic = factory.createGraphic("GFGPGLP----AUSX", positions, null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Phase line (2.X.2.2.2.2)");
-            graphic.setText("A");
-            layer.addRenderable(graphic);
+            // Update the layer panel to display the graphic layer.
+            this.getLayerPanel().update(this.getWwd());
         }
 
         /**
          * Add placemarks to a layer to mark the position of tactical graphic control points.
          *
-         * @param layer Layer to receive control point placemarks.
-         * @param positions Position of control points.
+         * @param positions list of control points positions.
+         * @param layer     layer to receive control point placemarks.
          */
-        protected void addControlPoints(RenderableLayer layer, List<Position> positions)
+        protected void addControlPoints(Iterable<Position> positions, RenderableLayer layer)
         {
             PointPlacemarkAttributes attrs = new PointPlacemarkAttributes();
             attrs.setUsePointAsDefaultImage(true);
@@ -162,20 +124,20 @@ public class Symbology extends ApplicationTemplate
             for (Position p : positions)
             {
                 PointPlacemark placemark = new PointPlacemark(p);
-                placemark.setValue(AVKey.DISPLAY_NAME, "Point " + i);
+                placemark.setValue(AVKey.DISPLAY_NAME, "Tactical Graphic Position " + i);
                 placemark.setAttributes(attrs);
                 placemark.setHighlightAttributes(attrs);
                 layer.addRenderable(placemark);
-                i += 1;
+                i++;
             }
         }
     }
 
     public static void main(String[] args)
     {
-        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.59);
-        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.59);
-        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 100000);
+        Configuration.setValue(AVKey.INITIAL_LATITUDE, 34.4780);
+        Configuration.setValue(AVKey.INITIAL_LONGITUDE, -117.5250);
+        Configuration.setValue(AVKey.INITIAL_ALTITUDE, 40000);
 
         ApplicationTemplate.start("World Wind Symbology", AppFrame.class);
     }
