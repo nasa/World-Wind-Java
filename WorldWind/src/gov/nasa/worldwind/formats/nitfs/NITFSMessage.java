@@ -149,7 +149,6 @@ public class NITFSMessage
         String fmtId = NITFSUtil.getString(roBuffer, 0, 4);
         if( 0 != "NITF".compareTo(fmtId) && 0 != "NSIF".compareTo(fmtId))
         {
-            roBuffer = null;
             throw new NITFSRuntimeException("NITFSReader.UnknownOrUnsupportedNITFSFormat", file.getCanonicalPath());
         }
 
