@@ -24,8 +24,8 @@ import java.awt.event.*;
 
 /**
  * Demonstrates how to create and render World Wind tactical symbols. See the <a title="Symbology Usage Guide"
- * href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Usage Guide</a> for more information on
- * symbology support in World Wind.
+ * href="http://goworldwind.org/developers-guide/symbology/" target="_blank">Symbology Usage Guide</a> for more
+ * information on symbology support in World Wind.
  *
  * @author dcollins
  * @version $Id$
