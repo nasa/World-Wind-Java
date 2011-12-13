@@ -13,8 +13,8 @@ import gov.nasa.worldwind.render.*;
 /**
  * TacticalSymbol provides a common interface for displaying tactical point symbols from symbology sets. A tactical
  * symbol displays graphic and textual information about an object at a single geographic position at a particular point
- * in time. See the TacticalSymbol <a title="Tactical Symbol Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/"
- * target="_blank">Usage Guide</a> for instructions on using TacticalSymbol in an application.
+ * in time. See the <a title="Tactical Symbol Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/"
+ * target="_blank">Tactical Symbol Usage Guide</a> for instructions on using TacticalSymbol in an application.
  * <p/>
  * <h2>Construction</h2> Implementations of this interface provide support for symbols belonging to a specific symbology
  * set. For example, class {@link gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol} provides support for
@@ -40,7 +40,7 @@ import gov.nasa.worldwind.render.*;
  * <pre>
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit. Since the SIDC specifies a ground symbol, the
  * // tactical symbol's altitude mode is automatically configured as WorldWind.CLAMP_TO_GROUND.
- * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0));
+ * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU---------G", Position.fromDegrees(40, -120, 0));
  *
  * // Create a renderable layer to display the tactical symbol. This example adds only a single symbol, but many
  * // symbols can be added to a single layer.
@@ -68,7 +68,7 @@ import gov.nasa.worldwind.render.*;
  * at its specified position.</li> </ul>
  * <p/>
  * Tactical symbol implementations configure the altitude mode from the string identifier specified during construction.
- * For example, specifying the MIL-STD-2525 SIDC "SFGPU----------" specifies a friendly ground unit symbol, and causes a
+ * For example, specifying the MIL-STD-2525 SIDC "SFGPU---------G" specifies a friendly ground unit symbol, and causes a
  * tactical symbol to configure the altitude mode as WorldWind.CLAMP_TO_GROUND. The automatically configured mode can be
  * overridden by calling setAltitudeMode.
  * <p/>
@@ -79,11 +79,11 @@ import gov.nasa.worldwind.render.*;
  * heading (direction of movement) modifier at construction for a MIL-STD-2525 friendly ground unit:
  * <p/>
  * <pre>
- * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit, specifying the optional heading (direction of
- * // movement) modifier by passing in a list of key-value pairs.
+ * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit, specifying the optional Direction of Movement
+ * // modifier by passing in a list of key-value pairs.
  * AVList modifiers = new AVListImpl();
- * modifiers.setValue(AVKey.HEADING, Angle.fromDegrees(45));
- * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0),
+ * modifiers.setValue(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
+ * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU---------G", Position.fromDegrees(40, -120, 0),
  *     modifiers);
  * </pre>
  * <p/>
@@ -91,10 +91,10 @@ import gov.nasa.worldwind.render.*;
  * <p/>
  * <pre>
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit.
- * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU----------", Position.fromDegrees(-120, 40, 0));
+ * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU---------G", Position.fromDegrees(40, -120, 0));
  *
  * // Set the heading (direction of movement) modifier.
- * symbol.setModifier(AVKey.HEADING, Angle.fromDegrees(45));
+ * symbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
  * </pre>
  * <p/>
  * Tactical symbol implementations apply modifiers from the string identifier specified during construction. For
@@ -104,9 +104,9 @@ import gov.nasa.worldwind.render.*;
  * <p/>
  * <pre>
  * // Create a tactical symbol for a MIL-STD-2525 friendly ground unit. Specify the echelon modifier and task force
- * // modifiers by setting the SIDC characters 11-12 to "EA". This indicates that the ground unit is a team/crew task
- * // force (see MIL-STD-2525C, Appendix A, Table A-II).
- * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU-----EA---", Position.fromDegrees(-120, 40, 0));
+ * // modifiers by setting the SIDC characters 11-12 to "EA". This indicates that the ground unit is a Task Force with
+ * // a Team/Crew Echelon (see MIL-STD-2525C, Appendix A, Table A-II).
+ * TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFGPU-----EA--G", Position.fromDegrees(40, -120, 0));
  * </pre>
  *
  * @author dcollins

@@ -60,7 +60,7 @@ public class TacticalSymbols extends ApplicationTemplate
             // The Echelon, Task Force Indicator, and Feint/Dummy Indicator are specified in characters 11-12 of the
             // symbol identifier ("GI"). The Direction of Movement is specified by calling TacticalSymbol.setModifier
             // with the appropriate key and value.
-            TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSG",
+            TacticalSymbol airSymbol = new MilStd2525TacticalSymbol("SFAPMFQM--GIUSA",
                 Position.fromDegrees(32.4520, 63.44553, 3000));
             airSymbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Friendly SOF Drone Aircraft"); // Tool tip text.
             airSymbol.setAttributes(this.sharedAttrs);
