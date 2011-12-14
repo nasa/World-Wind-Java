@@ -11,6 +11,7 @@ import gov.nasa.worldwind.event.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.util.Logging;
 
+import javax.media.opengl.GLJPanel;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -393,6 +394,16 @@ public class AWTInputHandler extends WWObjectImpl
             {
                 this.wwd.getView().getViewInputHandler().mousePressed(mouseEvent);
             }
+        }
+
+        // GLJPanel does not take keyboard focus when the user clicks on it, thereby suppressing key events normally
+        // sent to the InputHandler. This workaround calls requestFocus on the GLJPanel each time the user presses the
+        // mouse on the GLJPanel, causing GLJPanel to take the focus in the same manner as GLCanvas. Note that focus is
+        // passed only when the user clicks the primary mouse button. See
+        // http://issues.worldwind.arc.nasa.gov/jira/browse/WWJ-272.
+        if (MouseEvent.BUTTON1 == mouseEvent.getButton() && this.wwd instanceof GLJPanel)
+        {
+            ((GLJPanel) this.wwd).requestFocusInWindow();
         }
     }
 
