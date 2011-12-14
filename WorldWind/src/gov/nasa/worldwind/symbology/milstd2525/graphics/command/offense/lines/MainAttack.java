@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.axis.ground;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
