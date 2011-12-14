@@ -264,4 +264,26 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
      *                   attributes are used.
      */
     void setHighlightAttributes(TacticalGraphicAttributes attributes);
+
+    /**
+     * Indicates an offset used to position the graphic's main label relative to the label's geographic position. See
+     * comments on {@link #setLabelOffset(gov.nasa.worldwind.render.Offset) setLabelOffset} for more
+     * information.
+     *
+     * @return The offset that determines how the graphic's label is placed relative to the graphic.
+     */
+    Offset getLabelOffset();
+
+    /**
+     * Specifies an offset used to position this graphic's main label relative to the label's geographic position. The
+     * geographic position is determined by the type of graphic. For example, the label for an area graphic is typically
+     * placed at the center of the area polygon. Note that not all graphics have labels.
+     * <p/>
+     * The offset can specify an absolute pixel value, or a an offset relative to the size of the label. For example, an
+     * offset of (-0.5, -0.5) in fraction units will center the label on its geographic position both horizontally and
+     * vertically.
+     *
+     * @param offset The offset that determines how the graphic's label is placed relative to the graphic.
+     */
+    void setLabelOffset(Offset offset);
 }

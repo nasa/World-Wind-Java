@@ -29,8 +29,6 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     protected Double outlineOpacity;
     /** Indicates the line width (in pixels) used when rendering the shape's outline. Initially 0.0. */
     protected double outlineWidth;
-    /** Indicates the offset applied to the graphic's main label. */
-    protected Offset labelOffset;
     /** Indicates the font used to render text modifiers. */
     protected Font font;
     /** Indicates the material used to render text modifiers. */
@@ -59,7 +57,6 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
             throw new IllegalArgumentException(message);
         }
 
-        this.labelOffset = attributes.getTextModifierOffset();
         this.font = attributes.getTextModifierFont();
         this.textMaterial = attributes.getTextModifierMaterial();
         this.interiorMaterial = attributes.getInteriorMaterial();
@@ -80,7 +77,6 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     {
         if (attributes != null)
         {
-            this.labelOffset = attributes.getTextModifierOffset();
             this.font = attributes.getTextModifierFont();
             this.textMaterial = attributes.getTextModifierMaterial();
             this.interiorMaterial = attributes.getInteriorMaterial();
@@ -89,18 +85,6 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
             this.outlineOpacity = attributes.getOutlineOpacity();
             this.outlineWidth = attributes.getOutlineWidth();
         }
-    }
-
-    /** {@inheritDoc} */
-    public Offset getTextModifierOffset()
-    {
-        return this.labelOffset;
-    }
-
-    /** {@inheritDoc} */
-    public void setTextModifierOffset(Offset offset)
-    {
-        this.labelOffset = offset;
     }
 
     /** {@inheritDoc} */

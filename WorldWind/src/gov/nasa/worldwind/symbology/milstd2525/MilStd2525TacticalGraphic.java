@@ -83,6 +83,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected boolean showModifiers = true;
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
+    protected Offset labelOffset;
 
     protected String functionId;
     protected String standardIdentity;
@@ -152,6 +153,18 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setHighlightAttributes(TacticalGraphicAttributes attributes)
     {
         this.highlightAttributes = attributes;
+    }
+
+    /** {@inheritDoc} */
+    public Offset getLabelOffset()
+    {
+        return this.labelOffset;
+    }
+
+    /** {@inheritDoc} */
+    public void setLabelOffset(Offset labelOffset)
+    {
+        this.labelOffset = labelOffset;
     }
 
     /** {@inheritDoc} */
@@ -506,7 +519,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
 
         // Apply the offset to the main label.
-        Offset offset = this.activeOverrides.getTextModifierOffset();
+        Offset offset = this.getLabelOffset();
         if (offset == null)
             offset = this.getDefaultLabelOffset();
         this.labels.get(0).setOffset(offset);
