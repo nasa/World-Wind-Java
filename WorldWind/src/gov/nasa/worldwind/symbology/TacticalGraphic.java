@@ -39,29 +39,29 @@ import gov.nasa.worldwind.render.*;
  * <pre>
  * // Create a graphic factory for MIL-STD-2525
  * TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
- * <br/>
+ *
  * // Specify the control points for the line
  * List<Position> positions = Arrays.asList(
  *     Position.fromDegrees(34.7327, -117.8347, 0),
  *     Position.fromDegrees(34.7328, -117.7305, 0));
- * <br/>
+ *
  * // Specify a text modifier
  * AVList modifiers = new AVListImpl();
  * modifiers.put(SymbologyConstants.UNIQUE_DESIGNATION, "Alpha");
- * <br/>
+ *
  * // Create a graphic for a MIL-STD-2525 hostile phase line. The first argument is the symbol identification code
  * // (SIDC) that identifies the type of graphic to create.
  * TacticalGraphic graphic = factory.createGraphic("GHGPGLP----AUSX", positions, modifiers);
- * <br/>
+ *
  * // Create a renderable layer to display the tactical graphic. This example adds only a single graphic, but many
  * // graphics can be added to a single layer.
  * RenderableLayer graphicLayer = new RenderableLayer();
  * graphicLayer.addRenderable(graphic);
- * <br/>
+ *
  * // Add the layer to the world window's model and request that the layer redraw itself. The world window draws the
  * // graphic on the globe at the specified position. Interactions between the graphic and the cursor are returned in
  * // the world window's picked object list, and reported to the world window's select listeners.
- * WorldWind wwd = ... // A reference to your application's WorldWind instance.
+ * WorldWindow wwd = ... // A reference to your application's WorldWind instance.
  * wwd.getModel().getLayers().add(graphicLayer);
  * wwd.redraw();
  * </pre>
@@ -83,9 +83,8 @@ import gov.nasa.worldwind.render.*;
  * <pre>
  * AVList modifiers = new AVListImpl();
  * modifiers.setValue(SymbologyConstants.UNIQUE_DESIGNATION, "Boston"); // Text that identifies the area enclosed by
- * the
- * graphic.
- * <br/>
+ *                                                                      //  the  graphic.
+ *
  * List<Position> positions = ...; // List of positions that define the boundary of the area.
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions, params);
  * </pre>
@@ -108,7 +107,7 @@ import gov.nasa.worldwind.render.*;
  * <p/>
  * <pre>
  * Position position = Position.fromDegrees(34.9362, -118.2559, 0);
- * Tactical Graphic graphic = milstd2525Factory.createPoint("GFGPAPD----AUSX", position, null);
+ * TacticalGraphic graphic = milstd2525Factory.createPoint("GFGPAPD----AUSX", position, null);
  * </pre>
  * <p/>
  * More complicated graphics will require more control points. MIL-STD-2525 defines a template for each type of tactical
@@ -122,11 +121,11 @@ import gov.nasa.worldwind.render.*;
  *     Position.fromDegrees(34.5073, -117.8380, 0)); // PT. 1
  *     Position.fromDegrees(34.8686, -117.5088, 0)); // PT. 2
  *     Position.fromDegrees(34.4845, -117.8495, 0))); // PT. 3
- * <br/>
+ *
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GFGPSLA----AUSX", positions, null);
  * </pre>
  * <p/>
- * <h1>Categories of graphics</h1>
+ * <h1>Sub-interfaces of TacticalGraphic</h1>
  * <p/>
  * There are a few common categories of tactical graphics. Each of these is described by a sub-interface: <ul>
  * <li>{@link TacticalPoint}- Graphics positioned by a single point.</li> <li>{@link TacticalCircle} - Graphics

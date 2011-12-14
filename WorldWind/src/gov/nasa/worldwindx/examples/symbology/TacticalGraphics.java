@@ -63,8 +63,8 @@ public class TacticalGraphics extends ApplicationTemplate
 
         protected void createLineGraphics(RenderableLayer layer)
         {
-            MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
-            MilStd2525TacticalGraphic graphic;
+            TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
+            TacticalGraphic graphic;
 
             /////////////////////////////////////////////
             // Phase line (2.X.2.1.2.4)
@@ -223,8 +223,8 @@ public class TacticalGraphics extends ApplicationTemplate
 
         protected void createAreaGraphics(RenderableLayer layer)
         {
-            MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
-            MilStd2525TacticalGraphic graphic;
+            TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
+            TacticalGraphic graphic;
 
             /////////////////////////////////////////////
             // Assembly area (2.X.2.1.3.2)

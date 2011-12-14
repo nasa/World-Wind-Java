@@ -57,7 +57,7 @@ public interface TacticalGraphicFactory
      * @return A new TacticalGraphic configured to render at the position indicated, or {@code null} if no graphic can
      *         be created for the given symbol identifier.
      */
-    TacticalGraphic createPoint(String symbolIdentifier, Position position, AVList modifiers);
+    TacticalPoint createPoint(String symbolIdentifier, Position position, AVList modifiers);
 
     /**
      * Create a circular graphic.
