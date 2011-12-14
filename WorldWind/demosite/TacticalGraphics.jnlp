@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--$Id$-->
+<jnlp spec="1.0"
+      codebase="http://worldwindserver.net/java/demos/"
+      href="TacticalGraphics.jnlp">
+    <information>
+        <title>World Wind Tactical Graphics</title>
+        <vendor>NASA</vendor>
+        <homepage href="http://worldwind.arc.nasa.gov"/>
+        <description>World Wind Tactical Graphics</description>
+        <description kind="short">World Wind Tactical Graphics</description>
+        <offline-allowed/>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+
+    <resources>
+        <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="512m"
+              max-heap-size="512m"/>
+        <property name="sun.java2d.noddraw" value="true"/>
+        <jar href="worldwindx.jar" main="true"/>
+        <jar href="worldwind.jar"/>
+        <extension name="jogl" href="http://worldwind.arc.nasa.gov/java/jogl/webstart/jogl.jnlp"/>
+    </resources>
+    <application-desc main-class="gov.nasa.worldwindx.examples.symbology.TacticalGraphics"/>
+</jnlp>
