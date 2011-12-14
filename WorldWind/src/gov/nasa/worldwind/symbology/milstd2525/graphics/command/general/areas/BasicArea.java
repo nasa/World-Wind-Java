@@ -45,8 +45,6 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
 
     protected SurfacePolygon polygon;
 
-    protected boolean showIdentityLabels = true;
-
     public BasicArea()
     {
         this.polygon = new SurfacePolygon();
@@ -104,26 +102,6 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     public void moveTo(Position position)
     {
         this.polygon.moveTo(position);
-    }
-
-    /**
-     * Indicates whether or not "ENY" labels will be displayed on hostile entities.
-     *
-     * @return {@code true} if the identity labels will be displayed.
-     */
-    public boolean isShowIdentityLabels()
-    {
-        return this.showIdentityLabels;
-    }
-
-    /**
-     * Specifies whether or not to display "ENY" labels on hostile entities.
-     *
-     * @param showIdentityLabels {@code true} if the identity labels will be displayed.
-     */
-    public void setShowIdentityLabels(boolean showIdentityLabels)
-    {
-        this.showIdentityLabels = showIdentityLabels;
     }
 
     /** {@inheritDoc} */
@@ -232,8 +210,8 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
 
         if (this.mustCreateIdentityLabels())
         {
-            this.addLabel(HOSTILE_INDICATOR);
-            this.addLabel(HOSTILE_INDICATOR);
+            this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
+            this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
         }
     }
 
@@ -303,8 +281,8 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
 
     protected boolean mustCreateIdentityLabels()
     {
-        return this.showIdentityLabels && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(
-            this.getStandardIdentity());
+        return this.isShowHostileIndicator()
+            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.getStandardIdentity());
     }
 
     protected int getPositionCount()

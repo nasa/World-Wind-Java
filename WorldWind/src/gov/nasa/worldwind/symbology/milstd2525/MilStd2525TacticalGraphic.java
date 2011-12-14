@@ -67,9 +67,6 @@ import java.util.List;
  */
 public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic, Renderable
 {
-    /** Text modifier used to indicate hostile entities. */
-    public final static String HOSTILE_INDICATOR = "ENY";
-
     public final static Material MATERIAL_FRIEND = Material.BLACK;
     public final static Material MATERIAL_HOSTILE = Material.RED;
 
@@ -81,6 +78,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected boolean highlighted;
     protected boolean visible = true;
     protected boolean showModifiers = true;
+    protected boolean showHostileIndicator = true;
+
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
     protected Offset labelOffset;
@@ -250,6 +249,31 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setShowModifiers(boolean showModifiers)
     {
         this.showModifiers = showModifiers;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowHostileIndicator()
+    {
+        return this.showHostileIndicator;
+    }
+
+    /** {@inheritDoc} */
+    public void setShowHostileIndicator(boolean showHostileIndicator)
+    {
+        this.showHostileIndicator = showHostileIndicator;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowLocation()
+    {
+        // Most 2525 graphics do no support the location modifier. Graphics that do support it can override this method.
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public void setShowLocation(boolean showLocation)
+    {
+        // Most 2525 graphics do no support the location modifier. Graphics that do support it can override this method.
     }
 
     /**

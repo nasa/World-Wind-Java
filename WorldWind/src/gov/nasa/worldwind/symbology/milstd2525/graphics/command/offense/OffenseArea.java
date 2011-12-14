@@ -31,7 +31,7 @@ public class OffenseArea extends BasicArea
     /** Create a new area graphic. */
     public OffenseArea()
     {
-        super.setShowIdentityLabels(false);
+        super.setShowHostileIndicator(false);
     }
 
     /** {@inheritDoc} */

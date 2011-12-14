@@ -185,6 +185,45 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     void setShowModifiers(boolean showModifiers);
 
     /**
+     * Indicates whether or not the graphic should display its location as a text modifier. Not all graphics support the
+     * location modifier.
+     *
+     * @return true if the graphic will display the location modifier. Note that not all graphics support this
+     *         modifier.
+     */
+    boolean isShowLocation();
+
+    /**
+     * Specifies whether or not the graphic should display its location as a text modifier. Not all graphics support the
+     * location modifier. Setting showLocation on a graphic that does not support the modifier will have no effect.
+     *
+     * @param show true if the graphic will display the location modifier. Note that not all graphics support this
+     *             modifier.
+     */
+    void setShowLocation(boolean show);
+
+    /**
+     * Indicates whether or not this graphic will display a text indicator when the graphic represents a hostile entity.
+     * See comments on {@link #setShowHostileIndicator(boolean) setShowHostileIndicator} for more information.
+     *
+     * @return true if an indicator may be drawn when this graphic represents a hostile entity, if supported by the
+     *         graphic implementation. Note that some graphics may not display an indicator, even when representing a
+     *         hostile entity.
+     */
+    boolean isShowHostileIndicator();
+
+    /**
+     * Specifies whether or not to display a text indicator when the symbol or graphic represents a hostile entity. In
+     * the case of MIL-STD-2525C, the indicator is the letters "ENY". The indicator is determined by the symbology set,
+     * and may not apply to all graphics in the symbol set.
+     *
+     * @param show true if this graphic should display an indicator when this graphic represents a hostile entity and
+     *             the graphic implementation supports such an indicator. Note that some graphics may not display an
+     *             indicator, even when representing a hostile entity.
+     */
+    void setShowHostileIndicator(boolean show);
+
+    /**
      * Indicates a string identifier for this graphic. The format of the identifier depends on the symbol set to which
      * the graphic belongs.
      *
@@ -267,8 +306,7 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
 
     /**
      * Indicates an offset used to position the graphic's main label relative to the label's geographic position. See
-     * comments on {@link #setLabelOffset(gov.nasa.worldwind.render.Offset) setLabelOffset} for more
-     * information.
+     * comments on {@link #setLabelOffset(gov.nasa.worldwind.render.Offset) setLabelOffset} for more information.
      *
      * @return The offset that determines how the graphic's label is placed relative to the graphic.
      */

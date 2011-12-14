@@ -551,11 +551,15 @@ public interface SymbologyConstants
     final String HIGHER_FORMATION = "M";
 
     /**
-     * The MIL-STD-2525 Hostile (Enemy) modifier field ID. Indicates a hostile equipment symbol. See MIL-STD-2525
-     * section 5.3.4.10 (page 29), table IV (pages 22-24) and table XIV (pages 46-47). When used as a key, the
-     * corresponding value must be the string "ENY".
+     * String (ENY) that is displayed as part of MIL-STD-2525 graphics that depict hostile entities. See MIL-STD-2525
+     * section 5.5.1.1 (page 37). This modifier is displayed automatically on graphics that represent hostile entities
+     * and include Hostile Enemy modifier in the MIL-STD-2525C graphic template. Use the accessors on TacticalGraphic to
+     * enable or disable display of this modifier for a particular graphic.
+     *
+     * @see gov.nasa.worldwind.symbology.TacticalGraphic#isShowHostileIndicator()
+     * @see TacticalGraphic#setShowHostileIndicator(boolean)
      */
-    final String HOSTILE_ENEMY = "N";
+    final String HOSTILE_ENEMY = "ENY";
 
     /**
      * The MIL-STD-2525 IFF/SIF modifier field ID. Indicates an IFF/SIF identification mode or code. See MIL-STD-2525

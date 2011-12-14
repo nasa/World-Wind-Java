@@ -41,7 +41,7 @@ public class AviationZone extends BasicArea
     public AviationZone()
     {
         // Do not draw "ENY" labels on hostile entities.
-        this.setShowIdentityLabels(false);
+        this.setShowHostileIndicator(false);
     }
 
     @Override

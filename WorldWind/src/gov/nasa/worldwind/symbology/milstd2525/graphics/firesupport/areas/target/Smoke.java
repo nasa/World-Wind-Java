@@ -23,7 +23,7 @@ public class Smoke extends BasicArea
     public Smoke()
     {
         // Do not draw "ENY" labels for hostile entities
-        this.setShowIdentityLabels(false);
+        this.setShowHostileIndicator(false);
     }
 
     /** {@inheritDoc} */

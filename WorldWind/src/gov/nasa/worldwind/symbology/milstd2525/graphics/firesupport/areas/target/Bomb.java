@@ -23,7 +23,7 @@ public class Bomb extends BasicArea
     public Bomb()
     {
         // Do not draw "ENY" labels for hostile entities
-        this.setShowIdentityLabels(false);
+        this.setShowHostileIndicator(false);
     }
 
     /** {@inheritDoc} */

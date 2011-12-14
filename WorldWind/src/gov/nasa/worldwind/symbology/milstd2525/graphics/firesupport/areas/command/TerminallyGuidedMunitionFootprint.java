@@ -23,7 +23,7 @@ public class TerminallyGuidedMunitionFootprint extends BasicArea
     public TerminallyGuidedMunitionFootprint()
     {
         // Do not draw "ENY" labels for hostile entities
-        this.setShowIdentityLabels(false);
+        this.setShowHostileIndicator(false);
     }
 
     /** {@inheritDoc} */

@@ -24,7 +24,7 @@ public class IrregularAirspaceCoordinationArea extends AviationZone
     public IrregularAirspaceCoordinationArea()
     {
         // Do not draw "ENY" labels for hostile entities
-        this.setShowIdentityLabels(false);
+        this.setShowHostileIndicator(false);
     }
 
     @Override

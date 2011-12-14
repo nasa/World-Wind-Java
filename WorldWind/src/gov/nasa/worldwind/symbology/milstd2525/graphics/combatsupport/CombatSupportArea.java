@@ -41,7 +41,7 @@ public class CombatSupportArea extends BasicArea
     public CombatSupportArea()
     {
         // Do not draw "ENY" labels for hostile entities
-        this.setShowIdentityLabels(false);
+        this.setShowHostileIndicator(false);
     }
 
     /** {@inheritDoc} */
