@@ -26,7 +26,6 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String ACTION = "gov.nasa.worldwind.avkey.Action";
     final String AIRSPACE_GEOMETRY_CACHE_SIZE = "gov.nasa.worldwind.avkey.AirspaceGeometryCacheSize";
     final String ALLOW = "gov.nasa.worldwind.avkey.Allow";
-    final String ALTITUDE = "gov.nasa.worldwind.avkey.Altitude";
     final String AUTH_TOKEN = "gov.nasa.worldwind.avkey.AuthToken";
 
     final String AVAILABLE_IMAGE_FORMATS = "gov.nasa.worldwind.avkey.AvailableImageFormats";
@@ -153,7 +152,6 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String GRAYSCALE = "gov.nasa.worldwind.avkey.Grayscale";
     final String GREAT_CIRCLE = "gov.nasa.worldwind.avkey.GreatCircle";
 
-    final String HEADING = "gov.nasa.worldwind.avkey.Heading";
     final String HEIGHT = "gov.nasa.worldwind.avkey.Height";
     final String HIDDEN = "gov.nasa.worldwind.avkey.Hidden";
     final String HORIZONTAL = "gov.nasa.worldwind.avkey.Horizontal";
@@ -205,7 +203,6 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String LAYERS_CLASS_NAMES = "gov.nasa.worldwind.avkey.LayerClassNames";
     final String LEFT = "gov.nasa.worldwind.avkey.Left";
     final String LEFT_OF_CENTER = "gov.nasa.worldwind.avkey.LeftOfCenter";
-    final String LENGTH = "gov.nasa.worldwind.avkey.Length";
     final String LEVEL_NAME = "gov.nasa.worldwind.avkey.LevelNameKey";
     final String LEVEL_NUMBER = "gov.nasa.worldwind.avkey.LevelNumberKey";
     final String LEVEL_ZERO_TILE_DELTA = "gov.nasa.worldwind.avkey.LevelZeroTileDelta";
@@ -327,7 +324,6 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String RELATIVE_TO_GLOBE = "gov.nasa.worldwind.avkey.RelativeToGlobe";
     final String RELATIVE_TO_SCREEN = "gov.nasa.worldwind.avkey.RelativeToScreen";
 
-    final String RADIUS = "gov.nasa.worldwind.avkey.Radius";
     final String RASTER_BAND_ACTUAL_BITS_PER_PIXEL = "gov.nasa.worldwind.avkey.RasterBand.ActualBitsPerPixel";
     final String RASTER_BAND_MIN_PIXEL_VALUE = "gov.nasa.worldwind.avkey.RasterBand.MinPixelValue";
     final String RASTER_BAND_MAX_PIXEL_VALUE = "gov.nasa.worldwind.avkey.RasterBand.MaxPixelValue";
