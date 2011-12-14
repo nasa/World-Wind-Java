@@ -18,6 +18,9 @@ import gov.nasa.worldwind.render.*;
  * Graphic Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-graphics/"
  * target="_blank">Usage Guide</a> for instructions on using TacticalGraphic in an application.
  * <p/>
+ * See the {@link gov.nasa.worldwindx.examples.symbology.Symbology} and {@link gov.nasa.worldwindx.examples.symbology.TacticalGraphics}
+ * example applications for examples of how to use tactical graphics.
+ * <p/>
  * <h1>Construction</h1>
  * <p/>
  * TacticalGraphics are typically created by an instance of {@link TacticalGraphicFactory}. Each graphic within a symbol
@@ -38,13 +41,13 @@ import gov.nasa.worldwind.render.*;
  * TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
  * <br/>
  * // Specify the control points for the line
- * List<Position> positions = new ArrayList<Position>();
- * positions.add(Position.fromDegrees(34.7327, -117.8347, 0));
- * positions.add(Position.fromDegrees(34.7328, -117.7305, 0));
+ * List<Position> positions = Arrays.asList(
+ *     Position.fromDegrees(34.7327, -117.8347, 0),
+ *     Position.fromDegrees(34.7328, -117.7305, 0));
  * <br/>
  * // Specify a text modifier
  * AVList modifiers = new AVListImpl();
- * modifiers.put(AVKey.TEXT, "Alpha");
+ * modifiers.put(SymbologyConstants.UNIQUE_DESIGNATION, "Alpha");
  * <br/>
  * // Create a graphic for a MIL-STD-2525 hostile phase line. The first argument is the symbol identification code
  * // (SIDC) that identifies the type of graphic to create.
@@ -72,14 +75,16 @@ import gov.nasa.worldwind.render.*;
  * <p/>
  * Many graphics support text or graphic modifiers. Each modifier is identified by a String key. The set of possible
  * modifiers is determined by the symbol set. Modifiers can be specified in the parameter list when a graphic is
- * created, or using {#link #setModifier} after the graphic has been created.
+ * created, or using {@link #setModifier(String, Object) setModifier} after the graphic has been created.
  * <p/>
  * For example, a MIL-STD-2525 General Area graphic can have a text modifier that identifies the area. Here's an example
  * of how to specify the modifier when the graphic is created:
  * <p/>
  * <pre>
  * AVList modifiers = new AVListImpl();
- * modifiers.setValue(AVKey.TEXT, "Boston"); // Text that identifies the area enclosed by the graphic.
+ * modifiers.setValue(SymbologyConstants.UNIQUE_DESIGNATION, "Boston"); // Text that identifies the area enclosed by
+ * the
+ * graphic.
  * <br/>
  * List<Position> positions = ...; // List of positions that define the boundary of the area.
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions, params);
@@ -89,8 +94,8 @@ import gov.nasa.worldwind.render.*;
  * <p/>
  * <pre>
  * // Create the graphic
- * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions);
- * graphic.setModifier(AVKey.TEXT, "Boston");
+ * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions, null);
+ * graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, "Boston");
  * </pre>
  * <p/>
  * <h1>Position</h1>
@@ -103,7 +108,7 @@ import gov.nasa.worldwind.render.*;
  * <p/>
  * <pre>
  * Position position = Position.fromDegrees(34.9362, -118.2559, 0);
- * Tactical Graphic graphic = milstd2525Factory.createGraphic("GFGPAPD----AUSX", position, null);
+ * Tactical Graphic graphic = milstd2525Factory.createPoint("GFGPAPD----AUSX", position, null);
  * </pre>
  * <p/>
  * More complicated graphics will require more control points. MIL-STD-2525 defines a template for each type of tactical
@@ -113,22 +118,20 @@ import gov.nasa.worldwind.render.*;
  * to create a list of positions that specifies the three points in order:
  * <p/>
  * <pre>
- * List<Position> positions = new ArrayList<Position>();
- * positions.add(Position.fromDegrees(34.5073, -117.8380, 0)); // PT. 1
- * positions.add(Position.fromDegrees(34.8686, -117.5088, 0)); // PT. 2
- * positions.add(Position.fromDegrees(34.4845, -117.8495, 0)); // PT. 3
+ * List<Position> positions = Arrays.asList(
+ *     Position.fromDegrees(34.5073, -117.8380, 0)); // PT. 1
+ *     Position.fromDegrees(34.8686, -117.5088, 0)); // PT. 2
+ *     Position.fromDegrees(34.4845, -117.8495, 0))); // PT. 3
  * <br/>
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GFGPSLA----AUSX", positions, null);
  * </pre>
- *
+ * <p/>
  * <h1>Categories of graphics</h1>
- *
- * There are a few common categories of tactical graphics. Each of these is described by a subinterface:
- * <ul>
- *     <li>{@link TacticalPoint}- Graphics positioned by a single point.</li>
- *     <li>{@link TacticalCircle} - Graphics positioned by a center point and radius.</li>
- *     <li>{@link TacticalQuad} - Rectangles with a length and width.</li>
- *     <li>{@link TacticalRoute} - A series of point graphics connected by lines and treated as a single graphic.</li>
+ * <p/>
+ * There are a few common categories of tactical graphics. Each of these is described by a sub-interface: <ul>
+ * <li>{@link TacticalPoint}- Graphics positioned by a single point.</li> <li>{@link TacticalCircle} - Graphics
+ * positioned by a center point and radius.</li> <li>{@link TacticalQuad} - Rectangles with a length and width.</li>
+ * <li>{@link TacticalRoute} - A series of point graphics connected by lines and treated as a single graphic.</li>
  * </ul>
  *
  * @author pabercrombie
@@ -171,14 +174,14 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     /**
      * Indicates whether or not a text or graphic modifiers are visible.
      *
-     * @return {@code true} if the modifiers are visible.
+     * @return true if the modifiers are visible.
      */
     boolean isShowModifiers();
 
     /**
      * Specifies whether or not to draw text and graphic modifiers.
      *
-     * @param showModifiers {@code true} if the modifier should be visible.
+     * @param showModifiers true if the modifier should be visible.
      */
     void setShowModifiers(boolean showModifiers);
 
@@ -192,16 +195,21 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
 
     /**
      * Convenience method to specify a text modifier for the graphic. Calling this method is equivalent to calling
-     * <pre>setModifier(AVKey.TEXT, text)</pre>
+     * <code>setModifier(SymbologyConstants.UNIQUE_DESIGNATION, text)</code>.
      *
      * @param text New text modifier. May be null.
+     *
+     * @see #setModifier(String, Object)
      */
     void setText(String text);
 
     /**
-     * Convenience method to access the text modifier of the graphic.
+     * Convenience method to access the text modifier of the graphic. Calling this method is equivalent to calling
+     * <code>getModifier(SymbologyConstants.UNIQUE_DESIGNATION)</code>.
      *
      * @return Descriptive text for this graphic.
+     *
+     * @see #getModifier(String)
      */
     String getText();
 
@@ -234,7 +242,8 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
      * Specifies attributes for this graphic in the normal (as opposed to highlighted) state. If any fields in the
      * attribute bundle are null, the default attribute will be used instead. For example, if the attribute bundle
      * includes a setting for outline material but not for interior material the new outline material will override the
-     * default outline material, but the interior material will remain the default.
+     * default outline material, but the interior material will remain the default. The default attributes are
+     * determined by the symbol set, and may differ depending on the type of graphic.
      *
      * @param attributes new attributes. May be null, in which case default attributes are used.
      */
@@ -248,7 +257,9 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     TacticalGraphicAttributes getHighlightAttributes();
 
     /**
-     * Specifies attributes for this graphic in the highlighted state.
+     * Specifies attributes for this graphic in the highlighted state. See comments on {@link
+     * #setAttributes(TacticalGraphicAttributes) setAttributes} for more information on how the attributes are
+     * interpreted.
      *
      * @param attributes Attributes to apply to the graphic when it is highlighted. May be null, in which default
      *                   attributes are used.

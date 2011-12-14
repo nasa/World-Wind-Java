@@ -87,10 +87,12 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         List<Position> newPositions = new ArrayList<Position>();
 
+        double width = this.getWidth();
+
         for (TacticalPoint p : points)
         {
             // Set the circle's radius to the width of the route
-            p.setModifier(AVKey.RADIUS, DEFAULT_WIDTH); // TODO how to set width
+            p.setModifier(SymbologyConstants.DISTANCE, width);
 
             // Assign the route as the point's delegate owner so that the entire route will highlight
             // as a unit.
@@ -99,6 +101,36 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
         }
 
         this.positions = newPositions;
+    }
+
+    /**
+     * Indicates the width of the route, in meters.
+     *
+     * @return If the SymbologyConstants.DISTANCE modifier set, and is a Double, returns the value of this modifier.
+     *         Otherwise returns a default width.
+     */
+    public double getWidth()
+    {
+        Object widthModifier = this.getModifier(SymbologyConstants.DISTANCE);
+        if (widthModifier instanceof Double)
+        {
+            return (Double) widthModifier;
+        }
+        else
+        {
+            return DEFAULT_WIDTH;
+        }
+    }
+
+    /**
+     * Specifies the width of the route. Calling this method is equivalent to calling
+     * <code>setModifier(SymbologyConstants.DISTANCE, value)</code>.
+     *
+     * @param width Width of the route, in meters.
+     */
+    public void setWidth(double width)
+    {
+        this.setModifier(SymbologyConstants.DISTANCE, width);
     }
 
     /**
@@ -247,16 +279,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         this.paths = new ArrayList<Path>();
 
-        double width;
-        Object widthModifier = this.getModifier(AVKey.WIDTH);
-        if (widthModifier instanceof Double)
-        {
-            width = (Double) widthModifier;
-        }
-        else
-        {
-            width = DEFAULT_WIDTH;
-        }
+        double width = this.getWidth();
 
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
@@ -308,7 +331,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
     {
         StringBuilder sb = new StringBuilder();
 
-        Object o = this.getModifier(AVKey.TEXT);
+        Object o = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
         if (o != null)
         {
             sb.append("Name: ");
@@ -316,12 +339,12 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             sb.append("\n");
         }
 
-        o = this.getModifier(AVKey.WIDTH);
+        o = this.getModifier(SymbologyConstants.DISTANCE);
         if (o != null)
         {
             sb.append("Width: ");
             sb.append(o);
-            sb.append(" m"); // TODO safe to assume meters?
+            sb.append(" m");
             sb.append("\n");
         }
 

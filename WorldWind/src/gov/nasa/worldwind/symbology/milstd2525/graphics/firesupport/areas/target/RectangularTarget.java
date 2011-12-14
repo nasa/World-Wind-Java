@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -101,25 +100,29 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements Tact
     @Override
     public void setModifier(String modifier, Object value)
     {
-        if (AVKey.LENGTH.equals(modifier) && (value instanceof Double))
-            this.setLength((Double) value);
-        else if (AVKey.WIDTH.equals(modifier) && (value instanceof Double))
-            this.setWidth((Double) value);
-        else if (AVKey.HEADING.equals(modifier) && (value instanceof Angle))
+        if (SymbologyConstants.DISTANCE.equals(modifier) && (value instanceof Iterable))
+        {
+            Iterator iterator = ((Iterable) value).iterator();
+            this.setWidth((Double) iterator.next());
+            this.setLength((Double) iterator.next());
+        }
+        else if (SymbologyConstants.AZIMUTH.equals(modifier) && (value instanceof Angle))
+        {
             this.quad.setHeading((Angle) value);
+        }
         else
+        {
             super.setModifier(modifier, value);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public Object getModifier(String modifier)
     {
-        if (AVKey.WIDTH.equals(modifier))
-            return this.getWidth();
-        else if (AVKey.LENGTH.equals(modifier))
-            return this.getLength();
-        else if (AVKey.HEADING.equals(modifier))
+        if (SymbologyConstants.DISTANCE.equals(modifier))
+            return Arrays.asList(this.getWidth(), this.getLength());
+        else if (SymbologyConstants.AZIMUTH.equals(modifier))
             return this.quad.getHeading();
         else
             return super.getModifier(modifier);

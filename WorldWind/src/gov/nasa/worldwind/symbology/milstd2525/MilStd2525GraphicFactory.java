@@ -176,7 +176,11 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             throw new WWRuntimeException(e);
         }
 
-        this.setModifiers(graphic, symbolCode);
+        graphic.setModifier(SymbologyConstants.STANDARD_IDENTITY, symbolCode.getStandardIdentity());
+        graphic.setModifier(SymbologyConstants.STATUS, symbolCode.getStatus());
+        graphic.setModifier(SymbologyConstants.FUNCTION_ID, symbolCode.getFunctionId());
+        graphic.setModifier(SymbologyConstants.COUNTRY_CODE, symbolCode.getCountryCode());
+        graphic.setModifier(SymbologyConstants.ECHELON, symbolCode.getEchelon());
 
         if (modifiers != null)
         {

@@ -8,22 +8,26 @@ package gov.nasa.worldwind.symbology;
 
 /**
  * An interface for circular tactical graphics. This interface provides methods to access the radius of the circle. The
- * radius can also be set using the AVKey.RADIUS modifier.
+ * radius can also be set using the SymbologyConstants.DISTANCE modifier.
  *
  * @author pabercrombie
  * @version $Id$
+ * @see TacticalGraphicFactory#createCircle(String, gov.nasa.worldwind.geom.Position, double,
+ *      gov.nasa.worldwind.avlist.AVList)
  */
 public interface TacticalCircle extends TacticalPoint
 {
     /**
-     * Indicates the radius of this circle.
+     * Indicates the radius of this circle. Calling this method is equivalent to calling
+     * <code>getModifier(SymbologyConstants.DISTANCE )</code>.
      *
      * @return The radius of this circle, in meters.
      */
     double getRadius();
 
     /**
-     * Specifies the radius of this circle.
+     * Specifies the radius of this circle. Calling this method is equivalent to calling
+     * <code>setModifier(SymbologyConstants.DISTANCE, value)</code>.
      *
      * @param radius New radius, in meters.
      */

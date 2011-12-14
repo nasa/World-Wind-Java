@@ -12,6 +12,18 @@ import gov.nasa.worldwind.geom.Position;
 /**
  * A factory to create {@link TacticalGraphic}s. Each implementation of this interface handles the graphics for a
  * specific symbol set. Each graphic within that set is identified by a string identifier.
+ * <p/>
+ * The factory exposes creation several methods:
+ * <p/>
+ * <ul><li>{@link #createGraphic(String, Iterable, gov.nasa.worldwind.avlist.AVList) createGraphic} - Creates a graphic
+ * from a list of positions and modifiers. This method is the most general, and can create any type of graphic. The
+ * other creation methods are provided for convenience.</li> <li>{@link #createPoint(String,
+ * gov.nasa.worldwind.geom.Position, gov.nasa.worldwind.avlist.AVList) createPoint} - Create a graphic positioned by a
+ * single control point.</li> <li>{@link #createCircle(String, gov.nasa.worldwind.geom.Position, double,
+ * gov.nasa.worldwind.avlist.AVList) createCircle} - Create a graphic positioned by a center point and a radius.</li>
+ * <li>{@link #createQuad(String, Iterable, gov.nasa.worldwind.avlist.AVList) createQuad} - Create a graphic that has
+ * length and width properties.</li> <li>{@link #createRoute(String, Iterable, gov.nasa.worldwind.avlist.AVList)
+ * createRoute} - Create a graphic composed of point graphics connected by lines.</li> </ul>
  *
  * @author pabercrombie
  * @version $Id$

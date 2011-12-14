@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -112,7 +111,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements Tactica
     @Override
     public void setModifier(String modifier, Object value)
     {
-        if (AVKey.RADIUS.equals(modifier) && (value instanceof Double))
+        if (SymbologyConstants.DISTANCE.equals(modifier) && (value instanceof Double))
             this.setRadius((Double) value);
         else
             super.setModifier(modifier, value);
@@ -122,7 +121,7 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements Tactica
     @Override
     public Object getModifier(String modifier)
     {
-        if (AVKey.RADIUS.equals(modifier))
+        if (SymbologyConstants.DISTANCE.equals(modifier))
             return this.getRadius();
         else
             return super.getModifier(modifier);

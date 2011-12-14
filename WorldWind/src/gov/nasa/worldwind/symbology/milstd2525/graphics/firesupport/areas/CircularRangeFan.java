@@ -102,7 +102,7 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
     @SuppressWarnings("unchecked")
     public void setModifier(String modifier, Object value)
     {
-        if (AVKey.RADIUS.equals(modifier))
+        if (SymbologyConstants.DISTANCE.equals(modifier))
         {
             if (value instanceof Iterable)
             {
@@ -124,7 +124,7 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
     @Override
     public Object getModifier(String modifier)
     {
-        if (AVKey.RADIUS.equals(modifier))
+        if (SymbologyConstants.DISTANCE.equals(modifier))
         {
             return this.getRadii();
         }
@@ -253,7 +253,7 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         Iterator altIterator = null;
 
         // See if the altitude modifier is set. If so, use it's value to construct altitude labels.
-        Object modifier = this.getModifier(AVKey.ALTITUDE);
+        Object modifier = this.getModifier(SymbologyConstants.ALTITUDE_DEPTH);
         if (modifier instanceof Iterable)
         {
             altIterator = ((Iterable) modifier).iterator();

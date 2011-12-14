@@ -15,7 +15,7 @@ import java.awt.*;
  * <code>WorldWindow</code> renders the next frame. Instances of <code>TacticalGraphicAttributes</code> may be shared by
  * many graphics, thereby reducing the memory normally required to store attributes for each graphic.
  * <p/>
- * TacticalGraphicAttributes is used to override attributes determined by a graphic's symbol set. Any non-null
+ * TacticalGraphicAttributes is used to override default attributes determined by a graphic's symbol set. Any non-null
  * attributes will override the corresponding default attributes. Here's an example of overriding only the outline
  * material of a graphic without affecting other styling specified by the symbol set:
  * <p/>
@@ -65,9 +65,9 @@ public interface TacticalGraphicAttributes
      * geographic position is determined by the type of graphic. For example, the label for an area graphic is typically
      * placed at the center of the area polygon.
      * <p/>
-     * The offset can specify an absolute pixel value, or a an offset relative to the size of the label. For example,
-     * an offset of (-0.5, -0.5) in fraction units will center the label on its geographic position both horizontally
-     * and vertically.
+     * The offset can specify an absolute pixel value, or a an offset relative to the size of the label. For example, an
+     * offset of (-0.5, -0.5) in fraction units will center the label on its geographic position both horizontally and
+     * vertically.
      *
      * @param offset The offset that determines how the graphic's label is placed relative to the graphic.
      */
@@ -88,36 +88,39 @@ public interface TacticalGraphicAttributes
     void setTextModifierFont(Font font);
 
     /**
-     * Indicates the material used to render text modifiers.
+     * Indicates the material used to render text modifiers. See {@link #setTextModifierMaterial(gov.nasa.worldwind.render.Material)
+     * setTextModifierMaterial} for a description of how the material is used.
      *
      * @return The material used to render text modifiers.
      */
     Material getTextModifierMaterial();
 
     /**
-     * Specifies the material used to render text modifiers.
+     * Specifies the material used to render text modifiers. How the material is used depends on the graphic
+     * implementation. For example, graphics may draw 3D text that uses all of the specified material components, or
+     * draw 2D text that uses only the diffuse component. MIL-STD-2525 tactical graphics use the diffuse component to
+     * specify the color of 2D text.
      *
      * @param material The new material.
      */
     void setTextModifierMaterial(Material material);
 
     /**
-     * Indicates the material properties of the shape's interior. If lighting is applied to the shape, this indicates
-     * the interior's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light.
-     * Otherwise, the material's diffuse color indicates the shape's constant interior color.
+     * Indicates the material properties of the graphic's interior. See {@link #setInteriorMaterial(gov.nasa.worldwind.render.Material)
+     * setInteriorMaterial} for more information on how this material is interpreted.
      *
-     * @return the material applied to the balloon's interior.
+     * @return the material applied to the graphic's interior.
      *
      * @see #setInteriorMaterial(Material)
      */
     Material getInteriorMaterial();
 
     /**
-     * Specifies the material properties of the shape's interior. If lighting is applied to the shape, this specifies
-     * the interior's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light.
-     * Otherwise, the material's diffuse color specifies the shape's constant interior color.
+     * Specifies the material properties of the graphic's interior. If lighting is applied to the graphic, this
+     * indicates the interior's ambient, diffuse, and specular colors, its shininess, and the color of any emitted
+     * light. Otherwise, the material's diffuse color indicates the graphic's constant interior color.
      *
-     * @param material the material to apply to the balloon's interior.
+     * @param material the material to apply to the graphic's interior.
      *
      * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getInteriorMaterial()
@@ -125,22 +128,21 @@ public interface TacticalGraphicAttributes
     void setInteriorMaterial(Material material);
 
     /**
-     * Indicates the material properties of the shape's outline. If lighting is applied to the shape, this indicates the
-     * outline's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light. Otherwise,
-     * the material's diffuse color indicates the shape's constant outline color.
+     * Indicates the material properties of the graphic's outline. See {@link #setOutlineMaterial(gov.nasa.worldwind.render.Material)
+     * setOutlineMaterial} for more information on how this material is interpreted.
      *
-     * @return the material applied to the balloon's outline.
+     * @return the material applied to the graphic's outline.
      *
      * @see #setOutlineMaterial(Material)
      */
     Material getOutlineMaterial();
 
     /**
-     * Specifies the material properties of the shape's outline. If lighting is applied to the shape, this specifies the
-     * outline's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light. Otherwise,
-     * the material's diffuse color specifies as the shape's constant outline color.
+     * Specifies the material properties of the graphic's outline. If lighting is applied to the graphic, this indicates
+     * the outline's ambient, diffuse, and specular colors, its shininess, and the color of any emitted light.
+     * Otherwise, the material's diffuse color indicates the graphic's constant outline color.
      *
-     * @param material the material to apply to the balloon's outline.
+     * @param material the material to apply to the graphic's outline.
      *
      * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getOutlineMaterial()
@@ -148,7 +150,7 @@ public interface TacticalGraphicAttributes
     void setOutlineMaterial(Material material);
 
     /**
-     * Indicates the opacity of the shape's interior as a floating-point value in the range 0.0 to 1.0.
+     * Indicates the opacity of the graphic's interior as a floating-point value in the range 0.0 to 1.0.
      *
      * @return the interior opacity as a floating-point value from 0.0 to 1.0.
      *
@@ -157,7 +159,7 @@ public interface TacticalGraphicAttributes
     Double getInteriorOpacity();
 
     /**
-     * Specifies the opacity of the shape's interior as a floating-point value in the range 0.0 to 1.0. A value of 1.0
+     * Specifies the opacity of the graphic's interior as a floating-point value in the range 0.0 to 1.0. A value of 1.0
      * specifies a completely opaque interior, and 0.0 specifies a completely transparent interior. Values in between
      * specify a partially transparent interior.
      *
@@ -169,7 +171,7 @@ public interface TacticalGraphicAttributes
     void setInteriorOpacity(Double opacity);
 
     /**
-     * Indicates the opacity of the shape's outline as a floating-point value in the range 0.0 to 1.0.
+     * Indicates the opacity of the graphic's outline as a floating-point value in the range 0.0 to 1.0.
      *
      * @return the outline opacity as a floating-point value from 0.0 to 1.0.
      *
@@ -178,7 +180,7 @@ public interface TacticalGraphicAttributes
     Double getOutlineOpacity();
 
     /**
-     * Specifies the opacity of the shape's outline as a floating-point value in the range 0.0 to 1.0. A value of 1.0
+     * Specifies the opacity of the graphic's outline as a floating-point value in the range 0.0 to 1.0. A value of 1.0
      * specifies a completely opaque outline, and 0.0 specifies a completely transparent outline. Values in between
      * specify a partially transparent outline.
      *
@@ -190,7 +192,7 @@ public interface TacticalGraphicAttributes
     void setOutlineOpacity(Double opacity);
 
     /**
-     * Indicates the line width (in pixels) used when rendering the shape's outline. The returned value is either zero
+     * Indicates the line width (in pixels) used when rendering the graphic's outline. The returned value is either zero
      * or a positive floating-point value.
      *
      * @return the line width in pixels.
@@ -200,10 +202,10 @@ public interface TacticalGraphicAttributes
     Double getOutlineWidth();
 
     /**
-     * Specifies the line width (in pixels) to use when rendering the shape's outline. The specified <code>width</code>
-     * must be zero or a positive floating-point value. Specifying a line width of zero disables the shape's outline.
-     * The <code>width</code> may be limited by an implementation-defined maximum during rendering. The maximum width is
-     * typically 10 pixels.
+     * Specifies the line width (in pixels) to use when rendering the graphic's outline. The specified
+     * <code>width</code> must be zero or a positive floating-point value. Specifying a line width of zero disables the
+     * graphic's outline. The <code>width</code> may be limited by an implementation-defined maximum during rendering.
+     * The maximum width is typically 10 pixels.
      *
      * @param width the line width in pixels.
      *

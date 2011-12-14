@@ -362,6 +362,20 @@ public interface SymbologyConstants
     final String DIRECTION_OF_MOVEMENT = "Q";
 
     /**
+     * The MIL-STD-2525 Distance modifier field ID. Indicates a distance in meters (radius, length, width, etc). See
+     * MIL-STD-2525 section 5.5.2 (page 38), table XI (pages 38-39) and table XIV (pages 46-47). When used as a key, the
+     * corresponding value must be a Double.
+     */
+    final String DISTANCE = "AM";
+
+    /**
+     * The MIL-STD-2525 Azimuth modifier field ID. Indicates a distance in meters (radius, length, width, etc). See
+     * MIL-STD-2525 section 5.5.2 (page 38), table XI (pages 38-39) and table XIV (pages 46-47). When used as a key, the
+     * corresponding value must be an {@link gov.nasa.worldwind.geom.Angle} indicating an angle relative to true north.
+     */
+    final String AZIMUTH = "AN";
+
+    /**
      * The MIL-STD-2525 Echelon modifier field ID. Indicates the echelon code associated with a MIL-STD-2525 symbol
      * (SIDC position 12). A symbol's echelon defines the command level of a unit represented by the symbol. See
      * MIL-STD-2525 section 5.3.4.2 (page 25), section 5.5.2.2 (page 40), and table V (pages 25-26). When used as a key,
@@ -1060,6 +1074,13 @@ public interface SymbologyConstants
      * 1029) and table EG-II (page 1032)</li> </ul>
      */
     final String SYMBOL_MODIFIER = "gov.nasa.worldwind.symbology.SymbolModifier";
+
+    /**
+     * The MIL-STD-2525 Symbol Indicator modifier field ID. Indicates a symbol to included in a TacticalGraphic. See
+     * MIL-STD-2525 section 5.5.2 (page 38), table XI (pages 38-39) and table XIV (pages 46-47). When used as a key, the
+     * corresponding value must be an {@link TacticalSymbol}.
+     */
+    final String SYMBOL_INDICATOR = "A";
 
     /**
      * The MIL-STD-2525 Task Force Indicator modifier field ID. Indicates whether a MIL-STD-2525 symbol's represented

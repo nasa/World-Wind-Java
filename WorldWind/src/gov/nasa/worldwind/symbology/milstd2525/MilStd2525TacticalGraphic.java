@@ -12,7 +12,6 @@ import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
-import java.text.*;
 import java.util.*;
 import java.util.List;
 
@@ -23,27 +22,28 @@ import java.util.List;
  * <p/>
  * The following table lists the modifiers supported by 2525 graphics. Note that not all graphics support all modifiers.
  * <table width="100%"> <tr><th>Field</th><th>Modifier key</th><th>Data type</th><th>Description</th></tr>
- * <tr><td>A</td><td>AVKey.SYMBOL</td><td>{@link TacticalSymbol}</td><td>Symbol icon</td></tr>
- * <tr><td>B</td><td>AVKey.ECHELON</td><td>String</td><td>Echelon</td></tr> <tr><td>C</td><td>AVKey.QUANTITY</td><td>String</td><td>Quantity</td></tr>
- * <tr><td>H</td><td>AVKey.DESCRIPTION</td><td>String</td><td>Additional information</td></tr>
- * <tr><td>N</td><td>AVKey.SHOW_HOSTILE</td><td>Boolean</td><td>Show/hide hostile entity indicator</td></tr>
- * <tr><td>Q</td><td>AVKey.HEADING</td><td>{@link gov.nasa.worldwind.geom.Angle}</td><td>Direction indicator</td></tr>
- * <tr><td>S</td><td>AVKey.OFFSET</td><td>{@link gov.nasa.worldwind.render.Offset}</td><td>Offset location
- * indicator</td></tr> <tr><td>T</td><td>AVKey.TEXT</td><td>String</td><td>Unique designation</td></tr>
- * <tr><td>V</td><td>AVKey.TYPE</td><td>String</td><td>Type</td></tr> <tr><td>W</td><td>AVKey.DATE_TIME</td><td>Date</td><td>Date/time</td></tr>
- * <tr><td>X</td><td>AVKey.ALTITUDE</td><td>Double</td><td>Altitude/depth</td></tr>
- * <tr><td>Y</td><td>AVKey.SHOW_POSITION</td><td>Boolean</td><td>Show/hide position field</td></tr>
- * <tr><td>AM</td><td>AVKey.RADIUS, AVKey.WIDTH, AVKey.LENGTH</td><td>Double</td><td>Radius, length or width of
- * rectangle.</td></tr> <tr><td>AN</td><td>AVKey.AZIMUTH</td><td>Angle</td><td>Azimuth</td></tr>
- * <tr><td>--</td><td>AVKey.GRAPHIC</td><td>{@link TacticalGraphic}</td><td>Child graphic</td></tr> </table>
+ * <tr><td>A</td><td>SymbologyConstants.SYMBOL</td><td>{@link TacticalSymbol}</td><td>Symbol icon</td></tr>
+ * <tr><td>B</td><td>SymbologyConstants.ECHELON</td><td>String</td><td>Echelon</td></tr>
+ * <tr><td>C</td><td>SymbologyConstants.QUANTITY</td><td>String</td><td>Quantity</td></tr>
+ * <tr><td>H</td><td>SymbologyConstants.ADDITIONAL_INFO</td><td>String</td><td>Additional information</td></tr>
+ * <tr><td>N</td><td>SymbologyConstants.SHOW_HOSTILE</td><td>Boolean</td><td>Show/hide hostile entity
+ * indicator</td></tr> <tr><td>Q</td><td>SymbologyConstants.DIRECTION_OF_MOVEMENT</td><td>{@link
+ * gov.nasa.worldwind.geom.Angle}</td><td>Direction indicator</td></tr> <tr><td>S</td><td>SymbologyConstants.OFFSET</td><td>{@link
+ * gov.nasa.worldwind.render.Offset}</td><td>Offset location indicator</td></tr> <tr><td>T</td><td>SymbologyConstants.UNIQUE_DESIGNATION</td><td>String</td><td>Unique
+ * designation</td></tr> <tr><td>V</td><td>SymbologyConstants.TYPE</td><td>String</td><td>Type</td></tr>
+ * <tr><td>W</td><td>SymbologyConstants.DATE_TIME_GROUP</td><td>String</td><td>Date/time</td></tr>
+ * <tr><td>X</td><td>SymbologyConstants.ALTITUDE_DEPTH</td><td>Double</td><td>Altitude/depth</td></tr>
+ * <tr><td>Y</td><td>SymbologyConstants.SHOW_LOCATION</td><td>Boolean</td><td>Show/hide position field</td></tr>
+ * <tr><td>AM</td><td>SymbologyConstants.DISTANCE</td><td>Double</td><td>Radius, length or width of rectangle.</td></tr>
+ * <tr><td>AN</td><td>SymbologyConstants.AZIMUTH</td><td>Angle</td><td>Azimuth</td></tr> </table>
  * <p/>
  * Here's an example of setting modifiers during construction of a graphic:
  * <pre>
  * AVList modifiers = new AVListImpl();
- * modifiers.setValue(AVKey.TEXT, "X469"); // Field T
- * modifiers.setValue(AVKey.DATE_TIME, new Date()); // Field W
- * modifiers.setValue(AVKey.ADDITIONAL_INFO, "Anthrax Suspected"); // Field H
- * modifiers.setValue(AVKey.HEADING, Angle.fromDegrees(30.0)); // Field Q
+ * modifiers.setValue(SymbologyConstants.UNIQUE_DESIGNATION, "X469"); // Field T
+ * modifiers.setValue(SymbologyConstants.DATE_TIME_GROUP, new Date()); // Field W
+ * modifiers.setValue(SymbologyConstants.ADDITIONAL_INFO, "Anthrax Suspected"); // Field H
+ * modifiers.setValue(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(30.0)); // Field Q
  *
  * Position position = Position.fromDegrees(35.1026, -118.348, 0);
  *
@@ -56,16 +56,15 @@ import java.util.List;
  * application can pass an {@link Iterable} to <code>setModifier</code> if multiple values are required to specify the
  * modifier. Here's an example of how to specify two timestamps:
  * <pre>
- * Date startDate = ...
- * Date endData = ...
+ * String startDate = ...
+ * String endData = ...
  *
- * graphic.setModifier(AVKey.DATE_TIME, Arrays.asList(startDate, endDate));
+ * graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList(startDate, endDate));
  * </pre>
  *
  * @author pabercrombie
  * @version $Id$
  */
-// TODO give the app a way to control formatting of date/time
 public abstract class MilStd2525TacticalGraphic extends AVListImpl implements TacticalGraphic, Renderable
 {
     /** Text modifier used to indicate hostile entities. */
@@ -73,10 +72,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     public final static Material MATERIAL_FRIEND = Material.BLACK;
     public final static Material MATERIAL_HOSTILE = Material.RED;
-
-    /** Default date pattern used to format dates. */
-    public final static String DEFAULT_DATE_PATTERN = "ddhhmmss'Z'MMMyyyy";
-    public final static String TIME_PATTERN = "hhmmss'Z'";
 
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
@@ -174,7 +169,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** {@inheritDoc} */
     public Object getModifier(String modifier)
     {
-        if (AVKey.TEXT.equals(modifier))
+        if (SymbologyConstants.UNIQUE_DESIGNATION.equals(modifier))
         {
             return this.text;
         }
@@ -203,7 +198,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** {@inheritDoc} */
     public void setModifier(String modifier, Object value)
     {
-        if (AVKey.TEXT.equals(modifier) && (value instanceof String))
+        if (SymbologyConstants.UNIQUE_DESIGNATION.equals(modifier) && (value instanceof String))
         {
             this.setText((String) value);
         }
@@ -452,19 +447,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         this.determineLabelPositions(dc);
     }
 
-    /**
-     * Format a date to a string.
-     *
-     * @param d Date to format.
-     *
-     * @return The formatted date.
-     */
-    protected String formatDate(Date d)
-    {
-        DateFormat format = new SimpleDateFormat(TIME_PATTERN);
-        return format.format(d);
-    }
-
     /** Determine active attributes for this frame. */
     protected void determineActiveAttributes()
     {
@@ -641,9 +623,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     /**
      * Get the date range from the graphic's modifiers. This method looks at the value of the
-     * <code>AVKey.DATE_TIME</code> modifier, and returns the results as a two element array. If either value is an
-     * instance of {@link Date}, the date will be formatted to a String using the active date format. If the value of
-     * the modifier is an <code>Iterable</code>, then this method returns the first two values of the iteration. If the
+     * <code>AVKey.DATE_TIME</code> modifier, and returns the results as a two element array. If the value of the
+     * modifier is an <code>Iterable</code>, then this method returns the first two values of the iteration. If the
      * value of the modifier is a single object, this method returns an array containing that object and
      * <code>null</code>.
      *
@@ -654,26 +635,18 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         Object date1 = null;
         Object date2 = null;
 
-        Object o = this.getModifier(AVKey.DATE_TIME);
+        Object o = this.getModifier(SymbologyConstants.DATE_TIME_GROUP);
         if (o instanceof Iterable)
         {
             Iterator iterator = ((Iterable) o).iterator();
             if (iterator.hasNext())
             {
-                o = iterator.next();
-                if (o instanceof Date)
-                    date1 = this.formatDate((Date) o);
-                else
-                    date1 = o;
+                date1 = iterator.next();
             }
 
             if (iterator.hasNext())
             {
-                o = iterator.next();
-                if (o instanceof Date)
-                    date2 = this.formatDate((Date) o);
-                else
-                    date2 = o;
+                date2 = iterator.next();
             }
         }
         else
@@ -698,7 +671,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         Object alt1 = null;
         Object alt2 = null;
 
-        Object o = this.getModifier(AVKey.ALTITUDE);
+        Object o = this.getModifier(SymbologyConstants.ALTITUDE_DEPTH);
         if (o instanceof Iterable)
         {
             Iterator iterator = ((Iterable) o).iterator();

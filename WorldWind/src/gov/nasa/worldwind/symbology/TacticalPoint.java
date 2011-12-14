@@ -13,6 +13,7 @@ import gov.nasa.worldwind.geom.Position;
  *
  * @author pabercrombie
  * @version $Id$
+ * @see TacticalGraphicFactory#createPoint(String, gov.nasa.worldwind.geom.Position, gov.nasa.worldwind.avlist.AVList)
  */
 public interface TacticalPoint extends TacticalGraphic
 {

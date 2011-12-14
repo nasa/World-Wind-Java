@@ -29,8 +29,11 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     protected Double outlineOpacity;
     /** Indicates the line width (in pixels) used when rendering the shape's outline. Initially 0.0. */
     protected double outlineWidth;
+    /** Indicates the offset applied to the graphic's main label. */
     protected Offset labelOffset;
+    /** Indicates the font used to render text modifiers. */
     protected Font font;
+    /** Indicates the material used to render text modifiers. */
     protected Material textMaterial;
 
     /**

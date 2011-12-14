@@ -8,6 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
 /**
@@ -64,8 +65,9 @@ public class AviationZone extends BasicArea
     /**
      * Create text for the area's label.
      *
-     * @param includeAltitude Indicates whether to include altitude information in the label (if the AVKey.ALTITUDE
-     *                        modifier is set). Not all aviation area graphics support the altitude modifier.
+     * @param includeAltitude Indicates whether to include altitude information in the label (if the
+     *                        SymbologyConstants.ALTITUDE_DEPTH modifier is set). Not all aviation area graphics support
+     *                        the altitude modifier.
      *
      * @return Text for the label, based on the active modifiers.
      */
@@ -75,7 +77,7 @@ public class AviationZone extends BasicArea
         sb.append(this.getGraphicLabel());
         sb.append("\n");
 
-        Object o = this.getModifier(AVKey.TEXT);
+        Object o = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
         if (o != null)
         {
             sb.append(o);

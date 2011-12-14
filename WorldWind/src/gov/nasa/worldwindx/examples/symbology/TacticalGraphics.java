@@ -201,8 +201,9 @@ public class TacticalGraphics extends ApplicationTemplate
             TacticalRoute route = factory.createRoute("GFGPALM-------X", controlPoints, null);
             route.setValue(AVKey.DISPLAY_NAME, "Minimum Risk Route (2.X.2.2.2.2)");
             route.setText("KNIGHT");
-            route.setModifier(AVKey.WIDTH, 2000.0);
-            route.setModifier(AVKey.ALTITUDE, Arrays.asList("50 FT AGL", "200 FT AGL"));
+            route.setModifier(SymbologyConstants.DISTANCE, 2000.0);
+            route.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("270600Z", "271845Z"));
+            route.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("50 FT AGL", "200 FT AGL"));
 
             // And add the route to the layer. Note that we do not need to add the individual control points
             // to the layer because the route will take care of drawing them.
@@ -280,8 +281,8 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createGraphic("GFGPAAR----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Restricted Operations Zone (2.X.2.2.3.1)");
             graphic.setText("(Unit ID)");
-            graphic.setModifier(AVKey.DATE_TIME, Arrays.asList(new Date(), new Date()));
-            graphic.setModifier(AVKey.ALTITUDE, Arrays.asList("100 FT AGL", "1000 FT AGL"));
+            graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("180500Z", "180615Z"));
+            graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("2000 FT AGL", "3000 FT AGL"));
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
@@ -297,6 +298,7 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createGraphic("GFGPAAW----AUSX", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapons Free Zone (2.X.2.2.3.5)");
             graphic.setText("(Unit ID)");
+            graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("1000Z", "1300Z"));
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
@@ -305,7 +307,7 @@ public class TacticalGraphics extends ApplicationTemplate
 
             Position position = (Position.fromDegrees(35.1108, -117.0470, 0));
             TacticalCircle circle = factory.createCircle("GHFPATC-------X", position, 5000.0, null);
-            circle.setModifier(AVKey.TEXT, "AG9999");
+            circle.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, "AG9999");
             circle.setValue(AVKey.DISPLAY_NAME, "Circular Target (2.X.4.3.1.2)");
             layer.addRenderable(circle);
 
@@ -327,8 +329,8 @@ public class TacticalGraphics extends ApplicationTemplate
 
             position = (Position.fromDegrees(34.6813, -116.9724, 0));
             graphic = factory.createGraphic("GFFPAXC-------X", Arrays.asList(position), null);
-            graphic.setModifier(AVKey.RADIUS, Arrays.asList(1000.0, 6000.0, 11000.0));
-            graphic.setModifier(AVKey.ALTITUDE, Arrays.asList(100, 200, 300));
+            graphic.setModifier(SymbologyConstants.DISTANCE, Arrays.asList(1000.0, 6000.0, 11000.0));
+            graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL"));
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
             layer.addRenderable(graphic);
         }

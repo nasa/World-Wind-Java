@@ -8,10 +8,11 @@ package gov.nasa.worldwind.symbology;
 
 /**
  * An interface for tactical graphics shaped like a quadrilaterals. This interface provides methods to set the length
- * and width of the quad. The length and width can also be set using the AVKey.WIDTH and AVKey.LENGTH modifiers.
+ * and width of the quad. The length and width can also be set using the SymbologyConstants.DISTANCE modifier.
  *
  * @author pabercrombie
  * @version $Id$
+ * @see TacticalGraphicFactory#createQuad(String, Iterable, gov.nasa.worldwind.avlist.AVList)
  */
 public interface TacticalQuad extends TacticalGraphic
 {
