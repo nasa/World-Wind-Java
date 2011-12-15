@@ -49,7 +49,8 @@ public class TacticalSymbols extends ApplicationTemplate
             this.symbolLayer.setName("Tactical Symbols");
 
             // Create normal and highlight attribute bundles that are shared by all tactical symbols. Changes to these
-            // attribute bundles are reflected in all symbols.
+            // attribute bundles are reflected in all symbols. We specify both attribute bundle types in this example in
+            // order to keep a symbol's scale constant when it's highlighted, and change only its opacity.
             this.sharedAttrs = new BasicTacticalSymbolAttributes();
             this.sharedHighlightAttrs = new BasicTacticalSymbolAttributes();
 
