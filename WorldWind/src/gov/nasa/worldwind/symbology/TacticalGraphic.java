@@ -47,7 +47,7 @@ import gov.nasa.worldwind.render.*;
  *
  * // Specify a text modifier
  * AVList modifiers = new AVListImpl();
- * modifiers.put(SymbologyConstants.UNIQUE_DESIGNATION, "Alpha");
+ * modifiers.setValue(SymbologyConstants.UNIQUE_DESIGNATION, "Alpha");
  *
  * // Create a graphic for a MIL-STD-2525 hostile phase line. The first argument is the symbol identification code
  * // (SIDC) that identifies the type of graphic to create.
@@ -86,7 +86,7 @@ import gov.nasa.worldwind.render.*;
  *                                                                      //  the  graphic.
  *
  * List<Position> positions = ...; // List of positions that define the boundary of the area.
- * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions, params);
+ * TacticalGraphic graphic = milstd2525Factory.createGraphic("GHGPGAG----AUSX", positions, modifiers);
  * </pre>
  * <p/>
  * The modifier can also be set (or changed) after the graphic is created:
@@ -118,17 +118,22 @@ import gov.nasa.worldwind.render.*;
  * <p/>
  * <pre>
  * List<Position> positions = Arrays.asList(
- *     Position.fromDegrees(34.5073, -117.8380, 0)); // PT. 1
- *     Position.fromDegrees(34.8686, -117.5088, 0)); // PT. 2
- *     Position.fromDegrees(34.4845, -117.8495, 0))); // PT. 3
+ *     Position.fromDegrees(34.5073, -117.8380, 0), // PT. 1
+ *     Position.fromDegrees(34.8686, -117.5088, 0), // PT. 2
+ *     Position.fromDegrees(34.4845, -117.8495, 0)); // PT. 3
  *
  * TacticalGraphic graphic = milstd2525Factory.createGraphic("GFGPSLA----AUSX", positions, null);
  * </pre>
  * <p/>
  * <h1>Sub-interfaces of TacticalGraphic</h1>
  * <p/>
- * There are a few common categories of tactical graphics. Each of these is described by a sub-interface: <ul>
- * <li>{@link TacticalPoint}- Graphics positioned by a single point.</li> <li>{@link TacticalCircle} - Graphics
+ * TacticalGraphic describes any tactical graphic in the most general terms: a list of positions and modifiers. However,
+ * this general interface is not convenient for all graphics. For example, when creating a circle graphic it is more
+ * convenient to access the radius of the circle directly than to set a modifier that affects the radius. Sub-interfaces
+ * of tactical graphic provide more convenient methods for manipulating common types of graphics. Instances of these
+ * sub-interfaces can be created directly using a TacticalGraphicFactory. The sub-interfaces are:
+ * <p/>
+ * <ul> <li>{@link TacticalPoint}- Graphics positioned by a single point.</li> <li>{@link TacticalCircle} - Graphics
  * positioned by a center point and radius.</li> <li>{@link TacticalQuad} - Rectangles with a length and width.</li>
  * <li>{@link TacticalRoute} - A series of point graphics connected by lines and treated as a single graphic.</li>
  * </ul>

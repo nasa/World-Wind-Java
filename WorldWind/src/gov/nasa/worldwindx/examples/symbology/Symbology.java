@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalSymbol;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
@@ -93,8 +93,8 @@ public class Symbology extends ApplicationTemplate
 
             // Create a tactical graphic for the MIL-STD-2525 symbology set. The graphic identifies a MIL-STD-2525
             // friendly Supporting Attack.
-            MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
-            MilStd2525TacticalGraphic graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
+            TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
+            TacticalGraphic graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Graphic"); // Tool tip text.
             layer.addRenderable(graphic);
 
