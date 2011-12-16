@@ -579,7 +579,7 @@ public class Orbit extends AbstractAirspace
         int arcSlices, int lengthSlices, int stacks, int orientation,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "LongCylinder.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "LongCylinder.Vertices",
             radius, length, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1], type,
             arcSlices, lengthSlices, stacks, orientation, referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
@@ -689,7 +689,7 @@ public class Orbit extends AbstractAirspace
         int arcSlices, int lengthSlices, int loops, int orientation,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "LongDisk.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "LongDisk.Vertices",
             radii[0], radii[1], length, altitudes, terrainConformant, type,
             arcSlices, lengthSlices, loops, orientation,
             referenceCenter);

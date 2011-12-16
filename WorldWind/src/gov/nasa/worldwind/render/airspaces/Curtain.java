@@ -347,7 +347,7 @@ public class Curtain extends AbstractAirspace
         double[] altitudes, boolean[] terrainConformant,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "Curtain",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Curtain",
             locations, pathType, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1],
             splitThreshold, referenceCenter);
 

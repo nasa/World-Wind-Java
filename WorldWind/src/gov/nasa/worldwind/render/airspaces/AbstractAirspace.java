@@ -19,7 +19,6 @@ import java.util.*;
  * @author dcollins
  * @version $Id$
  */
-@SuppressWarnings({"deprecation"})
 public abstract class AbstractAirspace extends AVListImpl implements Airspace, Movable
 {
     protected static final String ARC_SLICES = "ArcSlices";
@@ -668,12 +667,14 @@ public abstract class AbstractAirspace extends AVListImpl implements Airspace, M
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
+
         if (dc.getGlobe() == null)
         {
             String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
+
         if (geom == null)
         {
             String message = "nullValue.AirspaceGeometryIsNull";
@@ -682,14 +683,13 @@ public abstract class AbstractAirspace extends AVListImpl implements Airspace, M
         }
 
         Object o = geom.getValue(EXPIRY_TIME);
-        if (o != null && o instanceof Long)
-            if (dc.getFrameTimeStamp() > (Long) o)
-                return true;
+        if (o != null && o instanceof Long && dc.getFrameTimeStamp() > (Long) o)
+            return true;
 
         o = geom.getValue(GLOBE_KEY);
-        if (o != null)
-            if (!dc.getGlobe().getStateKey(dc).equals(o))
-                return true;
+        //noinspection RedundantIfStatement
+        if (o != null && !dc.getGlobe().getStateKey(dc).equals(o))
+            return true;
 
         return false;
     }
@@ -702,6 +702,7 @@ public abstract class AbstractAirspace extends AVListImpl implements Airspace, M
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
+
         if (dc.getGlobe() == null)
         {
             String message = Logging.getMessage("nullValue.DrawingContextGlobeIsNull");

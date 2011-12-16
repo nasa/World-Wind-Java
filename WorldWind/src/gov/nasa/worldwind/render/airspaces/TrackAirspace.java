@@ -12,6 +12,8 @@ import gov.nasa.worldwind.util.*;
 
 import java.util.*;
 
+import gov.nasa.worldwind.render.airspaces.Box;
+
 /**
  * @author garakl
  * @version $Id$
@@ -20,8 +22,6 @@ public class TrackAirspace extends AbstractAirspace
 {
     protected List<Box> legs = new ArrayList<Box>();
     protected boolean enableInnerCaps = true;
-    protected boolean legsOutOfDate = true;
-    protected Object legsGlobeStateKey;
     /**
      * Denotes the the threshold that defines whether the angle between two adjacent legs is small. Initially 22.5
      * degrees.
@@ -62,6 +62,7 @@ public class TrackAirspace extends AbstractAirspace
                 if (b != null)
                     this.addLeg(b);
             }
+
             this.setLegsOutOfDate();
         }
     }
@@ -154,7 +155,7 @@ public class TrackAirspace extends AbstractAirspace
     {
         if (angle == null)
         {
-            String message = Logging.getMessage("nullValue.angle");
+            String message = Logging.getMessage("nullValue.AngleIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
         }
@@ -299,13 +300,21 @@ public class TrackAirspace extends AbstractAirspace
 
     protected boolean isLegsOutOfDate(DrawContext dc)
     {
-        return this.legsOutOfDate || this.legsGlobeStateKey == null || !this.legsGlobeStateKey.equals(
-            dc.getGlobe().getStateKey(dc));
+        for (Box leg : this.legs)
+        {
+            if (!leg.isVerticesValid(dc.getGlobe()))
+                return true;
+        }
+
+        return false;
     }
 
     protected void setLegsOutOfDate()
     {
-        this.legsOutOfDate = true;
+        for (Box leg : this.legs)
+        {
+            leg.clearVertices();
+        }
     }
 
     protected void doUpdateLegs(DrawContext dc)
@@ -323,8 +332,8 @@ public class TrackAirspace extends AbstractAirspace
             leg.setEnableCaps(true);
 
             Vec4[] vertices = Box.computeStandardVertices(globe, verticalExaggeration, leg);
-            if (vertices != null && vertices.length == 8) // This should never happen, but we check anyway.
-                leg.setVertices(vertices);
+            if (vertices != null && vertices.length == 8)
+                leg.setVertices(globe, vertices);
         }
 
         // If there's more than one leg, we potentially align the vertices of adjacent legs to give the appearance of
@@ -344,9 +353,6 @@ public class TrackAirspace extends AbstractAirspace
             if (this.mustJoinLegs(leg, nextLeg))
                 this.joinLegs(globe, verticalExaggeration, leg, nextLeg);
         }
-
-        this.legsOutOfDate = false;
-        this.legsGlobeStateKey = globe.getStateKey(dc);
     }
 
     /**
@@ -399,8 +405,8 @@ public class TrackAirspace extends AbstractAirspace
      */
     protected void joinLegs(Globe globe, double verticalExaggeration, Box leg1, Box leg2)
     {
-        Vec4[] leg1Vertices = leg1.getVertices();
-        Vec4[] leg2Vertices = leg2.getVertices();
+        Vec4[] leg1Vertices = leg1.getVertices(globe);
+        Vec4[] leg2Vertices = leg2.getVertices(globe);
 
         Plane bisectingPlane = this.computeBisectingPlane(globe, leg1, leg2);
 
@@ -456,8 +462,8 @@ public class TrackAirspace extends AbstractAirspace
 
             leg1.setEnableEndCap(true);
             leg2.setEnableStartCap(this.isEnableInnerCaps());
-            leg1.setVertices(leg1Vertices);
-            leg2.setVertices(leg2Vertices);
+            leg1.setVertices(globe, leg1Vertices);
+            leg2.setVertices(globe, leg2Vertices);
         }
         else
         {
@@ -483,8 +489,8 @@ public class TrackAirspace extends AbstractAirspace
 
             leg1.setEnableEndCap(this.isEnableInnerCaps());
             leg2.setEnableStartCap(this.isEnableInnerCaps());
-            leg1.setVertices(leg1Vertices);
-            leg2.setVertices(leg2Vertices);
+            leg1.setVertices(globe, leg1Vertices);
+            leg2.setVertices(globe, leg2Vertices);
         }
     }
 

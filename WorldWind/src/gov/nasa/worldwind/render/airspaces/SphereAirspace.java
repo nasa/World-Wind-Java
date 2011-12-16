@@ -390,7 +390,7 @@ public class SphereAirspace extends AbstractAirspace
 
     protected void drawUnitSphere(DrawContext dc, int subdivisions)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "Sphere", subdivisions);
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Sphere", subdivisions);
         Geometry geom = (Geometry) this.getGeometryCache().getObject(cacheKey);
         if (geom == null || this.isExpired(dc, geom))
         {

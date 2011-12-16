@@ -365,7 +365,7 @@ public class PartialCappedCylinder extends CappedCylinder
         double start, double sweep,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "PartialCylinder.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "PartialCylinder.Vertices",
             radius, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1],
             slices, stacks, orientation, start, sweep, referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
@@ -473,7 +473,7 @@ public class PartialCappedCylinder extends CappedCylinder
         double start, double sweep,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "PartialDisk.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "PartialDisk.Vertices",
             radii[0], radii[1], altitude, terrainConformant,
             slices, loops, orientation, start, sweep, referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
@@ -611,7 +611,7 @@ public class PartialCappedCylinder extends CappedCylinder
         int pillars, int stacks, int orientation,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "RadialWall.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "RadialWall.Vertices",
             radii[0], radii[1], angle, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1],
             pillars, stacks, orientation, referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);

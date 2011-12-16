@@ -556,7 +556,7 @@ public class CappedCylinder extends AbstractAirspace
         boolean[] terrainConformant, int slices, int stacks, int orientation,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "Cylinder.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Cylinder.Vertices",
             radius, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1],
             slices, stacks, orientation, referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);
@@ -661,7 +661,7 @@ public class CappedCylinder extends AbstractAirspace
         int slices, int loops, int orientation,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "Disk.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Disk.Vertices",
             radii[0], radii[1], altitude, terrainConformant,
             slices, loops, orientation, referenceCenter);
         Geometry vertexGeom = (Geometry) this.getGeometryCache().getObject(cacheKey);

@@ -8,11 +8,10 @@ package gov.nasa.worldwind.render.airspaces;
 import com.sun.opengl.util.BufferUtil;
 import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.cache.Cacheable;
+import gov.nasa.worldwind.globes.Globe;
 
 import javax.media.opengl.GL;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.nio.*;
 import java.util.Arrays;
 
 /**
@@ -23,21 +22,28 @@ public class Geometry extends AVListImpl implements Cacheable
 {
     public static class CacheKey
     {
+        private final Globe globe;
         private final Class cls;
         private final String key;
         private final Object[] params;
         private int hash = 0;
 
-        public CacheKey(Class cls, String key, Object... params)
+        public CacheKey(Globe globe, Class cls, String key, Object... params)
         {
+            this.globe = globe;
             this.cls = cls;
             this.key = key;
             this.params = params;
         }
 
+        public CacheKey(Class cls, String key, Object... params)
+        {
+            this(null, cls, key, params);
+        }
+
         public CacheKey(String key, Object... params)
         {
-            this(null, key, params);
+            this(null, null, key, params);
         }
 
         public boolean equals(Object o)
@@ -47,14 +53,16 @@ public class Geometry extends AVListImpl implements Cacheable
             if (o == null || this.getClass() != o.getClass())
                 return false;
 
-            CacheKey cacheKey = (CacheKey) o;
+            CacheKey that = (CacheKey) o;
 
-            if (this.cls != null ? !this.cls.equals(cacheKey.cls) : cacheKey.cls != null)
+            if (this.globe != null ? !this.globe.equals(that.globe) : that.globe != null)
                 return false;
-            if (this.key != null ? !this.key.equals(cacheKey.key) : cacheKey.key != null)
+            if (this.cls != null ? !this.cls.equals(that.cls) : that.cls != null)
+                return false;
+            if (this.key != null ? !this.key.equals(that.key) : that.key != null)
                 return false;
             //noinspection RedundantIfStatement
-            if (!Arrays.deepEquals(this.params, cacheKey.params))
+            if (!Arrays.deepEquals(this.params, that.params))
                 return false;
 
             return true;
@@ -65,11 +73,13 @@ public class Geometry extends AVListImpl implements Cacheable
             if (this.hash == 0)
             {
                 int result;
-                result = (this.cls != null ? cls.hashCode() : 0);
+                result = (this.globe != null ? this.globe.hashCode() : 0);
+                result = 31 * result + (this.cls != null ? this.cls.hashCode() : 0);
                 result = 31 * result + (this.key != null ? this.key.hashCode() : 0);
                 result = 31 * result + (this.params != null ? Arrays.deepHashCode(this.params) : 0);
                 this.hash = result;
             }
+
             return this.hash;
         }
     }
@@ -246,7 +256,6 @@ public class Geometry extends AVListImpl implements Cacheable
         this.count[NORMAL] = count;
     }
 
-
     public void clear(int type)
     {
         this.mode[type] = 0;
@@ -256,8 +265,6 @@ public class Geometry extends AVListImpl implements Cacheable
         this.stride[type] = 0;
         this.buffer[type] = null;
     }
-
-
 
     public long getSizeInBytes()
     {

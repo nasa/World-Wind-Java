@@ -453,7 +453,7 @@ public class Polygon extends AbstractAirspace
         boolean enableCaps, int subdivisions,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "Polygon",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Polygon",
             locations, edgeFlags, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1],
             enableCaps, subdivisions, referenceCenter);
 

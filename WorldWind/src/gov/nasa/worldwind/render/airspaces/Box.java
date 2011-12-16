@@ -6,7 +6,7 @@
 package gov.nasa.worldwind.render.airspaces;
 
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.globes.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
@@ -19,6 +19,26 @@ import java.util.*;
  */
 public class Box extends AbstractAirspace
 {
+    /**
+     * Holds a box's vertex data that's associated with a particular globe. The globeStateKey property indicates the
+     * globe state used to generate the vertex data.
+     */
+    protected static class BoxData
+    {
+        /** Indicates the globe state used to generate the vertex data. Initially <code>null</code>. */
+        public GlobeStateKey globeStateKey;
+        /** Indicates the Box's vertex data. Initially an array with length eight containing <code>null</code> entries. */
+        public Vec4[] vertices = new Vec4[8];
+
+        /**
+         * Constructs a new BoxData with its globeStateKey initialized to <code>null</code> and its vertices initialized
+         * to a new array with length eight.
+         */
+        public BoxData()
+        {
+        }
+    }
+
     public static final int FACE_TOP = 0;
     public static final int FACE_BOTTOM = 1;
     public static final int FACE_LEFT = 2;
@@ -51,8 +71,14 @@ public class Box extends AbstractAirspace
     private double rightWidth = 1.0;
     private boolean enableStartCap = true;
     private boolean enableEndCap = true;
-    // Geometry.
-    private Vec4[] vertices;
+
+    /**
+     * Map indicating the box's vertices associated with a particular globe. This enables a box to be used
+     * simultaneously in multiple models with different globes. This is initialized to a HashMap in order to support
+     * <code>null</code> keys. Null keys are used for backward compatibility with the Box accessor methods that do not
+     * specify a globe.
+     */
+    protected Map<Globe, BoxData> boxData = new HashMap<Globe, BoxData>(2); // Usually holds either one or two entries.
     private boolean forceCullFace = false;
     private int pillars = DEFAULT_PILLARS;
     private int stacks = DEFAULT_STACKS;
@@ -237,14 +263,68 @@ public class Box extends AbstractAirspace
 
     public Vec4[] getVertices()
     {
-        return this.vertices;
+        return this.getVertices(null);
     }
 
     public void setVertices(Vec4[] vertices)
     {
+        this.setVertices(null, vertices);
+    }
+
+    /**
+     * Indicates whether the box's vertices associated with the specific globe are valid for the globe's current state.
+     * This returns <code>true</code> if this box has any vertex data associated with the globe and the globe state used
+     * to generate the data is equivalent to the globe's current state. This returns <code>false</code> if this box does
+     * not have any vertex data associated with the globe, or if the vertex data is out of date.
+     *
+     * @param globe the globe the vertices are associated with, or <code>null</code> to get the valid state of the
+     *              vertices that are not associated with any globe.
+     *
+     * @return <code>true</code> if this box has vertices associated with the globe which are valid for the globe's
+     *         current state, and <code>false</code> otherwise.
+     */
+    public boolean isVerticesValid(Globe globe)
+    {
+        BoxData data = this.boxData.get(globe);
+        return data != null && data.globeStateKey != null && data.globeStateKey.equals(globe.getGlobeStateKey());
+    }
+
+    /**
+     * Indicates this box's vertices that associated with the specified globe. This returns <code>null</code> if no
+     * vertices are currently associated with the specified globe. Specify <code>null</code> to get the vertices that
+     * are not associated with any globe.
+     *
+     * @param globe the globe the vertices are associated with, or <code>null</code> to get the vertices that are not
+     *              associated with any globe.
+     *
+     * @return an array of length 8 indicating this box's vertices in model coordinates, or <code>null</code> to
+     *         indicate that no vertices are associated with the globe.
+     */
+    public Vec4[] getVertices(Globe globe)
+    {
+        BoxData data = this.boxData.get(globe);
+        return data != null ? data.vertices : null;
+    }
+
+    /**
+     * Specifies this box's vertices that are associated with the specified globe. Specify a <code>null</code> globe to
+     * indicate that the vertices are not associated with any globe. Specify <code>null</code> vertices to remove
+     * vertices associated with the specified globe. This copies the elements of the specified vertices array; changes
+     * to the array after this method do not affect the data held by this box.
+     *
+     * @param globe    the globe the vertices are associated with, or <code>null</code> to indicate that the vertices
+     *                 are not associated with any globe.
+     * @param vertices an array of length 8 indicating this box's vertices in model coordinates, or <code>null</code> to
+     *                 remove vertices associated with the specified globe.
+     *
+     * @throws IllegalArgumentException if the vertices array is not <code>null</code> and has fewer than eight
+     *                                  elements.
+     */
+    public void setVertices(Globe globe, Vec4[] vertices)
+    {
         if (vertices == null)
         {
-            this.vertices = null;
+            this.boxData.remove(globe);
         }
         else
         {
@@ -255,11 +335,28 @@ public class Box extends AbstractAirspace
                 throw new IllegalArgumentException(message);
             }
 
-            if (this.vertices == null)
-                this.vertices = new Vec4[8];
-            System.arraycopy(vertices, 0, this.vertices, 0, 8);
+            BoxData data = this.boxData.get(globe);
+
+            // Create a box data if one doesn't already exist and put it in the map.
+            if (data == null)
+            {
+                data = new BoxData();
+                this.boxData.put(globe, data);
+            }
+
+            // Copy the specified vertices into the data held by this box's map.
+            System.arraycopy(vertices, 0, data.vertices, 0, 8);
+            // Update the box data's globe state key.
+            data.globeStateKey = globe.getGlobeStateKey();
         }
+
         this.setExtentOutOfDate();
+    }
+
+    /** Removes all of this box's globe-associated vertex data. */
+    public void clearVertices()
+    {
+        this.boxData.clear();
     }
 
     public static Vec4[] computeStandardVertices(Globe globe, double verticalExaggeration, Box box)
@@ -368,7 +465,7 @@ public class Box extends AbstractAirspace
     @Override
     protected List<Vec4> computeMinimalGeometry(Globe globe, double verticalExaggeration)
     {
-        Vec4[] verts = this.getVertices();
+        Vec4[] verts = this.getVertices(globe);
         if (verts == null)
             verts = computeStandardVertices(globe, verticalExaggeration, this);
 
@@ -499,7 +596,7 @@ public class Box extends AbstractAirspace
             throw new IllegalArgumentException(message);
         }
 
-        Vec4[] verts = this.getVertices();
+        Vec4[] verts = this.getVertices(dc.getGlobe());
         if (verts == null)
             verts = computeStandardVertices(dc.getGlobe(), dc.getVerticalExaggeration(), this);
 
@@ -630,7 +727,7 @@ public class Box extends AbstractAirspace
         int pillars, int stacks, int heightStacks,
         Vec4 referenceCenter)
     {
-        Object cacheKey = new Geometry.CacheKey(this.getClass(), "Box.Vertices",
+        Object cacheKey = new Geometry.CacheKey(dc.getGlobe(), this.getClass(), "Box.Vertices",
             verts, altitudes[0], altitudes[1], terrainConformant[0], terrainConformant[1],
             enableCaps[0], enableCaps[1], pillars, stacks, heightStacks, referenceCenter);
 
