@@ -348,7 +348,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             sb.append("\n");
         }
 
-        Object[] altitudes = this.getAltitudeRange();
+        Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(this);
         if (altitudes[0] != null)
         {
             sb.append("Min Alt: ");
@@ -363,7 +363,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             sb.append("\n");
         }
 
-        Object[] dates = this.getDateRange();
+        Object[] dates = TacticalGraphicUtil.getDateRange(this);
         if (dates[0] != null)
         {
             sb.append("DTG Start: ");

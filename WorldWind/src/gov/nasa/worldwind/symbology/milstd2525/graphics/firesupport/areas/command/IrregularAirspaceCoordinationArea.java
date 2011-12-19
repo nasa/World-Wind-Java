@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.command;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.AviationZone;
 
 /**
@@ -47,7 +47,7 @@ public class IrregularAirspaceCoordinationArea extends AviationZone
             sb.append("\n");
         }
 
-        Object[] altitudes = this.getAltitudeRange();
+        Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(this);
         if (altitudes[0] != null)
         {
             sb.append("MIN ALT: ");
@@ -70,7 +70,7 @@ public class IrregularAirspaceCoordinationArea extends AviationZone
             sb.append("\n");
         }
 
-        Object[] dates = this.getDateRange();
+        Object[] dates = TacticalGraphicUtil.getDateRange(this);
         if (dates[0] != null)
         {
             sb.append("EFF: ");

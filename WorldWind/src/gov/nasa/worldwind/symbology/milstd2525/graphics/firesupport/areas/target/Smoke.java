@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
 
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
 /**
@@ -33,7 +33,7 @@ public class Smoke extends BasicArea
         StringBuilder sb = new StringBuilder();
         sb.append("SMOKE\n");
 
-        Object[] dates = this.getDateRange();
+        Object[] dates = TacticalGraphicUtil.getDateRange(this);
         if (dates[0] != null)
         {
             sb.append(dates[0]);

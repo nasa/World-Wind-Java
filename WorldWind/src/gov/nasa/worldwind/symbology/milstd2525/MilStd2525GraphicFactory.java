@@ -107,13 +107,25 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             DirectionOfAttack.FUNCTION_ID_MAIN,
             DirectionOfAttack.FUNCTION_ID_SUPPORTING);
 
+        this.mapClass(RectangularFireSupportArea.class,
+            RectangularFireSupportArea.FUNCTION_ID_FFA,
+            RectangularFireSupportArea.FUNCTION_ID_RFA);
+
+        this.mapClass(CircularFireSupportArea.class,
+            CircularFireSupportArea.FUNCTION_ID_TARGET,
+            CircularFireSupportArea.FUNCTION_ID_FFA,
+            CircularFireSupportArea.FUNCTION_ID_RFA);
+
+        this.mapClass(IrregularFireSupportArea.class,
+            IrregularFireSupportArea.FUNCTION_ID_TARGET,
+            IrregularFireSupportArea.FUNCTION_ID_FFA,
+            IrregularFireSupportArea.FUNCTION_ID_RFA);
+
         this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
         this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
         this.mapClass(Aviation.class, Aviation.FUNCTION_ID);
         this.mapClass(MainAttack.class, MainAttack.FUNCTION_ID);
         this.mapClass(AttackRotaryWing.class, AttackRotaryWing.FUNCTION_ID);
-        this.mapClass(AreaTarget.class, AreaTarget.FUNCTION_ID);
-        this.mapClass(CircularTarget.class, CircularTarget.FUNCTION_ID);
         this.mapClass(RectangularTarget.class, RectangularTarget.FUNCTION_ID);
         this.mapClass(Bomb.class, Bomb.FUNCTION_ID);
         this.mapClass(Smoke.class, Smoke.FUNCTION_ID);

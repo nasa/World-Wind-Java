@@ -28,9 +28,9 @@ import java.util.*;
 public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implements TacticalQuad, PreRenderable
 {
     /** Function ID for the Free Fire Area graphic (2.X.4.3.2.3.2). */
-    public final static String FUNCTION_ID_FREE_FIRE = "ACFR--";
+    public final static String FUNCTION_ID_FFA = "ACFR--";
     /** Function ID for the Restrictive Fire Area graphic (2.X.4.3.2.5.2). */
-    public final static String FUNCTION_ID_RESTRICTIVE_FIRE = "ACRR--";
+    public final static String FUNCTION_ID_RFA = "ACRR--";
 
     protected Iterable<? extends Position> positions;
     protected SurfaceQuad quad;
@@ -97,6 +97,9 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
 
             LatLon center = LatLon.interpolateGreatCircle(0.5, pos1, pos2);
             this.quad.setCenter(center);
+
+            Angle heading = LatLon.greatCircleAzimuth(pos2, pos1);
+            this.quad.setHeading(heading.subtract(Angle.POS90));
 
             this.positions = positions;
             this.shapeInvalid = true; // Need to recompute quad size
@@ -197,7 +200,7 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
         Angle angularDistance = LatLon.greatCircleDistance(pos1, pos2);
         double length = angularDistance.radians * dc.getGlobe().getRadius();
 
-        this.quad.setHeight(length);
+        this.quad.setWidth(length);
     }
 
     /**
@@ -214,48 +217,12 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
     @Override
     protected void createLabels()
     {
-        String text = this.createLabelText();
+        FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
+        String text = textBuilder.createText(this);
         if (!WWUtil.isEmpty(text))
         {
             this.addLabel(text);
         }
-    }
-
-    protected String getGraphicLabel()
-    {
-        String functionId = this.getFunctionId();
-        if (FUNCTION_ID_FREE_FIRE.equals(functionId))
-            return "FFA";
-        else if (FUNCTION_ID_RESTRICTIVE_FIRE.equals(functionId))
-            return "RFA";
-
-        return "";
-    }
-
-    protected String createLabelText()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.getGraphicLabel()).append("\n");
-
-        String s = this.getText();
-        if (!WWUtil.isEmpty(s))
-        {
-            sb.append(s).append("\n");
-        }
-
-        Object[] dates = this.getDateRange();
-        if (dates[0] != null)
-        {
-            sb.append(dates[0]);
-            sb.append("-");
-        }
-
-        if (dates[1] != null)
-        {
-            sb.append(dates[1]);
-        }
-
-        return sb.toString();
     }
 
     @Override

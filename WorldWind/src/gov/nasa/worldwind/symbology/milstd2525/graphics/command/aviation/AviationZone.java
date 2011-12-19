@@ -8,7 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
 
 /**
@@ -86,7 +86,7 @@ public class AviationZone extends BasicArea
 
         if (includeAltitude)
         {
-            Object[] altitudes = this.getAltitudeRange();
+            Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(this);
             if (altitudes[0] != null)
             {
                 sb.append("MIN ALT: ");
@@ -102,7 +102,7 @@ public class AviationZone extends BasicArea
             }
         }
 
-        Object[] dates = this.getDateRange();
+        Object[] dates = TacticalGraphicUtil.getDateRange(this);
         if (dates[0] != null)
         {
             sb.append("TIME FROM: ");

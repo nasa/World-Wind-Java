@@ -333,6 +333,20 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL"));
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
             layer.addRenderable(graphic);
+
+            //////////////////////////////////////////////////
+            // Restrictive Fire Area (Rectangular) (2.X.4.3.2.5.2)
+            //////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.9672, -116.8974, 0),
+                Position.fromDegrees(34.9188, -116.8205, 0));
+            graphic = factory.createGraphic("GFFPACRR------X", positions, null);
+            graphic.setModifier(SymbologyConstants.DISTANCE, 5000.0);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Restrictive Fire Area (2.X.4.3.2.5.2)");
+            graphic.setText("X CORPS");
+            graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
+            layer.addRenderable(graphic);
         }
     }
 

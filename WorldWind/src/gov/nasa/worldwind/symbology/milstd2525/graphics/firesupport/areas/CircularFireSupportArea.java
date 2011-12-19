@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
@@ -15,19 +15,30 @@ import gov.nasa.worldwind.util.*;
 import java.util.*;
 
 /**
- * Implementation of the Circular Target graphic (hierarchy 2.X.4.3.1.2, SIDC: G*FPATC---****X).
+ * Implementation of circular Fire Support graphics. This class implements the following graphics:
+ *
+ * <ul>
+ *   <li>Circular Target (2.X.4.3.1.2)</li>
+ *   <li>Free Fire Area (FFA), Circular (2.X.4.3.2.3.3)</li>
+ *   <li>Restrictive Fire Area (RFA), Circular (2.X.4.3.2.5.3)</li>
+ * </ul>
  *
  * @author pabercrombie
  * @version $Id$
  */
-public class CircularTarget extends MilStd2525TacticalGraphic implements TacticalCircle, PreRenderable
+public class CircularFireSupportArea extends MilStd2525TacticalGraphic implements TacticalCircle, PreRenderable
 {
-    public final static String FUNCTION_ID = "ATC---";
+    /** Function ID for the Circular Target graphic (2.X.4.3.1.2). */
+    public final static String FUNCTION_ID_TARGET = "ATC---";
+    /** Function ID for the Free Fire Area graphic (2.X.4.3.2.3.3). */
+    public final static String FUNCTION_ID_FFA = "ACFC--";
+    /** Function ID for the Restrictive Fire Area graphic (2.X.4.3.2.5.3). */
+    public final static String FUNCTION_ID_RFA = "ACRC--";
 
     protected SurfaceCircle circle;
     protected Object delegateOwner;
 
-    public CircularTarget()
+    public CircularFireSupportArea()
     {
         this.circle = this.createShape();
     }
@@ -36,13 +47,6 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements Tactica
     public String getCategory()
     {
         return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
     }
 
     /** {@inheritDoc} */
@@ -193,10 +197,11 @@ public class CircularTarget extends MilStd2525TacticalGraphic implements Tactica
     @Override
     protected void createLabels()
     {
-        String text = this.getText();
+        FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
+        String text = textBuilder.createText(this);
         if (!WWUtil.isEmpty(text))
         {
-            this.addLabel(this.getText());
+            this.addLabel(text);
         }
     }
 
