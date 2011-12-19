@@ -6,10 +6,11 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -19,8 +20,14 @@ import java.util.*;
  *
  * <ul>
  *   <li>Circular Target (2.X.4.3.1.2)</li>
+ *   <li>Fire Support Area, Circular (2.X.4.3.2.1.3)</li>
  *   <li>Free Fire Area (FFA), Circular (2.X.4.3.2.3.3)</li>
  *   <li>Restrictive Fire Area (RFA), Circular (2.X.4.3.2.5.3)</li>
+ *   <li>Sensor Zone, Circular</li>
+ *   <li>Dead Space Area, Circular</li>
+ *   <li>Zone of Responsibility, Circular</li>
+ *   <li>Target Build-up Area, Circular</li>
+ *   <li>Target Value Area, Circular</li>
  * </ul>
  *
  * @author pabercrombie
@@ -34,6 +41,18 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
     public final static String FUNCTION_ID_FFA = "ACFC--";
     /** Function ID for the Restrictive Fire Area graphic (2.X.4.3.2.5.3). */
     public final static String FUNCTION_ID_RFA = "ACRC--";
+    /** Function ID for the Fire Support Area graphic (2.X.4.3.2.1.3). */
+    public final static String FUNCTION_ID_FSA = "ACSC--";
+    /** Function ID for the Sensor Zone graphic. */
+    public final static String FUNCTION_ID_SENSOR_ZONE = "ACEC--";
+    /** Function ID for the Dead Space Area graphic. */
+    public final static String FUNCTION_ID_DEAD_SPACE_AREA = "ACDC--";
+    /** Function ID for the Zone of Responsibility graphic. */
+    public final static String FUNCTION_ID_ZONE_OF_RESPONSIBILITY = "ACZC--";
+    /** Function ID for the Target Build-up Area graphic. */
+    public final static String FUNCTION_ID_TARGET_BUILDUP = "ACBC--";
+    /** Function ID for the Target Value Area graphic. */
+    public final static String FUNCTION_ID_TARGET_VALUE = "ACVC--";
 
     protected SurfaceCircle circle;
     protected Object delegateOwner;
@@ -185,7 +204,7 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
         super.determineActiveAttributes();
 
         // Apply the delegate owner to the circle, if an owner has been set. If no owner is set, make this graphic the
-        // circle's owner. This allows
+        // circle's owner.
         Object owner = this.getDelegateOwner();
         if (owner != null)
             this.circle.setDelegateOwner(owner);
@@ -197,18 +216,46 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
     @Override
     protected void createLabels()
     {
-        FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
-        String text = textBuilder.createText(this);
+        FireSupportTextBuilder textBuilder = this.createTextBuilder();
+        String[] allText = textBuilder.createText(this);
+
+        String text = allText[0];
         if (!WWUtil.isEmpty(text))
         {
             this.addLabel(text);
         }
+
+        if (allText.length > 1)
+        {
+            String timeText = allText[1];
+
+            if (!WWUtil.isEmpty(timeText))
+            {
+                Label timeLabel = this.addLabel(timeText);
+                timeLabel.setTextAlign(AVKey.RIGHT);
+            }
+        }
+    }
+
+    protected FireSupportTextBuilder createTextBuilder()
+    {
+        return new FireSupportTextBuilder();
     }
 
     @Override
     protected void determineLabelPositions(DrawContext dc)
     {
         this.labels.get(0).setPosition(new Position(this.circle.getCenter(), 0));
+
+        Position center = new Position(this.circle.getCenter(), 0);
+        double radiusRadians = this.circle.getRadius() / dc.getGlobe().getRadius();
+
+        if (this.labels.size() > 1)
+        {
+            LatLon westEdge = LatLon.greatCircleEndPosition(center, Angle.NEG90 /* Due West */,
+                Angle.fromRadians(radiusRadians));
+            this.labels.get(1).setPosition(new Position(westEdge, 0));
+        }
     }
 
     protected SurfaceCircle createShape()

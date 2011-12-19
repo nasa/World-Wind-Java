@@ -114,7 +114,13 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(CircularFireSupportArea.class,
             CircularFireSupportArea.FUNCTION_ID_TARGET,
             CircularFireSupportArea.FUNCTION_ID_FFA,
-            CircularFireSupportArea.FUNCTION_ID_RFA);
+            CircularFireSupportArea.FUNCTION_ID_RFA,
+            CircularFireSupportArea.FUNCTION_ID_FSA,
+            CircularFireSupportArea.FUNCTION_ID_SENSOR_ZONE,
+            CircularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA,
+            CircularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
+            CircularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP,
+            CircularFireSupportArea.FUNCTION_ID_TARGET_VALUE);
 
         this.mapClass(IrregularFireSupportArea.class,
             IrregularFireSupportArea.FUNCTION_ID_TARGET,
@@ -213,13 +219,15 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         {
             return (TacticalPoint) graphic;
         }
-        else
+        else if (graphic != null)
         {
-            String className = graphic != null ? graphic.getClass().getName() : null;
+            String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalPoint.class.getName());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
+
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -232,13 +240,15 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             circle.setRadius(radius);
             return circle;
         }
-        else
+        else if (graphic != null)
         {
-            String className = graphic != null ? graphic.getClass().getName() : null;
+            String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalCircle.class.getName());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
+
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -249,13 +259,15 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         {
             return (TacticalQuad) graphic;
         }
-        else
+        else if (graphic != null)
         {
-            String className = graphic != null ? graphic.getClass().getName() : null;
+            String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalQuad.class.getName());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
+
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -269,13 +281,15 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             route.setControlPoints(controlPoints);
             return route;
         }
-        else
+        else if (graphic != null)
         {
-            String className = graphic != null ? graphic.getClass().getName() : null;
+            String className = graphic.getClass().getName();
             String msg = Logging.getMessage("Symbology.CannotCast", className, TacticalRoute.class.getName());
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
+
+        return null;
     }
 
     protected void setModifiers(TacticalGraphic graphic, AVList props)

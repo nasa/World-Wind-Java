@@ -334,9 +334,9 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
             layer.addRenderable(graphic);
 
-            //////////////////////////////////////////////////
-            // Restrictive Fire Area (Rectangular) (2.X.4.3.2.5.2)
-            //////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////
+            // Restrictive Fire Area (RFA), Rectangular (2.X.4.3.2.5.2)
+            ////////////////////////////////////////////////////////////
 
             positions = Arrays.asList(
                 Position.fromDegrees(34.9672, -116.8974, 0),
@@ -345,6 +345,17 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setModifier(SymbologyConstants.DISTANCE, 5000.0);
             graphic.setValue(AVKey.DISPLAY_NAME, "Restrictive Fire Area (2.X.4.3.2.5.2)");
             graphic.setText("X CORPS");
+            graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
+            layer.addRenderable(graphic);
+
+            /////////////////////////////////////////////////////
+            // Fire Support Area (FSA), Circular (2.X.4.3.2.1.3)
+            /////////////////////////////////////////////////////
+
+            position = Position.fromDegrees(34.8208, -116.8284, 0);
+            graphic = factory.createCircle("GFFPACSC------X", position, 5000.0, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Fire Support Area (2.X.4.3.2.1.3)");
+            graphic.setText("GREEN");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.addRenderable(graphic);
         }

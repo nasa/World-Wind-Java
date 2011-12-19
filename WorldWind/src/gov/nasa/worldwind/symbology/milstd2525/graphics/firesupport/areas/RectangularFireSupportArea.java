@@ -218,7 +218,7 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
     protected void createLabels()
     {
         FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
-        String text = textBuilder.createText(this);
+        String text = textBuilder.createText(this)[0];
         if (!WWUtil.isEmpty(text))
         {
             this.addLabel(text);

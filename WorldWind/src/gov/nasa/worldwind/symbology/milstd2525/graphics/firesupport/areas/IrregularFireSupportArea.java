@@ -47,6 +47,6 @@ public class IrregularFireSupportArea extends BasicArea
     protected String createLabelText()
     {
         FireSupportTextBuilder textBuilder = new FireSupportTextBuilder();
-        return textBuilder.createText(this);
+        return textBuilder.createText(this)[0];
     }
 }
