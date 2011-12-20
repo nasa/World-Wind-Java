@@ -99,6 +99,11 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
         return this.getOuterBoundary();
     }
 
+    public List<Iterable<? extends LatLon>> getBoundaries()
+    {
+        return this.boundaries;
+    }
+
     public void setLocations(Iterable<? extends LatLon> iterable)
     {
         if (iterable == null)

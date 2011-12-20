@@ -415,7 +415,7 @@ public class Polygon extends AbstractShape
      *
      * @return this shape's boundaries.
      */
-    protected List<List<? extends Position>> getBoundaries()
+    public List<List<? extends Position>> getBoundaries()
     {
         return this.boundaries;
     }
