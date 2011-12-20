@@ -169,7 +169,7 @@ public class Label implements OrderedRenderable
      */
     public Offset getOffset()
     {
-        return offset;
+        return this.offset;
     }
 
     /**

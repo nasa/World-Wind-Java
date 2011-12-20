@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
@@ -22,6 +22,7 @@ import java.util.*;
  */
 public class RectangularTarget extends MilStd2525TacticalGraphic implements TacticalQuad, PreRenderable
 {
+    /** Function ID for the Rectangular Target graphic. */
     public final static String FUNCTION_ID = "ATR---";
 
     protected SurfaceQuad quad;

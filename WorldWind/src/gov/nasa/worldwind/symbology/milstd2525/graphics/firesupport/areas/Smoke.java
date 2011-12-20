@@ -4,7 +4,7 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target;
+package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
@@ -53,12 +53,5 @@ public class Smoke extends BasicArea
     public String getCategory()
     {
         return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
     }
 }

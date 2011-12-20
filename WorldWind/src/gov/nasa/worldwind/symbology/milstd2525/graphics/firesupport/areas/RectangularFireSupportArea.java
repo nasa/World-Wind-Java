@@ -6,10 +6,11 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -20,6 +21,7 @@ import java.util.*;
  * <ul>
  *  <li>Free Fire Area (FFA), Rectangular (2.X.4.3.2.3.2)</li>
  *  <li>Restrictive Fire Area (RFA), Rectangular (2.X.4.3.2.5.2)</li>
+ *  <li>Airspace Coordination Area (ACA), Rectangular (2.X.4.3.2.2.2)</li>
  * </ul>
  *
  * @author pabercrombie
@@ -31,6 +33,11 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
     public final static String FUNCTION_ID_FFA = "ACFR--";
     /** Function ID for the Restrictive Fire Area graphic (2.X.4.3.2.5.2). */
     public final static String FUNCTION_ID_RFA = "ACRR--";
+    /** Function ID for the Airspace Coordination Area graphic (2.X.4.3.2.2.2). */
+    public final static String FUNCTION_ID_ACA = "ACAR--";
+
+    /** Center text block on label position when the text is left aligned. */
+    protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
     protected Iterable<? extends Position> positions;
     protected SurfaceQuad quad;
@@ -221,7 +228,8 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
         String text = textBuilder.createText(this)[0];
         if (!WWUtil.isEmpty(text))
         {
-            this.addLabel(text);
+            Label mainLabel = this.addLabel(text);
+            mainLabel.setTextAlign(this.getMainLabelTextAlign());
         }
     }
 
@@ -229,6 +237,42 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
     protected void determineLabelPositions(DrawContext dc)
     {
         this.labels.get(0).setPosition(new Position(this.quad.getCenter(), 0));
+    }
+
+    /**
+     * Indicates the text alignment to apply to the main label of this graphic.
+     *
+     * @return Text alignment for the main label.
+     */
+    protected String getMainLabelTextAlign()
+    {
+        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+
+        // Airspace Coordination Area labels are left aligned. All others are center aligned.
+        if (isACA)
+            return AVKey.LEFT;
+        else
+            return AVKey.CENTER;
+    }
+
+    /**
+     * Indicates the default offset applied to the graphic's main label. This offset may be overridden by the graphic
+     * attributes.
+     *
+     * @return Offset to apply to the main label.
+     */
+    @Override
+    protected Offset getDefaultLabelOffset()
+    {
+        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+
+        // Airspace Coordination Area labels are left aligned. Adjust the offset to center the left aligned label
+        // in the circle. (This is not necessary with a center aligned label because centering the text automatically
+        // centers the label in the circle).
+        if (isACA)
+            return LEFT_ALIGN_OFFSET;
+        else
+            return super.getDefaultLabelOffset();
     }
 
     protected SurfaceQuad createShape()

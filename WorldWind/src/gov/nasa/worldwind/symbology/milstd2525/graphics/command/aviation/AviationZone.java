@@ -37,6 +37,9 @@ public class AviationZone extends BasicArea
     /** Function ID for Low Altitude Missile Engagement Zone (2.X.2.2.3.4.1). */
     public final static String FUNCTION_ID_LO_ALT_MISSILE_ZONE = "AAM---";
 
+    /** Center text block on label position. */
+    protected final static Offset LABEL_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+
     /** Create a new aviation area. */
     public AviationZone()
     {
@@ -47,7 +50,7 @@ public class AviationZone extends BasicArea
     @Override
     protected Offset getDefaultLabelOffset()
     {
-        return new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION); // Center text block on label position.
+        return LABEL_OFFSET;
     }
 
     @Override

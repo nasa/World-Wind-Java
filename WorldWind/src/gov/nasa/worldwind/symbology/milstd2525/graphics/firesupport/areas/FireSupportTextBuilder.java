@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 /**
@@ -39,12 +39,33 @@ public class FireSupportTextBuilder
         String functionId = graphic.getFunctionId();
         if (CircularFireSupportArea.FUNCTION_ID_TARGET.equals(functionId))
         {
+            // Circular Target just uses the Unique Designation as a label.
             result = new String[] { graphic.getText() };
+        }
+        else if (IrregularFireSupportArea.FUNCTION_ID_BOMB.equals(functionId))
+        {
+            // Bomb graphic just says "BOMB"
+            result = new String[] { "BOMB" };
+        }
+        else if (IrregularFireSupportArea.FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT.equals(functionId))
+        {
+            // Terminally guided munitions footprint says "TGMF", and does not support modifiers.
+            result = new String[] { "TGMF" };
         }
         else
         {
             boolean useSeparateTimeLabel = this.isShowSeparateTimeLabel(functionId);
-            String mainText = this.createMainText(graphic, functionId, !useSeparateTimeLabel);
+
+            String mainText;
+
+            if (this.isAirspaceCoordinationArea(functionId))
+            {
+                mainText = this.createAirspaceCoordinationText(graphic);
+            }
+            else
+            {
+                mainText = this.createMainText(graphic, functionId, !useSeparateTimeLabel);
+            }
 
             if (useSeparateTimeLabel)
             {
@@ -67,6 +88,13 @@ public class FireSupportTextBuilder
             || CircularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY.equals(functionId)
             || CircularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP.equals(functionId)
             || CircularFireSupportArea.FUNCTION_ID_TARGET_VALUE.equals(functionId);
+    }
+
+    protected boolean isAirspaceCoordinationArea(String functionId)
+    {
+        return CircularFireSupportArea.FUNCTION_ID_ACA.equals(functionId)
+            || RectangularFireSupportArea.FUNCTION_ID_ACA.equals(functionId)
+            || IrregularFireSupportArea.FUNCTION_ID_ACA.equals(functionId);
     }
 
     protected String createMainText(MilStd2525TacticalGraphic graphic, String functionId, boolean includeTime)
@@ -158,4 +186,57 @@ public class FireSupportTextBuilder
 
         return "";
     }
+
+    protected String createAirspaceCoordinationText(MilStd2525TacticalGraphic graphic)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ACA\n");
+
+        Object o = graphic.getText();
+        if (o != null)
+        {
+            sb.append(o);
+            sb.append("\n");
+        }
+
+        Object[] altitudes = TacticalGraphicUtil.getAltitudeRange(graphic);
+        if (altitudes[0] != null)
+        {
+            sb.append("MIN ALT: ");
+            sb.append(altitudes[0]);
+            sb.append("\n");
+        }
+
+        if (altitudes[1] != null)
+        {
+            sb.append("MAX ALT: ");
+            sb.append(altitudes[1]);
+            sb.append("\n");
+        }
+
+        o = graphic.getModifier(SymbologyConstants.ADDITIONAL_INFORMATION);
+        if (o != null)
+        {
+            sb.append("Grids: ");
+            sb.append(o);
+            sb.append("\n");
+        }
+
+        Object[] dates = TacticalGraphicUtil.getDateRange(graphic);
+        if (dates[0] != null)
+        {
+            sb.append("EFF: ");
+            sb.append(dates[0]);
+            sb.append("\n");
+        }
+
+        if (dates[1] != null)
+        {
+            sb.append("     "); // TODO do a better job of vertically aligning the start and end time labels
+            sb.append(dates[1]);
+        }
+
+        return sb.toString();
+    }
+
 }

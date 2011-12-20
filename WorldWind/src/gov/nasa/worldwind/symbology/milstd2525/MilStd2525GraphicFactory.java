@@ -18,8 +18,6 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.Ph
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.command.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.target.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -116,6 +114,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             CircularFireSupportArea.FUNCTION_ID_FFA,
             CircularFireSupportArea.FUNCTION_ID_RFA,
             CircularFireSupportArea.FUNCTION_ID_FSA,
+            CircularFireSupportArea.FUNCTION_ID_ACA,
             CircularFireSupportArea.FUNCTION_ID_SENSOR_ZONE,
             CircularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA,
             CircularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
@@ -125,7 +124,10 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(IrregularFireSupportArea.class,
             IrregularFireSupportArea.FUNCTION_ID_TARGET,
             IrregularFireSupportArea.FUNCTION_ID_FFA,
-            IrregularFireSupportArea.FUNCTION_ID_RFA);
+            IrregularFireSupportArea.FUNCTION_ID_RFA,
+            IrregularFireSupportArea.FUNCTION_ID_ACA,
+            IrregularFireSupportArea.FUNCTION_ID_BOMB,
+            IrregularFireSupportArea.FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT);
 
         this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
         this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
@@ -133,10 +135,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(MainAttack.class, MainAttack.FUNCTION_ID);
         this.mapClass(AttackRotaryWing.class, AttackRotaryWing.FUNCTION_ID);
         this.mapClass(RectangularTarget.class, RectangularTarget.FUNCTION_ID);
-        this.mapClass(Bomb.class, Bomb.FUNCTION_ID);
         this.mapClass(Smoke.class, Smoke.FUNCTION_ID);
-        this.mapClass(TerminallyGuidedMunitionFootprint.class, TerminallyGuidedMunitionFootprint.FUNCTION_ID);
-        this.mapClass(IrregularAirspaceCoordinationArea.class, IrregularAirspaceCoordinationArea.FUNCTION_ID);
         this.mapClass(CircularRangeFan.class, CircularRangeFan.FUNCTION_ID);
     }
 

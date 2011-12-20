@@ -23,6 +23,7 @@ import java.util.*;
  *   <li>Fire Support Area, Circular (2.X.4.3.2.1.3)</li>
  *   <li>Free Fire Area (FFA), Circular (2.X.4.3.2.3.3)</li>
  *   <li>Restrictive Fire Area (RFA), Circular (2.X.4.3.2.5.3)</li>
+ *   <li>Airspace Coordination Area (ACA), Circular (2.X.4.3.2.2.3)</li>
  *   <li>Sensor Zone, Circular</li>
  *   <li>Dead Space Area, Circular</li>
  *   <li>Zone of Responsibility, Circular</li>
@@ -43,6 +44,8 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
     public final static String FUNCTION_ID_RFA = "ACRC--";
     /** Function ID for the Fire Support Area graphic (2.X.4.3.2.1.3). */
     public final static String FUNCTION_ID_FSA = "ACSC--";
+    /** Function ID for the Airspace Coordination Area graphic. */
+    public final static String FUNCTION_ID_ACA = "ACAC--";
     /** Function ID for the Sensor Zone graphic. */
     public final static String FUNCTION_ID_SENSOR_ZONE = "ACEC--";
     /** Function ID for the Dead Space Area graphic. */
@@ -53,6 +56,9 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
     public final static String FUNCTION_ID_TARGET_BUILDUP = "ACBC--";
     /** Function ID for the Target Value Area graphic. */
     public final static String FUNCTION_ID_TARGET_VALUE = "ACVC--";
+
+    /** Center text block on label position when the text is left aligned. */
+    protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
     protected SurfaceCircle circle;
     protected Object delegateOwner;
@@ -222,7 +228,8 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
         String text = allText[0];
         if (!WWUtil.isEmpty(text))
         {
-            this.addLabel(text);
+            Label mainLabel = this.addLabel(text);
+            mainLabel.setTextAlign(this.getMainLabelTextAlign());
         }
 
         if (allText.length > 1)
@@ -240,6 +247,42 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
     protected FireSupportTextBuilder createTextBuilder()
     {
         return new FireSupportTextBuilder();
+    }
+
+    /**
+     * Indicates the text alignment to apply to the main label of this graphic.
+     *
+     * @return Text alignment for the main label.
+     */
+    protected String getMainLabelTextAlign()
+    {
+        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+
+        // Airspace Coordination Area labels are left aligned. All others are center aligned.
+        if (isACA)
+            return AVKey.LEFT;
+        else
+            return AVKey.CENTER;
+    }
+
+    /**
+     * Indicates the default offset applied to the graphic's main label. This offset may be overridden by the graphic
+     * attributes.
+     *
+     * @return Offset to apply to the main label.
+     */
+    @Override
+    protected Offset getDefaultLabelOffset()
+    {
+        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+
+        // Airspace Coordination Area labels are left aligned. Adjust the offset to center the left aligned label
+        // in the circle. (This is not necessary with a center aligned label because centering the text automatically
+        // centers the label in the circle).
+        if (isACA)
+            return LEFT_ALIGN_OFFSET;
+        else
+            return super.getDefaultLabelOffset();
     }
 
     @Override
