@@ -31,6 +31,22 @@ import java.util.List;
  * values, where width and height are the AnalyticSurface's grid dimensions. If the caller does not specify any
  * GridPointAttributes, or the caller specified iterable contains too few values, the unassigned grid points are given
  * default attributes: the default scalar value is 0, and the default color is {@link java.awt.Color#BLACK}.
+ * <p/>
+ * <h2>Surface Altitude</h2>
+ * <p/>
+ * AnalyticSurface's altitude can vary at each grid point. The altitude of each grid point depends on four properties:
+ * the altitude mode, the surface altitude, the vertical scale, and the scalar value from GridPointAttributes. The
+ * following table outlines how the altitude at each grid point is computed for each altitude mode:
+ * <p/>
+ * <table border="1"> <tr><th>Altitude Mode</th><th>Grid Point Altitude</th></tr> <tr><td>WorldWind.ABSOLUTE
+ * (default)</td><td>surface altitude + (vertical scale * scalar value from GridPointAttributes)</td></tr>
+ * <tr><td>WorldWind.RELATIVE_TO_GROUND</td><td>terrain height at grid point + surface altitude + (vertical scale *
+ * scalar value from GridPointAttributes)</td></tr> <tr><td>WorldWind.CLAMP_TO_GROUND</td><td>terrain height at grid
+ * point</td></tr> </table>
+ * <p/>
+ * Note that when the altitude mode is WorldWind.CLAMP_TO_GROUND the surface altitude, vertical scale, and the scalar
+ * value from GridPointAttributes are ignored. In this altitude mode only the Sector, dimensions, and color from
+ * GridPointAttributes are used.
  *
  * @author dcollins
  * @version $Id$
@@ -235,7 +251,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      *
      * @param sector this surface's new geographic boundary, as a Sector.
      *
-     * @throws IllegalArgumentException if the surface is null.
+     * @throws IllegalArgumentException if the sector is null.
      */
     public void setSector(Sector sector)
     {
@@ -254,6 +270,8 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * Returns this surface's base altitude, in meters.
      *
      * @return this surface's base altitude, in meters.
+     *
+     * @see #setAltitude(double)
      */
     public double getAltitude()
     {
@@ -261,7 +279,8 @@ public class AnalyticSurface implements Renderable, PreRenderable
     }
 
     /**
-     * Sets this surface's base altitude, in meters.
+     * Sets this surface's base altitude, in meters. See the AnalyticSurface class documentation for information on how
+     * the altitude is interpreted.
      *
      * @param altitude the new base altitude, in meters.
      */
@@ -273,11 +292,11 @@ public class AnalyticSurface implements Renderable, PreRenderable
 
     /**
      * Returns the surface's altitude mode, one of {@link gov.nasa.worldwind.WorldWind#CLAMP_TO_GROUND}, {@link
-     * gov.nasa.worldwind.WorldWind#RELATIVE_TO_GROUND}, or {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}. The altitude
-     * mode {@link gov.nasa.worldwind.WorldWind#CONSTANT} is not supported and {@link
-     * gov.nasa.worldwind.WorldWind#ABSOLUTE} is used if specified.
+     * gov.nasa.worldwind.WorldWind#RELATIVE_TO_GROUND}, or {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}.
      *
      * @return the surface's altitude mode.
+     *
+     * @see #setAltitudeMode(int)
      */
     public int getAltitudeMode()
     {
@@ -288,7 +307,8 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * Specifies the surface's altitude mode, one of {@link gov.nasa.worldwind.WorldWind#CLAMP_TO_GROUND}, {@link
      * gov.nasa.worldwind.WorldWind#RELATIVE_TO_GROUND}, or {@link gov.nasa.worldwind.WorldWind#ABSOLUTE}. The altitude
      * mode {@link gov.nasa.worldwind.WorldWind#CONSTANT} is not supported and {@link
-     * gov.nasa.worldwind.WorldWind#ABSOLUTE} is used if specified.
+     * gov.nasa.worldwind.WorldWind#ABSOLUTE} is used if specified. See the AnalyticSurface class documentation for
+     * information on how the altitude mode is interpreted.
      *
      * @param altitudeMode the surface's altitude mode.
      */
@@ -354,7 +374,7 @@ public class AnalyticSurface implements Renderable, PreRenderable
      * iterable staring at the upper left hand corner, and proceeding in row-first order across the grid. The iterable
      * should contain at least <code>width * height</code> values, where width and height are the AnalyticSurface's grid
      * dimensions. If the iterable contains too few values, the unassigned grid points are given default attributes: the
-     * default scalar value is 0, and the default color is {@link java.awt.Color#BLACK}. (totally opaque).
+     * default scalar value is 0, and the default color is {@link java.awt.Color#BLACK}.
      *
      * @param iterable the new grid point attributes.
      *
