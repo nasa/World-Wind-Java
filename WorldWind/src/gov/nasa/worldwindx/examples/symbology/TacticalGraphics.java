@@ -358,6 +358,20 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setText("GREEN");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.addRenderable(graphic);
+
+            ////////////////////////////////////////////////////////////
+            // Sensor Zone, Rectangular
+            ////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.0592, -117.2903, 0),
+                Position.fromDegrees(35.0620, -117.1606, 0));
+            graphic = factory.createGraphic("GFFPACER------X", positions, null);
+            graphic.setModifier(SymbologyConstants.DISTANCE, 5000.0);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Sensor Zone");
+            graphic.setText("Q37");
+            graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
+            layer.addRenderable(graphic);
         }
     }
 

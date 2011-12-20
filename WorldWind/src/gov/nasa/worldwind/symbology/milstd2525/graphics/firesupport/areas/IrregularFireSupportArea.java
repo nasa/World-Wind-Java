@@ -40,6 +40,16 @@ public class IrregularFireSupportArea extends BasicArea
     public final static String FUNCTION_ID_ACA = "ACAI--";
     /** Function ID of the Terminally Guided Munitions Footprint graphic. */
     public final static String FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT = "ACT---";
+    /** Function ID for the Sensor Zone graphic. */
+    public final static String FUNCTION_ID_SENSOR_ZONE = "ACEI--";
+    /** Function ID for the Dead Space Area graphic. */
+    public final static String FUNCTION_ID_DEAD_SPACE_AREA = "ACDI--";
+    /** Function ID for the Zone of Responsibility graphic. */
+    public final static String FUNCTION_ID_ZONE_OF_RESPONSIBILITY = "ACZI--";
+    /** Function ID for the Target Build-up Area graphic. */
+    public final static String FUNCTION_ID_TARGET_BUILDUP = "ACBI--";
+    /** Function ID for the Target Value Area graphic. */
+    public final static String FUNCTION_ID_TARGET_VALUE = "ACVI--";
 
     /** Center text block on label position when the text is left aligned. */
     protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);

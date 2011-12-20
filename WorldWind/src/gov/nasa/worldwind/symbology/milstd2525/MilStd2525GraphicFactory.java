@@ -106,8 +106,18 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             DirectionOfAttack.FUNCTION_ID_SUPPORTING);
 
         this.mapClass(RectangularFireSupportArea.class,
+            RectangularFireSupportArea.FUNCTION_ID_FSA,
             RectangularFireSupportArea.FUNCTION_ID_FFA,
-            RectangularFireSupportArea.FUNCTION_ID_RFA);
+            RectangularFireSupportArea.FUNCTION_ID_RFA,
+            RectangularFireSupportArea.FUNCTION_ID_SENSOR_ZONE,
+            RectangularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA,
+            RectangularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
+            RectangularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP,
+            RectangularFireSupportArea.FUNCTION_ID_TARGET_VALUE,
+            RectangularFireSupportArea.FUNCTION_ID_ATI,
+            RectangularFireSupportArea.FUNCTION_ID_CFF,
+            RectangularFireSupportArea.FUNCTION_ID_CENSOR_ZONE,
+            RectangularFireSupportArea.FUNCTION_ID_CF);
 
         this.mapClass(CircularFireSupportArea.class,
             CircularFireSupportArea.FUNCTION_ID_TARGET,

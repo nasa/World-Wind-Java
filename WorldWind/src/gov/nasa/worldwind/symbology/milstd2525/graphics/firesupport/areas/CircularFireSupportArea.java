@@ -17,19 +17,12 @@ import java.util.*;
 
 /**
  * Implementation of circular Fire Support graphics. This class implements the following graphics:
- *
- * <ul>
- *   <li>Circular Target (2.X.4.3.1.2)</li>
- *   <li>Fire Support Area, Circular (2.X.4.3.2.1.3)</li>
- *   <li>Free Fire Area (FFA), Circular (2.X.4.3.2.3.3)</li>
- *   <li>Restrictive Fire Area (RFA), Circular (2.X.4.3.2.5.3)</li>
- *   <li>Airspace Coordination Area (ACA), Circular (2.X.4.3.2.2.3)</li>
- *   <li>Sensor Zone, Circular</li>
- *   <li>Dead Space Area, Circular</li>
- *   <li>Zone of Responsibility, Circular</li>
- *   <li>Target Build-up Area, Circular</li>
- *   <li>Target Value Area, Circular</li>
- * </ul>
+ * <p/>
+ * <ul> <li>Circular Target (2.X.4.3.1.2)</li> <li>Fire Support Area, Circular (2.X.4.3.2.1.3)</li> <li>Free Fire Area
+ * (FFA), Circular (2.X.4.3.2.3.3)</li> <li>Restrictive Fire Area (RFA), Circular (2.X.4.3.2.5.3)</li> <li>Airspace
+ * Coordination Area (ACA), Circular (2.X.4.3.2.2.3)</li> <li>Sensor Zone, Circular</li> <li>Dead Space Area,
+ * Circular</li> <li>Zone of Responsibility, Circular</li> <li>Target Build-up Area, Circular</li> <li>Target Value
+ * Area, Circular</li> </ul>
  *
  * @author pabercrombie
  * @version $Id$
@@ -63,9 +56,29 @@ public class CircularFireSupportArea extends MilStd2525TacticalGraphic implement
     protected SurfaceCircle circle;
     protected Object delegateOwner;
 
+    /** Create a new circular area. */
     public CircularFireSupportArea()
     {
         this.circle = this.createShape();
+    }
+
+    /**
+     * Indicates the function IDs of circular Fire Support area graphics that display a date/time range as a separate
+     * label at the left side of the circle. Whether or not a graphic supports this is determined by the graphic's
+     * template in MIL-STD-2525C.
+     *
+     * @return A Set containing the function IDs of graphics that support a date/time label separate from the graphic's
+     *         main label.
+     */
+    public static Set<String> getGraphicsWithTimeLabel()
+    {
+        return new HashSet<String>(Arrays.asList(
+            FUNCTION_ID_FSA,
+            FUNCTION_ID_SENSOR_ZONE,
+            FUNCTION_ID_DEAD_SPACE_AREA,
+            FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
+            FUNCTION_ID_TARGET_BUILDUP,
+            FUNCTION_ID_TARGET_VALUE));
     }
 
     /** {@inheritDoc} */
