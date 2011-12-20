@@ -108,7 +108,7 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
      * Specifies the length of the arrowhead.
      *
      * @param arrowLength Length of the arrowhead as a fraction of the total line length. If the arrowhead length is
-     *                    0.25, then the arrowhead will be length will be one quarter of the total line length.
+     *                    0.25, then the arrowhead length will be one quarter of the total line length.
      */
     public void setArrowLength(double arrowLength)
     {

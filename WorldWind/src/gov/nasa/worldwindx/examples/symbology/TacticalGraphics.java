@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
@@ -218,6 +218,18 @@ public class TacticalGraphics extends ApplicationTemplate
                 Position.fromDegrees(35.0459, -117.3795, 0));
             graphic = factory.createGraphic("GFGPOLKGM-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Main Attack (2.X.2.5.2.2.2.1)");
+            layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Final Protective Fire (2.X.4.2.1.2)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.8917, -117.8344, 0),
+                Position.fromDegrees(34.8283, -117.6794, 0));
+            graphic = factory.createGraphic("GFGPLTF-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Final Protective Fire (2.X.4.2.1.2)");
+            graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("AG1201", "2-22 INF MORT"));
             layer.addRenderable(graphic);
         }
 

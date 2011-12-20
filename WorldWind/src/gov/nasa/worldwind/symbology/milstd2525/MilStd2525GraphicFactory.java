@@ -15,9 +15,10 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.OffenseArea;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.lines.LinearTarget;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -149,6 +150,11 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             IrregularFireSupportArea.FUNCTION_ID_CENSOR_ZONE,
             IrregularFireSupportArea.FUNCTION_ID_CF);
 
+        this.mapClass(LinearTarget.class,
+            LinearTarget.FUNCTION_ID_MAIN,
+            LinearTarget.FUNCTION_ID_SMOKE,
+            LinearTarget.FUNCTION_ID_FPF);
+
         this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
         this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
         this.mapClass(Aviation.class, Aviation.FUNCTION_ID);
@@ -180,7 +186,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      *
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
-    public MilStd2525TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions, AVList modifiers)
+    public MilStd2525TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions,
+        AVList modifiers)
     {
         SymbolCode symbolCode = new SymbolCode(sidc);
 
