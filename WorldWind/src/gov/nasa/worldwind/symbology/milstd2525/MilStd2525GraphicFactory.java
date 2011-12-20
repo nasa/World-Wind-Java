@@ -157,6 +157,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(RectangularTarget.class, RectangularTarget.FUNCTION_ID);
         this.mapClass(Smoke.class, Smoke.FUNCTION_ID);
         this.mapClass(CircularRangeFan.class, CircularRangeFan.FUNCTION_ID);
+        this.mapClass(CircularPositionArea.class, CircularPositionArea.FUNCTION_ID);
+        this.mapClass(RectangularPositionArea.class, RectangularPositionArea.FUNCTION_ID);
     }
 
     /**

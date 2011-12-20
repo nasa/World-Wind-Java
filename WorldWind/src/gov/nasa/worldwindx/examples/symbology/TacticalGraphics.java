@@ -307,8 +307,8 @@ public class TacticalGraphics extends ApplicationTemplate
 
             Position position = (Position.fromDegrees(35.1108, -117.0870, 0));
             TacticalCircle circle = factory.createCircle("GHFPATC-------X", position, 5000.0, null);
-            circle.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, "AG9999");
             circle.setValue(AVKey.DISPLAY_NAME, "Circular Target (2.X.4.3.1.2)");
+            circle.setText("AG9999");
             layer.addRenderable(circle);
 
             /////////////////////////////////////////////
@@ -321,6 +321,27 @@ public class TacticalGraphics extends ApplicationTemplate
             quad.setWidth(4000.0);
             quad.setText("AB0176");
             quad.setValue(AVKey.DISPLAY_NAME, "Rectangular Target (2.X.4.3.1.1)");
+            layer.addRenderable(quad);
+
+            /////////////////////////////////////////////
+            // Position Area for Artillery, Circular target (2.X.4.3.2.6.2)
+            /////////////////////////////////////////////
+
+            position = Position.fromDegrees(35.2106, -117.0092, 0);
+            circle = factory.createCircle("GFFPACPC------X", position, 5000.0, null);
+            circle.setValue(AVKey.DISPLAY_NAME, "Position Area for Artillery (2.X.4.3.2.6.2)");
+            layer.addRenderable(circle);
+
+            /////////////////////////////////////////////
+            // Position Area for Artillery, Rectangular target (2.X.4.3.2.6.1)
+            /////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.2520, -116.8968, 0),
+                Position.fromDegrees(35.2364, -116.8063, 0));
+            quad = factory.createQuad("GFFPACPR------X", positions, null);
+            quad.setWidth(5000.0);
+            quad.setValue(AVKey.DISPLAY_NAME, "Position Area for Artillery (2.X.4.3.2.6.1)");
             layer.addRenderable(quad);
 
             //////////////////////////////////////////////////

@@ -9,7 +9,6 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -20,62 +19,22 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class RectangularTarget extends MilStd2525TacticalGraphic implements TacticalQuad, PreRenderable
+public class RectangularTarget extends AbstractRectangularGraphic
 {
     /** Function ID for the Rectangular Target graphic. */
     public final static String FUNCTION_ID = "ATR---";
 
-    protected SurfaceQuad quad;
-
     /** Create a new target. */
     public RectangularTarget()
     {
-        this.quad = this.createShape();
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
-    }
-
-    /** {@inheritDoc} */
-    public double getWidth()
-    {
-        return this.quad.getHeight();
-    }
-
-    /** {@inheritDoc} */
-    public void setWidth(double width)
-    {
-        //noinspection SuspiciousNameCombination
-        this.quad.setHeight(width);
-    }
-
-    /** {@inheritDoc} */
-    public double getLength()
-    {
-        return this.quad.getWidth();
-    }
-
-    /** {@inheritDoc} */
-    public void setLength(double length)
-    {
-        this.quad.setWidth(length);
+        super();
     }
 
     /**
      * {@inheritDoc}
      *
      * @param positions Control points. This graphic uses only one control point, which determines the center of the
-     *                  circle.
+     *                  quad.
      */
     public void setPositions(Iterable<? extends Position> positions)
     {
@@ -135,46 +94,6 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements Tact
         return Arrays.asList(new Position(this.quad.getCenter(), 0));
     }
 
-    /** {@inheritDoc} */
-    public Position getReferencePosition()
-    {
-        return this.quad.getReferencePosition();
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        this.quad.move(position);
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.quad.moveTo(position);
-    }
-
-    /** {@inheritDoc} */
-    public void preRender(DrawContext dc)
-    {
-        if (!this.isVisible())
-        {
-            return;
-        }
-
-        this.determineActiveAttributes();
-        this.quad.preRender(dc);
-    }
-
-    /**
-     * Render the quad.
-     *
-     * @param dc Current draw context.
-     */
-    public void doRenderGraphic(DrawContext dc)
-    {
-        this.quad.render(dc);
-    }
-
     /** Create labels for the graphic. */
     @Override
     protected void createLabels()
@@ -190,13 +109,5 @@ public class RectangularTarget extends MilStd2525TacticalGraphic implements Tact
     protected void determineLabelPositions(DrawContext dc)
     {
         this.labels.get(0).setPosition(new Position(this.quad.getCenter(), 0));
-    }
-
-    protected SurfaceQuad createShape()
-    {
-        SurfaceQuad quad = new SurfaceQuad();
-        quad.setDelegateOwner(this);
-        quad.setAttributes(this.getActiveShapeAttributes());
-        return quad;
     }
 }
