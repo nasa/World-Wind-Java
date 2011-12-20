@@ -83,7 +83,8 @@ public class FireSupportTextBuilder
     protected boolean isShowSeparateTimeLabel(String functionId)
     {
         return CircularFireSupportArea.getGraphicsWithTimeLabel().contains(functionId)
-            || RectangularFireSupportArea.getGraphicsWithTimeLabel().contains(functionId);
+            || RectangularFireSupportArea.getGraphicsWithTimeLabel().contains(functionId)
+            || IrregularFireSupportArea.getGraphicsWithTimeLabel().contains(functionId);
     }
 
     protected boolean isAirspaceCoordinationArea(String functionId)
@@ -190,19 +191,23 @@ public class FireSupportTextBuilder
         {
             return "TVAR";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_ATI.equals(functionId))
+        else if (RectangularFireSupportArea.FUNCTION_ID_ATI.equals(functionId)
+            || IrregularFireSupportArea.FUNCTION_ID_ATI.equals(functionId))
         {
             return "ATI ZONE";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_CFF.equals(functionId))
+        else if (RectangularFireSupportArea.FUNCTION_ID_CFF.equals(functionId)
+            || IrregularFireSupportArea.FUNCTION_ID_CFF.equals(functionId))
         {
             return "CFF ZONE";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_CENSOR_ZONE.equals(functionId))
+        else if (RectangularFireSupportArea.FUNCTION_ID_CENSOR_ZONE.equals(functionId)
+            || IrregularFireSupportArea.FUNCTION_ID_CENSOR_ZONE.equals(functionId))
         {
             return "CENSOR ZONE";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_CF.equals(functionId))
+        else if (RectangularFireSupportArea.FUNCTION_ID_CF.equals(functionId)
+            || IrregularFireSupportArea.FUNCTION_ID_CF.equals(functionId))
         {
             return "CF ZONE";
         }

@@ -305,7 +305,7 @@ public class TacticalGraphics extends ApplicationTemplate
             // Circular target (2.X.4.3.1.2)
             /////////////////////////////////////////////
 
-            Position position = (Position.fromDegrees(35.1108, -117.0470, 0));
+            Position position = (Position.fromDegrees(35.1108, -117.0870, 0));
             TacticalCircle circle = factory.createCircle("GHFPATC-------X", position, 5000.0, null);
             circle.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, "AG9999");
             circle.setValue(AVKey.DISPLAY_NAME, "Circular Target (2.X.4.3.1.2)");
@@ -370,6 +370,22 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setModifier(SymbologyConstants.DISTANCE, 5000.0);
             graphic.setValue(AVKey.DISPLAY_NAME, "Sensor Zone");
             graphic.setText("Q37");
+            graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
+            layer.addRenderable(graphic);
+
+            ////////////////////////////////////////////////////////////
+            // Call for Fire Zone, Irregular (2.X.4.3.3.2.1)
+            ////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.1386, -116.9302, 0),
+                Position.fromDegrees(35.1030, -116.9302, 0),
+                Position.fromDegrees(35.0731, -116.9561, 0),
+                Position.fromDegrees(35.0620, -116.8345, 0),
+                Position.fromDegrees(35.1422, -116.8193, 0));
+            graphic = factory.createGraphic("GFFPAZXI------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Call for Fire Zone (2.X.4.3.3.2.1)");
+            graphic.setText("3BDE 4ID");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.addRenderable(graphic);
         }

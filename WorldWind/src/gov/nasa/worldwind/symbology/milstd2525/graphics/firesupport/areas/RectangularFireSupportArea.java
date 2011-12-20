@@ -278,7 +278,7 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
             mainLabel.setTextAlign(this.getMainLabelTextAlign());
         }
 
-        if (allText.length > 1)
+        if (allText.length > 1 && !WWUtil.isEmpty(allText[1]))
         {
             Label timeLabel = this.addLabel(allText[1]);
             timeLabel.setTextAlign(AVKey.RIGHT);

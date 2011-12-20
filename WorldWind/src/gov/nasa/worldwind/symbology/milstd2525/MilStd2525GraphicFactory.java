@@ -132,12 +132,22 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             CircularFireSupportArea.FUNCTION_ID_TARGET_VALUE);
 
         this.mapClass(IrregularFireSupportArea.class,
+            IrregularFireSupportArea.FUNCTION_ID_FSA,
             IrregularFireSupportArea.FUNCTION_ID_TARGET,
             IrregularFireSupportArea.FUNCTION_ID_FFA,
             IrregularFireSupportArea.FUNCTION_ID_RFA,
             IrregularFireSupportArea.FUNCTION_ID_ACA,
             IrregularFireSupportArea.FUNCTION_ID_BOMB,
-            IrregularFireSupportArea.FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT);
+            IrregularFireSupportArea.FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT,
+            IrregularFireSupportArea.FUNCTION_ID_SENSOR_ZONE,
+            IrregularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA,
+            IrregularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
+            IrregularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP,
+            IrregularFireSupportArea.FUNCTION_ID_TARGET_VALUE,
+            IrregularFireSupportArea.FUNCTION_ID_ATI,
+            IrregularFireSupportArea.FUNCTION_ID_CFF,
+            IrregularFireSupportArea.FUNCTION_ID_CENSOR_ZONE,
+            IrregularFireSupportArea.FUNCTION_ID_CF);
 
         this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
         this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
