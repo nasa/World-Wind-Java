@@ -435,6 +435,19 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Series or Group of Targets (2.X.4.3.1.3)");
             graphic.setText("JEFF");
             layer.addRenderable(graphic);
+
+            ////////////////////////////////////////////////////////////
+            // Minimum Safe Distance Zones (2.X.3.4.1)
+            ////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.9073, -116.7041, 0), // Center point of graphic
+                Position.fromDegrees(34.9230, -116.6842, 0), // Radius of ring 1
+                Position.fromDegrees(34.8723, -116.6841, 0), // Radius of ring 2
+                Position.fromDegrees(34.8870, -116.7783, 0)); // Radius of ring 3
+            graphic = factory.createGraphic("GFFPNM--------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Minimum Safe Distance Zones (2.X.3.4.1)");
+            layer.addRenderable(graphic);
         }
     }
 
