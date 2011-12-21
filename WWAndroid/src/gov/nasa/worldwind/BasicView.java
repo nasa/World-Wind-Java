@@ -12,7 +12,7 @@ import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
 /**
- * @author dcollins
+ * @author ccrick
  * @version $Id$
  */
 public class BasicView extends WWObjectImpl implements View

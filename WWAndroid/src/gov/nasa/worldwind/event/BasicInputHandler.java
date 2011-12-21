@@ -16,7 +16,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 
 /**
- * @author dcollins
+ * @author ccrick
  * @version $Id$
  */
 public class BasicInputHandler extends WWObjectImpl implements InputHandler
