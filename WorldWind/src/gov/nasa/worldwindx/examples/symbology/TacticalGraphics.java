@@ -421,6 +421,20 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setText("3BDE 4ID");
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("051030", "051600Z"));
             layer.addRenderable(graphic);
+
+            ////////////////////////////////////////////////////////////
+            // Series or Group of Targets (2.X.4.3.1.3)
+            ////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.0160, -116.6625, 0),
+                Position.fromDegrees(35.0601, -116.6773, 0),
+                Position.fromDegrees(35.0542, -116.7611, 0),
+                Position.fromDegrees(35.0092, -116.7790, 0));
+            graphic = factory.createGraphic("GFFPATG-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Series or Group of Targets (2.X.4.3.1.3)");
+            graphic.setText("JEFF");
+            layer.addRenderable(graphic);
         }
     }
 

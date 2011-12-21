@@ -14,7 +14,6 @@ import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
-import java.util.List;
 
 /**
  * Implementation of general area graphics. This class implements the following graphics:
@@ -44,6 +43,11 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     public final static String FUNCTION_ID_PICKUP = "GAP---";
 
     protected SurfacePolygon polygon;
+
+    /** First "ENY" label, for hostile entities. */
+    protected Label identityLabel1;
+    /** Second "ENY" label, for hostile entities. */
+    protected Label identityLabel2;
 
     public BasicArea()
     {
@@ -150,12 +154,12 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         }
 
         StringBuilder sb = new StringBuilder();
-        if (label != null)
+        if (!WWUtil.isEmpty(label))
         {
             sb.append(label).append("\n");
         }
 
-        if (text != null)
+        if (!WWUtil.isEmpty(text))
         {
             sb.append(text);
         }
@@ -199,19 +203,18 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     protected void createLabels()
     {
         String labelText = this.createLabelText();
-        if (WWUtil.isEmpty(labelText))
+        if (!WWUtil.isEmpty(labelText))
         {
-            return;
-        }
-        Label mainLabel = this.addLabel(labelText);
-        mainLabel.setTextAlign(this.getLabelAlignment());
+            Label mainLabel = this.addLabel(labelText);
+            mainLabel.setTextAlign(this.getLabelAlignment());
 
-        mainLabel.setOffset(this.getDefaultLabelOffset());
+            mainLabel.setOffset(this.getDefaultLabelOffset());
+        }
 
         if (this.mustCreateIdentityLabels())
         {
-            this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
-            this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
+            this.identityLabel1 = this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
+            this.identityLabel2 = this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
         }
     }
 
@@ -263,7 +266,10 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         Position second = iterator.next();
 
         LatLon midpoint = LatLon.interpolate(0.5, first, second);
-        this.labels.get(1).setPosition(new Position(midpoint, 0));
+        if (this.identityLabel1 != null)
+        {
+            this.identityLabel1.setPosition(new Position(midpoint, 0));
+        }
 
         // Position the second label between the middle two control points in the position list. If the control
         // points are more or less evenly distributed, this will be about half way around the shape.
@@ -276,7 +282,10 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         second = iterator.next();
 
         midpoint = LatLon.interpolate(0.5, first, second);
-        this.labels.get(2).setPosition(new Position(midpoint, 0));
+        if (this.identityLabel2 != null)
+        {
+            this.identityLabel2.setPosition(new Position(midpoint, 0));
+        }
     }
 
     protected boolean mustCreateIdentityLabels()
