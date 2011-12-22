@@ -230,7 +230,7 @@ public class SurfaceImage implements SurfaceTile, Renderable, PreRenderable, Mov
         }
 
         // Initialize the source texture if the caller specified a new image source.
-        if (this.sourceTexture == null)
+        if (this.getImageSource() != null && this.sourceTexture == null)
             this.initializeSourceTexture(dc);
 
         // Exit if the source texture could not be initialized.
@@ -253,7 +253,7 @@ public class SurfaceImage implements SurfaceTile, Renderable, PreRenderable, Mov
         if (dc.isPickingMode() && !this.isPickEnabled())
             return;
 
-        if (!this.getSector().intersects(dc.getVisibleSector()))
+        if (this.getSector() == null || !this.getSector().intersects(dc.getVisibleSector()))
             return;
 
         if (this.sourceTexture == null)
