@@ -51,9 +51,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         }
     }
 
-    // The RectTile class is meant to be small and quick to construct so that many can exist and they can be created
-    // anew for each intersection or getSurfacePoint operation.
-
     /**
      * Defines an internal terrain tile. This class is meant to be small and quickly constructed so that many can exist
      * simultaneously and can be created anew for each operation. The geometry they refer to is cached and is
@@ -93,6 +90,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     protected int numCols;
     protected int[] indices;
     protected MemoryCache geometryCache;
+    protected MemoryCache tileCache;
     protected ThreadLocal<Long> startTime = new ThreadLocal<Long>();
 
     /**
@@ -155,6 +153,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 //                System.out.printf("CACHE CLEAN capacity %d, used %d, num entries %d\n", cap, cs, no);
 //            }
 //        });
+        this.tileCache = new BasicMemoryCache((long) (0.85 * 20e6), (long) 20e6);
     }
 
     /**
@@ -545,9 +544,16 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
      */
     protected RectTile createTile(Sector tileSector)
     {
+        RectTile tile = (RectTile) this.tileCache.getObject(tileSector);
+        if (tile != null)
+            return tile;
+
         Extent extent = Sector.computeBoundingBox(this.globe, this.verticalExaggeration, tileSector);
 
-        return new RectTile(extent, this.density, tileSector);
+        tile = new RectTile(extent, this.density, tileSector);
+        this.tileCache.add(tileSector, tile, 32);
+
+        return tile;
     }
 
     /**
