@@ -135,8 +135,8 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String FORWARD = "gov.nasa.worldwind.avkey.Forward";
     final String FOV = "gov.nasa.worldwind.avkey.FieldOfView";
     final String FORCE_LEVEL_ZERO_LOADS = "gov.nasa.worldwind.avkey.ForceLevelZeroLoads";
-    final String RETAIN_LEVEL_ZERO_TILES = "gov.nasa.worldwind.avkey.RetainLevelZeroTiles";
     final String FRACTION = "gov.nasa.worldwind.avkey.Fraction";
+    final String FRAME_TIMESTAMP = "gov.nasa.worldwind.avkey.FrameTimestamp";
 
     final String GDAL_AREA = "gov.nasa.worldwind.avkey.GDAL.Area";
     final String GDAL_CACHEMAX = "gov.nasa.worldwind.avkey.GDAL.CacheMax";
@@ -352,6 +352,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String RESIZE_SHRINK_ONLY = "gov.nasa.worldwind.CompassLayer.ResizeShrinkOnly";
     /** Does not modify the item size when the window changes size. */
     final String RESIZE_KEEP_FIXED_SIZE = "gov.nasa.worldwind.CompassLayer.ResizeKeepFixedSize";
+    final String RETAIN_LEVEL_ZERO_TILES = "gov.nasa.worldwind.avkey.RetainLevelZeroTiles";
     final String RETRIEVAL_POOL_SIZE = "gov.nasa.worldwind.avkey.RetrievalPoolSize";
     final String RETRIEVE_PROPERTIES_FROM_SERVICE = "gov.nasa.worldwind.avkey.RetrievePropertiesFromService";
     final String RETRIEVAL_QUEUE_SIZE = "gov.nasa.worldwind.avkey.RetrievalQueueSize";

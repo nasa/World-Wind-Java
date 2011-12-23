@@ -362,7 +362,11 @@ public abstract class AbstractSceneController extends WWObjectImpl implements Sc
         dc.setPickPoint(this.pickPoint);
         dc.setPickRectangle(this.pickRect);
         dc.setViewportCenterScreenPoint(this.getViewportCenter(dc));
-        dc.setFrameTimeStamp(System.currentTimeMillis());
+
+        long frameTimeStamp = System.currentTimeMillis();
+        dc.setFrameTimeStamp(frameTimeStamp);
+        // Indicate the frame time stamp to apps.
+        this.setValue(AVKey.FRAME_TIMESTAMP, frameTimeStamp);
     }
 
     protected Point getViewportCenter(DrawContext dc)

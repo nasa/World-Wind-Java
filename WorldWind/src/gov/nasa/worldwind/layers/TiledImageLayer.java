@@ -617,6 +617,9 @@ public abstract class TiledImageLayer extends AbstractLayer
 
         if (this.currentTiles.size() >= 1)
         {
+            // Indicate that this layer rendered something this frame.
+            this.setValue(AVKey.FRAME_TIMESTAMP, dc.getFrameTimeStamp());
+
             if (this.getScreenCredit() != null)
             {
                 dc.addScreenCredit(this.getScreenCredit());
