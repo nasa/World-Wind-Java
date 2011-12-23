@@ -5,16 +5,15 @@ All Rights Reserved.
 */
 package gov.nasa.worldwindx.examples.elevations;
 
-import gov.nasa.worldwind.View;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
-import gov.nasa.worldwindx.examples.*;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.ElevationModel;
 import gov.nasa.worldwind.terrain.*;
 import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwindx.examples.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -60,7 +59,7 @@ public class RetrieveElevations extends ApplicationTemplate
 
         protected void makeComponents()
         {
-            this.getWwd().setPreferredSize(new Dimension(1024, 768));
+            ((Component) this.getWwd()).setPreferredSize(new Dimension(1024, 768));
 
             JPanel panel = new JPanel(new BorderLayout());
             {
@@ -139,9 +138,9 @@ public class RetrieveElevations extends ApplicationTemplate
     {
         protected RetrieveElevations.AppFrame frame;
         // World Wind stuff.
-        protected WorldWindowGLCanvas wwd;
+        protected WorldWindow wwd;
 
-        public ElevationsDemoController(WorldWindowGLCanvas wwd)
+        public ElevationsDemoController(WorldWindow wwd)
         {
             this.wwd = wwd;
         }

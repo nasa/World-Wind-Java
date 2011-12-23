@@ -660,7 +660,7 @@ public class Shapes
                         {
                             lastToolTipIcon.setShowToolTip(false);
                             this.lastToolTipIcon = null;
-                            AppFrame.this.wwjPanel.getWwd().repaint();
+                            AppFrame.this.wwjPanel.getWwd().redraw();
                         }
 
                         // If there's a selection, we're not dragging, and the selection is an icon, show tool tip.
@@ -670,7 +670,7 @@ public class Shapes
                             {
                                 this.lastToolTipIcon = (WWIcon) event.getTopObject();
                                 lastToolTipIcon.setShowToolTip(true);
-                                AppFrame.this.wwjPanel.getWwd().repaint();
+                                AppFrame.this.wwjPanel.getWwd().redraw();
                             }
                         }
                     }

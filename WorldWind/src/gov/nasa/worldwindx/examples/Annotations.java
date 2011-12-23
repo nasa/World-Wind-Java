@@ -7,16 +7,15 @@ All Rights Reserved.
 package gov.nasa.worldwindx.examples;
 
 import com.sun.opengl.util.j2d.TextRenderer;
-import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwindx.examples.util.PowerOfTwoPaddedImage;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.pick.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwindx.examples.util.PowerOfTwoPaddedImage;
 
 import javax.media.opengl.GL;
 import javax.swing.*;
@@ -25,7 +24,7 @@ import javax.swing.border.*;
 import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 
 /**
@@ -575,9 +574,9 @@ public class Annotations extends ApplicationTemplate
                     {
                         // Handle cursor change on hyperlink
                         if (event.getTopPickedObject().getValue(AVKey.URL) != null)
-                            getWwd().setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                            ((Component) getWwd()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         else
-                            getWwd().setCursor(Cursor.getDefaultCursor());
+                            ((Component) getWwd()).setCursor(Cursor.getDefaultCursor());
                     }
 
                     // Select/unselect on left click on annotations
@@ -664,7 +663,7 @@ public class Annotations extends ApplicationTemplate
                             if (pol != null)
                             {
                                 AppFrame.this.highlight(pol.getTopObject());
-                                AppFrame.this.getWwd().repaint();
+                                AppFrame.this.getWwd().redraw();
                             }
                         }
                     }
@@ -1403,7 +1402,7 @@ public class Annotations extends ApplicationTemplate
                         updateAnnotation();
                         layer.addAnnotation(currentAnnotation);
                         currentAnnotation = a;
-                        getWwd().repaint();
+                        getWwd().redraw();
                     }
                 }
             });
@@ -1424,7 +1423,7 @@ public class Annotations extends ApplicationTemplate
                         widthSlider.setEnabled(false);
                         btApply.setEnabled(false);
                         btRemove.setEnabled(false);
-                        getWwd().repaint();
+                        getWwd().redraw();
                     }
                 }
             });
@@ -1869,11 +1868,11 @@ public class Annotations extends ApplicationTemplate
                 this.currentAnnotation.getAttributes().setHighlightScale(
                     (double) this.highlightScaleSlider.getValue() / 10);
 
-                getWwd().repaint();
+                getWwd().redraw();
             }
         }
 
-        private Position computeGroundPosition(WorldWindowGLCanvas wwd)
+        private Position computeGroundPosition(WorldWindow wwd)
         {
             View view = wwd.getView();
 

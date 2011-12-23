@@ -139,7 +139,7 @@ public class Shapefiles extends ApplicationTemplate
 
             Thread t = new WorkerThread(this.fc.getSelectedFile(), this);
             t.start();
-            getWwd().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            ((Component) getWwd()).setCursor(new Cursor(Cursor.WAIT_CURSOR));
         }
 
         public void showOpenURLDialog()
@@ -158,7 +158,7 @@ public class Shapefiles extends ApplicationTemplate
 
             Thread t = new WorkerThread(url, this);
             t.start();
-            getWwd().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+            ((Component) getWwd()).setCursor(new Cursor(Cursor.WAIT_CURSOR));
         }
     }
 
@@ -209,7 +209,7 @@ public class Shapefiles extends ApplicationTemplate
                 {
                     public void run()
                     {
-                        appFrame.getWwd().setCursor(Cursor.getDefaultCursor());
+                        ((Component) appFrame.getWwd()).setCursor(Cursor.getDefaultCursor());
                     }
                 });
             }

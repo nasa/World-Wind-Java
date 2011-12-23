@@ -153,7 +153,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
                 this.tooltipAnnotation.setText("<p><b>" + this.mouseEq.earthquake.title + "</b></p>" + composeElapsedString(this.mouseEq) + "<br />" + this.mouseEq.earthquake.summary);
                 this.tooltipAnnotation.setPosition(this.mouseEq.earthquake.position);
                 this.tooltipAnnotation.getAttributes().setVisible(true);
-                this.getWwd().repaint();
+                this.getWwd().redraw();
             }
         }
 
@@ -162,7 +162,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             if (this.blinker != null)
             {
                 this.blinker.stop();
-                this.getWwd().repaint();
+                this.getWwd().redraw();
             }
 
             if (ea == null)
@@ -569,7 +569,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
             }
             setBlinker(this.latestEq);
             setLatestLabel(this.latestEq);
-            this.getWwd().repaint();
+            this.getWwd().redraw();
         }
 
         private class Earthquake
@@ -683,7 +683,7 @@ public class FlatWorldEarthquakes extends ApplicationTemplate
                         annotation.getAttributes().setScale(initialScale * (1f + 7f * ((float)step / (float)steps)));
                         annotation.getAttributes().setOpacity(initialOpacity * (1f - ((float)step / (float)steps)));
                         step = step == steps ? 0 : step + 1;
-                        getWwd().repaint();
+                        getWwd().redraw();
                     }
                 });
                 start();

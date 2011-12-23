@@ -119,7 +119,7 @@ public class SurfaceImageViewer extends ApplicationTemplate
                             // TODO: proper threading
                             layer.addImage(imageFile.getAbsolutePath());
 
-                            getWwd().repaint();
+                            getWwd().redraw();
                             statusLabel.setText("status: ready");
                         }
                         catch (IOException e)
@@ -149,7 +149,7 @@ public class SurfaceImageViewer extends ApplicationTemplate
                 {
                     int value = opacitySlider.getValue();
                     layer.setOpacity(value / 100d);
-                    getWwd().repaint();
+                    getWwd().redraw();
                 }
             });
             JPanel opacityPanel = new JPanel(new BorderLayout(5, 5));

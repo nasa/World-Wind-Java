@@ -8,13 +8,13 @@ package gov.nasa.worldwindx.examples;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.awt.*;
 import gov.nasa.worldwind.event.*;
-import gov.nasa.worldwindx.examples.util.*;
 import gov.nasa.worldwind.exception.WWAbsentRequirementException;
 import gov.nasa.worldwind.layers.*;
 import gov.nasa.worldwind.layers.placename.PlaceNameLayer;
 import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwindx.examples.util.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +29,7 @@ public class ApplicationTemplate
 {
     public static class AppPanel extends JPanel
     {
-        protected WorldWindowGLCanvas wwd;
+        protected WorldWindow wwd;
         protected StatusBar statusBar;
         protected ToolTipController toolTipController;
         protected HighlightController highlightController;
@@ -39,7 +39,7 @@ public class ApplicationTemplate
             super(new BorderLayout());
 
             this.wwd = this.createWorldWindow();
-            this.wwd.setPreferredSize(canvasSize);
+            ((Component) this.wwd).setPreferredSize(canvasSize);
 
             // Create the default model as described in the current worldwind properties.
             Model m = (Model) WorldWind.createConfigurationComponent(AVKey.MODEL_CLASS_NAME);
@@ -48,7 +48,7 @@ public class ApplicationTemplate
             // Setup a select listener for the worldmap click-and-go feature
             this.wwd.addSelectListener(new ClickAndGoSelectListener(this.getWwd(), WorldMapLayer.class));
 
-            this.add(this.wwd, BorderLayout.CENTER);
+            this.add((Component) this.wwd, BorderLayout.CENTER);
             if (includeStatusBar)
             {
                 this.statusBar = new StatusBar();
@@ -61,12 +61,12 @@ public class ApplicationTemplate
             this.highlightController = new HighlightController(this.getWwd(), SelectEvent.ROLLOVER);
         }
 
-        protected WorldWindowGLCanvas createWorldWindow()
+        protected WorldWindow createWorldWindow()
         {
             return new WorldWindowGLCanvas();
         }
 
-        public WorldWindowGLCanvas getWwd()
+        public WorldWindow getWwd()
         {
             return wwd;
         }
@@ -171,7 +171,7 @@ public class ApplicationTemplate
             return wwjPanel;
         }
 
-        public WorldWindowGLCanvas getWwd()
+        public WorldWindow getWwd()
         {
             return this.wwjPanel.getWwd();
         }

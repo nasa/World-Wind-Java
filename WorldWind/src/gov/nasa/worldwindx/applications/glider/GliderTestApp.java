@@ -7,7 +7,7 @@ All Rights Reserved.
 
 package gov.nasa.worldwindx.applications.glider;
 
-import gov.nasa.worldwind.awt.WorldWindowGLCanvas;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
@@ -16,7 +16,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.beans.*;
 import java.io.*;
 import java.util.*;
@@ -36,7 +36,7 @@ public class GliderTestApp extends ApplicationTemplate
         }
 
         @Override
-        protected WorldWindowGLCanvas createWorldWindow()
+        protected WorldWindow createWorldWindow()
         {
             return new GliderWorldWindow();
         }
