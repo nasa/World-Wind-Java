@@ -55,7 +55,7 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
         return sb.toString();
     }
 
-    public String getGraphicLabel()
+    protected String getGraphicLabel()
     {
         String functionId = this.getFunctionId();
 
