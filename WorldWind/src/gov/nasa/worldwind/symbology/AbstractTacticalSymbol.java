@@ -737,7 +737,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     {
         // This render method is called three times during frame generation. It's first called as a {@link Renderable}
         // during <code>Renderable</code> picking. It's called again during normal rendering. And it's called a third
-        // time as an OrderedRenderable. The first two calls determine whether to add the placemark  and its optional
+        // time as an OrderedRenderable. The first two calls determine whether to add the symbol  and its optional
         // line to the ordered renderable list during pick and render. The third call just draws the ordered renderable.
 
         if (dc == null)
@@ -866,7 +866,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     {
         View view = dc.getView();
 
-        // Test the placemark's model coordinate point against the near and far clipping planes.
+        // Test the symbol's model coordinate point against the near and far clipping planes.
         if (this.placePoint != null
             && (view.getFrustumInModelCoordinates().getNear().distanceTo(this.placePoint) < 0
             || view.getFrustumInModelCoordinates().getFar().distanceTo(this.placePoint) < 0))
