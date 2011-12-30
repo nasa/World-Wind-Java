@@ -7,9 +7,9 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
 
 /**
  * Implementation of aviation area graphics. This class implements the following graphics:

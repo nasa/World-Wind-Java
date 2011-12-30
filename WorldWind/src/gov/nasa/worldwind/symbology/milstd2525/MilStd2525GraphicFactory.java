@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.combatsupport.CombatSupportArea;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;

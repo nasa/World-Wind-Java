@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense;
 
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
 
 /**
  * Implementation of offense area graphics. This class implements the following graphics:

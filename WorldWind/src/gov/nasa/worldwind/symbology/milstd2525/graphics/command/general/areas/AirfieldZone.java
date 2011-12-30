@@ -9,6 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
 
 import java.util.*;
 

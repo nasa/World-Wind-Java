@@ -4,12 +4,12 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
+package gov.nasa.worldwind.symbology.milstd2525.graphics;
 
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class AbstractCircularGraphic extends MilStd2525TacticalGraphic implements TacticalCircle, PreRenderable
+public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic implements TacticalCircle, PreRenderable
 {
     protected SurfaceCircle circle;
     protected Object delegateOwner;
@@ -29,12 +29,6 @@ public class AbstractCircularGraphic extends MilStd2525TacticalGraphic implement
     public AbstractCircularGraphic()
     {
         this.circle = this.createShape();
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
     /** {@inheritDoc} */
@@ -167,7 +161,7 @@ public class AbstractCircularGraphic extends MilStd2525TacticalGraphic implement
         this.circle.render(dc);
     }
 
-    /** {@inheritDoc} Overridden to apply the delegate owner to shapes used to draw the route point. */
+    /** {@inheritDoc} Overridden to apply the delegate owner to shapes used to draw the circle. */
     @Override
     protected void determineActiveAttributes()
     {
@@ -176,10 +170,17 @@ public class AbstractCircularGraphic extends MilStd2525TacticalGraphic implement
         // Apply the delegate owner to the circle, if an owner has been set. If no owner is set, make this graphic the
         // circle's owner.
         Object owner = this.getDelegateOwner();
-        if (owner != null)
-            this.circle.setDelegateOwner(owner);
-        else
-            this.circle.setDelegateOwner(this);
+        if (owner == null)
+            owner = this;
+
+        this.circle.setDelegateOwner(owner);
+        if (this.labels != null)
+        {
+            for (Label label : this.labels)
+            {
+                label.setDelegateOwner(owner);
+            }
+        }
     }
 
     protected SurfaceCircle createShape()

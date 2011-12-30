@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
 
 import java.util.Iterator;
 

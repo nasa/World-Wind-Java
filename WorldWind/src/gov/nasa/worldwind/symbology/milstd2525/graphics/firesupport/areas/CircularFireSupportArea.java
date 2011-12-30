@@ -9,8 +9,10 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.milstd2525.Label;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.AbstractCircularGraphic;
+import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
 
@@ -75,6 +77,12 @@ public class CircularFireSupportArea extends AbstractCircularGraphic
             FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
             FUNCTION_ID_TARGET_BUILDUP,
             FUNCTION_ID_TARGET_VALUE));
+    }
+
+    /** {@inheritDoc} */
+    public String getCategory()
+    {
+        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
     /** Create labels for the start and end of the path. */

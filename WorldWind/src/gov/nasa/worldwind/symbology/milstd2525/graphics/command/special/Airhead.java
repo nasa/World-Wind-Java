@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.special;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
 import gov.nasa.worldwind.util.WWUtil;
 
 /**

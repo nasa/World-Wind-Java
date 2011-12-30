@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.combatsupport;
 
 import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
 
 /**
  * Implementation of combat support area graphics. This class implements the following graphics:

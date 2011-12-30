@@ -7,7 +7,9 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.AbstractCircularGraphic;
 
 /**
  * Implementation of the Position Area for Artillery, Circular graphic (2.X.4.3.2.6.2).
@@ -24,6 +26,12 @@ public class CircularPositionArea extends AbstractCircularGraphic
     public CircularPositionArea()
     {
         super();
+    }
+
+    /** {@inheritDoc} */
+    public String getCategory()
+    {
+        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
     /** Create labels for the start and end of the path. */
