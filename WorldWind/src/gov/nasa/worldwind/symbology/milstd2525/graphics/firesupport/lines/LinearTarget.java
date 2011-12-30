@@ -120,6 +120,7 @@ public class LinearTarget extends MilStd2525TacticalGraphic
     public void setAdditionalText(String text)
     {
         this.additionalText = text;
+        this.onModifierChanged();
     }
 
     @Override

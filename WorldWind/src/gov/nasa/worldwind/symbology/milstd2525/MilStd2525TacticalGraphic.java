@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
 import java.util.*;
@@ -236,6 +236,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
                 this.modifiers = new AVListImpl();
 
             this.modifiers.setValue(modifier, value);
+            this.onModifierChanged();
         }
     }
 
@@ -304,6 +305,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setFunctionId(String functionId)
     {
         this.functionId = functionId;
+        this.onModifierChanged();
     }
 
     public String getStandardIdentity()
@@ -321,6 +323,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
 
         this.standardIdentity = standardIdentity;
+        this.onModifierChanged();
     }
 
     public String getEchelon()
@@ -338,6 +341,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
 
         this.echelon = echelon;
+        this.onModifierChanged();
     }
 
     /**
@@ -358,6 +362,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setStatus(String status)
     {
         this.status = status;
+        this.onModifierChanged();
     }
 
     /**
@@ -378,6 +383,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setCountryCode(String countryCode)
     {
         this.countryCode = countryCode;
+        this.onModifierChanged();
     }
 
     /** {@inheritDoc} */
@@ -390,6 +396,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setText(String text)
     {
         this.text = text;
+        this.onModifierChanged();
     }
 
     /////////////
@@ -428,6 +435,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             // Allow the subclass to create labels, if necessary
             if (this.mustCreateLabels)
             {
+                if (this.labels != null)
+                {
+                    this.labels.clear();
+                }
+
                 this.createLabels();
                 this.mustCreateLabels = false;
             }
@@ -438,7 +450,12 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         }
     }
 
-    public void doRenderModifiers(DrawContext dc)
+    /**
+     * Render the text modifiers.
+     *
+     * @param dc Current draw context.
+     */
+    protected void doRenderModifiers(DrawContext dc)
     {
         if (this.labels != null)
         {
@@ -447,6 +464,16 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
                 label.render(dc);
             }
         }
+    }
+
+    /**
+     * Invoked when a modifier is changed. This implementation marks the label text as invalid causing it to be
+     * recreated based on the new modifiers.
+     */
+    protected void onModifierChanged()
+    {
+        // Text may need to change to reflect new modifiers.
+        this.mustCreateLabels = true;
     }
 
     /**

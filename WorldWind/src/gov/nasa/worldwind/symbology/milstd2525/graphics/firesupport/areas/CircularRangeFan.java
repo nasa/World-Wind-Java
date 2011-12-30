@@ -9,9 +9,9 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
@@ -172,6 +172,8 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
                 this.rings.add(ring);
             }
         }
+
+        this.onModifierChanged();
     }
 
     /** {@inheritDoc} */

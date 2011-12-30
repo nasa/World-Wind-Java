@@ -7,8 +7,8 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -28,6 +28,29 @@ public class RectangularTarget extends AbstractRectangularGraphic
     public RectangularTarget()
     {
         super();
+    }
+
+    /**
+     * Indicates this shape's heading, its rotation clockwise from north. Calling this method is equivalent to calling
+     * <code>getModifier(SymbologyConstants.AZIMUTH)</code>.
+     *
+     * @return this shape's heading, or null if no heading has been specified.
+     */
+    public Angle getHeading()
+    {
+        return this.quad.getHeading();
+    }
+
+    /**
+     * Specifies this shape's heading, its rotation clockwise from north. Calling this method is equivalent to calling
+     * <code>setModifier(SymbologyConstants.AZIMUTH, heading)</code>.
+     *
+     * @param heading this shape's heading.
+     */
+    public void setHeading(Angle heading)
+    {
+        this.quad.setHeading(heading);
+        this.onModifierChanged();
     }
 
     /**
@@ -68,7 +91,7 @@ public class RectangularTarget extends AbstractRectangularGraphic
         }
         else if (SymbologyConstants.AZIMUTH.equals(modifier) && (value instanceof Angle))
         {
-            this.quad.setHeading((Angle) value);
+            this.setHeading((Angle) value);
         }
         else
         {

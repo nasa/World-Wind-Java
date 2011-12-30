@@ -111,6 +111,7 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
     {
         //noinspection SuspiciousNameCombination
         this.quad.setHeight(width);
+        this.onModifierChanged();
     }
 
     /** {@inheritDoc} */
@@ -123,6 +124,7 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
     public void setLength(double length)
     {
         this.quad.setWidth(length);
+        this.onModifierChanged();
     }
 
     /**

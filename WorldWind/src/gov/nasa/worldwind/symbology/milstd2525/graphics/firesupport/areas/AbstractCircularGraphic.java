@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
@@ -47,6 +47,7 @@ public class AbstractCircularGraphic extends MilStd2525TacticalGraphic implement
     public void setRadius(double radius)
     {
         this.circle.setRadius(radius);
+        this.onModifierChanged();
     }
 
     /** {@inheritDoc} */
