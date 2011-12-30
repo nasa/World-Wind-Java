@@ -437,6 +437,20 @@ public class TacticalGraphics extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             ////////////////////////////////////////////////////////////
+            // Airhead (2.X.2.6.2.2)
+            ////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.1260, -116.6625, 0),
+                Position.fromDegrees(35.1701, -116.6773, 0),
+                Position.fromDegrees(35.1642, -116.7611, 0),
+                Position.fromDegrees(35.1192, -116.7790, 0));
+            graphic = factory.createGraphic("GFFPSAA-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Airhead (2.X.2.6.2.2)");
+            graphic.setText("DELTA");
+            layer.addRenderable(graphic);
+
+            ////////////////////////////////////////////////////////////
             // Minimum Safe Distance Zones (2.X.3.4.1)
             ////////////////////////////////////////////////////////////
 
