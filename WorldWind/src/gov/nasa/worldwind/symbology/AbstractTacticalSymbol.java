@@ -994,7 +994,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         else
         {
             // Enable blending for RGB colors which have been premultiplied by their alpha component. We use this mode
-            // because the icon texure and modifier textures RGB color components have been premultiplied by their color
+            // because the icon texture and modifier textures RGB color components have been premultiplied by their color
             // component.
             gl.glEnable(GL.GL_BLEND);
             OGLUtil.applyBlending(gl, true);
@@ -1041,7 +1041,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         // must be done prior to computing the offset.
         this.layout(dc);
 
-        // Compute the layout for the symbol's dyanmic modifiers. This step must be performed every frame.
+        // Compute the layout for the symbol's dynamic modifiers. This step must be performed every frame.
         this.layoutDynamicModifiers(dc);
 
         this.computeScreenRect(dc);
@@ -1067,7 +1067,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             else
             {
                 // Set the current color to white with the symbol's current opacity. This applies the symbol's opacity
-                // toits icon texture and graphic modifier textures by multiplying texture fragment colors by the
+                // to its icon texture and graphic modifier textures by multiplying texture fragment colors by the
                 // opacity. We premultiply the white RGB color components by the alpha since the texture's RGB color
                 // components have also been premultiplied by their color component.
                 float a = this.getActiveAttributes().getOpacity() != null
