@@ -32,7 +32,11 @@ public class Label implements OrderedRenderable
 {
     /** Default font. */
     public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-16");
-    /** Default offset. The default offset centers the text on its geographic position both horizontally and vertically. */
+    /**
+     * Default offset. The default offset aligns the label horizontal with the text alignment position, and centers the
+     * label vertically. For example, if the text alignment is AVKey.LEFT, then the left edge of the text will be
+     * aligned with the geographic position, and the label will be centered vertically.
+     */
     public static final Offset DEFAULT_OFFSET = new Offset(0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
     /** Label text. */
@@ -163,7 +167,8 @@ public class Label implements OrderedRenderable
     }
 
     /**
-     * Indicates the offset from the geographic position at which to draw the label.
+     * Indicates the offset from the geographic position at which to draw the label. See {@link
+     * #setOffset(gov.nasa.worldwind.render.Offset) setOffset} for more information on how the offset is interpreted.
      *
      * @return The offset at which to draw the label.
      */
@@ -173,8 +178,13 @@ public class Label implements OrderedRenderable
     }
 
     /**
-     * Specifies the offset from the geographic position at which to draw the label. The default offset centers the text
-     * on the geographic position both horizontally and vertically.
+     * Specifies the offset from the geographic position at which to draw the label. The default offset aligns the label
+     * horizontal with the text alignment position, and centers the label vertically. For example, if the text alignment
+     * is <code>AVKey.LEFT</code., then the left edge of the text will be aligned with the geographic position, and the
+     * label will be centered vertically.
+     * <p/>
+     * When the text is rotated a horizontal offset moves the text along the orientation line, and a vertical offset
+     * moves the text perpendicular to the orientation line.
      *
      * @param offset The offset at which to draw the label.
      */
@@ -378,38 +388,74 @@ public class Label implements OrderedRenderable
     {
         // Project the label position onto the viewport
         Position pos = this.getPosition();
-        if (pos != null)
+        if (pos == null)
+            return;
+
+        this.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
+        this.screenPlacePoint = dc.getView().project(this.placePoint);
+
+        this.eyeDistance = this.placePoint.distanceTo3(dc.getView().getEyePoint());
+
+        boolean orientationReversed = false;
+        if (this.orientationPosition != null)
         {
-            this.placePoint = dc.computeTerrainPoint(pos.getLatitude(), pos.getLongitude(), 0);
-            this.screenPlacePoint = dc.getView().project(placePoint);
+            // Project the orientation point onto the screen
+            Vec4 orientationPlacePoint = dc.computeTerrainPoint(this.orientationPosition.getLatitude(),
+                this.orientationPosition.getLongitude(), 0);
+            Vec4 orientationScreenPoint = dc.getView().project(orientationPlacePoint);
 
-            this.eyeDistance = placePoint.distanceTo3(dc.getView().getEyePoint());
+            this.rotation = this.computeRotation(this.screenPlacePoint, orientationScreenPoint);
 
-            if (this.orientationPosition != null)
-            {
-                this.rotation = this.computeRotation(dc);
-            }
-
-            TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-            MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
-            mltr.setLineSpacing(this.getLineSpacing());
-
-            // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
-            // calculation if necessary.
-            if (this.bounds == null)
-            {
-                this.bounds = this.getMultilineTextBounds(this.text, textRenderer);
-            }
-
-            Offset offset = this.getOffset();
-            Point2D offsetPoint = offset.computeOffset(this.bounds.getWidth(), this.bounds.getHeight(), null, null);
-
-            int x = (int) (this.screenPlacePoint.x + offsetPoint.getX());
-            int y = (int) (this.screenPlacePoint.y - offsetPoint.getY());
-
-            this.screenPoint = new Point(x, y);
-            this.screenExtent = this.computeTextExtent(x, y, this.rotation);
+            // The orientation is reversed if the orientation point falls to the right of the screen point. Text is
+            // never drawn upside down, so when the orientation is reversed the text flips vertically to keep the text
+            // right side up.
+            orientationReversed = (orientationScreenPoint.x <= this.screenPlacePoint.x);
         }
+
+        TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
+            this.getFont());
+        MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
+        mltr.setLineSpacing(this.getLineSpacing());
+
+        // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
+        // calculation if necessary.
+        if (this.bounds == null)
+        {
+            this.bounds = this.getMultilineTextBounds(this.text, textRenderer);
+        }
+
+        Offset offset = this.getOffset();
+        Point2D offsetPoint = offset.computeOffset(this.bounds.getWidth(), this.bounds.getHeight(), null, null);
+
+        // If a rotation is applied to the text, then rotate the offset as well. An offset in the x direction
+        // will move the text along the orientation line, and a offset in the y direction will move the text
+        // perpendicular to the orientation line.
+        if (this.rotation != null)
+        {
+            double dy = offsetPoint.getY();
+
+            // If the orientation is reversed we need to adjust the vertical offset to compensate for the flipped
+            // text. For example, if the offset normally aligns the top of the text with the place point then without
+            // this adjustment the bottom of the text would align with the place point when the orientation is
+            // reversed.
+            if (orientationReversed)
+            {
+                dy = -(dy + this.bounds.getHeight());
+            }
+
+            Vec4 pOffset = new Vec4(offsetPoint.getX(), dy);
+            Matrix rot = Matrix.fromRotationZ(this.rotation.multiply(-1));
+
+            pOffset = pOffset.transformBy3(rot);
+
+            offsetPoint = new Point((int) pOffset.getX(), (int) pOffset.getY());
+        }
+
+        int x = (int) (this.screenPlacePoint.x + offsetPoint.getX());
+        int y = (int) (this.screenPlacePoint.y - offsetPoint.getY());
+
+        this.screenPoint = new Point(x, y);
+        this.screenExtent = this.computeTextExtent(x, y, this.rotation);
     }
 
     /**
@@ -441,20 +487,16 @@ public class Label implements OrderedRenderable
     /**
      * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
      *
-     * @param dc Current draw context.
+     * @param screenPoint            Geographic position of the text, projected onto the screen.
+     * @param orientationScreenPoint Orientation position, projected onto the screen.
      *
      * @return The rotation angle to apply when drawing the label.
      */
-    protected Angle computeRotation(DrawContext dc)
+    protected Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint)
     {
-        // Project the orientation point onto the screen
-        Vec4 placePoint = dc.computeTerrainPoint(this.orientationPosition.getLatitude(),
-            this.orientationPosition.getLongitude(), 0);
-        Vec4 orientationScreenPoint = dc.getView().project(placePoint);
-
         // Determine delta between the orientation position and the label position
-        double deltaX = this.screenPlacePoint.x - orientationScreenPoint.x;
-        double deltaY = this.screenPlacePoint.y - orientationScreenPoint.y;
+        double deltaX = screenPoint.x - orientationScreenPoint.x;
+        double deltaY = screenPoint.y - orientationScreenPoint.y;
 
         if (deltaX != 0)
         {
@@ -476,6 +518,18 @@ public class Label implements OrderedRenderable
     /** {@inheritDoc} */
     public void render(DrawContext dc)
     {
+        // This render method is called three times during frame generation. It's first called as a Renderable
+        // during Renderable picking. It's called again during normal rendering. And it's called a third
+        // time as an OrderedRenderable. The first two calls determine whether to add the label the ordered renderable
+        // list during pick and render. The third call just draws the ordered renderable.
+
+        if (dc == null)
+        {
+            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         if (dc.isOrderedRenderingMode())
             this.drawOrderedRenderable(dc);
         else
@@ -487,6 +541,13 @@ public class Label implements OrderedRenderable
     {
         // This method is called only when ordered renderables are being drawn.
         // Arg checked within call to render.
+
+        if (dc == null)
+        {
+            String msg = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
         this.pickSupport.clearPickList();
         try
@@ -688,15 +749,21 @@ public class Label implements OrderedRenderable
         else
             headingDegrees = 0;
 
-        gl.glPushMatrix();
+        boolean matrixPushed = false;
         try
         {
             int x = this.screenPoint.x;
             int y = this.screenPoint.y;
 
-            gl.glTranslated(x, y, 0);
-            gl.glRotated(headingDegrees, 0, 0, 1);
-            gl.glTranslated(-x, -y, 0);
+            if (headingDegrees != 0)
+            {
+                gl.glPushMatrix();
+                matrixPushed = true;
+
+                gl.glTranslated(x, y, 0);
+                gl.glRotated(headingDegrees, 0, 0, 1);
+                gl.glTranslated(-x, -y, 0);
+            }
 
             textRenderer.begin3DRendering();
             try
@@ -714,7 +781,10 @@ public class Label implements OrderedRenderable
         }
         finally
         {
-            gl.glPopMatrix();
+            if (matrixPushed)
+            {
+                gl.glPopMatrix();
+            }
         }
     }
 

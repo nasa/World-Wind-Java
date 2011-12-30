@@ -26,8 +26,6 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-// TODO: Final Protective Fire graphic doesn't look very good when there are two lines of text in the bottom label.
-// TODO: (The bottom label tends to overlap the top label when the view zooms out.)
 public class LinearTarget extends MilStd2525TacticalGraphic
 {
     /** Function ID for the Linear Target graphic (2.X.4.2.1). */
@@ -41,6 +39,17 @@ public class LinearTarget extends MilStd2525TacticalGraphic
     public final static double DEFAULT_VERTICAL_LENGTH = 0.25;
     /** Length of the vertical segments, as a fraction of the horizontal segment. */
     protected double verticalLength = DEFAULT_VERTICAL_LENGTH;
+
+    /**
+     * Offset applied to the graphic's upper label. This offset aligns the bottom edge of the label with the geographic
+     * position, in order to keep the label above the graphic as the zoom changes.
+     */
+    protected final static Offset TOP_LABEL_OFFSET = new Offset(0.0, -1.0, AVKey.FRACTION, AVKey.FRACTION);
+    /**
+     * Offset applied to the graphic's lower label. This offset aligns the top edge of the label with the geographic
+     * position, in order to keep the label above the graphic as the zoom changes.
+     */
+    protected final static Offset BOTTOM_LABEL_OFFSET = new Offset(0.0, 0.0, AVKey.FRACTION, AVKey.FRACTION);
 
     /** First control point. */
     protected Position startPosition;
@@ -334,7 +343,8 @@ public class LinearTarget extends MilStd2525TacticalGraphic
         text = this.getBottomLabelText();
         if (!WWUtil.isEmpty(text))
         {
-            this.addLabel(text);
+            Label label = this.addLabel(text);
+            label.setOffset(this.getBottomLabelOffset());
         }
     }
 
@@ -408,6 +418,23 @@ public class LinearTarget extends MilStd2525TacticalGraphic
                 bottomLabel.setOrientationPosition(orientationPositions.get(1));
             }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected Offset getDefaultLabelOffset()
+    {
+        return TOP_LABEL_OFFSET;
+    }
+
+    /**
+     * Indicates the offset applied to the lower label.
+     *
+     * @return Offset applied to the bottom label.
+     */
+    protected Offset getBottomLabelOffset()
+    {
+        return BOTTOM_LABEL_OFFSET;
     }
 
     /**
