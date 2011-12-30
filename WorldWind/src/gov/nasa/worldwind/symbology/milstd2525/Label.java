@@ -34,8 +34,8 @@ public class Label implements OrderedRenderable
     public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-16");
     /**
      * Default offset. The default offset aligns the label horizontal with the text alignment position, and centers the
-     * label vertically. For example, if the text alignment is AVKey.LEFT, then the left edge of the text will be
-     * aligned with the geographic position, and the label will be centered vertically.
+     * label vertically. For example, if the text alignment is <code>AVKey.LEFT</code>, then the left edge of the text
+     * will be aligned with the geographic position, and the label will be centered vertically.
      */
     public static final Offset DEFAULT_OFFSET = new Offset(0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
@@ -180,7 +180,7 @@ public class Label implements OrderedRenderable
     /**
      * Specifies the offset from the geographic position at which to draw the label. The default offset aligns the label
      * horizontal with the text alignment position, and centers the label vertically. For example, if the text alignment
-     * is <code>AVKey.LEFT</code., then the left edge of the text will be aligned with the geographic position, and the
+     * is <code>AVKey.LEFT</code>., then the left edge of the text will be aligned with the geographic position, and the
      * label will be centered vertically.
      * <p/>
      * When the text is rotated a horizontal offset moves the text along the orientation line, and a vertical offset
