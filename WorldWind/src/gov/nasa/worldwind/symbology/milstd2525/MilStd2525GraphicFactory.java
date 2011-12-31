@@ -83,6 +83,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             RoutePoint.FUNCTION_ID_AIR_CONTROL,
             RoutePoint.FUNCTION_ID_COMMUNICATIONS_CHECKPOINT);
 
+        this.mapClass(PullUpPoint.class, PullUpPoint.FUNCTION_ID);
+
         this.mapClass(Route.class,
             Route.FUNCTION_ID_AIR_CORRIDOR,
             Route.FUNCTION_ID_MINIMUM_RISK,

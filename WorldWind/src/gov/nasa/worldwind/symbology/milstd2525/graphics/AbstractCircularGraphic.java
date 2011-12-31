@@ -42,6 +42,7 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
     {
         this.circle.setRadius(radius);
         this.onModifierChanged();
+        this.reset();
     }
 
     /** {@inheritDoc} */
@@ -92,6 +93,7 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
         }
 
         this.circle.setCenter(iterator.next());
+        this.reset();
     }
 
     /** {@inheritDoc} */
@@ -130,12 +132,14 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
     public void move(Position position)
     {
         this.circle.move(position);
+        this.reset();
     }
 
     /** {@inheritDoc} */
     public void moveTo(Position position)
     {
         this.circle.moveTo(position);
+        this.reset();
     }
 
     /** {@inheritDoc} */
@@ -159,6 +163,15 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
     public void doRenderGraphic(DrawContext dc)
     {
         this.circle.render(dc);
+    }
+
+    /**
+     * Invoked when the position or radius of the circle changes. This implementation does nothing, but subclasses can
+     * override to invalid state when the graphic is changed.
+     */
+    protected void reset()
+    {
+        // Do nothing, but allow subclasses to override.
     }
 
     /** {@inheritDoc} Overridden to apply the delegate owner to shapes used to draw the circle. */

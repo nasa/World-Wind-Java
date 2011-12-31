@@ -462,6 +462,15 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createGraphic("GFFPNM--------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Minimum Safe Distance Zones (2.X.3.4.1)");
             layer.addRenderable(graphic);
+
+            ////////////////////////////////////////////////////////////
+            // Pull-Up Point (2.X.3.4.1)
+            ////////////////////////////////////////////////////////////
+
+            position = Position.fromDegrees(35.2132, -117.8042, 0);
+            circle = factory.createCircle("GFFPAPU-------X", position, 2000.0, null);
+            circle.setValue(AVKey.DISPLAY_NAME, "Pull-Up Point (2.X.2.2.1.3)");
+            layer.addRenderable(circle);
         }
     }
 
