@@ -40,7 +40,7 @@ public class ScreenCreditController implements Renderable, SelectListener, Dispo
         }
 
         this.wwd = wwd;
-        
+
         if (wwd.getSceneController().getScreenCreditController() != null)
             wwd.getSceneController().getScreenCreditController().dispose();
 
@@ -82,7 +82,7 @@ public class ScreenCreditController implements Renderable, SelectListener, Dispo
 
         Set<Map.Entry<ScreenCredit, Long>> credits = dc.getScreenCredits().entrySet();
 
-        int y = dc.getDrawableHeight() - (bottomMargin + creditHeight / 2);
+        int y = dc.getView().getViewport().height - (bottomMargin + creditHeight / 2);
         int x = leftMargin + creditWidth / 2;
 
         for (Map.Entry<ScreenCredit, Long> entry : credits)
@@ -114,7 +114,7 @@ public class ScreenCreditController implements Renderable, SelectListener, Dispo
 
         Set<Map.Entry<ScreenCredit, Long>> credits = dc.getScreenCredits().entrySet();
 
-        int y = dc.getDrawableHeight() - (bottomMargin + creditHeight / 2);
+        int y = dc.getView().getViewport().height - (bottomMargin + creditHeight / 2);
         int x = leftMargin + creditWidth / 2;
 
         for (Map.Entry<ScreenCredit, Long> entry : credits)

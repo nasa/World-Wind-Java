@@ -437,8 +437,8 @@ public class ScreenImage extends AVListImpl implements Renderable, Exportable
         {
             final BasicWWTexture texture = this.getTexture();
 
-            final int drawableWidth = dc.getDrawableWidth();
-            final int drawableHeight = dc.getDrawableHeight();
+            final int viewportWidth = dc.getView().getViewport().width;
+            final int viewportHeight = dc.getView().getViewport().height;
 
             // Compute image size
             if (texture != null)
@@ -460,7 +460,7 @@ public class ScreenImage extends AVListImpl implements Renderable, Exportable
             if (this.size != null)
             {
                 Dimension d = this.size.compute(this.originalImageWidth, this.originalImageHeight,
-                    drawableWidth, drawableHeight);
+                    viewportWidth, viewportHeight);
                 this.width = d.width;
                 this.height = d.height;
             }
@@ -494,18 +494,18 @@ public class ScreenImage extends AVListImpl implements Renderable, Exportable
                 // Compute the screen location in OpenGL coordinates. There is no need to convert from AWT to OpenGL
                 // coordinates because the Offset is already in OpenGL coordinates with its origin in the lower-left
                 // corner.
-                Point.Double pointD = this.screenOffset.computeOffset(drawableWidth, drawableHeight, null, null);
+                Point.Double pointD = this.screenOffset.computeOffset(viewportWidth, viewportHeight, null, null);
                 this.screenLocation = new Point((int) pointD.x, (int) (pointD.y));
             }
             else
             {
-                this.screenLocation = new Point(drawableWidth / 2, drawableHeight / 2);
+                this.screenLocation = new Point(viewportWidth / 2, viewportHeight / 2);
             }
 
             // Convert the screen location from OpenGL to AWT coordinates and store the result in awtScreenLocation. The
             // awtScreenLocation property is used in getScreenLocation to indicate the screen location in AWT
             // coordinates.
-            this.awtScreenLocation = new Point(this.screenLocation.x, drawableHeight - this.screenLocation.y);
+            this.awtScreenLocation = new Point(this.screenLocation.x, viewportHeight - this.screenLocation.y);
 
             Point.Double overlayPoint;
             if (this.imageOffset != null)
