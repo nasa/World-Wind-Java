@@ -150,8 +150,8 @@ public class FramebufferTexture implements WWTexture
         int potSourceWidth = WWMath.powerOfTwoCeiling(this.sourceTexture.getWidth(dc));
         int potSourceHeight = WWMath.powerOfTwoCeiling(this.sourceTexture.getHeight(dc));
 
-        this.width = Math.min(potSourceWidth, dc.getDrawableWidth());
-        this.height = Math.min(potSourceHeight, dc.getDrawableHeight());
+        this.width = Math.min(potSourceWidth, dc.getView().getViewport().width);
+        this.height = Math.min(potSourceHeight, dc.getView().getViewport().height);
 
         if (!this.generateTexture(dc, this.width, this.height))
             return null;
