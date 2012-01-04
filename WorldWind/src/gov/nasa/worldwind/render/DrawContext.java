@@ -81,20 +81,28 @@ public interface DrawContext extends WWObject, Disposable
     GLDrawable getGLDrawable();
 
     /**
-     * Retrieves the drawable width of this <code>DrawContext</code>.
+     * Indicates the width in pixels of the drawing target associated with this <code>DrawContext</code>. The returned
+     * width is potentially different from the GL viewport width. If this DrawContext is associated with a
+     * <code>GLJPanel</code>, the returned width is the power-of-two ceiling of the viewport, and is therefore almost
+     * always larger than the GL viewport width.
+     * <p/>
+     * The GL viewport dimensions can be accessed by calling <code>getView().getViewport()</code> on this
+     * <code>DrawContext</code>.
      *
-     * @return the drawable width of this <code>DrawCOntext</code>
-     *
-     * @since 1.5
+     * @return the width of the drawing target associated with this <code>DrawContext</code>, in pixels.
      */
     int getDrawableWidth();
 
     /**
-     * Retrieves the drawable height of this <code>DrawContext</code>.
+     * Indicates the height in pixels of the drawing target associated with this <code>DrawContext</code>. The returned
+     * height is potentially different from the GL viewport height. If this DrawContext is associated with a
+     * <code>GLJPanel</code>, the returned height is the power-of-two ceiling of the viewport, and is therefore almost
+     * always larger than the GL viewport height.
+     * <p/>
+     * The GL viewport dimensions can be accessed by calling <code>getView().getViewport()</code> on this
+     * <code>DrawContext</code>.
      *
-     * @return the drawable height of this <code>DrawCOntext</code>
-     *
-     * @since 1.5
+     * @return the height of the drawing target associated with this <code>DrawContext</code>, in pixels.
      */
     int getDrawableHeight();
 
