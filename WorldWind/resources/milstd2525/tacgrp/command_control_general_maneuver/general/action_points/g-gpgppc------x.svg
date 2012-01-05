@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="G*GPGPPC--****X" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-G-GPPC------X" width="400px" height="400px">
+            <rect x="100" y="50" width="200" height="200" transform="matrix(1 0 0 1 0 0) translate(0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></rect>
+            <line x1="200" y1="325" x2="200" y2="250"
+                  transform="matrix(1 0 0 1 0 0) translate(200 325) scale(1 1) translate(-200 -325)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+        </svg>
+
+    </g>
+</svg>

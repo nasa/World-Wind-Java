@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (C) 2012 United States Government as represented by the Administrator of the
+  ~ National Aeronautics and Space Administration.
+  ~ All Rights Reserved.
+  -->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="G*SPPN----****X" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.GP------------X" width="400px" height="400px">
+            <rect x="130" y="100" width="140" height="180" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></rect>
+            <polyline points="130,281 200,375 270,281" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.G-S-PN--------X" width="400px" height="400px">
+            <text x="134px" y="150px"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:45;font-family:@Arial Unicode MS">UMCP
+            </text>
+        </svg>
+
+    </g>
+</svg>

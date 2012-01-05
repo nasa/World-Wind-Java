@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="G*MPNEC---****X" width="400px" height="400px" viewBox="0 0 400 400">
+    <g transform="translate(45 0)">
+        <svg viewBox="0 0 400 400" id="_0.G-M-C---------X" width="400px" height="400px">
+            <circle cx="200" cy="235" r="40"
+                    transform="matrix(1 0 0 1 0 0) translate(160 220) scale(1 1) translate(-160 -220)"
+                    style="fill:rgb(255,255,128);stroke:rgb(0,0,0);stroke-width:5"></circle>
+            <polyline points="185,199.75 185,125 215,125 215,199.75"
+                      style="fill:rgb(255,255,128);stroke:rgb(0,0,0);stroke-width:5"></polyline>
+            <text x="188px" y="245px" transform="matrix(1 0 0 1 0 0) translate(0 0)"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:32;font-family:@Arial Unicode MS">C
+            </text>
+        </svg>
+
+    </g>
+</svg>

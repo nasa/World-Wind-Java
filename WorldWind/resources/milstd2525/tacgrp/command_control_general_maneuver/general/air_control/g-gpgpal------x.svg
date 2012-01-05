@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="G*GPGPAL--****X" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-G-GPA-------1" width="400px" height="400px">
+            <line x1="100" y1="25" x2="100" y2="375" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+            <line x1="300" y1="25" x2="300" y2="375" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.G-G-GPA-------2" width="400px" height="400px">
+            <circle cx="200" cy="200" r="50" transform="matrix(1 0 0 1 0 0)"
+                    style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:1"></circle>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_2.G-G-GPAL------X" width="400px" height="400px">
+            <text x="159px" y="365px" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:120;font-family:@Arial Unicode MS">P
+            </text>
+        </svg>
+
+    </g>
+</svg>

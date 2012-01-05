@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="G*MPOMW---****X" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-MPOMW-------X" width="400px" height="400px">
+            <g transform="translate(-450 -480) scale(2.5 2.5)">
+                <circle cx="218" cy="204.5" r="34" transform="matrix(1 0 0 1 42 41)"
+                        style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></circle>
+                <line x1="254" y1="279" x2="234" y2="333" transform="translate(-12.8713 -2.9703)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                <line x1="234" y1="332.211" x2="196" y2="264" transform="translate(-12.8713 -2.9703)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                <line x1="279" y1="231" x2="259" y2="285"
+                      transform="matrix(-1 0 0 1 549.569 -119.802) translate(-7.92079 163.366)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                <line x1="259" y1="284.211" x2="221" y2="216"
+                      transform="matrix(-1 0 0 1 549.569 -119.802) translate(-7.92079 163.366)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+            </g>
+        </svg>
+
+    </g>
+</svg>

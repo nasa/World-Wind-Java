@@ -1,0 +1,66 @@
+<!--
+  ~ Copyright (C) 2012 United States Government as represented by the Administrator of the
+  ~ National Aeronautics and Space Administration.
+  ~ All Rights Reserved.
+  -->
+
+<!--$Id $-->
+<project name="resources">
+
+    <!-- BATIK_HOME environment variable must point to base of Batik installation. -->
+    <property environment="env"/>
+    <property name="batik.jar" value="${env.BATIK_HOME}/batik-rasterizer.jar"/>
+
+    <property name="milstd2525.src.dir" location="resources/milstd2525"/>
+    <property name="milstd2525.dest.dir" location="resources/milstd2525-png"/>
+
+    <!-- Build all targets. -->
+    <target name="resources" depends="resources.milstd2525" description="Builds all resource targets."/>
+
+    <!-- Generate MIL-STD-2525C PNG images from SVG source files. -->
+    <target name="resources.milstd2525"
+            description="Generate images for MIL-STD-2525C tactical graphics. PNG images are generated from SVG source files.">
+
+        <!-- Rasterize graphics from 2525C Appendix B -->
+        <antcall target="rasterize">
+            <param name="rasterize.src.dir" value="${milstd2525.src.dir}/tacgrp"/>
+            <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/tacgrp"/>
+        </antcall>
+    </target>
+
+    <!-- Utility target to rasterize a directory of SVG files to PNG. -->
+    <target name="rasterize" depends="batik-check, batik-missing" if="batik.available"
+            description="Rasterize a directory of SVG files to PNG">
+        <!-- Invoke the Batik rasterizer to convert SVG to PNG -->
+        <apply executable="java" parallel="true">
+            <arg value="-jar"/>
+            <arg path="${batik.jar}"/>
+
+            <arg value="-d"/>
+            <arg value="${rasterize.dest.dir}"/>
+
+            <fileset dir="${rasterize.src.dir}">
+                <include name="**/*.svg"/>
+            </fileset>
+        </apply>
+    </target>
+
+    <target name="batik-missing" unless="batik.available"
+            description="Echo a warning if Batik library is not available.">
+        <echo level="info">Batik SVG rasterization library cannot be found. Set the BATIK_HOME</echo>
+        <echo>environment variable to the location of the Batik installation.</echo>
+        <echo>Batik is available from http://xmlgraphics.apache.org/batik/.</echo>
+    </target>
+
+    <target name="batik-check" description="Determine if Batik image library is available.">
+        <available file="${batik.jar}" property="batik.available"/>
+    </target>
+
+    <!-- Individual clean targets corresponding to each build target above. -->
+    <target name="clean.resources.milstd2525">
+        <delete dir="${milstd2525.dest.dir}"/>
+    </target>
+    <!-- Main clean target for resource build targets. Removes all files and directories created by all resource build targets. -->
+    <target name="clean.resources.all" depends="clean.resources.milstd2525"/>
+
+</project>
