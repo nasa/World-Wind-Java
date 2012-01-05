@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-HABM--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-HABM--P----" width="400px" height="400px">
+            <line x1="100" y1="300" x2="300" y2="300" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></line>
+            <line x1="199" y1="300" x2="199" y2="200" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></line>
+            <rect x="100" y="50" width="200" height="150" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></rect>
+            <circle cx="200" cy="300" r="35" transform="matrix(1 0 0 1 0 0)"
+                    style="fill:rgb(255,255,255);stroke:rgb(255,0,255);stroke-width:10"></circle>
+        </svg>
+
+    </g>
+</svg>

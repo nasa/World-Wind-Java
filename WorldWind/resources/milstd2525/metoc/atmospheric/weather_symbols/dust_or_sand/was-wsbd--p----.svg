@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSBD--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g transform="rotate(-90 200 200)">
+        <svg viewBox="0 0 400 400" id="_0.WAS-WSD-LMP----" width="400px" height="400px">
+            <line x1="10" y1="200" x2="390" y2="200" style="stroke:rgb(173,105,74);stroke-width:10"></line>
+            <polyline points="340,150 390,200 340,250"
+                      style="fill:none;stroke:rgb(173,105,74);stroke-width:10"></polyline>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.WAS-WSD---P----" width="400px" height="400px">
+            <g transform="matrix(-1.27394e-018 1 1 1.27394e-018 60.0004 62.4836)">
+                <path d="M50 275 C-33 204 50 100 100 100 C150 100 175 150 200 200 C225 250 250 300 300 300
+				C350 300 417 205 350 125" transform="scale(0.7 0.7)"
+                      style="fill:none;stroke:rgb(173,105,74);stroke-width:15"></path>
+            </g>
+        </svg>
+
+    </g>
+</svg>

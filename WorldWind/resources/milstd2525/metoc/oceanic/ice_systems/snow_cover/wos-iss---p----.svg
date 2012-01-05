@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-ISS---P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-ISS---P----" width="400px" height="400px">
+            <g transform="translate(0 75)">
+                <path d="M250 50 C85 75 85 325 250 350 C175 305 175 95 250 50 z"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:10"
+                      transform="matrix(6.12303e-017 1 -1 6.12303e-017 400 12.9586)"></path>
+            </g>
+            <line x1="200" y1="215" x2="200" y2="95" style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+            <polygon points="175,100 200,60 225,100" transform="matrix(1 0 0 1 0 0)"
+                     style="fill:rgb(0,0,0);stroke:none"></polygon>
+        </svg>
+
+    </g>
+</svg>

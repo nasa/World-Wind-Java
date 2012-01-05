@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSTMH-P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g transform="translate(0 -100)">
+        <svg viewBox="0 0 400 400" id="_0.WAS---GR-------" width="400px" height="400px">
+            <polygon points="150,250 200,150 250,250" transform="matrix(1 0 0 1 0 0)"
+                     style="fill:none;stroke:rgb(198,16,33);stroke-width:10"></polygon>
+        </svg>
+
+    </g>
+    <g transform="translate(0 75)">
+        <svg viewBox="0 0 400 400" id="_1.WAS-WST---P----" width="400px" height="400px">
+            <line x1="150" y1="100" x2="150" y2="300" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(198,16,33);stroke-width:10"></line>
+            <polyline points="125,100 275,100 217,200 275,290" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(198,16,33);stroke-width:10"></polyline>
+            <polyline points="275,250 280,300 240,275" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(198,16,33);stroke-width:10"></polyline>
+        </svg>
+
+    </g>
+</svg>

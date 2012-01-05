@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSVA--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WAS-WSVA--P----" width="400px" height="400px">
+            <polygon points="199,100 99,302 300,302" transform="matrix(1 0 0 1 0 0)"
+                     style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></polygon>
+            <path d="M200 100 C217 36 229 126 249 111 C255 105 259 64 276 87 C278 90 278 95 278 99 C279
+			104 282 116 293 112 C313 103 295 81 321 79" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></path>
+            <path d="" transform="matrix(1 0 0 1 0 0)" style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></path>
+        </svg>
+
+    </g>
+</svg>

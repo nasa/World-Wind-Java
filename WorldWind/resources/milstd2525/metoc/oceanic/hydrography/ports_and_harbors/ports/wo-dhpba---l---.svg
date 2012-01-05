@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WO-DHPBA---L---" width="400px" height="400px" viewBox="0 0 400 400">
+    <g transform="scale(0.5 0.5) translate(300 200)">
+        <svg viewBox="0 0 400 400" id="_0.WOS-HPBA--P----" width="400px" height="400px">
+            <line x1="200" y1="50" x2="200" y2="350" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:20"></line>
+            <line x1="75" y1="125" x2="325" y2="125" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:20"></line>
+            <path d="M35 280 C40 330 200 350 200 350 C200 350 360 330 365 280"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:20"></path>
+        </svg>
+
+    </g>
+    <g transform="translate(-150 0)">
+        <svg viewBox="0 0 400 400" id="_1.WO-DHPBA---L---" width="400px" height="400px">
+            <line x1="165" y1="185" x2="235" y2="185" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></line>
+            <path d="M174 185 C188 225 212 225 226 185" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+        </svg>
+
+    </g>
+    <g transform="translate(-50 0)">
+        <svg viewBox="0 0 400 400" id="_2.WO-DHPBA---L---" width="400px" height="400px">
+            <line x1="165" y1="185" x2="235" y2="185" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></line>
+            <path d="M174 185 C188 225 212 225 226 185" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+        </svg>
+
+    </g>
+    <g transform="translate(150 0)">
+        <svg viewBox="0 0 400 400" id="_3.WO-DHPBA---L---" width="400px" height="400px">
+            <line x1="165" y1="185" x2="235" y2="185" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></line>
+            <path d="M174 185 C188 225 212 225 226 185" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+        </svg>
+
+    </g>
+</svg>

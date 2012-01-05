@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSRFMHP----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g transform="translate(100 0)">
+        <svg viewBox="0 0 400 400" id="_0.WAS-WSR--------" width="400px" height="400px">
+            <circle cx="200" cy="200" r="50" style="fill:rgb(198,16,33);stroke:rgb(198,16,33);stroke-width:1"></circle>
+        </svg>
+
+    </g>
+    <g transform="translate(-100 0)">
+        <svg viewBox="0 0 400 400" id="_1.WAS-WSR--------" width="400px" height="400px">
+            <circle cx="200" cy="200" r="50" style="fill:rgb(198,16,33);stroke:rgb(198,16,33);stroke-width:1"></circle>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_2.WAS-WSDF-------" width="400px" height="400px">
+            <path d="M40 267 C23 252 10 227 10 200 C10 150 50 110 100 110 C150 110 180 150 200 200 C220
+			250 250 290 300 290 C350 290 390 250 390 200 C390 173 377 148 360 133"
+                  style="fill:none;stroke:rgb(198,16,33);stroke-width:10"></path>
+        </svg>
+
+    </g>
+</svg>

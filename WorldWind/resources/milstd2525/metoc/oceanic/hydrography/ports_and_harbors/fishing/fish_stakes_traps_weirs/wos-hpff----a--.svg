@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-HPFF----A--" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-HPFF----A--" width="400px" height="400px">
+            <defs>
+                <g id="rect1">
+                    <rect x="170" y="185" width="60" height="30"
+                          style="fill:none;stroke:rgb(192,192,192);stroke-width:5"></rect>
+                    <line x1="180" y1="165" x2="200" y2="185"
+                          style="fill:none;stroke:rgb(192,192,192);stroke-width:5"></line>
+                </g>
+            </defs>
+            <path d="M125 75 L275 75 L350 150 L350 250 L275 325 L125 325 L50 250 L50 150 z"
+                  style="fill:none;stroke:rgb(192,192,192);stroke-width:10;stroke-dasharray:20 10"></path>
+            <use x="-60" y="-50" xlink:href="#rect1"></use>
+            <use x="60" y="-50" xlink:href="#rect1"></use>
+            <use x="20" y="50" xlink:href="#rect1"></use>
+        </svg>
+
+    </g>
+</svg>

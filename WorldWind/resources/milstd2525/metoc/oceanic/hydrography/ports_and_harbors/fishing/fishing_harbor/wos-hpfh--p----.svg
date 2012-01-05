@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-HPFH--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-HPFH--P----" width="400px" height="400px">
+            <path d="M50 250 L100 200 C165 125 285 125 350 200 C285 275 165 275 100 200 L50 150 z"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+            <path d="M300 160 C280 185 280 215 300 240" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+            <path d="M50 125 C50 50 350 50 350 125" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+            <path d="M50 275 C50 350 350 350 350 275" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+        </svg>
+
+    </g>
+</svg>

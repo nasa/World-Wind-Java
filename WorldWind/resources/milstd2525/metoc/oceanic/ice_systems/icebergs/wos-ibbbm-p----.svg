@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-IBBBM-P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-IBGLM-P----" width="400px" height="400px">
+            <polygon points="50,250 125,100 275,100 350,250"
+                     style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:10"></polygon>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.WOS-IBBB--P----" width="400px" height="400px">
+            <line x1="45" y1="300" x2="355" y2="300" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+        </svg>
+
+    </g>
+</svg>

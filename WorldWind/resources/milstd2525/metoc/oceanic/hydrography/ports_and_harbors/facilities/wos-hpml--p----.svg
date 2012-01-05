@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-HPML--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-HPML--P----" width="400px" height="400px">
+            <circle cx="200" cy="200" r="175" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></circle>
+            <line x1="50" y1="292" x2="350" y2="292" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></line>
+            <line x1="200" y1="292" x2="200" y2="40" style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></line>
+            <polyline points="199.5,48.5 358.5,239.5 199.5,263.5"
+                      style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></polyline>
+            <path d="M200 250 L50 250 C60 200 75 100 200 65"
+                  style="fill:none;stroke:rgb(255,0,255);stroke-width:10"></path>
+        </svg>
+
+    </g>
+</svg>

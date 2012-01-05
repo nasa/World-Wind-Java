@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSFGFVP----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WAS-WSFGFVP----" width="400px" height="400px">
+            <line x1="50" y1="300" x2="350" y2="300" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(206,8,16);stroke-width:20"></line>
+            <line x1="50" y1="200" x2="350" y2="200" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(206,8,16);stroke-width:20"></line>
+            <polygon points="150,200 200,295 250,200" transform="matrix(1 0 0 1 0 0)"
+                     style="fill:rgb(206,8,16);stroke:rgb(206,8,16);stroke-width:10"></polygon>
+            <polyline points="50,100 100,100 200,300" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(206,8,16);stroke-width:20"></polyline>
+            <polyline points="350,100 300,100 200,300" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(206,8,16);stroke-width:20"></polyline>
+        </svg>
+
+    </g>
+</svg>

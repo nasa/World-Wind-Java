@@ -26,6 +26,13 @@
             <param name="rasterize.src.dir" value="${milstd2525.src.dir}/tacgrp"/>
             <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/tacgrp"/>
         </antcall>
+
+        <!-- Rasterize graphics from 2525C Appendix C -->
+        <antcall target="rasterize">
+            <param name="rasterize.src.dir" value="${milstd2525.src.dir}/metoc"/>
+            <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/metoc"/>
+        </antcall>
+
     </target>
 
     <!-- Utility target to rasterize a directory of SVG files to PNG. -->

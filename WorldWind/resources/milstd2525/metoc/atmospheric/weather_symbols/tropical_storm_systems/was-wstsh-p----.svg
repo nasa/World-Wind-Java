@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSTSH-P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WAS-WSTSH-P----" width="400px" height="400px">
+            <path d="M134.647 229.123 C86.2582 141.512 180.855 33.6544 250.524 11.3554 C250.524 11.3554
+			199.908 86.421 199.643 129.071" style="fill:rgb(198,16,33);stroke:rgb(198,16,33);stroke-width:5"></path>
+            <path d="M134.647 229.123 C86.2582 141.512 180.855 33.6544 250.524 11.3554 C250.524 11.3554
+			199.908 86.421 199.643 129.071" transform="rotate(180 200 200)"
+                  style="fill:rgb(198,16,33);stroke:rgb(198,16,33);stroke-width:5"></path>
+            <circle cx="200" cy="200" r="70" style="fill:rgb(198,16,33);stroke:rgb(198,16,33);stroke-width:10"></circle>
+        </svg>
+
+    </g>
+</svg>

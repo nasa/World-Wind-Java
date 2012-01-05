@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-IMM---P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WAS-IM----P----" width="400px" height="400px">
+            <path d="M20 200 C20 250 50 285 110 285 C170 285 200 250 200 200 C200 150 230 115 290 115
+			C350 115 380 150 380 200" style="fill:none;stroke:rgb(128,96,16);stroke-width:10"></path>
+        </svg>
+
+    </g>
+    <g transform="translate(-90 15)">
+        <svg viewBox="0 0 400 400" id="_1.WAS-I-M---P----" width="400px" height="400px">
+            <line x1="180" y1="100" x2="180" y2="300" style="fill:none;stroke:rgb(128,96,16);stroke-width:10"></line>
+            <line x1="220" y1="100" x2="220" y2="300" style="fill:none;stroke:rgb(128,96,16);stroke-width:10"></line>
+        </svg>
+
+    </g>
+    <g transform="translate(90 -15)">
+        <svg viewBox="0 0 400 400" id="_2.WAS-I-M---P----" width="400px" height="400px">
+            <line x1="180" y1="100" x2="180" y2="300" style="fill:none;stroke:rgb(128,96,16);stroke-width:10"></line>
+            <line x1="220" y1="100" x2="220" y2="300" style="fill:none;stroke:rgb(128,96,16);stroke-width:10"></line>
+        </svg>
+
+    </g>
+</svg>

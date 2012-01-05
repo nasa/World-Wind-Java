@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-HHDWA-P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-HHDWA-P----" width="400px" height="400px">
+            <line x1="25" y1="250" x2="375" y2="250" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(192,192,192);stroke-width:20"></line>
+            <polyline points="140,250 60,100 315,250"
+                      style="fill:rgb(192,192,192);stroke:rgb(192,192,192);stroke-width:1"></polyline>
+            <line x1="200" y1="200" x2="278" y2="50" style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></line>
+            <circle cx="200" cy="250" r="35"
+                    style="fill:rgb(192,192,192);stroke:rgb(192,192,192);stroke-width:10"></circle>
+        </svg>
+
+    </g>
+</svg>

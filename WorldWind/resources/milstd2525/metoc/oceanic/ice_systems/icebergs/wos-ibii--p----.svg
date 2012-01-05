@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-IBII--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-IBII--P----" width="400px" height="400px">
+            <polygon points="50,200 125,75 275,75 350,200 275,325 125,325"
+                     style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></polygon>
+            <line x1="337.2" y1="180" x2="250" y2="325" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="324.8" y1="159" x2="225" y2="325" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="312.4" y1="138" x2="200" y2="325" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="300" y1="117" x2="175" y2="325" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="287.6" y1="96" x2="150" y2="325" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="275" y1="75" x2="125" y2="325" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="250" y1="75" x2="112" y2="305" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="225" y1="75" x2="99.6" y2="284" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="200" y1="75" x2="87.2" y2="263" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="175" y1="75" x2="74.8" y2="242" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="150" y1="75" x2="62.4" y2="221" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="150" y1="325" x2="62.4" y2="180" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="175" y1="325" x2="74.8" y2="159" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="200" y1="325" x2="87.2" y2="138" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="225" y1="325" x2="99.6" y2="117" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="250" y1="325" x2="112" y2="96" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="275" y1="325" x2="125" y2="75" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="287.6" y1="305" x2="150" y2="75" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="300" y1="284" x2="175" y2="75" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="312.4" y1="263" x2="200" y2="75" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="324.8" y1="242" x2="225" y2="75" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="337.2" y1="221" x2="250" y2="75" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+        </svg>
+
+    </g>
+</svg>

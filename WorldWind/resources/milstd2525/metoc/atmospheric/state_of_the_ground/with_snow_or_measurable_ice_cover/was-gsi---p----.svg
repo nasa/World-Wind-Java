@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-GSI---P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WAS-GSI---P----" width="400px" height="400px">
+            <polygon points="40,40 40,360 360,360 360,40" style="fill:none;stroke:rgb(0,0,0);stroke-width:15"></polygon>
+            <g transform="translate(0 -40)">
+                <path d="M40 200 C40 160 145 160 145 200 C150 240 255 240 255 200 C255 160 360 160 360 200"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:15"></path>
+            </g>
+            <g transform="translate(0 40)">
+                <path d="M40 200 C40 160 145 160 145 200 C150 240 255 240 255 200 C255 160 360 160 360 200"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:15"></path>
+            </g>
+        </svg>
+
+    </g>
+</svg>

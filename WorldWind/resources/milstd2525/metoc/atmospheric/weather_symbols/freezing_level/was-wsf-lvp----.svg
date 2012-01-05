@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSF-LVP----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WAS-WSF-LVP----" width="400px" height="400px">
+            <rect x="10" y="100" width="380" height="200" transform="matrix(1 0 0 1 0 0) translate(0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></rect>
+            <text x="140px" y="215px" transform="matrix(1 0 0 1 -92.6 20.35)"
+                  style="fill:rgb(0,0,0);font-size:100;font-family:Arial">0 : 100
+            </text>
+            <circle cx="115" cy="160" r="7.5"
+                    transform="matrix(1 0 0 1 0 0) translate(0 0) translate(110.5 160) scale(1 1) translate(-110.5 -160)"
+                    style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></circle>
+        </svg>
+
+    </g>
+</svg>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-MOA---P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-MOA---P----" width="400px" height="400px">
+            <polyline points="110,320 150,80 250,80 290,320"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
+            <line x1="110" y1="320" x2="273" y2="225" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="127" y1="225" x2="290" y2="320" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="127" y1="225" x2="256" y2="120" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+            <line x1="273" y1="225" x2="144" y2="120" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+        </svg>
+
+    </g>
+</svg>

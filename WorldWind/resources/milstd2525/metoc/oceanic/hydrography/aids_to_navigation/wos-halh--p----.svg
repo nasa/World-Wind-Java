@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-HALH--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-HALH--P----" width="400px" height="400px">
+            <defs>
+                <g id="rayOfLight">
+                    <line x1="200" y1="10" x2="200" y2="70" style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                </g>
+            </defs>
+            <line x1="50" y1="350" x2="350" y2="350" style="fill:none;stroke:rgb(0,0,0);stroke-width:20"></line>
+            <circle cx="200" cy="125" r="40" style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></circle>
+            <line x1="125" y1="350" x2="166" y2="146" style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+            <line x1="275" y1="350" x2="234" y2="146" style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+            <g transform="rotate(-90 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g transform="rotate(-67.5 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g transform="rotate(-45 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g transform="rotate(-22.5 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g>
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g transform="rotate(22.5 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g transform="rotate(45 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g transform="rotate(67.5 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+            <g transform="rotate(90 200 125)">
+                <use xlink:href="#rayOfLight"></use>
+            </g>
+        </svg>
+
+    </g>
+</svg>

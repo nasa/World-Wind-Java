@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WOS-HPFS--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WOS-HOFS--P----" width="400px" height="400px">
+            <path d="M50 250 L100 200 C165 125 285 125 350 200 C285 275 165 275 100 200 L50 150"
+                  style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></path>
+            <polyline points="20,150 20,50 380,50 380,150"
+                      style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></polyline>
+            <line x1="200" y1="50" x2="200" y2="150" style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></line>
+            <line x1="290" y1="50" x2="290" y2="150" style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></line>
+            <line x1="110" y1="50" x2="110" y2="150" style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></line>
+            <polyline points="20,250 20,350 380,350 380,250"
+                      style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></polyline>
+            <line x1="200" y1="350" x2="200" y2="250" style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></line>
+            <line x1="290" y1="350" x2="290" y2="250" style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></line>
+            <line x1="110" y1="350" x2="110" y2="250" style="fill:none;stroke:rgb(192,192,192);stroke-width:10"></line>
+        </svg>
+
+    </g>
+</svg>

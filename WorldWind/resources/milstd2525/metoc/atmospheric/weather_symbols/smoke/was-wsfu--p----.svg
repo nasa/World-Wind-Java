@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="WAS-WSFU--P----" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.WAS-WSFU--P----" width="400px" height="400px">
+            <line x1="50" y1="78" x2="51" y2="350" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(173,105,74);stroke-width:10"></line>
+            <path d="M50 80 C55 50 72 50 75 50 C95 50 105 150 125 150 C145 150 155 50 175 50 C195 50 205
+			150 225 150 C245 150 255 50 275 50 C275 50 285 50 295 80" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(173,105,74);stroke-width:10"></path>
+        </svg>
+
+    </g>
+</svg>
