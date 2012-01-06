@@ -216,6 +216,14 @@ public interface SymbologyConstants
     final String CATEGORY_TASKS = "T";
     /** The MIL-STD-2525 Violent Activities category code, used by symbols belonging to the Stability Operations scheme. */
     final String CATEGORY_VIOLENT_ACTIVITIES = "V";
+
+    /** The MIL-STD-2525 Atmospheric category code, used by symbols belonging to the METOC scheme. */
+    final String CATEGORY_ATMOSPHERIC = "A";
+    /** The MIL-STD-2525 Oceanic category code, used by symbols belonging to the METOC scheme. */
+    final String CATEGORY_OCEANIC = "O";
+    /** The MIL-STD-2525 Space category code, used by symbols belonging to the METOC scheme. */
+    final String CATEGORY_SPACE = "S";
+
     /** List containing all recognized MIL-STD-2525 category codes. */
     final List<String> CATEGORY_ALL = Arrays.asList(
         // Tactical Graphics category codes.
@@ -236,7 +244,11 @@ public interface SymbologyConstants
         // Emergency Management category codes (CATEGORY_OPERATIONS already included from Tactical Graphics).
         CATEGORY_INCIDENT,
         CATEGORY_NATURAL_EVENTS,
-        CATEGORY_INFRASTRUCTURE
+        CATEGORY_INFRASTRUCTURE,
+        // METOC category codes
+        CATEGORY_ATMOSPHERIC,
+        CATEGORY_OCEANIC,
+        CATEGORY_SPACE
     );
     /** List containing all recognized MIL-STD-2525 category codes for the Tactical Graphics scheme. */
     final List<String> CATEGORY_ALL_TACTICAL_GRAPHICS = Arrays.asList(
@@ -263,6 +275,47 @@ public interface SymbologyConstants
         CATEGORY_NATURAL_EVENTS,
         CATEGORY_OPERATIONS,
         CATEGORY_INFRASTRUCTURE
+    );
+    /** List containing all recognized MIL-STD-2525 category codes for the Meteorological and Oceanographic scheme. */
+    final List<String> CATEGORY_ALL_METOC = Arrays.asList(
+        CATEGORY_ATMOSPHERIC,
+        CATEGORY_OCEANIC,
+        CATEGORY_SPACE
+    );
+
+    /**
+     * Indicates if a graphic in the Meteorological and Oceanographic scheme is static or dynamic (SIDC positions 3 and
+     * 4). When used as a key, the corresponding value must be one of the following:
+     * <p/>
+     * <ul> <li>STATIC</li> <li>DYNAMIC</li> </ul>
+     */
+    final String STATIC_DYNAMIC = "gov.nasa.worldwind.symbology.StaticDynamic";
+    /** The MIL-STD-2525 Static, used by symbols belonging to the METOC scheme. */
+    final String STATIC = "S-";
+    /** The MIL-STD-2525 Dynamic, used by symbols belonging to the METOC scheme. */
+    final String DYNAMIC = "-D";
+    final List<String> STATIC_DYNAMIC_ALL = Arrays.asList(
+        STATIC,
+        DYNAMIC
+    );
+
+    /**
+     * Indicates the type of a graphic in the Meteorological and Oceanographic scheme (SIDC positions 11-13). When used
+     * as a key, the corresponding value must be one of the following:
+     * <p/>
+     * <ul> <li>GRAPHIC_TYPE_POINT</li> <li>GRAPHIC_TYPE_LINE</li> <li>GRAPHIC_TYPE_AREA</li> </ul>
+     */
+    final String GRAPHIC_TYPE = "gov.nasa.worldwind.symbology.GraphicType";
+    /** The MIL-STD-2525 Point type, used by symbols belonging to the METOC scheme. */
+    final String GRAPHIC_TYPE_POINT = "P--";
+    /** The MIL-STD-2525 Line type, used by symbols belonging to the METOC scheme. */
+    final String GRAPHIC_TYPE_LINE = "-L-";
+    /** The MIL-STD-2525 Area type, used by symbols belonging to the METOC scheme. */
+    final String GRAPHIC_TYPE_AREA = "--A";
+    final List<String> GRAPHIC_TYPE_ALL = Arrays.asList(
+        GRAPHIC_TYPE_POINT,
+        GRAPHIC_TYPE_LINE,
+        GRAPHIC_TYPE_AREA
     );
 
     /** The MIL-STD-2525 allowable colors for filled symbols. See MIL-STD-2525C 5.7.2 */

@@ -48,7 +48,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
     {
         if (filename == null)
         {
-            String msg = Logging.getMessage("Symbology.StringIsNull");
+            String msg = Logging.getMessage("nullValue.StringIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }

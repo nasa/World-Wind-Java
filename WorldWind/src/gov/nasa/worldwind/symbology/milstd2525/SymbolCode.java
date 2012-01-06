@@ -510,6 +510,52 @@ public class SymbolCode extends AVListImpl
         this.setValue(SymbologyConstants.ORDER_OF_BATTLE, value);
     }
 
+    /**
+     * Indicates this symbol code's Static/Dynamic field.
+     *
+     * @return the value of the Static/Dynamic Condition field. May be <code>null</code>.
+     *
+     * @see #setStaticDynamic(String)
+     */
+    public String getStaticDynamic()
+    {
+        return this.getStringValue(SymbologyConstants.STATIC_DYNAMIC);
+    }
+
+    /**
+     * Specifies this symbol code's Static/Dynamic field. This field is used by graphics in the Meteorological and
+     * Oceanographic scheme. Valid values are STATIC and DYNAMIC.
+     *
+     * @param value the new value for the Static/Dynamic field. May be <code>null</code>.
+     */
+    public void setStaticDynamic(String value)
+    {
+        this.setValue(SymbologyConstants.STATIC_DYNAMIC, value);
+    }
+
+    /**
+     * Indicates this symbol code's Graphic Type field.
+     *
+     * @return the value of the Graphic Type field. May be <code>null</code>.
+     *
+     * @see #setStaticDynamic(String)
+     */
+    public String getGraphicType()
+    {
+        return this.getStringValue(SymbologyConstants.GRAPHIC_TYPE);
+    }
+
+    /**
+     * Specifies this symbol code's Graphic Type field. This field is used by graphics in the Meteorological and
+     * Oceanographic scheme. Valid values are GRAPHIC_TYPE_POINT, GRAPHIC_TYPE_LINE, GRAPHIC_TYPE_AREA.
+     *
+     * @param value the new value for the Graphic Type field. May be <code>null</code>.
+     */
+    public void setGraphicType(String value)
+    {
+        this.setValue(SymbologyConstants.GRAPHIC_TYPE, value);
+    }
+
     /** Returns the MIL-STD-2525 color currently assigned to the given standard identity. */
     public Color getStandardIdentityColor(String standardIdentity)
     {
@@ -764,10 +810,45 @@ public class SymbolCode extends AVListImpl
      */
     protected String parseMetocSymCode(String symCode)
     {
-        // TODO: Implement parsing of METOC symbol codes. See MIL-STD-2525C, Appendix C
-        // Causes constructor to throw a WWUnsupportedException.
-        String scheme = symCode.substring(0, 1);
-        return Logging.getMessage("Symbology.SymbolCodeSchemeUnrecognized", scheme, symCode);
+        StringBuilder sb = new StringBuilder();
+
+        // Coding Scheme (position 1).
+        String s = symCode.substring(0, 1);
+        if (SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(s))
+            this.setScheme(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.scheme"));
+
+        // Category (position 2).
+        s = symCode.substring(1, 2);
+        if (SymbologyConstants.CATEGORY_ALL_METOC.contains(s.toUpperCase()))
+            this.setCategory(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.category"));
+
+        // Static/Dynamic (position 3,4).
+        s = symCode.substring(2, 4);
+        if (SymbologyConstants.STATIC_DYNAMIC_ALL.contains(s.toUpperCase()))
+            this.setStaticDynamic(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
+
+        // Function ID (positions 5-10).
+        s = symCode.substring(4, 10);
+        if (!"------".equals(s)) // "------" is accepted and indicates a null function ID.
+            this.setFunctionId(s);
+
+        // Graphic Type (position 11-13).
+        s = symCode.substring(10, 13);
+        if (SymbologyConstants.GRAPHIC_TYPE_ALL.contains(s.toUpperCase()))
+            this.setGraphicType(s);
+        else
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.echelon"));
+
+        // Positions 14 and 15 unused
+
+        return sb.length() > 0
+            ? Logging.getMessage("Symbology.SymbolCodeFieldsUnrecognized", sb.toString(), symCode) : null;
     }
 
     /**
@@ -1122,15 +1203,27 @@ public class SymbolCode extends AVListImpl
 
     /**
      * Composes a 15-character symbol identification code (SIDC) for the Meteorological and Oceanographic coding scheme.
-     * METOC symbol codes are not currently supported, and this returns <code>null</code> indicating that the scheme is
-     * unrecognized.
+     * METOC symbol codes contain the following fields: Coding Scheme, Category, Static/Dynamic, Function ID, Graphic
+     * Type.
+     * <p/>
+     * The Meteorological and Oceanographic coding scheme is defined in MIL-STD-2525C table C-I (page 763).
      *
-     * @return <code>null</code>.
+     * @return the MIL-STD-2525 15-character symbol identification code (SIDC) corresponding to this SymbolCode,
+     *         according to the METOC coding scheme.
      */
     protected String composeMetocSymCode()
     {
-        // TODO: Implement composition of METOC symbol codes. See MIL-STD-2525C, Appendix C
-        return null;
+        StringBuilder sb = new StringBuilder();
+
+        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        this.appendFieldValue(sb, this.getCategory(), 1); // Position 2.
+        this.appendFieldValue(sb, this.getStaticDynamic(), 1); // Position 3, 4.
+        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
+        this.appendFieldValue(sb, this.getGraphicType(), 1); // Position 11-13
+        sb.append(UNUSED_POSITION_CODE); // Position 14 unused
+        sb.append(UNUSED_POSITION_CODE); // Position 15 unused
+
+        return sb.toString();
     }
 
     /**
