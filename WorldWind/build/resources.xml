@@ -11,6 +11,9 @@
     <property environment="env"/>
     <property name="batik.jar" value="${env.BATIK_HOME}/batik-rasterizer.jar"/>
 
+    <property name="rasterize.width" value="128"/>
+    <property name="rasterize.height" value="128"/>
+
     <property name="milstd2525.src.dir" location="resources/milstd2525"/>
     <property name="milstd2525.dest.dir" location="resources/milstd2525-png"/>
 
@@ -45,6 +48,12 @@
 
             <arg value="-d"/>
             <arg value="${rasterize.dest.dir}"/>
+
+            <arg value="-w"/>
+            <arg value="${rasterize.width}"/>
+
+            <arg value="-h"/>
+            <arg value="${rasterize.height}"/>
 
             <fileset dir="${rasterize.src.dir}">
                 <include name="**/*.svg"/>
