@@ -118,7 +118,7 @@ public class LayerPanel extends JPanel
 
     protected static class LayerAction extends AbstractAction
     {
-        WorldWindow wwd;
+        protected WorldWindow wwd;
         protected Layer layer;
         protected boolean selected;
 
