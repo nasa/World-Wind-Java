@@ -96,7 +96,7 @@ public class DynamicLayerPanelDisplay
 
     // The rest of this class just instantiates the World Window and installs the layer panel. It's a stripped down
     // version of the code in ApplicationTemplate. The only part that is special to this example is the instantiation
-    // of the DynamicLayerPanel.
+    // of the DynamicLayerPanel and the registration of a rendering listener to update the layer panel each frame.
 
     public static class AppPanel extends JPanel
     {
@@ -146,7 +146,7 @@ public class DynamicLayerPanelDisplay
 
             this.getContentPane().add(this.layerPanel, BorderLayout.WEST);
 
-            // Register a rendering exception listener that's notified when exceptions occur during rendering.
+            // Register a rendering listener that's notified when exceptions occur during rendering.
             this.wwjPanel.wwd.addRenderingListener(new RenderingListener()
             {
                 @Override
