@@ -51,6 +51,7 @@
                target="${worldwind.jdk.version}"
                fork="true"
                includeantruntime="false"
+               encoding="ISO-8859-1"
                memoryMaximumSize="512m">
             <classpath>
                 <pathelement location="jogl.jar"/>
