@@ -6,7 +6,10 @@
 
 package gov.nasa.worldwind.symbology;
 
-import java.util.Iterator;
+import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.globes.Globe;
+
+import java.util.*;
 
 /**
  * Utility methods for working with tactical graphics.
@@ -17,11 +20,28 @@ import java.util.Iterator;
 public class TacticalGraphicUtil
 {
     /**
-     * Get the date range from a graphic's modifiers. This method looks at the value of the
-     * <code>AVKey.DATE_TIME</code> modifier, and returns the results as a two element array. If the value of the
-     * modifier is an <code>Iterable</code>, then this method returns the first two values of the iteration. If the
-     * value of the modifier is a single object, this method returns an array containing that object and
-     * <code>null</code>.
+     * Convert a list of cartesian points to Positions.
+     *
+     * @param globe  Globe used to convert points to positions.
+     * @param points Points to convert.
+     *
+     * @return List of positions computed from cartesian points.
+     */
+    public static List<Position> asPositionList(Globe globe, Vec4... points)
+    {
+        List<Position> positions = new ArrayList<Position>(points.length);
+        for (Vec4 point : points)
+        {
+            positions.add(globe.computePositionFromPoint(point));
+        }
+        return positions;
+    }
+
+    /**
+     * Get the date range from a graphic's modifiers. This method looks at the value of the <code>AVKey.DATE_TIME</code>
+     * modifier, and returns the results as a two element array. If the value of the modifier is an
+     * <code>Iterable</code>, then this method returns the first two values of the iteration. If the value of the
+     * modifier is a single object, this method returns an array containing that object and <code>null</code>.
      *
      * @param graphic Graphic from which to retrieve dates.
      *

@@ -54,7 +54,7 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
     /** {@inheritDoc} */
     public void setPosition(Position position)
     {
-        this.move(position);
+        this.moveTo(position);
     }
 
     /** {@inheritDoc} */
@@ -126,20 +126,6 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
     public Position getReferencePosition()
     {
         return this.circle.getReferencePosition();
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        this.circle.move(position);
-        this.reset();
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.circle.moveTo(position);
-        this.reset();
     }
 
     /** {@inheritDoc} */

@@ -9,9 +9,9 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.symbology.TacticalQuad;
+import gov.nasa.worldwind.symbology.milstd2525.Label;
+import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implements TacticalQuad, PreRenderable
+public class RectangularFireSupportArea extends AbstractRectangularGraphic implements TacticalQuad, PreRenderable
 {
     /** Function ID for the Fire Support Area graphic (2.X.4.3.2.1.2). */
     public final static String FUNCTION_ID_FSA = "ACSR--";
@@ -60,15 +60,10 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
     /** Center text block on label position when the text is left aligned. */
     protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
-    protected Iterable<? extends Position> positions;
-    protected SurfaceQuad quad;
-
-    protected boolean shapeInvalid;
-
     /** Create a new target. */
     public RectangularFireSupportArea()
     {
-        this.quad = this.createShape();
+        super();
     }
 
     /**
@@ -92,178 +87,6 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
             FUNCTION_ID_CFF,
             FUNCTION_ID_CENSOR_ZONE,
             FUNCTION_ID_CF));
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
-    }
-
-    /** {@inheritDoc} */
-    public double getWidth()
-    {
-        return this.quad.getHeight();
-    }
-
-    /** {@inheritDoc} */
-    public void setWidth(double width)
-    {
-        //noinspection SuspiciousNameCombination
-        this.quad.setHeight(width);
-        this.onModifierChanged();
-    }
-
-    /** {@inheritDoc} */
-    public double getLength()
-    {
-        return this.quad.getWidth();
-    }
-
-    /** {@inheritDoc} */
-    public void setLength(double length)
-    {
-        this.quad.setWidth(length);
-        this.onModifierChanged();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param positions Control points. This graphic uses only one control point, which determines the center of the
-     *                  circle.
-     */
-    public void setPositions(Iterable<? extends Position> positions)
-    {
-        if (positions == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionsListIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Iterator<? extends Position> iterator = positions.iterator();
-        try
-        {
-            Position pos1 = iterator.next();
-            Position pos2 = iterator.next();
-
-            LatLon center = LatLon.interpolateGreatCircle(0.5, pos1, pos2);
-            this.quad.setCenter(center);
-
-            Angle heading = LatLon.greatCircleAzimuth(pos2, pos1);
-            this.quad.setHeading(heading.subtract(Angle.POS90));
-
-            this.positions = positions;
-            this.shapeInvalid = true; // Need to recompute quad size
-        }
-        catch (NoSuchElementException e)
-        {
-            String message = Logging.getMessage("generic.InsufficientPositions");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setModifier(String modifier, Object value)
-    {
-        if (SymbologyConstants.DISTANCE.equals(modifier))
-        {
-            if (value instanceof Double)
-            {
-                this.setWidth((Double) value);
-            }
-            else if (value instanceof Iterable)
-            {
-                // Only use the first value of the iterable. This graphic uses two control points and a width.
-                Iterator iterator = ((Iterable) value).iterator();
-                this.setWidth((Double) iterator.next());
-            }
-        }
-        else
-        {
-            super.setModifier(modifier, value);
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Object getModifier(String modifier)
-    {
-        if (SymbologyConstants.DISTANCE.equals(modifier))
-            return this.getWidth();
-        else
-            return super.getModifier(modifier);
-    }
-
-    /** {@inheritDoc} */
-    public Iterable<? extends Position> getPositions()
-    {
-        return Arrays.asList(new Position(this.quad.getCenter(), 0));
-    }
-
-    /** {@inheritDoc} */
-    public Position getReferencePosition()
-    {
-        return this.quad.getReferencePosition();
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        this.quad.move(position);
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.quad.moveTo(position);
-    }
-
-    /** {@inheritDoc} */
-    public void preRender(DrawContext dc)
-    {
-        if (!this.isVisible())
-        {
-            return;
-        }
-
-        if (this.shapeInvalid)
-        {
-            this.computeQuadSize(dc);
-            this.shapeInvalid = false;
-        }
-
-        this.determineActiveAttributes();
-        this.quad.preRender(dc);
-    }
-
-    protected void computeQuadSize(DrawContext dc)
-    {
-        if (this.positions == null)
-            return;
-
-        Iterator<? extends Position> iterator = this.positions.iterator();
-
-        Position pos1 = iterator.next();
-        Position pos2 = iterator.next();
-
-        Angle angularDistance = LatLon.greatCircleDistance(pos1, pos2);
-        double length = angularDistance.radians * dc.getGlobe().getRadius();
-
-        this.quad.setWidth(length);
-    }
-
-    /**
-     * Render the quad.
-     *
-     * @param dc Current draw context.
-     */
-    public void doRenderGraphic(DrawContext dc)
-    {
-        this.quad.render(dc);
     }
 
     /** Create labels for the graphic. */
@@ -349,13 +172,5 @@ public class RectangularFireSupportArea extends MilStd2525TacticalGraphic implem
             return LEFT_ALIGN_OFFSET;
         else
             return super.getDefaultLabelOffset();
-    }
-
-    protected SurfaceQuad createShape()
-    {
-        SurfaceQuad quad = new SurfaceQuad();
-        quad.setDelegateOwner(this);
-        quad.setAttributes(this.getActiveShapeAttributes());
-        return quad;
     }
 }

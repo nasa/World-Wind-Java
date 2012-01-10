@@ -97,18 +97,6 @@ public class Dummy extends MilStd2525TacticalGraphic
         return this.path.getReferencePosition();
     }
 
-    /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        this.path.move(position);
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.path.moveTo(position);
-    }
-
     @Override
     protected void applyDefaultAttributes(ShapeAttributes attributes)
     {

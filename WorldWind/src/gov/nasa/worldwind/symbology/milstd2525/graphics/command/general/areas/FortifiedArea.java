@@ -10,6 +10,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
@@ -43,6 +44,7 @@ public class FortifiedArea extends BasicArea
     public void setPositions(Iterable<? extends Position> positions)
     {
         this.positions = positions;
+        this.computedPositions = null;
     }
 
     /** {@inheritDoc} */
@@ -50,6 +52,31 @@ public class FortifiedArea extends BasicArea
     public Iterable<? extends Position> getPositions()
     {
         return this.positions;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void moveTo(Position position)
+    {
+        if (position == null)
+        {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Position oldPosition = this.getReferencePosition();
+
+        // The reference position is null if this shape has no positions. In this case moving the shape to a new
+        // reference position is meaningless. Therefore we fail softly by exiting and doing nothing.
+        if (oldPosition == null)
+            return;
+
+        this.positions = Position.computeShiftedPositions(oldPosition, position, this.getPositions());
+
+        // Just move the polygon instead of recomputing the square wave using the shifted position list. This makes
+        // moving the polygon using a dragger smoother.
+        this.polygon.moveTo(position);
     }
 
     /**

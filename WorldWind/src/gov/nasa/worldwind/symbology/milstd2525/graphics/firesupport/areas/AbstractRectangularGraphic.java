@@ -106,6 +106,12 @@ public class AbstractRectangularGraphic extends MilStd2525TacticalGraphic implem
     }
 
     /** {@inheritDoc} */
+    public Iterable<? extends Position> getPositions()
+    {
+        return this.positions;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public void setModifier(String modifier, Object value)
     {
@@ -139,27 +145,9 @@ public class AbstractRectangularGraphic extends MilStd2525TacticalGraphic implem
     }
 
     /** {@inheritDoc} */
-    public Iterable<? extends Position> getPositions()
-    {
-        return Arrays.asList(new Position(this.quad.getCenter(), 0));
-    }
-
-    /** {@inheritDoc} */
     public Position getReferencePosition()
     {
         return this.quad.getReferencePosition();
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        this.quad.move(position);
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.quad.moveTo(position);
     }
 
     /** {@inheritDoc} */

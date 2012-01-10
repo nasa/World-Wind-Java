@@ -189,37 +189,6 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
     }
 
     /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        if (position == null)
-        {
-            String message = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        Position referencePosition = this.getReferencePosition();
-        if (referencePosition == null)
-            return;
-
-        this.position = referencePosition.add(position);
-
-        for (SurfaceCircle ring : this.rings)
-        {
-            ring.move(position);
-        }
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        for (SurfaceCircle ring : this.rings)
-        {
-            ring.moveTo(position);
-        }
-    }
-
-    /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {
         if (!this.isVisible())

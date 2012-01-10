@@ -8,7 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.*;
@@ -78,18 +78,6 @@ public class PhaseLine extends MilStd2525TacticalGraphic
     public Position getReferencePosition()
     {
         return this.path.getReferencePosition();
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        this.path.move(position);
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.path.moveTo(position);
     }
 
     /** {@inheritDoc} */

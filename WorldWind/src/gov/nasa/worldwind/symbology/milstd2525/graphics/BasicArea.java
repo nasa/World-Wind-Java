@@ -97,18 +97,6 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     }
 
     /** {@inheritDoc} */
-    public void move(Position position)
-    {
-        this.polygon.move(position);
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        this.polygon.moveTo(position);
-    }
-
-    /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {
         if (!this.isVisible())

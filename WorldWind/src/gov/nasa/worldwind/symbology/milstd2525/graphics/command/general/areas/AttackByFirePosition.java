@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.Logging;
 
@@ -139,7 +139,8 @@ public class AttackByFirePosition extends MilStd2525TacticalGraphic
     /**
      * Specifies the length of the legs of the graphic's base.
      *
-     * @param legLength Length of the legs of the graphic's base, as a fraction of the distance between the control points that define the base.
+     * @param legLength Length of the legs of the graphic's base, as a fraction of the distance between the control
+     *                  points that define the base.
      */
     public void setLegLength(double legLength)
     {
@@ -200,49 +201,6 @@ public class AttackByFirePosition extends MilStd2525TacticalGraphic
     public Position getReferencePosition()
     {
         return this.position1;
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position delta)
-    {
-        if (delta == null)
-        {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Position refPos = this.getReferencePosition();
-
-        // The reference position is null if this shape has no positions. In this case moving the shape by a
-        // relative delta is meaningless. Therefore we fail softly by exiting and doing nothing.
-        if (refPos == null)
-            return;
-
-        this.moveTo(refPos.add(delta));
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Position oldPosition = this.getReferencePosition();
-
-        // The reference position is null if this shape has no positions. In this case moving the shape to a new
-        // reference position is meaningless. Therefore we fail softly by exiting and doing nothing.
-        if (oldPosition == null)
-            return;
-
-        List<Position> newPositions = Position.computeShiftedPositions(oldPosition, position, this.getPositions());
-
-        if (newPositions != null)
-            this.setPositions(newPositions);
     }
 
     /** {@inheritDoc} */
@@ -340,7 +298,7 @@ public class AttackByFirePosition extends MilStd2525TacticalGraphic
 
         Vec4 pD = pC.add3(perpendicular).add3(parallel);
 
-        return this.toPositionList(globe, pA, pB, pC, pD);
+        return TacticalGraphicUtil.asPositionList(globe, pA, pB, pC, pD);
     }
 
     /**
@@ -388,25 +346,7 @@ public class AttackByFirePosition extends MilStd2525TacticalGraphic
         Vec4 pA = arrowBase.add3(perpendicular);
         Vec4 pC = arrowBase.subtract3(perpendicular);
 
-        return this.toPositionList(globe, pA, pB, pC);
-    }
-
-    /**
-     * Convert a list of cartesian points to Positions.
-     *
-     * @param globe  Globe used to convert points to positions.
-     * @param points Points to convert.
-     *
-     * @return List of positions computed from cartesian points.
-     */
-    protected List<Position> toPositionList(Globe globe, Vec4... points)
-    {
-        List<Position> positions = new ArrayList<Position>(points.length);
-        for (Vec4 point : points)
-        {
-            positions.add(globe.computePositionFromPoint(point));
-        }
-        return positions;
+        return TacticalGraphicUtil.asPositionList(globe, pA, pB, pC);
     }
 
     /**

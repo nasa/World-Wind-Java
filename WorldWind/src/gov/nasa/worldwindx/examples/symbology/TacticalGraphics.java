@@ -13,7 +13,7 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import java.awt.*;
@@ -52,6 +52,9 @@ public class TacticalGraphics extends ApplicationTemplate
             insertBeforePlacenames(getWwd(), areaLayer);
 
             this.getLayerPanel().update(this.getWwd());
+
+            // Add a BasicDragger so that graphics can be moved by clicking and dragging.
+            this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
 
             // Size the World Window to provide enough screen space for the graphics, and center the World Window
             // on the screen.
@@ -239,7 +242,7 @@ public class TacticalGraphics extends ApplicationTemplate
             positions = Arrays.asList(
                 Position.fromDegrees(34.5556, -117.4123, 0),
                 Position.fromDegrees(34.5210, -117.4786, 0),
-            Position.fromDegrees(34.5942, -117.4766, 0));
+                Position.fromDegrees(34.5942, -117.4766, 0));
             graphic = factory.createGraphic("GFGPSLA-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Ambush (2.X.2.6.1.1)");
             layer.addRenderable(graphic);

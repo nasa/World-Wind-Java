@@ -9,7 +9,6 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -17,7 +16,6 @@ import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
-import java.util.List;
 
 /**
  * Implementation of the aviation route graphics. This class implements the following graphics: <ul> <li>Air Corridor
@@ -147,21 +145,16 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             throw new IllegalArgumentException(message);
         }
 
-        // Ensure that the position list provides at least 3 control points.
-        try
+        this.positions = positions;
+
+        // Move the control points to the new route positions
+        Iterator<? extends Position> positionIterator = positions.iterator();
+        Iterator<? extends TacticalPoint> childIterator = this.getControlPoints().iterator();
+        while (positionIterator.hasNext() && childIterator.hasNext())
         {
-            Iterator<? extends Position> iterator = positions.iterator();
-            iterator.next();
-            iterator.next();
-        }
-        catch (NoSuchElementException e)
-        {
-            String message = Logging.getMessage("generic.InsufficientPositions");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
+            childIterator.next().setPosition(positionIterator.next());
         }
 
-        this.positions = positions;
         this.paths = null; // Need to regenerate paths
     }
 
@@ -179,49 +172,6 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             return this.positions.iterator().next(); // use the first position
         }
         return null;
-    }
-
-    /** {@inheritDoc} */
-    public void move(Position delta)
-    {
-        if (delta == null)
-        {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Position refPos = this.getReferencePosition();
-
-        // The reference position is null if this shape has no positions. In this case moving the shape by a
-        // relative delta is meaningless. Therefore we fail softly by exiting and doing nothing.
-        if (refPos == null)
-            return;
-
-        this.moveTo(refPos.add(delta));
-    }
-
-    /** {@inheritDoc} */
-    public void moveTo(Position position)
-    {
-        if (position == null)
-        {
-            String msg = Logging.getMessage("nullValue.PositionIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        Position oldPosition = this.getReferencePosition();
-
-        // The reference position is null if this shape has no positions. In this case moving the shape to a new
-        // reference position is meaningless. Therefore we fail softly by exiting and doing nothing.
-        if (oldPosition == null)
-            return;
-
-        List<Position> newPositions = Position.computeShiftedPositions(oldPosition, position, this.positions);
-
-        if (newPositions != null)
-            this.setPositions(newPositions);
     }
 
     /** {@inheritDoc} */

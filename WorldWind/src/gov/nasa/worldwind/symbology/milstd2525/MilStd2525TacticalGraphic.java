@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
@@ -397,6 +398,53 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     {
         this.text = text;
         this.onModifierChanged();
+    }
+
+    /////////////////////////////
+    // Movable interface
+    /////////////////////////////
+
+    /** {@inheritDoc} */
+    public void move(Position delta)
+    {
+        if (delta == null)
+        {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Position refPos = this.getReferencePosition();
+
+        // The reference position is null if this shape has no positions. In this case moving the shape by a
+        // relative delta is meaningless. Therefore we fail softly by exiting and doing nothing.
+        if (refPos == null)
+            return;
+
+        this.moveTo(refPos.add(delta));
+    }
+
+    /** {@inheritDoc} */
+    public void moveTo(Position position)
+    {
+        if (position == null)
+        {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Position oldPosition = this.getReferencePosition();
+
+        // The reference position is null if this shape has no positions. In this case moving the shape to a new
+        // reference position is meaningless. Therefore we fail softly by exiting and doing nothing.
+        if (oldPosition == null)
+            return;
+
+        List<Position> newPositions = Position.computeShiftedPositions(oldPosition, position, this.getPositions());
+
+        if (newPositions != null)
+            this.setPositions(newPositions);
     }
 
     /////////////
