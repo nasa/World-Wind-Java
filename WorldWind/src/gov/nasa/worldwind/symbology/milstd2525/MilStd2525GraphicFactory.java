@@ -181,6 +181,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(MinimumSafeDistanceZones.class, MinimumSafeDistanceZones.FUNCTION_ID);
         this.mapClass(AttackByFirePosition.class, AttackByFirePosition.FUNCTION_ID);
         this.mapClass(SupportByFirePosition.class, SupportByFirePosition.FUNCTION_ID);
+        this.mapClass(Ambush.class, Ambush.FUNCTION_ID);
     }
 
     /**

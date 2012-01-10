@@ -231,6 +231,18 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Final Protective Fire (2.X.4.2.1.2)");
             graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("AG1201", "2-22 INF MORT"));
             layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Ambush (2.X.2.6.1.1)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.5556, -117.4123, 0),
+                Position.fromDegrees(34.5210, -117.4786, 0),
+            Position.fromDegrees(34.5942, -117.4766, 0));
+            graphic = factory.createGraphic("GFGPSLA-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Ambush (2.X.2.6.1.1)");
+            layer.addRenderable(graphic);
         }
 
         protected void createAreaGraphics(RenderableLayer layer)
