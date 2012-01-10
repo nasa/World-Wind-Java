@@ -471,6 +471,31 @@ public class TacticalGraphics extends ApplicationTemplate
             circle = factory.createCircle("GFFPAPU-------X", position, 2000.0, null);
             circle.setValue(AVKey.DISPLAY_NAME, "Pull-Up Point (2.X.2.2.1.3)");
             layer.addRenderable(circle);
+
+            ///////////////////////////////////////////////////
+            // Attack by Fire Position (2.X.2.5.3.3)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.6297, -117.6718, 0),
+                Position.fromDegrees(34.5807, -117.5902, 0),
+                Position.fromDegrees(34.5344, -117.6686, 0));
+            graphic = factory.createGraphic("GFGPOAF-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Attack by Fire Position (2.X.2.5.3.3)");
+            layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Support by Fire Position (2.X.2.5.3.4)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.6159, -117.8571, 0),
+                Position.fromDegrees(34.5775, -117.7887, 0),
+                Position.fromDegrees(34.6308, -117.8477, 0),
+                Position.fromDegrees(34.5837, -117.7725, 0));
+            graphic = factory.createGraphic("GFGPOAS-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Support by Fire Position (2.X.2.5.3.4)");
+            layer.addRenderable(graphic);
         }
     }
 
