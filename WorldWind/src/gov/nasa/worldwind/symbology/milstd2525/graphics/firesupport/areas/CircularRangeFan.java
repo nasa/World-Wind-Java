@@ -63,7 +63,7 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
      */
     public void setPosition(Position position)
     {
-        this.move(position);
+        this.moveTo(position);
     }
 
     /**
