@@ -2183,6 +2183,7 @@ public class ExtrudedPolygon extends AbstractShape
         if (terrain == null || terrain != this.previousIntersectionTerrain)
             return false;
 
+        //noinspection SimplifiableIfStatement
         if (terrain.getVerticalExaggeration() != this.previousIntersectionTerrain.getVerticalExaggeration())
             return false;
 
@@ -2229,6 +2230,7 @@ public class ExtrudedPolygon extends AbstractShape
 
             this.previousIntersectionShapeData = highResShapeData;
             this.previousIntersectionTerrain = terrain;
+            this.previousIntersectionGlobeStateKey = terrain.getGlobe().getGlobeStateKey();
         }
 
         if (highResShapeData.getExtent() != null && highResShapeData.getExtent().intersect(line) == null)
