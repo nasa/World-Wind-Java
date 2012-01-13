@@ -35,7 +35,7 @@ import java.awt.*;
  *                                                                           scale height to maintain aspect ratio
  * Explicit        Native           1.0 (fraction)     N/A                   Stretch the image to fill the width of the
  *                                                                           container, but do not scale the height.
- * <p/>
+ *
  * This class implements the functionality of a KML <i>size</i>.
  *
  * @author pabercrombie
@@ -114,6 +114,20 @@ public class Size
     {
         return new Size(EXPLICIT_DIMENSION, widthInPixels, AVKey.PIXELS,
             EXPLICIT_DIMENSION, heightInPixels, AVKey.PIXELS);
+    }
+
+    /**
+     * Creates a new size from explicit fraction dimensions.
+     *
+     * @param widthFraction  the size's width as a fraction of the containing rectangle.
+     * @param heightFraction the size's height as a fraction of the containing rectangle.
+     *
+     * @return a new size with the specified width and height.
+     */
+    public static Size fromFraction(double widthFraction, double heightFraction)
+    {
+        return new Size(EXPLICIT_DIMENSION, widthFraction, AVKey.FRACTION,
+            EXPLICIT_DIMENSION, heightFraction, AVKey.FRACTION);
     }
 
     /**

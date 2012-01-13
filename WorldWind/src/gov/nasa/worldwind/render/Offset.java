@@ -42,6 +42,19 @@ public class Offset
     }
 
     /**
+     * Creates a new offset from explicit fraction coordinates.
+     *
+     * @param xFraction the offset's X coordinate as a fraction of the containing rectangle.
+     * @param yFraction the offset's Y coordinate as a fraction of the containing rectangle.
+     *
+     * @return a new offset with the specified X and Y coordinates.
+     */
+    public static Offset fromFraction(double xFraction, double yFraction)
+    {
+        return new Offset(xFraction, yFraction, AVKey.FRACTION, AVKey.FRACTION);
+    }
+
+    /**
      * Returns the hot spot's X coordinate. See {@link #setXUnits(String)} for a description of the hot spot.
      *
      * @return the hot spot's X coordinate.
