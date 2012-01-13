@@ -66,6 +66,13 @@ public interface SymbologyConstants
     );
 
     /**
+     * The MIL-STD-2525 Azimuth modifier field ID. Indicates a distance in meters (radius, length, width, etc). See
+     * MIL-STD-2525 section 5.5.2 (page 38), table XI (pages 38-39) and table XIV (pages 46-47). When used as a key, the
+     * corresponding value must be an {@link gov.nasa.worldwind.geom.Angle} indicating an angle relative to true north.
+     */
+    final String AZIMUTH = "AN";
+
+    /**
      * Indicates the battle dimension code associated with a MIL-STD-2525 symbol (SIDC position 3). A symbol's battle
      * dimension defines the primary mission area for the object being represented. See MIL-STD-2525C section 5.3.1.3
      * (page 17), table I (page 15) and table II (page 16). When used as a key, the corresponding value must be one of
@@ -125,24 +132,24 @@ public interface SymbologyConstants
     final String BATTLE_DIMENSION_UNKNOWN = "Z";
     /** List containing all recognized MIL-STD-2525 battle dimension codes. */
     final List<String> BATTLE_DIMENSION_ALL = Arrays.asList(
+        BATTLE_DIMENSION_UNKNOWN,
         BATTLE_DIMENSION_SPACE,
         BATTLE_DIMENSION_AIR,
         BATTLE_DIMENSION_GROUND,
         BATTLE_DIMENSION_SEA_SURFACE,
         BATTLE_DIMENSION_SEA_SUBSURFACE,
         BATTLE_DIMENSION_SOF,
-        BATTLE_DIMENSION_OTHER,
-        BATTLE_DIMENSION_UNKNOWN
+        BATTLE_DIMENSION_OTHER
     );
     /** List containing all recognized MIL-STD-2525 battle dimension codes for the Signals Intelligence scheme. */
     final List<String> BATTLE_DIMENSION_ALL_INTELLIGENCE = Arrays.asList(
+        BATTLE_DIMENSION_UNKNOWN,
         BATTLE_DIMENSION_SPACE,
         BATTLE_DIMENSION_AIR,
         BATTLE_DIMENSION_GROUND,
         BATTLE_DIMENSION_SEA_SURFACE,
         BATTLE_DIMENSION_SEA_SUBSURFACE,
-        BATTLE_DIMENSION_OTHER,
-        BATTLE_DIMENSION_UNKNOWN
+        BATTLE_DIMENSION_OTHER
     );
 
     /**
@@ -283,41 +290,6 @@ public interface SymbologyConstants
         CATEGORY_SPACE
     );
 
-    /**
-     * Indicates if a graphic in the Meteorological and Oceanographic scheme is static or dynamic (SIDC positions 3 and
-     * 4). When used as a key, the corresponding value must be one of the following:
-     * <p/>
-     * <ul> <li>STATIC</li> <li>DYNAMIC</li> </ul>
-     */
-    final String STATIC_DYNAMIC = "gov.nasa.worldwind.symbology.StaticDynamic";
-    /** The MIL-STD-2525 Static, used by symbols belonging to the METOC scheme. */
-    final String STATIC = "S-";
-    /** The MIL-STD-2525 Dynamic, used by symbols belonging to the METOC scheme. */
-    final String DYNAMIC = "-D";
-    final List<String> STATIC_DYNAMIC_ALL = Arrays.asList(
-        STATIC,
-        DYNAMIC
-    );
-
-    /**
-     * Indicates the type of a graphic in the Meteorological and Oceanographic scheme (SIDC positions 11-13). When used
-     * as a key, the corresponding value must be one of the following:
-     * <p/>
-     * <ul> <li>GRAPHIC_TYPE_POINT</li> <li>GRAPHIC_TYPE_LINE</li> <li>GRAPHIC_TYPE_AREA</li> </ul>
-     */
-    final String GRAPHIC_TYPE = "gov.nasa.worldwind.symbology.GraphicType";
-    /** The MIL-STD-2525 Point type, used by symbols belonging to the METOC scheme. */
-    final String GRAPHIC_TYPE_POINT = "P--";
-    /** The MIL-STD-2525 Line type, used by symbols belonging to the METOC scheme. */
-    final String GRAPHIC_TYPE_LINE = "-L-";
-    /** The MIL-STD-2525 Area type, used by symbols belonging to the METOC scheme. */
-    final String GRAPHIC_TYPE_AREA = "--A";
-    final List<String> GRAPHIC_TYPE_ALL = Arrays.asList(
-        GRAPHIC_TYPE_POINT,
-        GRAPHIC_TYPE_LINE,
-        GRAPHIC_TYPE_AREA
-    );
-
     /** The MIL-STD-2525 allowable colors for filled symbols. See MIL-STD-2525C 5.7.2 */
     final Color COLOR_DARK_RED = new Color(200, 0, 0);
     final Color COLOR_MEDIUM_RED = new Color(255, 48, 49);
@@ -420,13 +392,6 @@ public interface SymbologyConstants
      * corresponding value must be a Double.
      */
     final String DISTANCE = "AM";
-
-    /**
-     * The MIL-STD-2525 Azimuth modifier field ID. Indicates a distance in meters (radius, length, width, etc). See
-     * MIL-STD-2525 section 5.5.2 (page 38), table XI (pages 38-39) and table XIV (pages 46-47). When used as a key, the
-     * corresponding value must be an {@link gov.nasa.worldwind.geom.Angle} indicating an angle relative to true north.
-     */
-    final String AZIMUTH = "AN";
 
     /**
      * The MIL-STD-2525 Echelon modifier field ID. Indicates the echelon code associated with a MIL-STD-2525 symbol
@@ -583,6 +548,25 @@ public interface SymbologyConstants
     final String FUNCTION_ID = "gov.nasa.worldwind.symbology.FunctionId";
 
     /**
+     * Indicates the type of a graphic in the Meteorological and Oceanographic scheme (SIDC positions 11-13). When used
+     * as a key, the corresponding value must be one of the following:
+     * <p/>
+     * <ul> <li>GRAPHIC_TYPE_POINT</li> <li>GRAPHIC_TYPE_LINE</li> <li>GRAPHIC_TYPE_AREA</li> </ul>
+     */
+    final String GRAPHIC_TYPE = "gov.nasa.worldwind.symbology.GraphicType";
+    /** The MIL-STD-2525 Point type, used by symbols belonging to the METOC scheme. */
+    final String GRAPHIC_TYPE_POINT = "P--";
+    /** The MIL-STD-2525 Line type, used by symbols belonging to the METOC scheme. */
+    final String GRAPHIC_TYPE_LINE = "-L-";
+    /** The MIL-STD-2525 Area type, used by symbols belonging to the METOC scheme. */
+    final String GRAPHIC_TYPE_AREA = "--A";
+    final List<String> GRAPHIC_TYPE_ALL = Arrays.asList(
+        GRAPHIC_TYPE_POINT,
+        GRAPHIC_TYPE_LINE,
+        GRAPHIC_TYPE_AREA
+    );
+
+    /**
      * The MIL-STD-2525 Headquarters modifier field ID. Indicates whether a MIL-STD-2525 symbol's represented object is
      * a headquarters. A headquarters symbol indicates the headquarters associated with a unit, equipment, or
      * installation. When a marked as an headquarters, a symbol's graphic is changed to include a line extending
@@ -732,6 +716,103 @@ public interface SymbologyConstants
     );
 
     /**
+     * The MIL-STD-2525 feint/dummy units and equipment symbol modifier code. Indicates a symbol that is a feint/dummy.
+     * Appears in SIDC position 11. See {@link #FEINT_DUMMY}.
+     */
+    final String MODIFIER_CODE_FEINT_DUMMY = "F";
+    /**
+     * The MIL-STD-2525 feint/dummy headquarters units and equipment symbol modifier code. Indicates a symbol that is a
+     * feint/dummy and a headquarters. Appears in SIDC position 11. See {@link #FEINT_DUMMY} and {@link #HEADQUARTERS}.
+     */
+    final String MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS = "C";
+    /**
+     * The MIL-STD-2525 feint/dummy task force units and equipment symbol modifier code. Indicates a symbol that is a
+     * feint/dummy and a task force. Appears in SIDC position 11. See {@link #FEINT_DUMMY} and {@link #TASK_FORCE}.
+     */
+    final String MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE = "G";
+    /**
+     * The MIL-STD-2525 feint/dummy task force headquarters units and equipment symbol modifier code. Indicates a symbol
+     * that is a feint/dummy, a task force, and a headquarters. Appears in SIDC position 11. See {@link #FEINT_DUMMY},
+     * {@link #TASK_FORCE}, and {@link #HEADQUARTERS}.
+     */
+    final String MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS = "D";
+    /**
+     * The MIL-STD-2525 headquarters units and equipment symbol modifier code. Indicates a symbol that is a
+     * headquarters. Appears in SIDC position 11. See {@link #HEADQUARTERS}.
+     */
+    final String MODIFIER_CODE_HEADQUARTERS = "A";
+    /**
+     * The MIL-STD-2525 task force units and equipment symbol modifier code. Indicates a symbol that is a task force.
+     * Appears in SIDC position 11. See {@link #TASK_FORCE}.
+     */
+    final String MODIFIER_CODE_TASK_FORCE = "E";
+    /**
+     * The MIL-STD-2525 task force headquarters units and equipment symbol modifier code. Indicates a symbol that is a
+     * task force and a headquarters. Appears in SIDC position 11. See {@link #TASK_FORCE} and {@link #HEADQUARTERS}.
+     */
+    final String MODIFIER_CODE_TASK_FORCE_HEADQUARTERS = "B";
+    /** List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes. */
+    final List<String> MODIFIER_CODE_ALL_UEI = Arrays.asList(
+        MODIFIER_CODE_HEADQUARTERS,
+        MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
+        MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
+        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        MODIFIER_CODE_TASK_FORCE,
+        MODIFIER_CODE_FEINT_DUMMY,
+        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
+    );
+    /**
+     * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
+     * feint/dummy.
+     */
+    final List<String> MODIFIER_CODE_ALL_FEINT_DUMMY = Arrays.asList(
+        MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
+        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        MODIFIER_CODE_FEINT_DUMMY,
+        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
+    );
+    /**
+     * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
+     * headquarters.
+     */
+    final List<String> MODIFIER_CODE_ALL_HEADQUARTERS = Arrays.asList(
+        MODIFIER_CODE_HEADQUARTERS,
+        MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
+        MODIFIER_CODE_FEINT_DUMMY_HEADQUARTERS,
+        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS
+    );
+    /**
+     * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a task
+     * force.
+     */
+    final List<String> MODIFIER_CODE_ALL_TASK_FORCE = Arrays.asList(
+        MODIFIER_CODE_TASK_FORCE_HEADQUARTERS,
+        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
+        MODIFIER_CODE_TASK_FORCE,
+        MODIFIER_CODE_FEINT_DUMMY_TASK_FORCE
+    );
+
+    final String OPERATIONAL_CONDITION = "gov.nasa.worldwind.symbology.OperationalCondition";
+    final String OPERATIONAL_CONDITION_DAMAGED = "OD";
+    final String OPERATIONAL_CONDITION_DESTROYED = "OX";
+    final List<String> OPERATIONAL_CONDITION_ALL = Arrays.asList(
+        OPERATIONAL_CONDITION_DAMAGED,
+        OPERATIONAL_CONDITION_DESTROYED
+    );
+
+    final String OPERATIONAL_CONDITION_ALTERNATE = "gov.nasa.worldwind.symbology.OperationalConditionAlternate";
+    final String OPERATIONAL_CONDITION_ALTERNATE_FULLY_CAPABLE = "PC";
+    final String OPERATIONAL_CONDITION_ALTERNATE_DAMAGED = "PD";
+    final String OPERATIONAL_CONDITION_ALTERNATE_DESTROYED = "PX";
+    final String OPERATIONAL_CONDITION_ALTERNATE_FULL_TO_CAPACITY = "PF";
+    final List<String> OPERATIONAL_CONDITION_ALTERNATE_ALL = Arrays.asList(
+        OPERATIONAL_CONDITION_ALTERNATE_FULLY_CAPABLE,
+        OPERATIONAL_CONDITION_ALTERNATE_DAMAGED,
+        OPERATIONAL_CONDITION_ALTERNATE_DESTROYED,
+        OPERATIONAL_CONDITION_ALTERNATE_FULL_TO_CAPACITY
+    );
+
+    /**
      * Indicates the order of battle code associated with a MIL-STD-2525 symbol (SIDC position 15). A symbol's order of
      * battle provides additional information about the symbol in the operational environment. The recognized values
      * depend on the specific MIL-STD-2525 symbology scheme the symbol belongs to, and are defined in each appendix of
@@ -800,12 +881,18 @@ public interface SymbologyConstants
 
     /**
      * The MIL-STD-2525 Reinforced or Reduced modifier field ID. Indicates whether a unit is reinforced or reduced, or
-     * both. When used as a key, the corresponding value must be one of the following strings:
+     * both. When used as a key, the corresponding value must be one of the following values:
      * <p/>
-     * <ul> <li>"R" to indicate that the unit is reinforced</li> <li>"D" to indicate that the unit is reduced</li>
-     * <li>"RD" to indicate that the unit is reinforced and reduced</li> </ul>
+     * <ul> <li>REINFORCED to indicate that the unit is reinforced</li> <li>REDUCED to indicate that the unit is
+     * reduced</li> <li>REINFORCED_AND_REDUCED to indicate that the unit is reinforced and reduced</li> </ul>
      */
     final String REINFORCED_REDUCED = "F";
+
+    final String REINFORCED = "R";
+
+    final String REDUCED = "D";
+
+    final String REINFORCED_AND_REDUCED = "RD";
 
     /**
      * Indicates the scheme code associated with a MIL-STD-2525 symbol (SIDC position 1). A symbol's scheme defines the
@@ -1002,18 +1089,34 @@ public interface SymbologyConstants
     final List<String> STANDARD_IDENTITY_ALL = Arrays.asList(
         STANDARD_IDENTITY_PENDING,
         STANDARD_IDENTITY_UNKNOWN,
-        STANDARD_IDENTITY_ASSUMED_FRIEND,
         STANDARD_IDENTITY_FRIEND,
         STANDARD_IDENTITY_NEUTRAL,
-        STANDARD_IDENTITY_SUSPECT,
         STANDARD_IDENTITY_HOSTILE,
+        STANDARD_IDENTITY_ASSUMED_FRIEND,
+        STANDARD_IDENTITY_SUSPECT,
         STANDARD_IDENTITY_EXERCISE_PENDING,
         STANDARD_IDENTITY_EXERCISE_UNKNOWN,
-        STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND,
         STANDARD_IDENTITY_EXERCISE_FRIEND,
         STANDARD_IDENTITY_EXERCISE_NEUTRAL,
+        STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND,
         STANDARD_IDENTITY_JOKER,
         STANDARD_IDENTITY_FAKER
+    );
+
+    /**
+     * Indicates if a graphic in the Meteorological and Oceanographic scheme is static or dynamic (SIDC positions 3 and
+     * 4). When used as a key, the corresponding value must be one of the following:
+     * <p/>
+     * <ul> <li>STATIC</li> <li>DYNAMIC</li> </ul>
+     */
+    final String STATIC_DYNAMIC = "gov.nasa.worldwind.symbology.StaticDynamic";
+    /** The MIL-STD-2525 Static, used by symbols belonging to the METOC scheme. */
+    final String STATIC = "S-";
+    /** The MIL-STD-2525 Dynamic, used by symbols belonging to the METOC scheme. */
+    final String DYNAMIC = "-D";
+    final List<String> STATIC_DYNAMIC_ALL = Arrays.asList(
+        STATIC,
+        DYNAMIC
     );
 
     /**
@@ -1057,22 +1160,22 @@ public interface SymbologyConstants
      * The MIL-STD-2525 Present/Damaged status code. Indicates a symbol who's represented object is damaged, and
      * currently exists at the symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
      */
-    final String STATUS_PRESENT_DAMAGED = "D";
+    final String STATUS_DAMAGED = "D";
     /**
      * The MIL-STD-2525 Present/Destroyed status code. Indicates a symbol who's represented object is destroyed, and
      * currently exists at the symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
      */
-    final String STATUS_PRESENT_DESTROYED = "X";
+    final String STATUS_DESTROYED = "X";
     /**
      * The MIL-STD-2525 Present/Full To Capacity status code. Indicates a symbol who's represented object's capacity is
      * full, and currently exists at the symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
      */
-    final String STATUS_PRESENT_FULL_TO_CAPACITY = "F";
+    final String STATUS_FULL_TO_CAPACITY = "F";
     /**
      * The MIL-STD-2525 Present/Fully Capable status code. Indicates a symbol who's represented object is fully capable,
      * and currently exists at the symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
      */
-    final String STATUS_PRESENT_FULLY_CAPABLE = "C";
+    final String STATUS_FULLY_CAPABLE = "C";
     /**
      * The MIL-STD-2525 Suspected status code. Indicates a symbol who's represented object is suspected to exist at the
      * symbol's location. See MIL-STD-2525C section 5.3.1.4 (pages 17-18).
@@ -1083,25 +1186,25 @@ public interface SymbologyConstants
         // UEI, SIGINT, SO, and EM status codes.
         STATUS_ANTICIPATED,
         STATUS_PRESENT,
-        STATUS_PRESENT_FULLY_CAPABLE,
-        STATUS_PRESENT_DAMAGED,
-        STATUS_PRESENT_DESTROYED,
-        STATUS_PRESENT_FULL_TO_CAPACITY,
+        STATUS_FULLY_CAPABLE,
+        STATUS_DAMAGED,
+        STATUS_DESTROYED,
+        STATUS_FULL_TO_CAPACITY,
         // Tactical Graphics and METOC status codes (ANTICIPATED and PRESENT already included).
         STATUS_SUSPECTED,
         STATUS_KNOWN
     );
     /**
      * List containing all recognized MIL-STD-2525 status codes for the Warfighting (UEI), Signals Intelligence
-     * (SIGINT), and Stability Operations (SO) schemes.
+     * (SIGINT), Stability Operations (SO), and Emergency Management schemes. TODO: EM scheme contradicts itself.
      */
-    final List<String> STATUS_ALL_UEI_SIGINT_SO = Arrays.asList(
+    final List<String> STATUS_ALL_UEI_SIGINT_SO_EM = Arrays.asList(
         STATUS_ANTICIPATED,
         STATUS_PRESENT,
-        STATUS_PRESENT_FULLY_CAPABLE,
-        STATUS_PRESENT_DAMAGED,
-        STATUS_PRESENT_DESTROYED,
-        STATUS_PRESENT_FULL_TO_CAPACITY
+        STATUS_FULLY_CAPABLE,
+        STATUS_DAMAGED,
+        STATUS_DESTROYED,
+        STATUS_FULL_TO_CAPACITY
     );
     /**
      * List containing all recognized MIL-STD-2525 status codes for the Tactical Graphics and Meteorological and
@@ -1112,11 +1215,6 @@ public interface SymbologyConstants
         STATUS_SUSPECTED,
         STATUS_PRESENT,
         STATUS_KNOWN
-    );
-    /** List containing all recognized MIL-STD-2525 status codes for the Emergency Management scheme. */
-    final List<String> STATUS_ALL_EMERGENCY_MANAGEMENT = Arrays.asList(
-        STATUS_ANTICIPATED,
-        STATUS_PRESENT
     );
 
     /**
@@ -1166,81 +1264,4 @@ public interface SymbologyConstants
      * containing up to 21 characters.
      */
     final String UNIQUE_DESIGNATION = "T";
-
-    /**
-     * The MIL-STD-2525 feint/dummy units and equipment symbol modifier code. Indicates a symbol that is a feint/dummy.
-     * Appears in SIDC position 11. See {@link #FEINT_DUMMY}.
-     */
-    final String UNITS_EQUIPMENT_FEINT_DUMMY = "F";
-    /**
-     * The MIL-STD-2525 feint/dummy headquarters units and equipment symbol modifier code. Indicates a symbol that is a
-     * feint/dummy and a headquarters. Appears in SIDC position 11. See {@link #FEINT_DUMMY} and {@link #HEADQUARTERS}.
-     */
-    final String UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS = "C";
-    /**
-     * The MIL-STD-2525 feint/dummy task force units and equipment symbol modifier code. Indicates a symbol that is a
-     * feint/dummy and a task force. Appears in SIDC position 11. See {@link #FEINT_DUMMY} and {@link #TASK_FORCE}.
-     */
-    final String UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE = "G";
-    /**
-     * The MIL-STD-2525 feint/dummy task force headquarters units and equipment symbol modifier code. Indicates a symbol
-     * that is a feint/dummy, a task force, and a headquarters. Appears in SIDC position 11. See {@link #FEINT_DUMMY},
-     * {@link #TASK_FORCE}, and {@link #HEADQUARTERS}.
-     */
-    final String UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS = "D";
-    /**
-     * The MIL-STD-2525 headquarters units and equipment symbol modifier code. Indicates a symbol that is a
-     * headquarters. Appears in SIDC position 11. See {@link #HEADQUARTERS}.
-     */
-    final String UNITS_EQUIPMENT_HEADQUARTERS = "A";
-    /**
-     * The MIL-STD-2525 task force units and equipment symbol modifier code. Indicates a symbol that is a task force.
-     * Appears in SIDC position 11. See {@link #TASK_FORCE}.
-     */
-    final String UNITS_EQUIPMENT_TASK_FORCE = "E";
-    /**
-     * The MIL-STD-2525 task force headquarters units and equipment symbol modifier code. Indicates a symbol that is a
-     * task force and a headquarters. Appears in SIDC position 11. See {@link #TASK_FORCE} and {@link #HEADQUARTERS}.
-     */
-    final String UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS = "B";
-    /** List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes. */
-    final List<String> UNITS_EQUIPMENT_ALL = Arrays.asList(
-        UNITS_EQUIPMENT_HEADQUARTERS,
-        UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
-        UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
-        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        UNITS_EQUIPMENT_TASK_FORCE,
-        UNITS_EQUIPMENT_FEINT_DUMMY,
-        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
-    );
-    /**
-     * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
-     * feint/dummy.
-     */
-    final List<String> UNITS_EQUIPMENT_ALL_FEINT_DUMMY = Arrays.asList(
-        UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
-        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        UNITS_EQUIPMENT_FEINT_DUMMY,
-        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
-    );
-    /**
-     * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a
-     * headquarters.
-     */
-    final List<String> UNITS_EQUIPMENT_ALL_HEADQUARTERS = Arrays.asList(
-        UNITS_EQUIPMENT_HEADQUARTERS,
-        UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
-        UNITS_EQUIPMENT_FEINT_DUMMY_HEADQUARTERS,
-        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS
-    );
-    /**
-     * List containing all recognized MIL-STD-2525 units and equipment symbol modifier codes that indicate a task
-     * force.
-     */
-    final List<String> UNITS_EQUIPMENT_ALL_TASK_FORCE = Arrays.asList(
-        UNITS_EQUIPMENT_TASK_FORCE_HEADQUARTERS,
-        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE_HEADQUARTERS,
-        UNITS_EQUIPMENT_TASK_FORCE,
-        UNITS_EQUIPMENT_FEINT_DUMMY_TASK_FORCE
-    );
 }

@@ -335,95 +335,6 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
-     * Computes and returns the modifier key-value pairs associated with this SymbolCode's SymbolModifier field. This
-     * recognizes modifier codes used by the Warfighting, Stability Operations, and Emergency Management symbology
-     * schemes: echelon, headquarters, task force, feint/dummy, installation, equipment mobility, and auxiliary
-     * equipment. This adds modifier keys only for those modifiers present in the SymbolModifier field. Any modifiers
-     * not in the SymbolModifier field are ignored. The following key-value pairs are used to indicate each modifier:
-     * <p/>
-     * <table border="1"> <tr><th>Modifier</th><th>Key</th><th>Value</th></tr> <tr><td>Echelon</td><td>SymbologyConstants.ECHELON</td><td>See
-     * {@link SymbologyConstants#ECHELON}</td></tr> <tr><td>Headquarters</td><td>SymbologyConstants.HEADQUARTERS</td><td>Boolean.TRUE
-     * or <code>null</code></td></tr> <tr><td>Task Force</td><td>SymbologyConstants.TASK_FORCE</td><td>Boolean.TRUE or
-     * <code>null</code></td></tr> <tr><td>Feint/Dummy</td><td>SymbologyConstants.FEINT_DUMMY</td><td>Boolean.TRUE or
-     * <code>null</code></td></tr> <tr><td>Installation</td><td>SymbologyConstants.INSTALLATION</td><td>See {@link
-     * SymbologyConstants#INSTALLATION}</td></tr> <tr><td>Equipment Mobility</td><td>SymbologyConstants.MOBILITY</td><td>See
-     * {@link SymbologyConstants#MOBILITY}</td></tr> <tr><td>Auxiliary Equipment</td><td>SymbologyConstants.AUXILIARY_EQUIPMENT</td><td>See
-     * {@link SymbologyConstants#AUXILIARY_EQUIPMENT}</td></tr> </table>
-     * <p/>
-     * Note that the installation modifier code indicates that an installation is either a normal installation or a
-     * feint/dummy installation. In the latter case, this also sets the modifier key SymbologyConstants.FEINT_DUMMY to
-     * Boolean.TRUE. This provides a consistent way to identify feint/dummy modifier status for both units/equipment and
-     * installations.
-     *
-     * @param params a parameter list in which to place the modifier key-value pairs, or <code>null</code> to allocate
-     *               and return a new parameter list.
-     *
-     * @return a parameter list containing the modifier key-value pairs.
-     */
-    public AVList getSymbolModifierParams(AVList params)
-    {
-        String code = this.getSymbolModifier();
-
-        if (code == null || code.length() != 2 || code.equals("--"))
-            return params;
-
-        if (params == null)
-            params = new AVListImpl();
-
-        String firstChar = code.substring(0, 1);
-        String secondChar = code.substring(1, 2);
-        String uppercaseCode = code.toUpperCase();
-        String uppercaseFirstChar = firstChar.toUpperCase();
-        String uppercaseSecondChar = secondChar.toUpperCase();
-
-        if (UNUSED_POSITION_CODE.equals(uppercaseFirstChar)
-            || SymbologyConstants.UNITS_EQUIPMENT_ALL.contains(uppercaseFirstChar))
-        {
-            // The symbol modifier code indicates units and equipment modifiers. The first character is either unused or
-            // indicates the symbol's headquarters, task force, and feint/dummy status. MIL-STD-2525 supports any
-            // combination of the headquarters, task force, and feint/dummy states, so we check for each independently.
-            // The second character is either unused or indicates the symbol's echelon.
-
-            if (SymbologyConstants.ECHELON_ALL.contains(uppercaseSecondChar))
-                params.setValue(SymbologyConstants.ECHELON, secondChar);
-
-            if (SymbologyConstants.UNITS_EQUIPMENT_ALL_HEADQUARTERS.contains(uppercaseFirstChar))
-                params.setValue(SymbologyConstants.HEADQUARTERS, Boolean.TRUE);
-
-            if (SymbologyConstants.UNITS_EQUIPMENT_ALL_TASK_FORCE.contains(uppercaseFirstChar))
-                params.setValue(SymbologyConstants.TASK_FORCE, Boolean.TRUE);
-
-            if (SymbologyConstants.UNITS_EQUIPMENT_ALL_FEINT_DUMMY.contains(uppercaseFirstChar))
-                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
-        }
-        else if (SymbologyConstants.INSTALLATION_ALL.contains(uppercaseCode))
-        {
-            // The symbol modifier code indicates an installation modifier. Currently, this must either be a normal
-            // installation or a feint/dummy installation. Though the installation modifier code indicates that an
-            // installation is a feint/dummy, we check for this case and set the FEINT_DUMMY modifier key to TRUE. This
-            // provides a consistent modifier key for feint/dummy status across for units/equipment and installations.
-
-            params.setValue(SymbologyConstants.INSTALLATION, code);
-
-            if (SymbologyConstants.INSTALLATION_FEINT_DUMMY.equalsIgnoreCase(code))
-                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
-        }
-        else if (SymbologyConstants.MOBILITY_ALL.contains(uppercaseCode))
-        {
-            // The symbol modifier code indicates an equipment mobility modifier.
-            params.setValue(SymbologyConstants.MOBILITY, code);
-        }
-        else if (SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(uppercaseCode))
-        {
-            // The symbol modifier code indicates an auxiliary equipment modifier. Currently, this is limited to the
-            // towed sonar array modifier.
-            params.setValue(SymbologyConstants.AUXILIARY_EQUIPMENT, code);
-        }
-
-        return params;
-    }
-
-    /**
      * Indicates this symbol code's Echelon field.
      *
      * @return the value of the Echelon field. May be <code>null</code>.
@@ -588,6 +499,173 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
+     * Computes and returns the modifier key-value pairs associated with the specified SymbolModifier code. This
+     * recognizes modifier codes used by the Warfighting, Stability Operations, and Emergency Management symbology
+     * schemes: echelon, headquarters, task force, feint/dummy, installation, equipment mobility, and auxiliary
+     * equipment. This adds modifier keys only for those modifiers present in the SymbolModifier field. Any modifiers
+     * not in the SymbolModifier field are ignored. The following key-value pairs are used to indicate each modifier:
+     * <p/>
+     * <table border="1"> <tr><th>Modifier</th><th>Key</th><th>Value</th></tr> <tr><td>Echelon</td><td>SymbologyConstants.ECHELON</td><td>See
+     * {@link SymbologyConstants#ECHELON}</td></tr> <tr><td>Headquarters</td><td>SymbologyConstants.HEADQUARTERS</td><td>Boolean.TRUE
+     * or <code>null</code></td></tr> <tr><td>Task Force</td><td>SymbologyConstants.TASK_FORCE</td><td>Boolean.TRUE or
+     * <code>null</code></td></tr> <tr><td>Feint/Dummy</td><td>SymbologyConstants.FEINT_DUMMY</td><td>Boolean.TRUE or
+     * <code>null</code></td></tr> <tr><td>Installation</td><td>SymbologyConstants.INSTALLATION</td><td>See {@link
+     * SymbologyConstants#INSTALLATION}</td></tr> <tr><td>Equipment Mobility</td><td>SymbologyConstants.MOBILITY</td><td>See
+     * {@link SymbologyConstants#MOBILITY}</td></tr> <tr><td>Auxiliary Equipment</td><td>SymbologyConstants.AUXILIARY_EQUIPMENT</td><td>See
+     * {@link SymbologyConstants#AUXILIARY_EQUIPMENT}</td></tr> </table>
+     * <p/>
+     * Note that the installation modifier code indicates that an installation is either a normal installation or a
+     * feint/dummy installation. In the latter case, this also sets the modifier key SymbologyConstants.FEINT_DUMMY to
+     * Boolean.TRUE. This provides a consistent way to identify feint/dummy modifier status for both units/equipment and
+     * installations.
+     *
+     * @param code   the symbol modifier code to parse.
+     * @param params a parameter list in which to place the modifier key-value pairs, or <code>null</code> to allocate
+     *               and return a new parameter list.
+     *
+     * @return a parameter list containing the modifier key-value pairs.
+     */
+    public static AVList parseSymbolModifierCode(String code, AVList params)
+    {
+        if (code == null || code.length() != 2 || code.equals("--"))
+            return params;
+
+        if (params == null)
+            params = new AVListImpl();
+
+        String firstChar = code.substring(0, 1);
+        String secondChar = code.substring(1, 2);
+        String uppercaseCode = code.toUpperCase();
+        String uppercaseFirstChar = firstChar.toUpperCase();
+        String uppercaseSecondChar = secondChar.toUpperCase();
+
+        if (SymbologyConstants.MODIFIER_CODE_ALL_UEI.contains(uppercaseFirstChar)
+            || UNUSED_POSITION_CODE.equals(uppercaseFirstChar))
+        {
+            // The symbol modifier code indicates units and equipment modifiers. The first character is either unused or
+            // indicates the symbol's headquarters, task force, and feint/dummy status. MIL-STD-2525 supports any
+            // combination of the headquarters, task force, and feint/dummy states, so we check for each independently.
+            // The second character is either unused or indicates the symbol's echelon.
+
+            if (SymbologyConstants.ECHELON_ALL.contains(uppercaseSecondChar))
+                params.setValue(SymbologyConstants.ECHELON, secondChar);
+
+            if (SymbologyConstants.MODIFIER_CODE_ALL_HEADQUARTERS.contains(uppercaseFirstChar))
+                params.setValue(SymbologyConstants.HEADQUARTERS, Boolean.TRUE);
+
+            if (SymbologyConstants.MODIFIER_CODE_ALL_TASK_FORCE.contains(uppercaseFirstChar))
+                params.setValue(SymbologyConstants.TASK_FORCE, Boolean.TRUE);
+
+            if (SymbologyConstants.MODIFIER_CODE_ALL_FEINT_DUMMY.contains(uppercaseFirstChar))
+                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
+        }
+        else if (SymbologyConstants.INSTALLATION_ALL.contains(uppercaseCode))
+        {
+            // The symbol modifier code indicates an installation modifier. Currently, this must either be a normal
+            // installation or a feint/dummy installation. Though the installation modifier code indicates that an
+            // installation is a feint/dummy, we check for this case and set the FEINT_DUMMY modifier key to TRUE. This
+            // provides a consistent modifier key for feint/dummy status across for units/equipment and installations.
+
+            params.setValue(SymbologyConstants.INSTALLATION, code);
+
+            if (SymbologyConstants.INSTALLATION_FEINT_DUMMY.equalsIgnoreCase(code))
+                params.setValue(SymbologyConstants.FEINT_DUMMY, Boolean.TRUE);
+        }
+        else if (SymbologyConstants.MOBILITY_ALL.contains(uppercaseCode))
+        {
+            // The symbol modifier code indicates an equipment mobility modifier.
+            params.setValue(SymbologyConstants.MOBILITY, code);
+        }
+        else if (SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(uppercaseCode))
+        {
+            // The symbol modifier code indicates an auxiliary equipment modifier. Currently, this is limited to the
+            // towed sonar array modifier.
+            params.setValue(SymbologyConstants.AUXILIARY_EQUIPMENT, code);
+        }
+        else if (SymbologyConstants.OPERATIONAL_CONDITION_ALL.contains(uppercaseCode))
+        {
+            params.setValue(SymbologyConstants.OPERATIONAL_CONDITION, code);
+        }
+        else if (SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_ALL.contains(uppercaseCode))
+        {
+            params.setValue(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE, code);
+        }
+
+        return params;
+    }
+
+    public static String composeSymbolModifierCode(SymbolCode symbolCode, AVList modifiers, String modifierKey)
+    {
+        if (symbolCode == null)
+            return null;
+
+        if (modifiers == null || modifierKey == null)
+            return null;
+
+        Object modifierValue = modifiers.getValue(modifierKey);
+        String uppercaseValue = modifierValue != null ? modifierValue.toString().toUpperCase() : null;
+
+        if (SymbologyConstants.ECHELON.equalsIgnoreCase(modifierKey)
+            && SymbologyConstants.ECHELON_ALL.contains(uppercaseValue))
+        {
+            return UNUSED_POSITION_CODE + uppercaseValue;
+        }
+        else if (SymbologyConstants.TASK_FORCE.equalsIgnoreCase(modifierKey) && Boolean.TRUE.equals(modifierValue))
+        {
+            Object echelonValue = modifiers.getValue(SymbologyConstants.ECHELON);
+            if (echelonValue != null && SymbologyConstants.ECHELON_ALL.contains(echelonValue.toString().toUpperCase()))
+                return SymbologyConstants.MODIFIER_CODE_TASK_FORCE + echelonValue.toString().toUpperCase();
+            else
+                return SymbologyConstants.MODIFIER_CODE_TASK_FORCE + UNUSED_POSITION_CODE;
+        }
+        else if (SymbologyConstants.FEINT_DUMMY.equalsIgnoreCase(modifierKey) && Boolean.TRUE.equals(modifierValue))
+        {
+            return SymbologyConstants.MODIFIER_CODE_FEINT_DUMMY + UNUSED_POSITION_CODE;
+        }
+        else if (SymbologyConstants.INSTALLATION.equalsIgnoreCase(modifierKey)
+            && SymbologyConstants.INSTALLATION_ALL.contains(uppercaseValue))
+        {
+            return uppercaseValue;
+        }
+        else if (SymbologyConstants.MOBILITY.equalsIgnoreCase(modifierKey)
+            && SymbologyConstants.MOBILITY_ALL.contains(uppercaseValue))
+        {
+            return uppercaseValue;
+        }
+        else if (SymbologyConstants.AUXILIARY_EQUIPMENT.equalsIgnoreCase(modifierKey)
+            && SymbologyConstants.AUXILIARY_EQUIPMENT_ALL.contains(uppercaseValue))
+        {
+            return uppercaseValue;
+        }
+        else if (SymbologyConstants.OPERATIONAL_CONDITION.equalsIgnoreCase(modifierKey))
+        {
+            Object status = symbolCode.getStatus();
+            String uppercaseStatus = (status != null ? status.toString().toUpperCase() : null);
+
+            if (SymbologyConstants.STATUS_DAMAGED.equalsIgnoreCase(uppercaseStatus))
+                return SymbologyConstants.OPERATIONAL_CONDITION_DAMAGED;
+            else if (SymbologyConstants.STATUS_DESTROYED.equalsIgnoreCase(uppercaseStatus))
+                return SymbologyConstants.OPERATIONAL_CONDITION_DESTROYED;
+        }
+        else if (SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE.equalsIgnoreCase(modifierKey))
+        {
+            Object status = symbolCode.getStatus();
+            String uppercaseStatus = (status != null ? status.toString().toUpperCase() : null);
+
+            if (SymbologyConstants.STATUS_FULLY_CAPABLE.equalsIgnoreCase(uppercaseStatus))
+                return SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_FULLY_CAPABLE;
+            else if (SymbologyConstants.STATUS_DAMAGED.equalsIgnoreCase(uppercaseStatus))
+                return SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_DAMAGED;
+            else if (SymbologyConstants.STATUS_DESTROYED.equalsIgnoreCase(uppercaseStatus))
+                return SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_DESTROYED;
+            else if (SymbologyConstants.STATUS_FULL_TO_CAPACITY.equalsIgnoreCase(uppercaseStatus))
+                return SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE_FULL_TO_CAPACITY;
+        }
+
+        return null;
+    }
+
+    /**
      * Parses a symbol code encoded into its individual fields, populating this SymbolCode's fields with the value of
      * each field. Fields that are either not part of the specified symbol code or are unspecified are left unchanged.
      *
@@ -687,7 +765,7 @@ public class SymbolCode extends AVListImpl
 
         // Status/Operational Condition (position 4).
         s = symCode.substring(3, 4);
-        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO.contains(s.toUpperCase()))
+        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
             this.setStatus(s);
         else
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
@@ -891,7 +969,7 @@ public class SymbolCode extends AVListImpl
 
         // Status/Operational Condition (position 4)
         s = symCode.substring(3, 4);
-        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO.contains(s.toUpperCase()))
+        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
             this.setStatus(s);
         else
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
@@ -955,6 +1033,7 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
 
         // Category (position 3).
+        // TODO: incorrect error message
         s = symCode.substring(2, 3);
         if (SymbologyConstants.CATEGORY_ALL_STABILITY_OPERATIONS.contains(s.toUpperCase()))
             this.setCategory(s);
@@ -963,7 +1042,7 @@ public class SymbolCode extends AVListImpl
 
         // Status/Operational Condition (position 4).
         s = symCode.substring(3, 4);
-        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO.contains(s.toUpperCase()))
+        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
             this.setStatus(s);
         else
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
@@ -1029,6 +1108,7 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
 
         // Category (position 3).
+        // TODO: incorrect error message
         s = symCode.substring(2, 3);
         if (SymbologyConstants.CATEGORY_ALL_EMERGENCY_MANAGEMENT.contains(s.toUpperCase()))
             this.setCategory(s);
@@ -1037,7 +1117,7 @@ public class SymbolCode extends AVListImpl
 
         // Status/Operational Condition (position 4).
         s = symCode.substring(3, 4);
-        if (SymbologyConstants.STATUS_ALL_EMERGENCY_MANAGEMENT.contains(s.toUpperCase()))
+        if (SymbologyConstants.STATUS_ALL_UEI_SIGINT_SO_EM.contains(s.toUpperCase()))
             this.setStatus(s);
         else
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.status"));
@@ -1088,7 +1168,7 @@ public class SymbolCode extends AVListImpl
         String firstChar = value.substring(0, 1).toUpperCase();
         String secondChar = value.substring(1, 2).toUpperCase();
 
-        return (UNUSED_POSITION_CODE.equals(firstChar) || SymbologyConstants.UNITS_EQUIPMENT_ALL.contains(firstChar))
+        return (UNUSED_POSITION_CODE.equals(firstChar) || SymbologyConstants.MODIFIER_CODE_ALL_UEI.contains(firstChar))
             && SymbologyConstants.ECHELON_ALL.contains(secondChar.toUpperCase());
     }
 

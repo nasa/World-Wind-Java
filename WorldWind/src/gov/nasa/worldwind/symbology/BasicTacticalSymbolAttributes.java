@@ -18,6 +18,11 @@ import java.awt.*;
  */
 public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
 {
+    public static final double DEFAULT_SCALE = 1d;
+    public static final double DEFAULT_OPACITY = 1d;
+    public static final Font DEFAULT_TEXT_MODIFIER_FONT = Font.decode("Arial-PLAIN-12");
+    public static final Material DEFAULT_TEXT_MODIFIER_MATERIAL = Material.BLACK;
+
     /**
      * Indicates the symbol scale as a ratio of the symbol's original size, or <code>null</code> to use the symbol's
      * default scale. Initially <code>null</code>.

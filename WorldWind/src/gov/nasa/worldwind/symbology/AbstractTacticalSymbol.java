@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.symbology;
 
 import com.sun.opengl.util.BufferUtil;
+import com.sun.opengl.util.j2d.TextRenderer;
 import com.sun.opengl.util.texture.*;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
@@ -18,9 +19,11 @@ import gov.nasa.worldwind.util.*;
 
 import javax.media.opengl.GL;
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.image.*;
 import java.nio.FloatBuffer;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author dcollins
@@ -30,23 +33,28 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 {
     protected static class IconSource
     {
+        protected IconRetriever retriever;
         protected String symbolId;
-        protected IconRetriever iconRetriever;
-        protected AVList params;
+        protected AVList retrieverParams;
 
-        public IconSource(String symbolId, IconRetriever iconRetriever, AVList params)
+        public IconSource(IconRetriever retriever, String symbolId, AVList retrieverParams)
         {
+            this.retriever = retriever;
             this.symbolId = symbolId;
-            this.iconRetriever = iconRetriever;
 
-            if (params != null)
+            if (retrieverParams != null)
             {
                 // If the specified parameters are non-null, then store a copy of the parameters in this key's params
                 // property to insulate it from changes made by the caller. This params list must not change after
                 // construction this key's properties must be immutable.
-                this.params = new AVListImpl();
-                this.params.setValues(params);
+                this.retrieverParams = new AVListImpl();
+                this.retrieverParams.setValues(retrieverParams);
             }
+        }
+
+        public IconRetriever getRetriever()
+        {
+            return this.retriever;
         }
 
         public String getSymbolId()
@@ -54,14 +62,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             return this.symbolId;
         }
 
-        public IconRetriever getIconRetriever()
+        public AVList getRetrieverParams()
         {
-            return this.iconRetriever;
-        }
-
-        public AVList getParams()
-        {
-            return this.params;
+            return this.retrieverParams;
         }
 
         @Override
@@ -74,15 +77,15 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             IconSource that = (IconSource) o;
 
-            if (this.iconRetriever != null ? !this.iconRetriever.equals(that.iconRetriever)
-                : that.iconRetriever != null)
+            if (this.retriever != null ? !this.retriever.equals(that.retriever)
+                : that.retriever != null)
                 return false;
-            // TODO: need a mechanism to equate the retriever parameters.
-            //if (this.params != null ? !this.params.equals(that.params) : that.params != null)
-            //    return false;
-            //noinspection RedundantIfStatement
             if (this.symbolId != null ? !this.symbolId.equals(that.symbolId) : that.symbolId != null)
                 return false;
+            // TODO: need a mechanism to equate the retriever parameters.
+            //noinspection RedundantIfStatement
+            //if (this.params != null ? !this.params.equals(that.params) : that.params != null)
+            //    return false;
 
             return true;
         }
@@ -90,8 +93,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         @Override
         public int hashCode()
         {
-            int result = this.symbolId != null ? this.symbolId.hashCode() : 0;
-            result = 31 * result + (this.iconRetriever != null ? this.iconRetriever.hashCode() : 0);
+            int result = this.retriever != null ? this.retriever.hashCode() : 0;
+            result = 31 * result + (this.symbolId != null ? this.symbolId.hashCode() : 0);
             // TODO: need a mechanism to equate the retriever parameters.
             //result = 31 * result + (this.params != null ? this.params.hashCode() : 0);
             return result;
@@ -104,85 +107,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    protected static class ModifierSource
-    {
-        protected String modifierKey;
-        protected Object modifierValue;
-        protected ModifierRetriever modifierRetriever;
-
-        public ModifierSource(String modifierKey, Object modifierValue, ModifierRetriever modifierRetriever)
-        {
-            this.modifierKey = modifierKey;
-            this.modifierValue = modifierValue;
-            this.modifierRetriever = modifierRetriever;
-        }
-
-        public String getModifierKey()
-        {
-            return this.modifierKey;
-        }
-
-        public Object getModifierValue()
-        {
-            return this.modifierValue;
-        }
-
-        public ModifierRetriever getModifierRetriever()
-        {
-            return this.modifierRetriever;
-        }
-
-        @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-                return true;
-            if (o == null || this.getClass() != o.getClass())
-                return false;
-
-            ModifierSource that = (ModifierSource) o;
-
-            if (this.modifierKey != null ? !this.modifierKey.equals(that.modifierKey) : that.modifierKey != null)
-                return false;
-            if (this.modifierValue != null ? !this.modifierValue.equals(that.modifierValue)
-                : that.modifierValue != null)
-                return false;
-            //noinspection RedundantIfStatement
-            if (this.modifierRetriever != null ? !this.modifierRetriever.equals(that.modifierRetriever)
-                : that.modifierRetriever != null)
-                return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result = this.modifierKey != null ? this.modifierKey.hashCode() : 0;
-            result = 31 * result + (this.modifierValue != null ? this.modifierValue.hashCode() : 0);
-            result = 31 * result + (this.modifierRetriever != null ? this.modifierRetriever.hashCode() : 0);
-            return result;
-        }
-
-        @Override
-        public String toString()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.append(this.modifierKey);
-
-            if (this.modifierValue != null)
-                sb.append("=").append(this.modifierValue);
-
-            return sb.toString();
-        }
-    }
-
     // Use an IconKey as the texture's image source. The image source is what defines the contents of this texture,
     // and is used as an address for the texture's contents in the cache.
     protected static class IconTexture extends LazilyLoadedTexture
     {
-        public Rectangle frameRect;
-
         public IconTexture(IconSource imageSource)
         {
             super(imageSource);
@@ -207,9 +135,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         {
             try
             {
-                IconSource iconSource = (IconSource) this.getImageSource();
-                BufferedImage image = iconSource.getIconRetriever().createIcon(iconSource.getSymbolId(),
-                    iconSource.getParams());
+                IconSource source = (IconSource) this.getImageSource();
+                BufferedImage image = source.getRetriever().createIcon(source.getSymbolId(),
+                    source.getRetrieverParams());
 
                 if (image == null)
                 {
@@ -285,11 +213,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    protected static class ModifierGlyph extends TextureAtlasElement
+    protected static class IconAtlasElement extends TextureAtlasElement
     {
-        public ModifierGlyph(TextureAtlas atlas, ModifierSource modifierSource)
+        public IconAtlasElement(TextureAtlas atlas, IconSource source)
         {
-            super(atlas, modifierSource);
+            super(atlas, source);
         }
 
         @Override
@@ -307,9 +235,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         {
             try
             {
-                ModifierSource modifierSource = (ModifierSource) this.getImageSource();
-                BufferedImage image = modifierSource.getModifierRetriever().createModifier(
-                    modifierSource.getModifierKey(), modifierSource.getModifierValue());
+                IconSource source = (IconSource) this.getImageSource();
+                BufferedImage image = source.getRetriever().createIcon(source.getSymbolId(),
+                    source.getRetrieverParams());
 
                 if (image == null)
                 {
@@ -331,15 +259,73 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    protected static interface ModifierRetriever
+    protected static class TextModifier
     {
-        BufferedImage createModifier(String modifier, Object value);
+        protected TextRenderer renderer;
+        protected String text;
+        protected Point point;
+        protected Color color;
+
+        public TextModifier(TextRenderer renderer, String text, Point point, Color color)
+        {
+            if (renderer == null)
+            {
+                String msg = Logging.getMessage("nullValue.RendererIsNull");
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            if (text == null)
+            {
+                String msg = Logging.getMessage("nullValue.StringIsNull");
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            if (point == null)
+            {
+                String msg = Logging.getMessage("nullValue.PointIsNull");
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            if (color == null)
+            {
+                String msg = Logging.getMessage("nullValue.ColorIsNull");
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            this.renderer = renderer;
+            this.text = text;
+            this.point = point;
+            this.color = color;
+        }
+
+        public TextRenderer getTextRenderer()
+        {
+            return this.renderer;
+        }
+
+        public String getText()
+        {
+            return this.text;
+        }
+
+        public Point getPoint()
+        {
+            return this.point;
+        }
+
+        public Color getColor()
+        {
+            return this.color;
+        }
     }
 
-    protected static final double DEFAULT_OPACITY = 1d;
-    protected static final double DEFAULT_SCALE = 1d;
-    protected static final Font DEFAULT_TEXT_MODIFIER_FONT = Font.decode("Arial-PLAIN-12");
-    protected static final Material DEFAULT_TEXT_MODIFIER_MATERIAL = Material.WHITE;
+    protected static final String LAYOUT_ABSOLUTE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutAbsolute";
+    protected static final String LAYOUT_RELATIVE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutRelative";
+    protected static final String LAYOUT_NONE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutNone";
     /** Configured to match the depth offset produced by existing screen elements such as PointPlacemark. */
     protected static final double DEFAULT_DEPTH_OFFSET = -8200;
 
@@ -350,20 +336,20 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     {
         // Create and populate the default attributes.
         defaultAttrs = new BasicTacticalSymbolAttributes();
-        defaultAttrs.setOpacity(DEFAULT_OPACITY);
-        defaultAttrs.setScale(DEFAULT_SCALE);
-        defaultAttrs.setTextModifierFont(DEFAULT_TEXT_MODIFIER_FONT);
-        defaultAttrs.setTextModifierMaterial(DEFAULT_TEXT_MODIFIER_MATERIAL);
+        defaultAttrs.setOpacity(BasicTacticalSymbolAttributes.DEFAULT_OPACITY);
+        defaultAttrs.setScale(BasicTacticalSymbolAttributes.DEFAULT_SCALE);
+        //defaultAttrs.setTextModifierFont(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT);
+        defaultAttrs.setTextModifierMaterial(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL);
     }
 
     /**
-     * Indicates whether this symbol is drawn when in view. true if this symbol is drawn when in view, otherwise false.
-     * Initially true.
+     * Indicates whether this symbol is drawn when in view. <code>true</code> if this symbol is drawn when in view,
+     * otherwise <code>false</code>. Initially <code>true</code>.
      */
     protected boolean visible = true;
     /**
-     * Indicates whether this symbol is highlighted. true if this symbol is highlighted, otherwise false. Initially
-     * false.
+     * Indicates whether this symbol is highlighted. <code>true</code> if this symbol is highlighted, otherwise
+     * <code>false</code>. Initially <code>false</code>.
      */
     protected boolean highlighted;
     /**
@@ -378,13 +364,13 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected int altitudeMode = WorldWind.ABSOLUTE;
     /**
-     * Indicates whether this symbol draws its supplemental graphic modifiers. true if this symbol draws its graphic
-     * modifiers, otherwise false. Initially true.
+     * Indicates whether this symbol draws its supplemental graphic modifiers. <code>true</code> if this symbol draws
+     * its graphic modifiers, otherwise <code>false</code>. Initially <code>true</code>.
      */
     protected boolean showGraphicModifiers = true;
     /**
-     * Indicates whether this symbol draws its supplemental text modifiers. true if this symbol draws its text
-     * modifiers, otherwise false. Initially true.
+     * Indicates whether this symbol draws its supplemental text modifiers. <code>true</code> if this symbol draws its
+     * text modifiers, otherwise <code>false</code>. Initially <code>true</code>.
      */
     protected boolean showTextModifiers = true;
     protected boolean enableBatchRendering = true;
@@ -411,9 +397,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * to a new BasicTacticalSymbolAttributes.
      */
     protected TacticalSymbolAttributes activeAttrs = new BasicTacticalSymbolAttributes();
+    protected Offset offset;
     protected Double depthOffset;
     protected IconRetriever iconRetriever;
-    protected ModifierRetriever modifierRetriever;
+    protected IconRetriever modifierRetriever;
 
     /**
      * The frame used to calculate this symbol's per-frame values. Set to the draw context's frame number each frame.
@@ -438,23 +425,41 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected double eyeDistance;
     /**
+     * Per-frame screen scale indicating this symbol's x-scale relative to the screen offset. Calculated each frame in
+     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     */
+    protected double sx;
+    /**
+     * Per-frame screen scale indicating this symbol's y-scale relative to the screen offset. Calculated each frame in
+     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     */
+    protected double sy;
+
+    /**
      * Per-frame screen offset indicating this symbol's x-offset relative to the screenPoint. Calculated each frame in
-     * {@link #layout(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
      */
     protected double dx;
     /**
      * Per-frame screen offset indicating this symbol's y-offset relative to the screenPoint. Calculated each frame in
-     * {@link #layout(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
      */
     protected double dy;
+
+    protected Rectangle iconRect;
+    protected Rectangle layoutRect;
     protected Rectangle screenRect;
-    protected Rectangle screenBounds;
 
     protected IconTexture iconTexture;
-    protected Map<Object, ModifierGlyph> modifierGlyphMap = new HashMap<Object, ModifierGlyph>();
-    protected TextureAtlas modifierAtlas;
     protected FloatBuffer iconVertices;
-    protected FloatBuffer modifierVertices;
+    protected Offset iconOffset;
+    protected Size iconSize;
+
+    protected Map<String, IconAtlasElement> glyphModifiers = new HashMap<String, IconAtlasElement>();
+    protected List<TextModifier> textModifiers = new ArrayList<TextModifier>();
+    protected TextureAtlas glyphAtlas;
+    protected FloatBuffer glyphVertices;
+    protected FloatBuffer lineVertices;
 
     /**
      * Support for setting up and restoring OpenGL state during rendering. Initialized to a new OGLStackHandler, and
@@ -623,15 +628,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             throw new IllegalArgumentException(msg);
         }
 
-        if (this.modifiers.hasKey(modifier) && this.modifiers.getValue(modifier) == value)
-            return;
-
         this.modifiers.setValue(modifier, value);
-
-        // Note that we co not explicitly remove this glyphs from the atlas. Texture atlases are designed to
-        // automatically evict the oldest entries once they're full. Leaving this glyph in the atlas does not incur
-        // any additional overhead, and has the benefit of ensuring that we do not remove glyphs used by another symbol.
-        this.modifierGlyphMap.remove(modifier);
     }
 
     /** {@inheritDoc} */
@@ -658,49 +655,59 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.highlightAttrs = highlightAttrs; // Null is accepted, and indicates the default highlight attributes.
     }
 
-    public Double getDepthOffset()
+    protected Offset getOffset()
+    {
+        return this.offset;
+    }
+
+    protected void setOffset(Offset offset)
+    {
+        this.offset = offset;
+    }
+
+    protected Double getDepthOffset()
     {
         return this.depthOffset;
     }
 
-    public void setDepthOffset(Double depthOffset)
+    protected void setDepthOffset(Double depthOffset)
     {
         this.depthOffset = depthOffset; // Null is accepted, and indicates the default depth offset is used.
     }
 
-    public IconRetriever getIconRetriever()
+    protected IconRetriever getIconRetriever()
     {
         return this.iconRetriever;
     }
 
-    protected void setIconRetriever(IconRetriever iconRetriever)
+    protected void setIconRetriever(IconRetriever retriever)
     {
-        this.iconRetriever = iconRetriever;
+        this.iconRetriever = retriever;
     }
 
-    protected ModifierRetriever getModifierRetriever()
+    protected IconRetriever getModifierRetriever()
     {
         return this.modifierRetriever;
     }
 
-    protected void setModifierRetriever(ModifierRetriever modifierRetriever)
+    protected void setModifierRetriever(IconRetriever retriever)
     {
-        this.modifierRetriever = modifierRetriever;
+        this.modifierRetriever = retriever;
     }
 
-    protected TextureAtlas getModifierAtlas()
+    protected TextureAtlas getGlyphAtlas()
     {
-        return this.modifierAtlas;
+        return this.glyphAtlas;
     }
 
-    protected void setModifierAtlas(TextureAtlas atlas)
+    protected void setGlyphAtlas(TextureAtlas atlas)
     {
         // Note that we do not explicitly remove this symbol's glyphs from the old atlas. The modifier texture atlas
         // should be  configured to evict the oldest glyphs when the atlas is full. Leaving this symbol's glyphs in the
         // atlas does not incur any additional overhead, and has the benefit of ensuring that we do not remove glyphs
         // used by another symbol.
 
-        this.modifierAtlas = atlas;
+        this.glyphAtlas = atlas;
     }
 
     /** {@inheritDoc} */
@@ -735,11 +742,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     /** {@inheritDoc} */
     public void render(DrawContext dc)
     {
-        // This render method is called three times during frame generation. It's first called as a {@link Renderable}
-        // during <code>Renderable</code> picking. It's called again during normal rendering. And it's called a third
-        // time as an OrderedRenderable. The first two calls determine whether to add the symbol  and its optional
-        // line to the ordered renderable list during pick and render. The third call just draws the ordered renderable.
-
         if (dc == null)
         {
             String msg = Logging.getMessage("nullValue.DrawContextIsNull");
@@ -758,20 +760,27 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected void makeOrderedRenderable(DrawContext dc)
     {
-        // Calculate this symbol's per-frame values, Re-using values already calculated this frame. This step computes
-        // the symbol's Cartesian and screen coordinate points, its screen bounding rectangle, and the currently active
-        // attributes. The symbol's layout and offset are computed in drawOrderedRenderable because the layout requires
-        // that the symbol's textures be loaded. By delaying their computation until drawOrderedRenderable we ensure
-        // that the textures for offscreen symbols are not loaded before the symbol is visible.
+        // Calculate this symbol's per-frame values, re-using values already calculated this frame.
         if (dc.getFrameTimeStamp() != this.frameNumber)
         {
+            // Compute the model and screen coordinate points corresponding to the position and altitude mode.
             this.computeSymbolPoints(dc);
             if (this.placePoint == null || this.screenPoint == null)
                 return;
 
+            // Compute the currently active attributes from either the normal or the highlight attributes.
             this.determineActiveAttributes();
             if (this.getActiveAttributes() == null)
                 return;
+
+            // Compute the icon and modifier layout.
+            // TODO: layout only when necessary
+            // TODO: layout must not issue new requests for resources, but must load resources that have already been requested.
+            this.layout(dc);
+
+            // Compute the scale and offset parameters that are applied during rendering. This must be done after
+            // layout, because the transform depends on the frame rectangle computed during layout.
+            this.computeTransform(dc);
 
             this.frameNumber = dc.getFrameTimeStamp();
         }
@@ -792,7 +801,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     {
         this.placePoint = null;
         this.screenPoint = null;
-        this.screenBounds = null;
+        this.eyeDistance = 0;
 
         Position pos = this.getPosition();
         if (pos == null)
@@ -815,20 +824,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (this.placePoint == null)
             return;
 
-        // Compute the symbol''s screen location.
+        // Compute the symbol's screen location the distance between the eye point and the place point.
         this.screenPoint = dc.getView().project(this.placePoint);
         this.eyeDistance = this.placePoint.distanceTo3(dc.getView().getEyePoint());
-
-        if (this.screenRect != null)
-        {
-            double s = this.getActiveAttributes().getScale() != null ? this.getActiveAttributes().getScale()
-                : DEFAULT_SCALE;
-            double width = s * this.screenRect.getWidth();
-            double height = s * this.screenRect.getHeight();
-            double x = this.screenPoint.x + s * (this.dx + this.screenRect.getX());
-            double y = this.screenPoint.y + s * (this.dy + this.screenRect.getY());
-            this.screenBounds = new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
-        }
     }
 
     protected void determineActiveAttributes()
@@ -862,6 +860,270 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         return this.activeAttrs;
     }
 
+    protected void layout(DrawContext dc)
+    {
+        this.screenRect = null;
+        this.layoutRect = null;
+
+        if (this.mustDrawIcon(dc))
+            this.layoutIcon(dc);
+
+        if (this.mustDrawGraphicModifiers(dc) || this.mustDrawTextModifiers(dc))
+            this.layoutModifiers(dc);
+    }
+
+    protected void layoutIcon(DrawContext dc)
+    {
+        if (this.getIconRetriever() == null)
+            return;
+
+        if (this.iconTexture == null) // Lazily create the symbol icon texture.
+        {
+            IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), this.modifiers);
+            this.iconTexture = new IconTexture(source);
+        }
+
+        if (this.iconRect == null && this.iconTexture.bind(dc)) // Lazily assign the symbol icon rectangle.
+        {
+            // Compute the symbol icon's frame rectangle in local coordinates. This is used by the modifier layout to
+            // determine where to place modifier graphics and modifier text. Note that we bind the texture in order to
+            // load the texture image, and make the width and height available.
+            int w = this.iconTexture.getWidth(dc);
+            int h = this.iconTexture.getHeight(dc);
+            Point2D point = this.iconOffset != null ? this.iconOffset.computeOffset(w, h, null, null) : new Point(0, 0);
+            Dimension size = this.iconSize != null ? this.iconSize.compute(w, h, w, h) : new Dimension(w, h);
+            this.iconRect = new Rectangle((int) point.getX(), (int) point.getY(), size.width, size.height);
+
+            // Compute the symbol icon's vertex points in local coordinates. This buffer is used during icon drawing to
+            // define the icon's location in screen coordinates.
+            if (this.iconVertices != null)
+                this.iconVertices.clear(); // Reset the position and limit.
+            this.iconVertices = this.addRectVertices(this.iconVertices, new Rectangle(0, 0, w, h),
+                this.iconTexture.getTexCoords());
+            this.iconVertices.flip(); // Set the limit to the current position.
+        }
+
+        if (this.iconRect != null)
+        {
+            if (this.screenRect != null)
+                this.screenRect.add(this.iconRect);
+            else
+                this.screenRect = new Rectangle(this.iconRect);
+
+            if (this.layoutRect != null)
+                this.layoutRect.add(this.iconRect);
+            else
+                this.layoutRect = new Rectangle(this.iconRect);
+        }
+    }
+
+    protected void layoutModifiers(DrawContext dc)
+    {
+        // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
+        // with this tactical symbol.
+    }
+
+    protected void layoutGlyphModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierCode)
+    {
+        this.layoutGlyphModifier(dc, offset, hotspot, modifierCode, null, null);
+    }
+
+    protected void layoutGlyphModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierCode,
+        AVList retrieverParams, Object layoutMode)
+    {
+        if (this.getGlyphAtlas() == null || this.getModifierRetriever() == null)
+            return;
+
+        IconAtlasElement elem = this.glyphModifiers.get(modifierCode);
+        if (elem == null)
+        {
+            IconSource source = new IconSource(this.getModifierRetriever(), modifierCode, retrieverParams);
+            elem = new IconAtlasElement(this.getGlyphAtlas(), source);
+            this.glyphModifiers.put(modifierCode, elem);
+        }
+
+        if (elem.load(dc))
+        {
+            Rectangle rect = this.layoutRect(offset, hotspot, elem.getSize(), layoutMode);
+            this.glyphVertices = this.addRectVertices(this.glyphVertices, rect, elem.getTexCoords());
+        }
+    }
+
+    protected void layoutTextModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierText)
+    {
+        this.layoutTextModifier(dc, offset, hotspot, modifierText, null, null, null);
+    }
+
+    protected void layoutTextModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierText, Font font,
+        Color color, Object layoutMode)
+    {
+        if (font == null)
+        {
+            // Use either the currently specified text modifier font or compute a default if no font is specified.
+            font = this.getActiveAttributes().getTextModifierFont();
+            if (font == null)
+                font = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT;
+        }
+
+        if (color == null)
+        {
+            // Use either the currently specified text modifier material or the default if no material is specified.
+            Material material = this.getActiveAttributes().getTextModifierMaterial();
+            if (material == null)
+                material = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL;
+
+            // Use either the currently specified opacity or the default if no opacity is specified.
+            Double opacity = this.getActiveAttributes().getOpacity();
+            if (opacity == null)
+                opacity = BasicTacticalSymbolAttributes.DEFAULT_OPACITY;
+
+            int alpha = (int) (255 * opacity + 0.5);
+            Color diffuse = material.getDiffuse();
+            color = new Color(diffuse.getRed(), diffuse.getGreen(), diffuse.getBlue(), alpha);
+        }
+
+        TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
+        Dimension size = tr.getBounds(modifierText).getBounds().getSize();
+
+        Rectangle rect = this.layoutRect(offset, hotspot, size, layoutMode);
+        this.textModifiers.add(new TextModifier(tr, modifierText, rect.getLocation(), color));
+    }
+
+    @SuppressWarnings( {"UnusedParameters"})
+    protected void layoutLineModifier(DrawContext dc, Offset offset, List<? extends Point2D> points, Object layoutMode,
+        int layoutCount)
+    {
+        points = this.layoutLines(offset, points, layoutMode, layoutCount);
+        this.lineVertices = this.addLineVertices(this.lineVertices, points);
+    }
+
+    protected Rectangle layoutRect(Offset offset, Offset hotspot, Dimension size, Object layoutMode)
+    {
+        int x = 0;
+        int y = 0;
+
+        if (offset != null)
+        {
+            Rectangle rect;
+            if (LAYOUT_ABSOLUTE.equals(layoutMode))
+                rect = this.iconRect;
+            else if (LAYOUT_RELATIVE.equals(layoutMode))
+                rect = this.layoutRect;
+            else // LAYOUT_NONE
+                rect = this.iconRect;
+
+            Point2D p = offset.computeOffset(rect.getWidth(), rect.getHeight(), null, null);
+            x += rect.getX() + p.getX();
+            y += rect.getY() + p.getY();
+        }
+
+        if (hotspot != null)
+        {
+            Point2D p = hotspot.computeOffset(size.getWidth(), size.getHeight(), null, null);
+            x -= p.getX();
+            y -= p.getY();
+        }
+
+        Rectangle rect = new Rectangle(x, y, size.width, size.height);
+
+        if (this.screenRect != null)
+            this.screenRect.add(rect);
+        else
+            this.screenRect = new Rectangle(rect);
+
+        if (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode))
+        {
+            if (this.layoutRect != null)
+                this.layoutRect.add(rect);
+            else
+                this.layoutRect = new Rectangle(rect);
+        }
+
+        return rect;
+    }
+
+    protected List<? extends Point2D> layoutLines(Offset offset, List<? extends Point2D> points, Object layoutMode,
+        int layoutCount)
+    {
+        int x = 0;
+        int y = 0;
+
+        if (offset != null)
+        {
+            Rectangle rect;
+            if (LAYOUT_ABSOLUTE.equals(layoutMode))
+                rect = this.iconRect;
+            else if (LAYOUT_RELATIVE.equals(layoutMode))
+                rect = this.layoutRect;
+            else // LAYOUT_NONE
+                rect = this.iconRect;
+
+            Point2D p = offset.computeOffset(rect.getWidth(), rect.getHeight(), null, null);
+            x += rect.getX() + p.getX();
+            y += rect.getY() + p.getY();
+        }
+
+        for (int i = 0; i < points.size(); i++)
+        {
+            Point2D p = points.get(i);
+            p.setLocation(x + p.getX(), y + p.getY());
+
+            if (this.screenRect != null)
+                this.screenRect.add(p);
+            else
+                this.screenRect = new Rectangle((int) p.getX(), (int) p.getY(), 0, 0);
+
+            if (i < layoutCount && (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode)))
+            {
+                if (this.layoutRect != null)
+                    this.layoutRect.add(p);
+                else
+                    this.layoutRect = new Rectangle((int) p.getX(), (int) p.getY(), 0, 0);
+            }
+        }
+
+        return points;
+    }
+
+    protected void computeTransform(DrawContext dc)
+    {
+        if (this.getActiveAttributes().getScale() != null)
+        {
+            this.sx = this.getActiveAttributes().getScale();
+            this.sy = this.getActiveAttributes().getScale();
+        }
+        else
+        {
+            this.sx = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
+            this.sy = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
+        }
+
+        if (this.getOffset() != null && this.iconRect != null)
+        {
+            Point2D p = this.getOffset().computeOffset(this.iconRect.getWidth(), this.iconRect.getHeight(), null, null);
+            this.dx = -this.iconRect.getX() - p.getX();
+            this.dy = -this.iconRect.getY() - p.getY();
+        }
+        else
+        {
+            this.dx = 0;
+            this.dy = 0;
+        }
+    }
+
+    protected Rectangle computeScreenExtent()
+    {
+        if (this.screenRect == null)
+            return null;
+
+        double x = this.screenPoint.x + this.sx * (this.dx + this.screenRect.getX());
+        double y = this.screenPoint.y + this.sy * (this.dy + this.screenRect.getY());
+        double width = this.sx * this.screenRect.getWidth();
+        double height = this.sy * this.screenRect.getHeight();
+
+        return new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
+    }
+
     protected boolean intersectsFrustum(DrawContext dc)
     {
         View view = dc.getView();
@@ -874,13 +1136,13 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             return false;
         }
 
-        // TODO: screen bounds are one frame behind the layout
-        if (this.screenBounds != null)
+        Rectangle screenExtent = this.computeScreenExtent();
+        if (screenExtent != null)
         {
             if (dc.isPickingMode())
-                return dc.getPickFrustums().intersectsAny(this.screenBounds);
+                return dc.getPickFrustums().intersectsAny(screenExtent);
             else
-                return view.getViewport().intersects(this.screenBounds);
+                return view.getViewport().intersects(screenExtent);
         }
 
         return true;
@@ -949,11 +1211,13 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             | GL.GL_CURRENT_BIT // for current color
             | GL.GL_LINE_BIT; // for line smooth enable and line width
 
+        Rectangle viewport = dc.getView().getViewport();
+
         this.BEogsh.clear(); // Reset the stack handler's internal state.
         this.BEogsh.pushAttrib(gl, attrMask);
         // TODO: comment on why this works
         this.BEogsh.pushProjectionIdentity(gl);
-        gl.glOrtho(0d, dc.getDrawableWidth(), 0d, dc.getDrawableHeight(), 0d, -1d);
+        gl.glOrtho(0d, viewport.getWidth(), 0d, viewport.getHeight(), 0d, -1d);
         this.BEogsh.pushModelviewIdentity(gl);
 
         // Enable OpenGL vertex arrays for all symbols by default. All tactical symbol drawing code specifies its data
@@ -1036,19 +1300,23 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     {
         GL gl = dc.getGL();
 
-        // Compute the symbol frame and modifier layout. This step determines the symbol's frame size and modifier
-        // layout relative to that frame. Since the offset usually depends on the frame size and modifier layout, this
-        // must be done prior to computing the offset.
-        this.layout(dc);
-
-        // Compute the layout for the symbol's dynamic modifiers. This step must be performed every frame.
-        this.layoutDynamicModifiers(dc);
-
-        this.computeScreenRect(dc);
-
-        // Compute the symbol's offset using the symbol frame size and modifier information computed during layout. This
-        // step computes the symbol's dx and dy offsets, and therefore must be done prior to using dx and dy.
-        this.computeOffset(dc);
+        if (dc.isPickingMode())
+        {
+            Color pickColor = dc.getUniquePickColor();
+            pickCandidates.addPickableObject(this.createPickedObject(pickColor.getRGB()));
+            gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
+        }
+        else
+        {
+            // Set the current color to white with the symbol's current opacity. This applies the symbol's opacity to
+            // its icon texture and graphic modifier textures by multiplying texture fragment colors by the opacity. We
+            // pre-multiply the white RGB color components by the alpha since the texture's RGB color components have
+            // also been pre-multiplied by their color component.
+            float a = this.getActiveAttributes().getOpacity() != null
+                ? this.getActiveAttributes().getOpacity().floatValue()
+                : (float) BasicTacticalSymbolAttributes.DEFAULT_OPACITY;
+            gl.glColor4f(a, a, a, a);
+        }
 
         Double depthOffsetUnits = this.getDepthOffset();
         try
@@ -1058,35 +1326,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (depthOffsetUnits != null)
                 gl.glPolygonOffset(0f, depthOffsetUnits.floatValue());
 
-            if (dc.isPickingMode())
-            {
-                Color pickColor = dc.getUniquePickColor();
-                pickCandidates.addPickableObject(this.createPickedObject(pickColor.getRGB()));
-                gl.glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
-            }
-            else
-            {
-                // Set the current color to white with the symbol's current opacity. This applies the symbol's opacity
-                // to its icon texture and graphic modifier textures by multiplying texture fragment colors by the
-                // opacity. We premultiply the white RGB color components by the alpha since the texture's RGB color
-                // components have also been premultiplied by their color component.
-                float a = this.getActiveAttributes().getOpacity() != null
-                    ? this.getActiveAttributes().getOpacity().floatValue() : (float) DEFAULT_OPACITY;
-                gl.glColor4f(a, a, a, a);
-            }
-
-            // Apply the symbol's offset in screen coordinates. We translate the X and Y coordinates so that the
-            // symbol's hot spot (identified by its offset) is aligned with its screen point. We translate the Z
-            // coordinate so that the symbol's depth values are appropriately computed by OpenGL according to its
-            // distance from the eye. The orthographic projection matrix configured in beginRendering correctly maps
-            // the screen point's Z coordinate to its corresponding depth value.
-            Double scale = this.getActiveAttributes().getScale() != null ? this.getActiveAttributes().getScale()
-                : DEFAULT_SCALE;
-            gl.glLoadIdentity(); // Assumes that the current matrix mode is GL_MODELVIEW.
-            gl.glTranslated(this.screenPoint.x, this.screenPoint.y, this.screenPoint.z);
-            gl.glScaled(scale.floatValue(), scale.floatValue(), 1d);
-            gl.glTranslated(this.dx, this.dy, 0d);
-
+            this.prepareToDraw(dc);
             this.draw(dc);
         }
         finally
@@ -1098,94 +1338,18 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    protected void layout(DrawContext dc)
+    protected void prepareToDraw(DrawContext dc)
     {
-        if (this.mustDrawIcon(dc))
-            this.layoutIcon(dc);
-    }
-
-    protected void layoutDynamicModifiers(DrawContext dc)
-    {
-        // Intentionally left blank. Subclasses override this method to perform layout on dynamic modifiers, which must
-        // be updated every frame.
-    }
-
-    protected void layoutIcon(DrawContext dc)
-    {
-        if (this.iconTexture == null)
-            this.iconTexture = this.createIconTexture(); // Lazily create the symbol icon texture.
-
-        // We must know the symbol icon's width and height in order to determine its screen point coordinates and local
-        // frame rectangle. Bind the texture in order to making the width and height available by loading the texture.
-        if (this.iconTexture == null || !this.iconTexture.bind(dc))
-            return;
-
-        int w = this.iconTexture.getWidth(dc);
-        int h = this.iconTexture.getHeight(dc);
-
-        // Compute the symbol icon's frame rectangle in local coordinates. This is used by the modifier layout to
-        // determine where to place modifier graphics and modifier text.
-        Rectangle rect = this.computeIconFrameRect(w, h);
-        if (rect != null)
-            this.iconTexture.frameRect = rect;
-
-        // Compute the symbol icon's vertex points in local coordinates. This buffer is used during icon drawing to
-        // define the icon's location in screen coordinates.
-        if (this.iconVertices != null)
-            this.iconVertices.clear();
-        this.iconVertices = this.addRectVertices(this.iconVertices, 0, 0, w, h, this.iconTexture.getTexCoords());
-        this.iconVertices.flip(); // Set the limit to the current position.
-    }
-
-    protected IconTexture createIconTexture()
-    {
-        if (this.getIconRetriever() != null)
-        {
-            IconSource source = new IconSource(this.getIdentifier(), this.getIconRetriever(), this.modifiers);
-            return new IconTexture(source);
-        }
-
-        return null;
-    }
-
-    protected Rectangle computeIconFrameRect(int imageWidth, int imageHeight)
-    {
-        return new Rectangle(0, 0, imageWidth, imageHeight);
-    }
-
-    protected void computeScreenRect(DrawContext dc)
-    {
-        this.screenRect = null;
-
-        if (this.mustDrawIcon(dc) && this.iconTexture != null && this.iconTexture.frameRect != null)
-        {
-            this.screenRect = new Rectangle(this.iconTexture.frameRect);
-        }
-
-        if (this.mustDrawGraphicModifiers(dc) && this.modifierVertices != null)
-        {
-            this.addVerticesToScreenRect(this.modifierVertices, 4);
-        }
-    }
-
-    protected void computeOffset(DrawContext dc)
-    {
-        if (this.iconTexture != null && this.iconTexture.frameRect != null && this.screenRect != null
-            && this.getAltitudeMode() == WorldWind.CLAMP_TO_GROUND)
-        {
-            this.dy = -this.screenRect.getMinY();
-            this.dx = -this.iconTexture.frameRect.getCenterX();
-        }
-        else if (this.iconTexture != null && this.iconTexture.frameRect != null)
-        {
-            this.dy = -this.iconTexture.frameRect.getCenterY();
-            this.dx = -this.iconTexture.frameRect.getCenterX();
-        }
-        else
-        {
-            this.dx = 0;
-            this.dy = 0;
-        }
+        // Apply the symbol's offset in screen coordinates. We translate the X and Y coordinates so that the
+        // symbol's hot spot (identified by its offset) is aligned with its screen point. We translate the Z
+        // coordinate so that the symbol's depth values are appropriately computed by OpenGL according to its
+        // distance from the eye. The orthographic projection matrix configured in beginRendering correctly maps
+        // the screen point's Z coordinate to its corresponding depth value.
+        GL gl = dc.getGL();
+        gl.glLoadIdentity(); // Assumes that the current matrix mode is GL_MODELVIEW.
+        gl.glTranslated(this.screenPoint.x, this.screenPoint.y, this.screenPoint.z);
+        gl.glScaled(this.sx, this.sy, 1d);
+        gl.glTranslated(this.dx, this.dy, 0d);
     }
 
     protected void draw(DrawContext dc)
@@ -1195,6 +1359,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (this.mustDrawGraphicModifiers(dc))
             this.drawGraphicModifiers(dc);
+
+        if (this.mustDrawTextModifiers(dc) && !dc.isPickingMode())
+            this.drawTextModifiers(dc);
     }
 
     @SuppressWarnings( {"UnusedParameters"})
@@ -1203,35 +1370,78 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         return true;
     }
 
-    protected void drawIcon(DrawContext dc)
-    {
-        if (this.iconVertices != null && this.iconVertices.remaining() >= 16
-            && this.iconTexture != null && this.iconTexture.bind(dc))
-        {
-            this.drawRects(dc, this.iconVertices);
-        }
-    }
-
     @SuppressWarnings( {"UnusedParameters"})
     protected boolean mustDrawGraphicModifiers(DrawContext dc)
     {
         return this.isShowGraphicModifiers();
     }
 
+    @SuppressWarnings( {"UnusedParameters"})
+    protected boolean mustDrawTextModifiers(DrawContext dc)
+    {
+        return this.isShowTextModifiers();
+    }
+
+    protected void drawIcon(DrawContext dc)
+    {
+        if (this.iconVertices != null && this.iconVertices.remaining() >= 16)
+        {
+            if (this.iconTexture != null && this.iconTexture.bind(dc))
+            {
+                this.drawRects(dc, this.iconVertices);
+            }
+        }
+    }
+
     protected void drawGraphicModifiers(DrawContext dc)
     {
-        if (this.modifierVertices != null && this.modifierVertices.remaining() >= 16
-            && this.modifierAtlas != null && this.modifierAtlas.bind(dc))
+        if (this.glyphVertices != null && this.glyphVertices.remaining() >= 16)
         {
-            this.drawRects(dc, this.modifierVertices);
+            if (this.glyphAtlas != null && this.glyphAtlas.bind(dc))
+            {
+                this.drawRects(dc, this.glyphVertices);
+            }
+        }
+
+        if (this.lineVertices != null && this.lineVertices.remaining() >= 4)
+        {
+            this.drawLines(dc, this.lineVertices);
+        }
+    }
+
+    @SuppressWarnings( {"UnusedParameters"})
+    protected void drawTextModifiers(DrawContext dc)
+    {
+        if (this.textModifiers.isEmpty())
+            return;
+
+        TextRenderer tr = null;
+        try
+        {
+            for (TextModifier modifier : this.textModifiers)
+            {
+                if (tr == null || tr != modifier.getTextRenderer())
+                {
+                    if (tr != null)
+                        tr.end3DRendering();
+                    tr = modifier.getTextRenderer();
+                    tr.begin3DRendering();
+                }
+
+                Point p = modifier.getPoint();
+                tr.setColor(modifier.getColor());
+                tr.draw(modifier.getText(), p.x, p.y);
+            }
+        }
+        finally
+        {
+            if (tr != null)
+                tr.end3DRendering();
         }
     }
 
     protected void drawRects(DrawContext dc, FloatBuffer verts)
     {
-        if (verts.remaining() < 16)
-            return;
-
         GL gl = dc.getGL();
 
         gl.glVertexPointer(2, GL.GL_FLOAT, 16, verts);
@@ -1241,43 +1451,95 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         gl.glDrawArrays(GL.GL_QUADS, 0, verts.remaining() / 4);
     }
 
-    protected FloatBuffer addRectVertices(FloatBuffer verts, float x, float y, float w, float h,
-        TextureCoords texCoords)
+    protected void drawLines(DrawContext dc, FloatBuffer verts)
     {
-        if (verts == null)
-            verts = BufferUtil.newFloatBuffer(16);
-        else if (verts.remaining() < 16)
+        // Use either the currently specified opacity or the default if no opacity is specified.
+        Double opacity = this.getActiveAttributes().getOpacity() != null ? this.getActiveAttributes().getOpacity()
+            : BasicTacticalSymbolAttributes.DEFAULT_OPACITY;
+
+        GL gl = dc.getGL();
+
+        try
         {
-            FloatBuffer newBuffer = BufferUtil.newFloatBuffer(verts.capacity() + 16);
+            // Disable the depth test and texturing. We draw the direction of movement as black lines in screen space.
+            // Direction of movement lines for ground objects therefore likely penetrate the terrain, but must appear
+            // on top to be visible.
+            gl.glDisable(GL.GL_DEPTH_TEST);
+            gl.glDisable(GL.GL_TEXTURE_2D);
+
+            // Set the current color to black with the current opacity value as the alpha component. Blending is set to
+            // pre-multiplied alpha mode, but we can just specify 0 for the RGB components because multiplying them by
+            // the alpha component has no effect.
+            if (!dc.isPickingMode())
+                gl.glColor4f(0f, 0f, 0f, opacity.floatValue());
+
+            gl.glVertexPointer(2, GL.GL_FLOAT, 0, verts);
+            gl.glDrawArrays(GL.GL_LINES, 0, verts.remaining() / 2);
+        }
+        finally
+        {
+            // Restore the depth test enable state and the texture 2D enable state to the values specified in
+            // beginDrawing.
+            gl.glEnable(GL.GL_DEPTH_TEST);
+            gl.glEnable(GL.GL_TEXTURE_2D);
+
+            // Restore the current color to that specified in doDrawOrderedRenderable.
+            if (!dc.isPickingMode())
+                gl.glColor4f(opacity.floatValue(), opacity.floatValue(), opacity.floatValue(), opacity.floatValue());
+        }
+    }
+
+    protected FloatBuffer addRectVertices(FloatBuffer verts, Rectangle rect, TextureCoords texCoords)
+    {
+        int numCoords = 16;
+        if (verts == null)
+            verts = BufferUtil.newFloatBuffer(numCoords);
+        else if (verts.remaining() < numCoords)
+        {
+            FloatBuffer newBuffer = BufferUtil.newFloatBuffer(verts.capacity() + numCoords);
             verts.flip(); // Flip the vertex buffer so the elements between 0 and its current position are copied.
-            newBuffer.put(verts); // Copy the current data into the new buffer, and advances new buffer's position.
+            newBuffer.put(verts); // Copy the current data into the new buffer, and advance the new buffer's position.
             verts = newBuffer;
         }
 
-        verts.put(x).put(y);
+        verts.put((float) rect.getMinX()).put((float) rect.getMinY());
         verts.put(texCoords.left()).put(texCoords.bottom());
-        verts.put(x + w).put(y);
+        verts.put((float) rect.getMaxX()).put((float) rect.getMinY());
         verts.put(texCoords.right()).put(texCoords.bottom());
-        verts.put(x + w).put(y + h);
+        verts.put((float) rect.getMaxX()).put((float) rect.getMaxY());
         verts.put(texCoords.right()).put(texCoords.top());
-        verts.put(x).put(y + h);
+        verts.put((float) rect.getMinX()).put((float) rect.getMaxY());
         verts.put(texCoords.left()).put(texCoords.top());
 
         return verts;
     }
 
-    protected void addVerticesToScreenRect(FloatBuffer verts, int stride)
+    protected FloatBuffer addLineVertices(FloatBuffer verts, List<? extends Point2D> points)
     {
-        for (int i = verts.position(); i < verts.remaining(); i += stride)
+        int numCoords = 4 * (points.size() - 1);
+        if (verts == null)
+            verts = BufferUtil.newFloatBuffer(numCoords);
+        else if (verts.remaining() < numCoords)
         {
-            int x = (int) verts.get(i);
-            int y = (int) verts.get(i + 1);
-
-            if (this.screenRect == null)
-                this.screenRect = new Rectangle(x, y, 0, 0);
-            else
-                this.screenRect.add(x, y);
+            FloatBuffer newBuffer = BufferUtil.newFloatBuffer(verts.capacity() + numCoords);
+            verts.flip(); // Flip the vertex buffer so the elements between 0 and its current position are copied.
+            newBuffer.put(verts); // Copy the current data into the new buffer, and advance the new buffer's position.
+            verts = newBuffer;
         }
+
+        Point2D lastPoint = null;
+        for (Point2D p : points)
+        {
+            if (lastPoint != null)
+            {
+                verts.put((float) lastPoint.getX()).put((float) lastPoint.getY());
+                verts.put((float) p.getX()).put((float) p.getY());
+            }
+
+            lastPoint = p;
+        }
+
+        return verts;
     }
 
     protected PickedObject createPickedObject(int colorCode)
