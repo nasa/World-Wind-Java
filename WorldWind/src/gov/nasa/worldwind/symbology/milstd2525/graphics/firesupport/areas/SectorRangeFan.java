@@ -12,21 +12,21 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.util.*;
 
+import java.text.*;
 import java.util.*;
 
 /**
  * Implementation of the Sector Weapon/Sensor Range Fans graphic (2.X.4.3.4.2). The range fans are defined by a center
- * position, list of radii, and list of left and right azimuths. If azimuths are not specified, the fans will be drawn
- * as full circles.
+ * position, list of radii, and list of left and right azimuths. If no azimuths are specified, the fans will be drawn as
+ * full circles.
  *
  * @author pabercrombie
  * @version $Id$
  */
 // TODO draw symbol at the center or the fan.
-// TODO implement text for this graphic
 public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRenderable
 {
     /** Function ID for the Sector Weapon/Sensor Range Fans graphic. */
@@ -41,6 +41,14 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     public final static double DEFAULT_ARROWHEAD_LENGTH = 0.05;
     /** Default angle of the arrowhead. */
     public final static Angle DEFAULT_ARROWHEAD_ANGLE = Angle.fromDegrees(60.0);
+    /**
+     * Azimuth labels are placed to the side of the line that they label. This value specifies a percentage that is
+     * multiplied by the maximum radius in the range fan to compute a distance for this offset.
+     */
+    protected final static double AZIMUTH_LABEL_OFFSET = 0.03;
+
+    /** Default number format used to create azimuth and radius labels. */
+    public final static NumberFormat DEFAULT_NUMBER_FORMAT = new DecimalFormat("#");
 
     /** Length of the arrowhead from base to tip, as a fraction of the Center Of Sector line length. */
     protected Angle arrowAngle = DEFAULT_ARROWHEAD_ANGLE;
@@ -50,6 +58,11 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     protected double centerOfSectorLength = DEFAULT_CENTER_OF_SECTOR_LENGTH;
     /** Number of intervals used to draw each arcs. */
     protected int intervals = DEFAULT_NUM_INTERVALS;
+
+    /** Number format used to create azimuth labels. */
+    protected NumberFormat azimuthFormat = DEFAULT_NUMBER_FORMAT;
+    /** Number format used to create radius labels. */
+    protected NumberFormat radiusFormat = DEFAULT_NUMBER_FORMAT;
 
     /** Position of the center of the range fan. */
     protected Position position;
@@ -62,6 +75,13 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     protected Iterable<Double> radii;
     /** Azimuths of the range fans. The azimuths are specified in pairs, first the left azimuth, then the right azimuth. */
     protected Iterable<? extends Angle> azimuths;
+    /** Altitudes of the range fans. */
+    protected Iterable<String> altitudes;
+
+    /** Azimuth of the Center Of Sector arrow. */
+    protected Angle centerAzimuth;
+    /** Maximum radius in the range fan. */
+    protected double maxRadius;
 
     /** Create the range fan. */
     public SectorRangeFan()
@@ -193,6 +213,60 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     }
 
     /**
+     * Indicates the number format applied to azimuth values to create the azimuth labels.
+     *
+     * @return NumberFormat used to create azimuth labels.
+     */
+    public NumberFormat getAzimuthFormat()
+    {
+        return this.azimuthFormat;
+    }
+
+    /**
+     * Specifies the number format applied to azimuth values to create the azimuth labels.
+     *
+     * @param azimuthFormat NumberFormat to create azimuth labels.
+     */
+    public void setAzimuthFormat(NumberFormat azimuthFormat)
+    {
+        if (azimuthFormat == null)
+        {
+            String message = Logging.getMessage("nullValue.Format");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.azimuthFormat = azimuthFormat;
+    }
+
+    /**
+     * Indicates the number format applied to radius values to create the radius labels.
+     *
+     * @return NumberFormat used to create radius labels.
+     */
+    public NumberFormat getRadiusFormat()
+    {
+        return this.radiusFormat;
+    }
+
+    /**
+     * Specifies the number format applied to radius values to create the radius labels.
+     *
+     * @param radiusFormat NumberFormat to create radius labels.
+     */
+    public void setRadiusFormat(NumberFormat radiusFormat)
+    {
+        if (radiusFormat == null)
+        {
+            String message = Logging.getMessage("nullValue.Format");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.radiusFormat = radiusFormat;
+    }
+
+    /**
      * Indicates the center position of the range ran.
      *
      * @return The range fan center position.
@@ -248,7 +322,6 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         {
             if (value instanceof Iterable)
             {
-                //noinspection unchecked
                 this.setRadii((Iterable) value);
             }
             else if (value instanceof Double)
@@ -260,8 +333,22 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         {
             if (value instanceof Iterable)
             {
-                //noinspection unchecked
                 this.setAzimuths((Iterable) value);
+            }
+            else if (value instanceof Angle)
+            {
+                this.setAzimuths(Arrays.asList((Angle) value));
+            }
+        }
+        else if (SymbologyConstants.ALTITUDE_DEPTH.equals(modifier))
+        {
+            if (value instanceof Iterable)
+            {
+                this.setAltitudes((Iterable) value);
+            }
+            else if (value != null)
+            {
+                this.setAltitudes(Arrays.asList(value.toString()));
             }
         }
         else
@@ -278,6 +365,8 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
             return this.getRadii();
         else if (SymbologyConstants.AZIMUTH.equals(modifier))
             return this.getAzimuths();
+        else if (SymbologyConstants.ALTITUDE_DEPTH.equals(modifier))
+            return this.getAltitudes();
         else
             return super.getModifier(modifier);
     }
@@ -285,11 +374,14 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     /**
      * Indicates the radii of the rings that make up the range fan.
      *
-     * @return List of radii, in meters. If there are no rings this returns an empty list.
+     * @return List of radii, in meters. This method never returns null. If there are no rings this returns an empty
+     *         list.
      */
     public Iterable<Double> getRadii()
     {
-        return this.radii;
+        if (this.radii != null)
+            return this.radii;
+        return Collections.emptyList();
     }
 
     /**
@@ -308,11 +400,14 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
      * Indicates the left and right azimuths of the fans in this graphic. The list contains pairs of azimuths, first
      * left and then right.
      *
-     * @return Left and right azimuths, measured clockwise from North.
+     * @return Left and right azimuths, measured clockwise from North. This method never returns null. If there are no
+     *         azimuths, returns an empty list.
      */
     public Iterable<? extends Angle> getAzimuths()
     {
-        return this.azimuths;
+        if (this.azimuths != null)
+            return this.azimuths;
+        return Collections.emptyList();
     }
 
     /**
@@ -333,6 +428,38 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         this.azimuths = azimuths;
         this.onModifierChanged();
         this.reset();
+    }
+
+    /**
+     * Indicates the altitudes of the rings that make up the range fan. Note that the range fan is always drawn on the
+     * surface. The altitude strings are displayed as text.
+     *
+     * @return List of altitude strings. This method never returns null. If there are no altitudes, returns an empty
+     *         list.
+     */
+    public Iterable<String> getAltitudes()
+    {
+        if (this.altitudes != null)
+            return this.altitudes;
+        return Collections.emptyList();
+    }
+
+    /**
+     * Specifies the altitudes of the rings that make up the range fan. Note that the range fan is always drawn on the
+     * surface. The altitude strings are displayed as text.
+     *
+     * @param altitudes List of altitude strings.
+     */
+    public void setAltitudes(Iterable<String> altitudes)
+    {
+        if (altitudes == null)
+        {
+            String message = Logging.getMessage("nullValue.ListIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.altitudes = altitudes;
     }
 
     /** {@inheritDoc} */
@@ -399,43 +526,30 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
      */
     protected void createShapes(DrawContext dc)
     {
-        Iterable<? extends Double> radii = this.getRadii();
-        if (radii == null)
-            return;
-
-        // If no azimuths are provided we will draw full circles.
-        Iterable<? extends Angle> azimuths = this.getAzimuths();
-        if (azimuths == null)
-        {
-            azimuths = Collections.emptyList();
-        }
-
         this.paths = new ArrayList<Path>();
 
-        Iterator<? extends Double> radiusIterator = radii.iterator();
-        Iterator<? extends Angle> azimuthIterator = azimuths.iterator();
+        Iterator<Double> radii = this.getRadii().iterator();
+        Iterator<? extends Angle> azimuths = this.getAzimuths().iterator();
 
-        Angle leftAzimuth;
-        Angle rightAzimuth;
-
-        Angle prevLeftAzimuth = Angle.NEG360;
-        Angle prevRightAzimuth = Angle.POS360;
+        Angle prevLeftAzimuth = Angle.NEG180;
+        Angle prevRightAzimuth = Angle.POS180;
         double prevRadius = 0;
 
-        List<Position> positions;
-
         // Create range fan arcs.
-        while (radiusIterator.hasNext())
+        while (radii.hasNext())
         {
-            double radius = radiusIterator.next();
+            double radius = radii.next();
 
-            leftAzimuth = azimuthIterator.hasNext() ? azimuthIterator.next() : Angle.ZERO;
-            rightAzimuth = azimuthIterator.hasNext() ? azimuthIterator.next() : Angle.POS360;
+            if (radius > this.maxRadius)
+                this.maxRadius = radius;
 
-            if (leftAzimuth.compareTo(rightAzimuth) > 0)
-                leftAzimuth = leftAzimuth.subtract(Angle.POS360);
+            Angle leftAzimuth = azimuths.hasNext() ? azimuths.next() : prevLeftAzimuth;
+            Angle rightAzimuth = azimuths.hasNext() ? azimuths.next() : prevRightAzimuth;
 
-            positions = new ArrayList<Position>();
+            leftAzimuth = this.normalizeAzimuth(leftAzimuth);
+            rightAzimuth = this.normalizeAzimuth(rightAzimuth);
+
+            List<Position> positions = new ArrayList<Position>();
 
             // Create an arc to complete the left side of the previous fan, if this fan is larger. If this fan is smaller
             // this will add a single point to the position list at the range of the previous radius.
@@ -454,29 +568,36 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
             prevRightAzimuth = rightAzimuth;
         }
 
-        // Create the Center Of Sector Arrow.
-        this.createCenterOfSectorArrow(dc, prevLeftAzimuth, prevRightAzimuth, prevRadius);
+        // Create the Center of Sector arrow if the fan is less than a full circle. If the fan is a full circle then it
+        // doesn't make sense to draw an arbitrary arrow.
+        boolean fullCircle = Math.abs(prevLeftAzimuth.subtract(prevRightAzimuth).degrees) >= 360;
+        if (!fullCircle)
+        {
+            this.centerAzimuth = this.computeCenterSectorAngle(prevLeftAzimuth, prevRightAzimuth);
+            this.createCenterOfSectorArrow(dc, centerAzimuth, prevRadius);
+        }
+        else
+        {
+            this.centerAzimuth = Angle.POS180; // Due South
+        }
     }
 
     /**
      * Create shapes to draw the Center Of Sector arrow. This arrow bisects the final range fan.
      *
-     * @param dc                Current draw context.
-     * @param finalLeftAzimuth  Left azimuth of the final range fan.
-     * @param finalRightAzimuth Right azimuth of the final range fan.
-     * @param finalRadius       Radius, in meters, of the final range fan.
+     * @param dc            Current draw context.
+     * @param centerAzimuth Azimuth of the Center Of Sector arrow.
+     * @param finalRadius   Radius, in meters, of the final range fan.
      */
-    protected void createCenterOfSectorArrow(DrawContext dc, Angle finalLeftAzimuth, Angle finalRightAzimuth,
-        double finalRadius)
+    protected void createCenterOfSectorArrow(DrawContext dc, Angle centerAzimuth, double finalRadius)
     {
-        // Create the Center of Sector arrow.
-        Angle centerAngle = this.computeCenterSectorAngle(finalLeftAzimuth, finalRightAzimuth);
         Position center = this.getPosition();
 
         // Create the line par of the arrow.
         List<Position> positions = new ArrayList<Position>();
         positions.add(center);
-        this.createArc(dc, finalRadius * this.getCenterOfSectorLength(), centerAngle, centerAngle, positions);
+        this.createArc(dc, finalRadius * this.getCenterOfSectorLength(), centerAzimuth, centerAzimuth,
+            positions);
 
         this.paths.add(this.createPath(positions));
 
@@ -593,6 +714,222 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         Vec4 vertex2 = ptB.add3(parallel).subtract3(perpendicular);
 
         return TacticalGraphicUtil.asPositionList(globe, vertex1, vertex2, ptB);
+    }
+
+    /** Create labels for the start and end of the path. */
+    @Override
+    protected void createLabels()
+    {
+        Iterable<Double> radii = this.getRadii();
+        if (radii == null)
+            return;
+
+        Iterator<String> altitudes = this.getAltitudes().iterator();
+        Iterator<? extends Angle> azimuths = this.getAzimuths().iterator();
+
+        Angle leftAzimuth = null;
+        Angle rightAzimuth = null;
+
+        for (Double radius : radii)
+        {
+            if (azimuths.hasNext())
+                leftAzimuth = azimuths.next();
+            if (azimuths.hasNext())
+                rightAzimuth = azimuths.next();
+
+            String alt = null;
+            if (altitudes.hasNext())
+                alt = altitudes.next();
+
+            this.addLabel(this.createRangeLabelString(radius, alt));
+
+            if (leftAzimuth != null)
+                this.addLabel(this.createAzimuthLabelString(leftAzimuth));
+
+            if (rightAzimuth != null)
+                this.addLabel(this.createAzimuthLabelString(rightAzimuth));
+        }
+    }
+
+    /** Create azimuth labels. */
+    protected void createAzimuthLabels()
+    {
+        Iterable<? extends Angle> azimuths = this.getAzimuths();
+        if (azimuths == null)
+            return;
+
+        for (Angle azimuth : azimuths)
+        {
+            this.addLabel(this.createAzimuthLabelString(azimuth));
+        }
+    }
+
+    /**
+     * Create text for a range label.
+     *
+     * @param radius   Range of the ring, in meters.
+     * @param altitude Altitude string.
+     *
+     * @return Range label text for this ring.
+     */
+    protected String createRangeLabelString(double radius, String altitude)
+    {
+        NumberFormat df = this.getRadiusFormat();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("RG ").append(df.format(radius));
+
+        if (!WWUtil.isEmpty(altitude))
+        {
+            sb.append("\nALT ").append(altitude);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Create text for an azimuth label.
+     *
+     * @param azimuth Azimuth, measured clockwise from North.
+     *
+     * @return Azimuth label text.
+     */
+    protected String createAzimuthLabelString(Angle azimuth)
+    {
+        NumberFormat df = this.getAzimuthFormat();
+        return df.format(azimuth.degrees);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void determineLabelPositions(DrawContext dc)
+    {
+        if (this.labels == null)
+            return;
+
+        Position center = this.getPosition();
+
+        Iterator<Label> labelIterator = this.labels.iterator();
+        Iterator<Double> radii = this.getRadii().iterator();
+        Iterator<? extends Angle> azimuths = this.getAzimuths().iterator();
+
+        Angle leftAzimuth = null;
+        Angle rightAzimuth = null;
+
+        double prevRadius = 0;
+        double globeRadius = dc.getGlobe().getRadiusAt(center);
+
+        while (radii.hasNext() && labelIterator.hasNext())
+        {
+            if (azimuths.hasNext())
+                leftAzimuth = azimuths.next();
+            if (azimuths.hasNext())
+                rightAzimuth = azimuths.next();
+
+            leftAzimuth = this.normalizeAzimuth(leftAzimuth);
+            rightAzimuth = this.normalizeAzimuth(rightAzimuth);
+
+            // The labels come in sets of three: radius, left azimuth, right azimuth
+            Label rangeLabel = labelIterator.next();
+
+            Label leftLabel = null; // Left azimuth label
+            Label rightLabel = null; // Right azimuth label
+
+            if (leftAzimuth != null && labelIterator.hasNext())
+                leftLabel = labelIterator.next();
+            if (rightAzimuth != null && labelIterator.hasNext())
+                rightLabel = labelIterator.next();
+
+            double radius = radii.next();
+            double avgRadius = (radius + prevRadius) / 2.0;
+            double radiusRadians = avgRadius / globeRadius;
+
+            // Find the range label position
+            Position position = this.determineRangeLabelPosition(center, this.centerAzimuth, leftAzimuth, rightAzimuth,
+                radiusRadians);
+            rangeLabel.setPosition(position);
+
+            // Compute an angular offset that will put the label a little bit to the side of range fan line.
+            double offset = this.computeAzimuthLabelOffset(avgRadius, this.maxRadius);
+
+            // Find left azimuth label position
+            if (leftAzimuth != null && leftLabel != null)
+            {
+                LatLon ll = LatLon.greatCircleEndPosition(center, leftAzimuth.radians - offset, radiusRadians);
+                leftLabel.setPosition(new Position(ll, 0));
+            }
+
+            // Find right azimuth label position
+            if (rightAzimuth != null && rightLabel != null)
+            {
+                LatLon ll = LatLon.greatCircleEndPosition(center, rightAzimuth.radians + offset, radiusRadians);
+                rightLabel.setPosition(new Position(ll, 0));
+            }
+
+            prevRadius = radius;
+        }
+    }
+
+    /**
+     * Compute an angular offset to apply to a azimuth label. This angle will be added to the azimuth of the label's
+     * azimuth in order to place the label a little bit to the side of the line that it applies to.
+     *
+     * @param radius    Radius at which the label will be placed.
+     * @param maxRadius Maximum radius in the range fan.
+     *
+     * @return Angle, in radians, to add to the range fan azimuth in order to determine the label position.
+     */
+    protected double computeAzimuthLabelOffset(double radius, double maxRadius)
+    {
+        return Math.asin(AZIMUTH_LABEL_OFFSET * maxRadius / radius);
+    }
+
+    /**
+     * Determine the position of a range label for a ring in the range fan. The method finds a point to either the left
+     * or right of the center line, depending on which has more space for the label.
+     *
+     * @param center        Center of the range fan.
+     * @param centerAzimuth Azimuth of the Center Of Sector arrow.
+     * @param leftAzimuth   Left azimuth of this ring.
+     * @param rightAzimuth  Right azimuth of this ring.
+     * @param radiusRadians Radius, in radians, at which to place the label.
+     *
+     * @return Position for the range label on this ring.
+     */
+    protected Position determineRangeLabelPosition(Position center, Angle centerAzimuth, Angle leftAzimuth,
+        Angle rightAzimuth, double radiusRadians)
+    {
+        // If either left or right azimuth is not specified, use the center instead.
+        leftAzimuth = (leftAzimuth != null) ? leftAzimuth : centerAzimuth;
+        rightAzimuth = (rightAzimuth != null) ? rightAzimuth : centerAzimuth;
+
+        // Determine the angular distance between the Center Of Sector line and the left and right sides of the fan.
+        double deltaLeft = Math.abs(centerAzimuth.subtract(leftAzimuth).degrees);
+        double deltaRight = Math.abs(centerAzimuth.subtract(rightAzimuth).degrees);
+
+        // Place the range label in the larger wedge.
+        Angle labelAzimuth = (deltaLeft > deltaRight) ? leftAzimuth : rightAzimuth;
+
+        // Place the label midway between the Center Of Sector arrow and the side of the fan.
+        labelAzimuth = labelAzimuth.add(centerAzimuth).divide(2.0);
+
+        LatLon ll = LatLon.greatCircleEndPosition(center, labelAzimuth.radians, radiusRadians);
+        return new Position(ll, 0);
+    }
+
+    /**
+     * Normalize an azimuth angle to the range [-180:180] degrees.
+     *
+     * @param azimuth Azimuth to normalize.
+     *
+     * @return Normalized azimuth. Returns null if {@code azimuth} is null.
+     */
+    protected Angle normalizeAzimuth(Angle azimuth)
+    {
+        // The azimuth is not actually a longitude, but the normalization formula is the same as for longitude.
+        if (azimuth != null)
+            return Angle.normalizedLongitude(azimuth);
+        return null;
     }
 
     /** {@inheritDoc} Overridden to turn on shape interiors. */

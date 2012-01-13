@@ -387,15 +387,16 @@ public class TacticalGraphics extends ApplicationTemplate
             //////////////////////////////////////////////////
 
             List<Angle> azimuths = Arrays.asList(
-                Angle.fromDegrees(290), Angle.fromDegrees(30),
-                Angle.fromDegrees(290), Angle.fromDegrees(30),
-                Angle.fromDegrees(315), Angle.fromDegrees(30),
+                Angle.fromDegrees(290), Angle.fromDegrees(30), // Range 1, left azimuth, right azimuth
+                Angle.fromDegrees(290), Angle.fromDegrees(30), // Range 2, left azimuth, right azimuth
+                Angle.fromDegrees(315), Angle.fromDegrees(30), // Range 3, left azimuth, right azimuth
                 Angle.fromDegrees(315), Angle.fromDegrees(35));
 
             position = (Position.fromDegrees(34.5798, -116.6591, 0));
             graphic = factory.createGraphic("GFFPAXS-------X", Arrays.asList(position), null);
             graphic.setModifier(SymbologyConstants.DISTANCE, Arrays.asList(4000.0, 6000.0, 11000.0, 15000.0));
             graphic.setModifier(SymbologyConstants.AZIMUTH, azimuths);
+            graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL", "GL"));
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.2)");
             layer.addRenderable(graphic);
 
