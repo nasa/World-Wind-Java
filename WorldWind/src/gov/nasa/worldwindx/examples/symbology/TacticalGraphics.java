@@ -38,6 +38,9 @@ public class TacticalGraphics extends ApplicationTemplate
         {
             super(true, true, false);
 
+            RenderableLayer pointLayer = new RenderableLayer();
+            pointLayer.setName("Tactical Graphics (Points)");
+
             RenderableLayer lineLayer = new RenderableLayer();
             lineLayer.setName("Tactical Graphics (Lines)");
 
@@ -45,9 +48,11 @@ public class TacticalGraphics extends ApplicationTemplate
             areaLayer.setName("Tactical Graphics (Areas)");
 
             // Create tactical symbols and graphics and add them to the layer
+            this.createPointGraphics(pointLayer);
             this.createLineGraphics(lineLayer);
             this.createAreaGraphics(areaLayer);
 
+            insertBeforePlacenames(getWwd(), pointLayer);
             insertBeforePlacenames(getWwd(), lineLayer);
             insertBeforePlacenames(getWwd(), areaLayer);
 
@@ -62,6 +67,28 @@ public class TacticalGraphics extends ApplicationTemplate
             this.setPreferredSize(size);
             this.pack();
             WWUtil.alignComponent(null, this, AVKey.CENTER);
+        }
+
+        protected void createPointGraphics(RenderableLayer layer)
+        {
+            TacticalGraphicFactory factory = new MilStd2525GraphicFactory();
+            TacticalGraphic graphic;
+
+            /////////////////////////////////////////////
+            // Underwater Datum (2.X.2.1.1.1.1.1)
+            /////////////////////////////////////////////
+
+            graphic = factory.createPoint("GFGPGPUUD-----X", Position.fromDegrees(35.2144, -117.8824, 0), null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Underwater Datum (2.X.2.1.1.1.1.1)");
+            layer.addRenderable(graphic);
+
+            /////////////////////////////////////////////
+            // Search Center (2.X.2.1.1.1.3.3)
+            /////////////////////////////////////////////
+
+            graphic = factory.createPoint("GFGPGPUSC-----X", Position.fromDegrees(35.2144, -117.9824, 0), null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Search Center (2.X.2.1.1.1.3.3)");
+            layer.addRenderable(graphic);
         }
 
         protected void createLineGraphics(RenderableLayer layer)

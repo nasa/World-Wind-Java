@@ -24,6 +24,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.lines.Linear
 import gov.nasa.worldwind.symbology.milstd2525.graphics.mobility.MinimumSafeDistanceZones;
 import gov.nasa.worldwind.util.Logging;
 
+import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -183,6 +184,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(AttackByFirePosition.class, AttackByFirePosition.FUNCTION_ID);
         this.mapClass(SupportByFirePosition.class, SupportByFirePosition.FUNCTION_ID);
         this.mapClass(Ambush.class, Ambush.FUNCTION_ID);
+
+        this.mapClass(MilStd2525PointGraphic.class, MilStd2525PointGraphic.POINT_GRAPHIC_FUNCTION_IDS);
     }
 
     /**
@@ -204,6 +207,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      *
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
+    @SuppressWarnings( {"unchecked"})
     public MilStd2525TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions,
         AVList modifiers)
     {
@@ -226,7 +230,23 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         MilStd2525TacticalGraphic graphic;
         try
         {
-            graphic = (MilStd2525TacticalGraphic) clazz.newInstance();
+            try
+            {
+                Constructor ct = clazz.getConstructor(String.class);
+                graphic = (MilStd2525TacticalGraphic) ct.newInstance(sidc);
+            }
+            catch (NoSuchMethodException e)
+            {
+                // TODO: all graphic classes should support the String constructor. Remove this code when they do.
+                graphic = (MilStd2525TacticalGraphic) clazz.newInstance();
+
+                graphic.setModifier(SymbologyConstants.STANDARD_IDENTITY, symbolCode.getStandardIdentity());
+                graphic.setModifier(SymbologyConstants.STATUS, symbolCode.getStatus());
+                graphic.setModifier(SymbologyConstants.FUNCTION_ID, symbolCode.getFunctionId());
+                graphic.setModifier(SymbologyConstants.COUNTRY_CODE, symbolCode.getCountryCode());
+                graphic.setModifier(SymbologyConstants.ECHELON, symbolCode.getEchelon());
+            }
+
             if (positions != null)
             {
                 graphic.setPositions(positions);
@@ -238,12 +258,6 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             Logging.logger().severe(msg);
             throw new WWRuntimeException(e);
         }
-
-        graphic.setModifier(SymbologyConstants.STANDARD_IDENTITY, symbolCode.getStandardIdentity());
-        graphic.setModifier(SymbologyConstants.STATUS, symbolCode.getStatus());
-        graphic.setModifier(SymbologyConstants.FUNCTION_ID, symbolCode.getFunctionId());
-        graphic.setModifier(SymbologyConstants.COUNTRY_CODE, symbolCode.getCountryCode());
-        graphic.setModifier(SymbologyConstants.ECHELON, symbolCode.getEchelon());
 
         if (modifiers != null)
         {
