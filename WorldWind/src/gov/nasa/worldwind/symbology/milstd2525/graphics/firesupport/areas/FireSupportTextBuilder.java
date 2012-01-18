@@ -8,7 +8,8 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
+import gov.nasa.worldwind.util.*;
 
 /**
  * Utility class to construct text for the graphics of Fire Support Area graphics. Many of these graphics come in three
@@ -34,37 +35,47 @@ public class FireSupportTextBuilder
      */
     public String[] createText(MilStd2525TacticalGraphic graphic)
     {
+        if (graphic == null)
+        {
+            String message = Logging.getMessage("nullValue.GraphicIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
         String[] result;
 
-        String functionId = graphic.getFunctionId();
-        if (CircularFireSupportArea.FUNCTION_ID_TARGET.equals(functionId))
+        // Compute the masked SIDC for this graphic.
+        SymbolCode symCode = new SymbolCode(graphic.getIdentifier());
+        String maskedSidc = symCode.toMaskedString();
+
+        if (TacGrpSidc.FSUPP_ARS_ARATGT_CIRTGT.equals(maskedSidc))
         {
             // Circular Target just uses the Unique Designation as a label.
             result = new String[] {graphic.getText()};
         }
-        else if (IrregularFireSupportArea.FUNCTION_ID_BOMB.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_ARATGT_BMARA.equals(maskedSidc))
         {
             // Bomb graphic just says "BOMB"
             result = new String[] {"BOMB"};
         }
-        else if (IrregularFireSupportArea.FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TGMF.equals(maskedSidc))
         {
             // Terminally guided munitions footprint says "TGMF", and does not support modifiers.
             result = new String[] {"TGMF"};
         }
         else
         {
-            boolean useSeparateTimeLabel = this.isShowSeparateTimeLabel(functionId);
+            boolean useSeparateTimeLabel = this.isShowSeparateTimeLabel(maskedSidc);
 
             String mainText;
 
-            if (this.isAirspaceCoordinationArea(functionId))
+            if (this.isAirspaceCoordinationArea(maskedSidc))
             {
                 mainText = this.createAirspaceCoordinationText(graphic);
             }
             else
             {
-                mainText = this.createMainText(graphic, functionId, !useSeparateTimeLabel);
+                mainText = this.createMainText(graphic, maskedSidc, !useSeparateTimeLabel);
             }
 
             if (useSeparateTimeLabel)
@@ -89,9 +100,9 @@ public class FireSupportTextBuilder
 
     protected boolean isAirspaceCoordinationArea(String functionId)
     {
-        return CircularFireSupportArea.FUNCTION_ID_ACA.equals(functionId)
-            || RectangularFireSupportArea.FUNCTION_ID_ACA.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_ACA.equals(functionId);
+        return TacGrpSidc.FSUPP_ARS_C2ARS_ACA_IRR.equals(functionId)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equals(functionId)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equals(functionId);
     }
 
     protected String createMainText(MilStd2525TacticalGraphic graphic, String functionId, boolean includeTime)
@@ -142,72 +153,73 @@ public class FireSupportTextBuilder
         return sb.toString();
     }
 
-    protected String getGraphicLabel(String functionId)
+    protected String getGraphicLabel(String sidc)
     {
-        if (RectangularFireSupportArea.FUNCTION_ID_FFA.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_FFA.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_FFA.equals(functionId))
+        if (TacGrpSidc.FSUPP_ARS_C2ARS_FFA_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_IRR.equals(sidc))
         {
             return "FFA";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_RFA.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_RFA.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_RFA.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_RFA_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_IRR.equals(sidc))
         {
             return "RFA";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_FSA.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_FSA.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_IRR.equals(sidc))
         {
             return "FSA";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_SENSOR_ZONE.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_SENSOR_ZONE.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_SENSOR_ZONE.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_IRR.equals(sidc))
         {
             return "SENSOR\nZONE";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_DA_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equals(sidc))
         {
             return "DA";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equals(sidc))
         {
             return "ZOR";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TBA_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_IRR.equals(sidc))
         {
             return "TBA";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_TARGET_VALUE.equals(functionId)
-            || CircularFireSupportArea.FUNCTION_ID_TARGET_VALUE.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_TARGET_VALUE.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_IRR.equals(sidc))
         {
             return "TVAR";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_ATI.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_ATI.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equals(sidc))
         {
             return "ATI ZONE";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_CFF.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_CFF.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_IRR.equals(sidc))
         {
             return "CFF ZONE";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_CENSOR_ZONE.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_CENSOR_ZONE.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_IRR.equals(sidc))
         {
             return "CENSOR ZONE";
         }
-        else if (RectangularFireSupportArea.FUNCTION_ID_CF.equals(functionId)
-            || IrregularFireSupportArea.FUNCTION_ID_CF.equals(functionId))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR.equals(sidc))
         {
             return "CF ZONE";
         }

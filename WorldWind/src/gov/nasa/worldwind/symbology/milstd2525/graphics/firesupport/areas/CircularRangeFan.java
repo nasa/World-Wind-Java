@@ -11,6 +11,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -24,9 +25,6 @@ import java.util.*;
 // TODO: add support for a symbol at the center of the range fan.
 public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    /** Function ID for the Circular Weapon/Sensor Range Fan graphic. */
-    public final static String FUNCTION_ID = "AXC---";
-
     protected final static Offset LABEL_OFFSET = new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION);
 
     /** Position of the center of the range fan. */
@@ -34,16 +32,25 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
     /** Rings that make up the range fan. */
     protected List<SurfaceCircle> rings;
 
-    /** Create the range fan. */
-    public CircularRangeFan()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        this.rings = new ArrayList<SurfaceCircle>();
+        return Arrays.asList(TacGrpSidc.FSUPP_ARS_WPNRF_CIRCLR);
     }
 
-    /** {@inheritDoc} */
-    public String getCategory()
+    /**
+     * Create the range fan.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public CircularRangeFan(String sidc)
     {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
+        super(sidc);
+        this.rings = new ArrayList<SurfaceCircle>();
     }
 
     /**

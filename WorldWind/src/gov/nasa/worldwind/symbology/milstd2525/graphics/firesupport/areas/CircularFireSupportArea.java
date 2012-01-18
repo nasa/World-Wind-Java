@@ -9,9 +9,8 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.Label;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.AbstractCircularGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
@@ -30,34 +29,37 @@ import java.util.*;
  */
 public class CircularFireSupportArea extends AbstractCircularGraphic
 {
-    /** Function ID for the Circular Target graphic (2.X.4.3.1.2). */
-    public final static String FUNCTION_ID_TARGET = "ATC---";
-    /** Function ID for the Free Fire Area graphic (2.X.4.3.2.3.3). */
-    public final static String FUNCTION_ID_FFA = "ACFC--";
-    /** Function ID for the Restrictive Fire Area graphic (2.X.4.3.2.5.3). */
-    public final static String FUNCTION_ID_RFA = "ACRC--";
-    /** Function ID for the Fire Support Area graphic (2.X.4.3.2.1.3). */
-    public final static String FUNCTION_ID_FSA = "ACSC--";
-    /** Function ID for the Airspace Coordination Area graphic. */
-    public final static String FUNCTION_ID_ACA = "ACAC--";
-    /** Function ID for the Sensor Zone graphic. */
-    public final static String FUNCTION_ID_SENSOR_ZONE = "ACEC--";
-    /** Function ID for the Dead Space Area graphic. */
-    public final static String FUNCTION_ID_DEAD_SPACE_AREA = "ACDC--";
-    /** Function ID for the Zone of Responsibility graphic. */
-    public final static String FUNCTION_ID_ZONE_OF_RESPONSIBILITY = "ACZC--";
-    /** Function ID for the Target Build-up Area graphic. */
-    public final static String FUNCTION_ID_TARGET_BUILDUP = "ACBC--";
-    /** Function ID for the Target Value Area graphic. */
-    public final static String FUNCTION_ID_TARGET_VALUE = "ACVC--";
-
     /** Center text block on label position when the text is left aligned. */
     protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
-    /** Create a new circular area. */
-    public CircularFireSupportArea()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super();
+        return Arrays.asList(
+            TacGrpSidc.FSUPP_ARS_ARATGT_CIRTGT,
+            TacGrpSidc.FSUPP_ARS_C2ARS_FSA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_FFA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_RFA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_DA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TBA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_CIRCLR);
+    }
+
+    /**
+     * Create a new circular area.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public CircularFireSupportArea(String sidc)
+    {
+        super(sidc);
     }
 
     /**
@@ -71,18 +73,12 @@ public class CircularFireSupportArea extends AbstractCircularGraphic
     public static Set<String> getGraphicsWithTimeLabel()
     {
         return new HashSet<String>(Arrays.asList(
-            FUNCTION_ID_FSA,
-            FUNCTION_ID_SENSOR_ZONE,
-            FUNCTION_ID_DEAD_SPACE_AREA,
-            FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
-            FUNCTION_ID_TARGET_BUILDUP,
-            FUNCTION_ID_TARGET_VALUE));
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
+            TacGrpSidc.FSUPP_ARS_C2ARS_FSA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_DA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TBA_CIRCLR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_CIRCLR));
     }
 
     /** Create labels for the start and end of the path. */
@@ -123,7 +119,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic
      */
     protected String getMainLabelTextAlign()
     {
-        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+        boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equals(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. All others are center aligned.
         if (isACA)
@@ -141,7 +137,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic
     @Override
     protected Offset getDefaultLabelOffset()
     {
-        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+        boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equals(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. Adjust the offset to center the left aligned label
         // in the circle. (This is not necessary with a center aligned label because centering the text automatically

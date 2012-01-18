@@ -10,8 +10,8 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -24,26 +24,23 @@ import java.util.*;
  */
 public class Dummy extends MilStd2525TacticalGraphic
 {
-    public final static String FUNCTION_ID = "PD----";
-
     protected Path path;
 
-    public Dummy()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(TacGrpSidc.C2GM_DCPN_DMY);
+    }
+
+    public Dummy(String sidc)
+    {
+        super(sidc);
         this.path = this.createPath();
         this.path.setAttributes(this.getActiveShapeAttributes());
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
-    }
-
-    /** {@inheritDoc} */
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
     }
 
     /** {@inheritDoc} */

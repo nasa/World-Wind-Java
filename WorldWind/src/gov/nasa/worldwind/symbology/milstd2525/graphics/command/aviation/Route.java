@@ -13,6 +13,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -27,17 +28,6 @@ import java.util.*;
  */
 public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, PreRenderable
 {
-    /** Function ID for Air Corridor (2.X.2.2.2.1). */
-    public final static String FUNCTION_ID_AIR_CORRIDOR = "ALC---";
-    /** Function ID for Minimum Risk Route (2.X.2.2.2.2). */
-    public final static String FUNCTION_ID_MINIMUM_RISK = "ALM---";
-    /** Function ID for Standard Flight Route (2.X.2.2.2.3). */
-    public final static String FUNCTION_ID_STANDARD_FLIGHT = "ALS---";
-    /** Function ID for Unmanned Aircraft Route (2.X.2.2.2.4). */
-    public final static String FUNCTION_ID_UNMANNED_AIRCRAFT = "ALU---";
-    /** Function ID for Low Level Transit Route (2.X.2.2.2.5). */
-    public final static String FUNCTION_ID_LOW_LEVEL_TRANSIT = "ALL---";
-
     /** Width of the route if no width is specified in the modifiers. */
     public static final double DEFAULT_WIDTH = 2000;
 
@@ -50,10 +40,23 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
     /** Graphics drawn at the route control points. */
     protected Iterable<? extends TacticalPoint> children;
 
-    /** {@inheritDoc} */
-    public String getCategory()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        return Arrays.asList(
+            TacGrpSidc.C2GM_AVN_LNE_ACDR,
+            TacGrpSidc.C2GM_AVN_LNE_MRR,
+            TacGrpSidc.C2GM_AVN_LNE_SAAFR,
+            TacGrpSidc.C2GM_AVN_LNE_LLTR);
+    }
+
+    public Route(String sidc)
+    {
+        super(sidc);
     }
 
     /** {@inheritDoc} Overridden to apply the highlight state to child graphics. */
@@ -365,17 +368,17 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
      */
     protected String getGraphicLabel()
     {
-        String functionId = this.getFunctionId();
+        String code = this.maskedSymbolCode;
 
-        if (FUNCTION_ID_AIR_CORRIDOR.equals(functionId))
+        if (TacGrpSidc.C2GM_AVN_LNE_ACDR.equals(code))
             return "AC";
-        else if (FUNCTION_ID_MINIMUM_RISK.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_LNE_MRR.equals(code))
             return "MRR";
-        else if (FUNCTION_ID_STANDARD_FLIGHT.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_LNE_SAAFR.equals(code))
             return "SAAFR";
-        else if (FUNCTION_ID_LOW_LEVEL_TRANSIT.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_LNE_LLTR.equals(code))
             return "LLTR";
-        else if (FUNCTION_ID_UNMANNED_AIRCRAFT.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_LNE_UAR.equals(code))
             return "UA";
 
         return "";

@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 
 import java.util.*;
 
@@ -21,11 +21,23 @@ import java.util.*;
  */
 public class AirfieldZone extends BasicArea
 {
-    /** Function ID for this graphic. */
-    public final static String FUNCTION_ID = "GAZ---";
-
     /** Paths used to draw the airfield graphic. */
     protected List<Path> airfieldPaths;
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
+    {
+        return Arrays.asList(TacGrpSidc.C2GM_GNL_ARS_AIRFZ);
+    }
+
+    public AirfieldZone(String sidc)
+    {
+        super(sidc);
+    }
 
     /** {@inheritDoc} */
     @Override

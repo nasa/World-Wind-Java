@@ -9,6 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -21,13 +22,24 @@ import java.util.*;
  */
 public class RectangularTarget extends AbstractRectangularGraphic
 {
-    /** Function ID for the Rectangular Target graphic. */
-    public final static String FUNCTION_ID = "ATR---";
-
-    /** Create a new target. */
-    public RectangularTarget()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super();
+        return Arrays.asList(TacGrpSidc.FSUPP_ARS_ARATGT_RTGTGT);
+    }
+
+    /**
+     * Create a new target.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public RectangularTarget(String sidc)
+    {
+        super(sidc);
     }
 
     /**

@@ -27,16 +27,15 @@ public class AbstractRectangularGraphic extends MilStd2525TacticalGraphic implem
 
     protected boolean shapeInvalid;
 
-    /** Create a new target. */
-    public AbstractRectangularGraphic()
+    /**
+     * Create a new target.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public AbstractRectangularGraphic(String sidc)
     {
+        super(sidc);
         this.quad = this.createShape();
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
     /** {@inheritDoc} */

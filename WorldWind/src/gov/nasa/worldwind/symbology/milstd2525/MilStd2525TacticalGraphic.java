@@ -74,6 +74,15 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
 
+    /**
+     * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
+     * this graphic belongs. For symbols belonging to the MIL-STD-2525 symbol set, this returns a 15-character
+     * alphanumeric symbol identification code (SIDC). Calculated from the current modifiers at construction and during
+     * each call to {@link #setModifier(String, Object)}. Initially <code>null</code>.
+     */
+    protected SymbolCode symbolCode;
+    protected String maskedSymbolCode;
+
     protected String text;
 
     protected boolean highlighted;
@@ -84,12 +93,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
     protected Offset labelOffset;
-
-    protected String functionId;
-    protected String standardIdentity;
-    protected String echelon;
-    protected String status;
-    protected String countryCode;
 
     protected AVList modifiers;
 
@@ -103,20 +106,18 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** Flag to indicate that labels must be recreated before the graphic is rendered. */
     protected boolean mustCreateLabels = true;
 
-    public abstract String getCategory();
-
     protected abstract void doRenderGraphic(DrawContext dc);
+
+    protected MilStd2525TacticalGraphic(String symbolCode)
+    {
+        this.symbolCode = new SymbolCode(symbolCode);
+        this.maskedSymbolCode = this.symbolCode.toMaskedString();
+    }
 
     /** {@inheritDoc} */
     public String getIdentifier()
     {
-        SymbolCode symCode = new SymbolCode();
-        symCode.setStandardIdentity(this.standardIdentity);
-        symCode.setEchelon(this.echelon);
-        symCode.setCategory(this.getCategory());
-        symCode.setFunctionId(this.getFunctionId());
-
-        return symCode.toString();
+        return this.symbolCode.toString();
     }
 
     /** {@inheritDoc} */
@@ -186,26 +187,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         {
             return this.text;
         }
-        else if (SymbologyConstants.FUNCTION_ID.equals(modifier))
-        {
-            return this.getFunctionId();
-        }
-        else if (SymbologyConstants.STANDARD_IDENTITY.equals(modifier))
-        {
-            return this.getStandardIdentity();
-        }
-        else if (SymbologyConstants.ECHELON.equals(modifier))
-        {
-            return this.getEchelon();
-        }
-        else if (SymbologyConstants.STATUS.equals(modifier))
-        {
-            return this.getStatus();
-        }
-        else
+        else if (this.modifiers != null)
         {
             return this.modifiers.getValue(modifier);
         }
+        return null;
     }
 
     /** {@inheritDoc} */
@@ -214,22 +200,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         if (SymbologyConstants.UNIQUE_DESIGNATION.equals(modifier) && (value instanceof String))
         {
             this.setText((String) value);
-        }
-        else if (SymbologyConstants.FUNCTION_ID.equals(modifier) && (value instanceof String))
-        {
-            this.setFunctionId((String) value);
-        }
-        else if (SymbologyConstants.STANDARD_IDENTITY.equals(modifier) && (value instanceof String))
-        {
-            this.setStandardIdentity((String) value);
-        }
-        else if (SymbologyConstants.ECHELON.equals(modifier) && (value instanceof String))
-        {
-            this.setEchelon((String) value);
-        }
-        else if (SymbologyConstants.STATUS.equals(modifier) && (value instanceof String))
-        {
-            this.setStatus((String) value);
         }
         else
         {
@@ -276,115 +246,6 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setShowLocation(boolean showLocation)
     {
         // Most 2525 graphics do no support the location modifier. Graphics that do support it can override this method.
-    }
-
-    /**
-     * Indicates the scheme portion of the graphic identifier.
-     *
-     * @return The scheme of this graphic.
-     */
-    public String getScheme()
-    {
-        return SymbologyConstants.SCHEME_TACTICAL_GRAPHICS;
-    }
-
-    /**
-     * Indicates the function ID of this graphic.
-     *
-     * @return The graphic's function ID.
-     */
-    public String getFunctionId()
-    {
-        return this.functionId;
-    }
-
-    /**
-     * Specifies the function ID of this graphic. This may cause the graphic to change how it draws itself.
-     *
-     * @param functionId New function ID.
-     */
-    public void setFunctionId(String functionId)
-    {
-        this.functionId = functionId;
-        this.onModifierChanged();
-    }
-
-    public String getStandardIdentity()
-    {
-        return this.standardIdentity;
-    }
-
-    public void setStandardIdentity(String standardIdentity)
-    {
-        if (standardIdentity == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.standardIdentity = standardIdentity;
-        this.onModifierChanged();
-    }
-
-    public String getEchelon()
-    {
-        return this.echelon;
-    }
-
-    public void setEchelon(String echelon)
-    {
-        if (echelon == null)
-        {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        this.echelon = echelon;
-        this.onModifierChanged();
-    }
-
-    /**
-     * Indicates the status portion of the graphic identifier.
-     *
-     * @return The status associated with this graphic.
-     */
-    public String getStatus()
-    {
-        return this.status;
-    }
-
-    /**
-     * Specifies the status portion of the graphic identifier.
-     *
-     * @param status The status associated with this graphic.
-     */
-    public void setStatus(String status)
-    {
-        this.status = status;
-        this.onModifierChanged();
-    }
-
-    /**
-     * Indicates the country code portion of the graphic identifier.
-     *
-     * @return The country code associated with this graphic.
-     */
-    public String getCountryCode()
-    {
-        return this.countryCode;
-    }
-
-    /**
-     * Specifies the country code portion of the graphic identifier.
-     *
-     * @param countryCode The country code associated with this graphic.
-     */
-    public void setCountryCode(String countryCode)
-    {
-        this.countryCode = countryCode;
-        this.onModifierChanged();
     }
 
     /** {@inheritDoc} */
@@ -512,6 +373,21 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
                 label.render(dc);
             }
         }
+    }
+
+    protected String getStandardIdentity()
+    {
+        return this.symbolCode.getStandardIdentity();
+    }
+
+    /**
+     * Indicates the status portion of the graphic identifier.
+     *
+     * @return The status associated with this graphic.
+     */
+    protected String getStatus()
+    {
+        return this.symbolCode.getStatus();
     }
 
     /**

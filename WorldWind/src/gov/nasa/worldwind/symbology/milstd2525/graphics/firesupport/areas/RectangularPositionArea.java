@@ -7,7 +7,8 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.util.*;
 
@@ -19,13 +20,24 @@ import java.util.*;
  */
 public class RectangularPositionArea extends AbstractRectangularGraphic
 {
-    /** Function ID for the Position Area for Artillery graphic (2.X.4.3.2.6.1). */
-    public final static String FUNCTION_ID = "ACPR--";
-
-    /** Create a new target. */
-    public RectangularPositionArea()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super();
+        return Arrays.asList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_RTG);
+    }
+
+    /**
+     * Create a new target.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public RectangularPositionArea(String sidc)
+    {
+        super(sidc);
     }
 
     /** Create labels for the start and end of the path. */

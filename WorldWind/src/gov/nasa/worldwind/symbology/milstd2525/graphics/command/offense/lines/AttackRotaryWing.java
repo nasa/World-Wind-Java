@@ -8,6 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.util.*;
 
@@ -19,9 +20,6 @@ import java.util.*;
  */
 public class AttackRotaryWing extends Aviation
 {
-    /** Function ID for this graphic. */
-    public final static String FUNCTION_ID = "OLAR--";
-
     /** Index of the left vertical path in the {@code paths} array. */
     protected final static int LEFT_VERTICAL = 1;
     /** Index of the right vertical path in the {@code paths} array. */
@@ -30,18 +28,23 @@ public class AttackRotaryWing extends Aviation
     protected final static int ROTOR_SYMBOL = 3;
 
     /**
-     * Create a new graphic.
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
      */
-    public AttackRotaryWing()
+    public static List<String> getSupportedGraphics()
     {
-        super(4);
+        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_ATK);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getFunctionId()
+    /**
+     * Create a new graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public AttackRotaryWing(String sidc)
     {
-        return FUNCTION_ID;
+        super(sidc, 4);
     }
 
     @Override

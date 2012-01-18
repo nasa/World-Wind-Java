@@ -8,8 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.util.*;
 
@@ -21,24 +20,19 @@ import java.util.*;
  */
 public class MainAttack extends AbstractOffenseArrow
 {
-    /** Function ID for the Phase Line. */
-    public final static String FUNCTION_ID = "OLAGM-";
-
-    public MainAttack()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super(2);
+        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_GRD_MANATK);
     }
 
-    /** {@inheritDoc} */
-    public String getCategory()
+    public MainAttack(String sidc)
     {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
-    }
-
-    /** {@inheritDoc} */
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
+        super(sidc, 2);
     }
 
     @Override

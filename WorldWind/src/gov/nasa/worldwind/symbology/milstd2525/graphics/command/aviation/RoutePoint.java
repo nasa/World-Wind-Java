@@ -8,9 +8,11 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.AbstractCircularGraphic;
+import gov.nasa.worldwind.symbology.TacticalPoint;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
+
+import java.util.*;
 
 /**
  * Implementation of aviation route control point graphics. This class implements the following graphics:
@@ -22,22 +24,27 @@ import gov.nasa.worldwind.util.WWUtil;
  */
 public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint, PreRenderable
 {
-    /** Function ID for Air Control Point (2.X.2.2.1.1). */
-    public final static String FUNCTION_ID_AIR_CONTROL = "APP---";
-    /** Function ID for Communications Checkpoint (2.X.2.2.1.2). */
-    public final static String FUNCTION_ID_COMMUNICATIONS_CHECKPOINT = "APC---";
-
-    /** Create a new control point. */
-    public RoutePoint()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super();
+        return Arrays.asList(
+            TacGrpSidc.C2GM_AVN_PNT_ACP,
+            TacGrpSidc.C2GM_AVN_PNT_COMMCP
+        );
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getCategory()
+    /**
+     * Create a new control point.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public RoutePoint(String sidc)
     {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        super(sidc);
     }
 
     /**
@@ -57,11 +64,11 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
 
     protected String getGraphicLabel()
     {
-        String functionId = this.getFunctionId();
+        String code = this.maskedSymbolCode;
 
-        if (FUNCTION_ID_AIR_CONTROL.equals(functionId))
+        if (TacGrpSidc.C2GM_AVN_PNT_ACP.equals(code))
             return "ACP";
-        else if (FUNCTION_ID_COMMUNICATIONS_CHECKPOINT.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_PNT_COMMCP.equals(code))
             return "CCP";
 
         return "";

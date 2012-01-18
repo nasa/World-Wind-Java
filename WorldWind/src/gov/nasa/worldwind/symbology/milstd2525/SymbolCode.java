@@ -499,6 +499,27 @@ public class SymbolCode extends AVListImpl
     }
 
     /**
+     * Indicates a string representation of the symbol code with positions that do not uniquely identify a particular
+     * symbol or graphic replaced with hyphens. This method masks out the Standard Identity, Status, Echelon, Symbol
+     * Modifier, and Country Code fields. For example, the masked version of "GFGPGPAD---AUSX" is "G-F-GPAD------X".
+     *
+     * @return String representation of the symbol code with some fields replaced with hyphens.
+     */
+    public String toMaskedString()
+    {
+        SymbolCode masked = new SymbolCode();
+        masked.setValues(this);
+
+        masked.setStandardIdentity("-");
+        masked.setStatus("-");
+        masked.setEchelon("--");
+        masked.setSymbolModifier("--");
+        masked.setCountryCode("--");
+
+        return masked.toString();
+    }
+
+    /**
      * Computes and returns the modifier key-value pairs associated with the specified SymbolModifier code. This
      * recognizes modifier codes used by the Warfighting, Stability Operations, and Emergency Management symbology
      * schemes: echelon, headquarters, task force, feint/dummy, installation, equipment mobility, and auxiliary

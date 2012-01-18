@@ -7,10 +7,11 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -26,6 +27,25 @@ import java.util.*;
 // TODO: apply delegate owner to symbol.
 public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements TacticalPoint
 {
+    /** Offset to align the center of the graphic with the geographic position. */
+    protected static Offset CENTER_OFFSET = new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION);
+    /** Offset to align the center of the bottom edge of the graphic with the geographic position. */
+    protected static Offset BOTTOM_CENTER_OFFSET = new Offset(0.5, 0.0, AVKey.FRACTION, AVKey.FRACTION);
+
+    /** Default offset is the center of the graphic. */
+    protected static Offset DEFAULT_OFFSET = CENTER_OFFSET;
+
+    /**
+     * Map that relates function IDs to offsets. Most graphics are centered on their position, but some require a
+     * different offset. This map provides those non-standard offsets.
+     */
+    protected static Map<String, Offset> offsetOverrides = new HashMap<String, Offset>();
+
+    static
+    {
+        offsetOverrides.put(TacGrpSidc.C2GM_GNL_PNT_WPN_GRDZRO, BOTTOM_CENTER_OFFSET);
+    }
+
     /** Implementation of TacticalSymbol that is configured to create and layout tactical point graphics. */
     protected static class PointGraphicSymbol extends AbstractTacticalSymbol
     {
@@ -59,6 +79,9 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             // and the default modifier atlas.
             // TODO: replace default retrievers with per-instance objects that use the base URL to determine equality.
             this.setIconRetriever(DEFAULT_ICON_RETRIEVER);
+
+            Offset offset = offsetOverrides.get(this.symbolCode.getFunctionId());
+            this.setOffset(offset != null ? offset : DEFAULT_OFFSET);
         }
 
         /** {@inheritDoc} */
@@ -67,14 +90,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             return this.symbolCode.toString();
         }
     }
-
-    /**
-     * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
-     * this graphic belongs. For symbols belonging to the MIL-STD-2525 symbol set, this returns a 15-character
-     * alphanumeric symbol identification code (SIDC). Calculated from the current modifiers at construction and during
-     * each call to {@link #setModifier(String, Object)}. Initially <code>null</code>.
-     */
-    protected SymbolCode symbolCode;
 
     protected Object delegateOwner;
 
@@ -91,6 +106,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
      */
     public MilStd2525PointGraphic(String sidc)
     {
+        super(sidc);
         this.init(sidc, modifiers);
     }
 
@@ -105,12 +121,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             this.modifiers.setValues(modifiers);
     }
 
-    /** {@inheritDoc} */
-    public String getIdentifier()
-    {
-        return this.symbolCode.toString();
-    }
-
     /**
      * Create a tactical symbol to render this graphic.
      *
@@ -122,12 +132,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
     protected TacticalSymbol createSymbol(String symbolId, Position position)
     {
         return new PointGraphicSymbol(symbolId, position);
-    }
-
-    @Override
-    public String getCategory()
-    {
-        return this.symbolCode.getCategory();
     }
 
     /**
@@ -226,137 +230,198 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         this.symbol.render(dc);
     }
 
-    // TODO: create symbolic constants for each function id?
-    public static final String[] POINT_GRAPHIC_FUNCTION_IDS = {
-        "PCB---",
-        "PCH---",
-        "PCL---",
-        "PCR---",
-        "PCS---",
-        "PS----",
-        "PTN---",
-        "PTS---",
-        "APD---",
-        "DPT---",
-        "GPAA--",
-        "GPAC--",
-        "GPAH--",
-        "GPAK--",
-        "GPAL--",
-        "GPAM--",
-        "GPAO--",
-        "GPAP--",
-        "GPAR--",
-        "GPAS--",
-        "GPAT--",
-        "GPAW--",
-        "GPF---",
-        "GPH---",
-        "GPHA--",
-        "GPHQ--",
-        "GPHX--",
-        "GPHY--",
-        "GPO---",
-        "GPOD--",
-        "GPOP--",
-        "GPOR--",
-        "GPOW--",
-        "GPOZ--",
-        "GPP---",
-        "GPPC--",
-        "GPPD--",
-        "GPPE--",
-        "GPPK--",
-        "GPPL--",
-        "GPPO--",
-        "GPPP--",
-        "GPPR--",
-        "GPPS--",
-        "GPPW--",
-        "GPRD--",
-        "GPRI--",
-        "GPRN--",
-        "GPRS--",
-        "GPUS--",
-        "GPUSA-",
-        "GPUSC-",
-        "GPUSD-",
-        "GPUUB-",
-        "GPUUD-",
-        "GPUUL-",
-        "GPUUS-",
-        "GPUY--",
-        "GPUYA-",
-        "GPUYK-",
-        "GPUYP-",
-        "GPUYR-",
-        "GPUYT-",
-        "GPWA--",
-        "GPWD--",
-        "GPWE--",
-        "GPWG--",
-        "GPWI--",
-        "GPWM--",
-        "GPWP--",
-        "OPP---",
-        "BCP---",
-        "NEB---",
-        "NEC---",
-        "NF----",
-        "NZ----",
-        "OB----",
-        "OMD---",
-        "OME---",
-        "OMP---",
-        "OMT---",
-        "OMU---",
-        "OMW---",
-        "SE----",
-        "SF----",
-        "SS----",
-        "SU----",
-        "PD----",
-        "ED----",
-        "EP----",
-        "EV----",
-        "FA----",
-        "FE----",
-        "FO----",
-        "HI----",
-        "HM----",
-        "HO----",
-        "SB----",
-        "SBM---",
-        "SBN---",
-        "SBW---",
-        "SBWD--",
-        "SM----",
-        "SS----",
-        "PAS---",
-        "PAT---",
-        "PC----",
-        "PD----",
-        "PE----",
-        "PI----",
-        "PL----",
-        "PM----",
-        "PN----",
-        "PO----",
-        "PR----",
-        "PSA---",
-        "PSB---",
-        "PSC---",
-        "PSD---",
-        "PSE---",
-        "PSF---",
-        "PSG---",
-        "PSH---",
-        "PSI---",
-        "PSJ---",
-        "PSZ---",
-        "PT----",
-        "PU----",
-        "PX----",
-        "PY----X"
-    };
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
+    {
+        return Arrays.asList(
+            TacGrpSidc.C2GM_GNL_PNT_USW_UH2_DTM,
+            TacGrpSidc.C2GM_GNL_PNT_USW_UH2_BCON,
+            TacGrpSidc.C2GM_GNL_PNT_USW_UH2_LCON,
+            TacGrpSidc.C2GM_GNL_PNT_USW_UH2_SNK,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_PTNCTR,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_DIFAR,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_LOFAR,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_CASS,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_DICASS,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_BT,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_ANM,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_VLAD,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_ATAC,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_RO,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_KGP,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SNBY_EXP,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SRH,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SRH_ARA,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SRH_DIPPSN,
+            TacGrpSidc.C2GM_GNL_PNT_USW_SRH_CTR,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_NAVREF,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_SPLPNT,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_DLRP,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_PIM,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_MRSH,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_WAP,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_CRDRTB,
+            TacGrpSidc.C2GM_GNL_PNT_REFPNT_PNTINR,
+            TacGrpSidc.C2GM_GNL_PNT_WPN,
+            TacGrpSidc.C2GM_GNL_PNT_WPN_AIMPNT,
+            TacGrpSidc.C2GM_GNL_PNT_WPN_DRPPNT,
+            TacGrpSidc.C2GM_GNL_PNT_WPN_ENTPNT,
+            TacGrpSidc.C2GM_GNL_PNT_WPN_GRDZRO,
+            TacGrpSidc.C2GM_GNL_PNT_WPN_MSLPNT,
+            TacGrpSidc.C2GM_GNL_PNT_WPN_IMTPNT,
+            TacGrpSidc.C2GM_GNL_PNT_WPN_PIPNT,
+            TacGrpSidc.C2GM_GNL_PNT_FRMN,
+            TacGrpSidc.C2GM_GNL_PNT_HBR,
+            TacGrpSidc.C2GM_GNL_PNT_HBR_PNTQ,
+            TacGrpSidc.C2GM_GNL_PNT_HBR_PNTA,
+            TacGrpSidc.C2GM_GNL_PNT_HBR_PNTY,
+            TacGrpSidc.C2GM_GNL_PNT_HBR_PNTX,
+            TacGrpSidc.C2GM_GNL_PNT_RTE,
+            TacGrpSidc.C2GM_GNL_PNT_RTE_RDV,
+            TacGrpSidc.C2GM_GNL_PNT_RTE_DVSN,
+            TacGrpSidc.C2GM_GNL_PNT_RTE_WAP,
+            TacGrpSidc.C2GM_GNL_PNT_RTE_PIM,
+            TacGrpSidc.C2GM_GNL_PNT_RTE_PNTR,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_CAP,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_ABNEW,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_TAK,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_ASBWF,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_ASBWR,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_SUWF,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_SUWR,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_MIWF,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_MIWR,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_SKEIP,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_TCN,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_TMC,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_RSC,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_RPH,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_UA,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_VTUA,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_ORB,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_ORBF8,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_ORBRT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTL_ORBRD,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_CHKPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_CONPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_CRDPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_DCNPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_LNKUPT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_PSSPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_RAYPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_RELPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_STRPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_AMNPNT,
+            TacGrpSidc.C2GM_GNL_PNT_ACTPNT_WAP,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_USV,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_USV_RMV,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_USV_ASW,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_USV_SUW,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_USV_MIW,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_ASW,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_SUW,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_MIW,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_PKT,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_RDV,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_RSC,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_REP,
+            TacGrpSidc.C2GM_GNL_PNT_SCTL_NCBTT,
+            TacGrpSidc.C2GM_GNL_PNT_UCTL,
+            TacGrpSidc.C2GM_GNL_PNT_UCTL_UUV,
+            TacGrpSidc.C2GM_GNL_PNT_UCTL_UUV_ASW,
+            TacGrpSidc.C2GM_GNL_PNT_UCTL_UUV_SUW,
+            TacGrpSidc.C2GM_GNL_PNT_UCTL_UUV_MIW,
+            TacGrpSidc.C2GM_GNL_PNT_UCTL_SBSTN,
+            TacGrpSidc.C2GM_GNL_PNT_UCTL_SBSTN_ASW,
+            TacGrpSidc.C2GM_AVN_PNT_DAPP,
+            TacGrpSidc.MOBSU_OBST_ATO_TDTSM_FIXPFD,
+            TacGrpSidc.MOBSU_OBST_ATO_TDTSM_MVB,
+            TacGrpSidc.MOBSU_OBST_ATO_TDTSM_MVBPFD,
+            TacGrpSidc.MOBSU_OBST_BBY,
+            TacGrpSidc.MOBSU_OBST_MNE_USPMNE,
+            TacGrpSidc.MOBSU_OBST_MNE_ATMNE,
+            TacGrpSidc.MOBSU_OBST_MNE_ATMAHD,
+            TacGrpSidc.MOBSU_OBST_MNE_ATMDIR,
+            TacGrpSidc.MOBSU_OBST_MNE_APMNE,
+            TacGrpSidc.MOBSU_OBST_MNE_WAMNE,
+            TacGrpSidc.MOBSU_OBST_AVN_TWR_LOW,
+            TacGrpSidc.MOBSU_OBST_AVN_TWR_HIGH,
+            TacGrpSidc.MOBSU_OBSTBP_CSGSTE_ERP,
+            TacGrpSidc.MOBSU_SU_ESTOF,
+            TacGrpSidc.MOBSU_SU_FRT,
+            TacGrpSidc.MOBSU_SU_SUFSHL,
+            TacGrpSidc.MOBSU_SU_UGDSHL,
+            TacGrpSidc.MOBSU_CBRN_NDGZ,
+            TacGrpSidc.MOBSU_CBRN_FAOTP,
+            TacGrpSidc.MOBSU_CBRN_REEVNT_BIO,
+            TacGrpSidc.MOBSU_CBRN_REEVNT_CML,
+            TacGrpSidc.MOBSU_CBRN_DECONP_USP,
+            TacGrpSidc.MOBSU_CBRN_DECONP_ALTUSP,
+            TacGrpSidc.MOBSU_CBRN_DECONP_TRP,
+            TacGrpSidc.MOBSU_CBRN_DECONP_EQT,
+            TacGrpSidc.MOBSU_CBRN_DECONP_EQTTR,
+            TacGrpSidc.MOBSU_CBRN_DECONP_OPDECN,
+            TacGrpSidc.MOBSU_CBRN_DECONP_TRGH,
+            TacGrpSidc.FSUPP_PNT_TGT_PTGT,
+            TacGrpSidc.FSUPP_PNT_TGT_NUCTGT,
+            TacGrpSidc.FSUPP_PNT_C2PNT_FSS,
+            TacGrpSidc.FSUPP_PNT_C2PNT_SCP,
+            TacGrpSidc.FSUPP_PNT_C2PNT_FP,
+            TacGrpSidc.FSUPP_PNT_C2PNT_RP,
+            TacGrpSidc.FSUPP_PNT_C2PNT_HP,
+            TacGrpSidc.FSUPP_PNT_C2PNT_LP,
+            TacGrpSidc.CSS_PNT_AEP,
+            TacGrpSidc.CSS_PNT_CBNP,
+            TacGrpSidc.CSS_PNT_CCP,
+            TacGrpSidc.CSS_PNT_CVP,
+            TacGrpSidc.CSS_PNT_DCP,
+            TacGrpSidc.CSS_PNT_EPWCP,
+            TacGrpSidc.CSS_PNT_LRP,
+            TacGrpSidc.CSS_PNT_MCP,
+            TacGrpSidc.CSS_PNT_RRRP,
+            TacGrpSidc.CSS_PNT_ROM,
+            TacGrpSidc.CSS_PNT_TCP,
+            TacGrpSidc.CSS_PNT_TTP,
+            TacGrpSidc.CSS_PNT_UMC,
+            TacGrpSidc.CSS_PNT_SPT,
+            TacGrpSidc.CSS_PNT_SPT_GNL,
+            TacGrpSidc.CSS_PNT_SPT_CLS1,
+            TacGrpSidc.CSS_PNT_SPT_CLS2,
+            TacGrpSidc.CSS_PNT_SPT_CLS3,
+            TacGrpSidc.CSS_PNT_SPT_CLS4,
+            TacGrpSidc.CSS_PNT_SPT_CLS5,
+            TacGrpSidc.CSS_PNT_SPT_CLS6,
+            TacGrpSidc.CSS_PNT_SPT_CLS7,
+            TacGrpSidc.CSS_PNT_SPT_CLS8,
+            TacGrpSidc.CSS_PNT_SPT_CLS9,
+            TacGrpSidc.CSS_PNT_SPT_CLS10,
+            TacGrpSidc.CSS_PNT_AP,
+            TacGrpSidc.CSS_PNT_AP_ASP,
+            TacGrpSidc.CSS_PNT_AP_ATP,
+            TacGrpSidc.OTH_ER_DTHAC,
+            TacGrpSidc.OTH_ER_PIW,
+            TacGrpSidc.OTH_ER_DSTVES,
+            TacGrpSidc.OTH_HAZ_SML,
+            TacGrpSidc.OTH_HAZ_IB,
+            TacGrpSidc.OTH_HAZ_OLRG,
+            TacGrpSidc.OTH_SSUBSR_BTMRTN,
+            TacGrpSidc.OTH_SSUBSR_BTMRTN_INS,
+            TacGrpSidc.OTH_SSUBSR_BTMRTN_SBRSOO,
+            TacGrpSidc.OTH_SSUBSR_BTMRTN_WRKND,
+            TacGrpSidc.OTH_SSUBSR_BTMRTN_WRKD,
+            TacGrpSidc.OTH_SSUBSR_MARLFE,
+            TacGrpSidc.OTH_SSUBSR_SA,
+            TacGrpSidc.OTH_FIX_ACU,
+            TacGrpSidc.OTH_FIX_EM,
+            TacGrpSidc.OTH_FIX_EOP);
+    }
 }

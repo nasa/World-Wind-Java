@@ -8,8 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines;
 
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.util.*;
 
@@ -21,36 +20,36 @@ import java.util.*;
  */
 public class Aviation extends AbstractOffenseArrow
 {
-    /** Function ID for this graphic. */
-    public final static String FUNCTION_ID = "OLAV--";
-
-    /** Create a new Aviation graphic. */
-    public Aviation()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        this(1);
+        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_AVN);
+    }
+
+    /**
+     * Create a new Aviation graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public Aviation(String sidc)
+    {
+        this(sidc, 1);
     }
 
     /**
      * Create a new Aviation graphic, composed of more than one path. This constructor is for use by subclasses that
      * extend the base Aviation graphic by adding additional paths.
      *
+     * @param sidc     Symbol code the identifies the graphic.
      * @param numPaths Number of paths to create.
      */
-    protected Aviation(int numPaths)
+    protected Aviation(String sidc, int numPaths)
     {
-        super(numPaths);
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
-    }
-
-    /** {@inheritDoc} */
-    public String getFunctionId()
-    {
-        return FUNCTION_ID;
+        super(sidc, numPaths);
     }
 
     /** {@inheritDoc} */

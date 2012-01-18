@@ -7,11 +7,13 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.Arrays;
 
 /**
  * Implementation of the Weapons Free Zone graphic (2.X.2.2.3.5).
@@ -24,11 +26,23 @@ public class WeaponsFreeZone extends AviationZone
     /** Path to the image used for the polygon fill pattern. */
     protected static final String DIAGONAL_FILL_PATH = "images/diagonal-fill-16x16.png";
 
-    /** Function ID for Weapons Free Zone (2.X.2.2.3.5). */
-    public final static String FUNCTION_ID = "AAW---";
-
     /** Annotation used to draw the label. */
     protected GlobeAnnotation annotation;
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static java.util.List<String> getSupportedGraphics()
+    {
+        return Arrays.asList(TacGrpSidc.C2GM_AVN_ARS_WFZ);
+    }
+
+    public WeaponsFreeZone(String sidc)
+    {
+        super(sidc);
+    }
 
     @Override
     protected void doRenderGraphic(DrawContext dc)

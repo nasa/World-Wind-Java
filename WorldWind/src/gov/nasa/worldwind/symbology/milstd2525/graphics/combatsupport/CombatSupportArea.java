@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.combatsupport;
 
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
+
+import java.util.*;
 
 /**
  * Implementation of combat support area graphics. This class implements the following graphics:
@@ -22,24 +23,32 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
  */
 public class CombatSupportArea extends BasicArea
 {
-    /** Function ID for Detainee Holding Area (2.X.5.3.1). */
-    public final static String FUNCTION_ID_DETAINEE = "AD----";
-    /** Function ID for Enemy Prisoner of War Holding Area (2.X.5.3.2). */
-    public final static String FUNCTION_ID_EPW = "AE----";
-    /** Function ID for Forward Arming and Refueling Area (2.X.5.3.3). */
-    public final static String FUNCTION_ID_FARP = "AR----";
-    /** Function ID for Refugee Holding Area (2.X.5.3.4). */
-    public final static String FUNCTION_ID_REFUGEE = "AH----";
-    /** Function ID for Support Areas Brigade (2.X.5.3.5.1). */
-    public final static String FUNCTION_ID_SUPPORT_BRIGADE = "ASB---";
-    /** Function ID for Support Areas Division (DSA) (2.X.5.3.5.2). */
-    public final static String FUNCTION_ID_SUPPORT_DIVISION = "ASD---";
-    /** Function ID for Support Areas Regimental (RSA) (2.X.5.3.5.3). */
-    public final static String FUNCTION_ID_SUPPORT_REGIMENTAL = "ASR---";
-
-    /** Create a new area. */
-    public CombatSupportArea()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(
+            TacGrpSidc.CSS_ARA_DHA,
+            TacGrpSidc.CSS_ARA_EPWHA,
+            TacGrpSidc.CSS_ARA_FARP,
+            TacGrpSidc.CSS_ARA_RHA,
+            TacGrpSidc.CSS_ARA_SUPARS_BSA,
+            TacGrpSidc.CSS_ARA_SUPARS_DSA,
+            TacGrpSidc.CSS_ARA_SUPARS_RSA);
+    }
+
+    /**
+     * Create a new area.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public CombatSupportArea(String sidc)
+    {
+        super(sidc);
+
         // Do not draw "ENY" labels for hostile entities
         this.setShowHostileIndicator(false);
     }
@@ -48,30 +57,23 @@ public class CombatSupportArea extends BasicArea
     @Override
     protected String getGraphicLabel()
     {
-        String functionId = this.getFunctionId();
+        String code = this.maskedSymbolCode;
 
-        if (FUNCTION_ID_DETAINEE.equals(functionId))
+        if (TacGrpSidc.CSS_ARA_DHA.equals(code))
             return "DETAINEE\nHOLDING\nAREA";
-        else if (FUNCTION_ID_EPW.equals(functionId))
+        else if (TacGrpSidc.CSS_ARA_EPWHA.equals(code))
             return "EPW\nHOLDING\nAREA";
-        else if (FUNCTION_ID_FARP.equals(functionId))
+        else if (TacGrpSidc.CSS_ARA_FARP.equals(code))
             return "FARP";
-        else if (FUNCTION_ID_REFUGEE.equals(functionId))
+        else if (TacGrpSidc.CSS_ARA_RHA.equals(code))
             return "REFUGEE\nHOLDING\nAREA";
-        else if (FUNCTION_ID_SUPPORT_BRIGADE.equals(functionId))
+        else if (TacGrpSidc.CSS_ARA_SUPARS_BSA.equals(code))
             return "BSA";
-        else if (FUNCTION_ID_SUPPORT_DIVISION.equals(functionId))
+        else if (TacGrpSidc.CSS_ARA_SUPARS_DSA.equals(code))
             return "DSA";
-        else if (FUNCTION_ID_SUPPORT_REGIMENTAL.equals(functionId))
+        else if (TacGrpSidc.CSS_ARA_SUPARS_RSA.equals(code))
             return "RSA";
 
         return "";
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMBAT_SERVICE_SUPPORT;
     }
 }

@@ -13,6 +13,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
 import java.text.*;
@@ -29,9 +30,6 @@ import java.util.*;
 // TODO draw symbol at the center or the fan.
 public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    /** Function ID for the Sector Weapon/Sensor Range Fans graphic. */
-    public final static String FUNCTION_ID = "AXS---";
-
     /** Default number of intervals used to draw each arcs. */
     public final static int DEFAULT_NUM_INTERVALS = 32;
 
@@ -83,15 +81,24 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     /** Maximum radius in the range fan. */
     protected double maxRadius;
 
-    /** Create the range fan. */
-    public SectorRangeFan()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(TacGrpSidc.FSUPP_ARS_WPNRF_SCR);
     }
 
-    /** {@inheritDoc} */
-    public String getCategory()
+    /**
+     * Create the range fan.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public SectorRangeFan(String sidc)
     {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
+        super(sidc);
     }
 
     /**

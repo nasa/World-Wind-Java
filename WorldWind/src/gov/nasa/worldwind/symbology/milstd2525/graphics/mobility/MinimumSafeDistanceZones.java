@@ -8,8 +8,8 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.mobility;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -26,9 +26,6 @@ import java.util.*;
  */
 public class MinimumSafeDistanceZones extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    /** Function ID for the Minimum Safe Distance Zone graphic (2.X.3.4.1). */
-    public final static String FUNCTION_ID = "NM----";
-
     /**
      * Default angle used to position the graphic's labels. This default angle (60 degrees) is chosen to match the
      * graphic template defined by MIL-STD-2525C, pg. 613.
@@ -43,9 +40,24 @@ public class MinimumSafeDistanceZones extends MilStd2525TacticalGraphic implemen
     /** Position the labels along a line radiating out from the center of the circle at this angle from North. */
     protected Angle labelAngle = DEFAULT_LABEL_ANGLE;
 
-    /** Create the graphic. */
-    public MinimumSafeDistanceZones()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(TacGrpSidc.MOBSU_CBRN_MSDZ);
+    }
+
+    /**
+     * Create the graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public MinimumSafeDistanceZones(String sidc)
+    {
+        super(sidc);
     }
 
     /**
@@ -75,12 +87,6 @@ public class MinimumSafeDistanceZones extends MilStd2525TacticalGraphic implemen
         }
 
         this.labelAngle = angle;
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_MOBILITY_SURVIVABILITY;
     }
 
     /**

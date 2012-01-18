@@ -9,9 +9,8 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.Label;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
@@ -32,45 +31,43 @@ import java.util.*;
  */
 public class IrregularFireSupportArea extends BasicArea
 {
-    /** Function ID for the Fire Support Area graphic (2.X.4.3.2.1.1). */
-    public final static String FUNCTION_ID_FSA = "ACSI--";
-    /** Function ID of the Bomb graphic (2.X.4.3.1.5). */
-    public final static String FUNCTION_ID_BOMB = "ATB---";
-    /** Function ID of the Area Target graphic (2.X.4.3.1). */
-    public final static String FUNCTION_ID_TARGET = "AT----";
-    /** Function ID for the Free Fire Area graphic (2.X.4.3.2.3.1). */
-    public final static String FUNCTION_ID_FFA = "ACFI--";
-    /** Function ID for the Restrictive Fire Area graphic (2.X.4.3.2.5.1). */
-    public final static String FUNCTION_ID_RFA = "ACRI--";
-    /** Function ID of the Airspace Coordination Area graphic (2.X.4.3.2.2.1). */
-    public final static String FUNCTION_ID_ACA = "ACAI--";
-    /** Function ID of the Terminally Guided Munitions Footprint graphic. */
-    public final static String FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT = "ACT---";
-    /** Function ID for the Sensor Zone graphic. */
-    public final static String FUNCTION_ID_SENSOR_ZONE = "ACEI--";
-    /** Function ID for the Dead Space Area graphic. */
-    public final static String FUNCTION_ID_DEAD_SPACE_AREA = "ACDI--";
-    /** Function ID for the Zone of Responsibility graphic. */
-    public final static String FUNCTION_ID_ZONE_OF_RESPONSIBILITY = "ACZI--";
-    /** Function ID for the Target Build-up Area graphic. */
-    public final static String FUNCTION_ID_TARGET_BUILDUP = "ACBI--";
-    /** Function ID for the Target Value Area graphic. */
-    public final static String FUNCTION_ID_TARGET_VALUE = "ACVI--";
-    /** Function ID for the Artillery Target Intelligence Zone graphic ( 2.X.4.3.3.1.1). */
-    public final static String FUNCTION_ID_ATI = "AZII--";
-    /** Function ID for the Call For Fire Zone graphic (2.X.4.3.3.2.1). */
-    public final static String FUNCTION_ID_CFF = "AZXI--";
-    /** Function ID for the Censor Zone graphic (2.X.4.3.3.4.1). */
-    public final static String FUNCTION_ID_CENSOR_ZONE = "AZCI--";
-    /** Function ID for the Critical Friendly Zone graphic (2.X.4.3.3.6.1). */
-    public final static String FUNCTION_ID_CF = "AZFI--";
-
     /** Center text block on label position when the text is left aligned. */
     protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
-    /** Create the area graphic. */
-    public IrregularFireSupportArea()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(
+            TacGrpSidc.FSUPP_ARS_ARATGT,
+            TacGrpSidc.FSUPP_ARS_ARATGT_BMARA,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TGMF,
+            TacGrpSidc.FSUPP_ARS_C2ARS_FSA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_FFA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_RFA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_ACA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TBA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR);
+    }
+
+    /**
+     * Create the area graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public IrregularFireSupportArea(String sidc)
+    {
+        super(sidc);
         this.setShowHostileIndicator(false);
     }
 
@@ -85,23 +82,16 @@ public class IrregularFireSupportArea extends BasicArea
     public static Set<String> getGraphicsWithTimeLabel()
     {
         return new HashSet<String>(Arrays.asList(
-            FUNCTION_ID_FSA,
-            FUNCTION_ID_SENSOR_ZONE,
-            FUNCTION_ID_DEAD_SPACE_AREA,
-            FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
-            FUNCTION_ID_TARGET_BUILDUP,
-            FUNCTION_ID_TARGET_VALUE,
-            FUNCTION_ID_ATI,
-            FUNCTION_ID_CFF,
-            FUNCTION_ID_CENSOR_ZONE,
-            FUNCTION_ID_CF));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
+            TacGrpSidc.FSUPP_ARS_C2ARS_FSA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TBA_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_IRR,
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR));
     }
 
     @Override
@@ -189,7 +179,7 @@ public class IrregularFireSupportArea extends BasicArea
     @Override
     protected String getLabelAlignment()
     {
-        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+        boolean isACA = TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equals(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. All others are center aligned.
         if (isACA)
@@ -207,7 +197,7 @@ public class IrregularFireSupportArea extends BasicArea
     @Override
     protected Offset getDefaultLabelOffset()
     {
-        boolean isACA = FUNCTION_ID_ACA.equals(this.getFunctionId());
+        boolean isACA = TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equals(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. Adjust the offset to center the left aligned label
         // in the circle. (This is not necessary with a center aligned label because centering the text automatically

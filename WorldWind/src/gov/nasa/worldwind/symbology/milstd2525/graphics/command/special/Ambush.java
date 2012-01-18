@@ -11,8 +11,9 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicUtil;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -25,9 +26,6 @@ import java.util.*;
  */
 public class Ambush extends MilStd2525TacticalGraphic
 {
-    /** Function ID for the Ambush graphic (2.X.2.6.1.1). */
-    public final static String FUNCTION_ID = "SLA---";
-
     /** Default length of the arrowhead, as a fraction of the total line length. */
     public final static double DEFAULT_ARROWHEAD_LENGTH = 0.2;
     /**
@@ -98,9 +96,24 @@ public class Ambush extends MilStd2525TacticalGraphic
         Vec4 direction;
     }
 
-    /** Create a new graphic. */
-    public Ambush()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(TacGrpSidc.C2GM_SPL_LNE_AMB);
+    }
+
+    /**
+     * Create a new graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public Ambush(String sidc)
+    {
+        super(sidc);
     }
 
     /**
@@ -282,12 +295,6 @@ public class Ambush extends MilStd2525TacticalGraphic
 
         this.legLength = legLength;
         this.onShapeChanged();
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /**

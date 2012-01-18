@@ -9,8 +9,10 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.special;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
+
+import java.util.*;
 
 /**
  * Implementation of the Airhead graphic (2.X.2.6.2.2).
@@ -20,19 +22,31 @@ import gov.nasa.worldwind.util.WWUtil;
  */
 public class Airhead extends BasicArea
 {
-    /** Function ID for Airhead graphic (2.X.2.6.2.2). */
-    public final static String FUNCTION_ID = "SAA---";
-
     /**
      * Default offset to apply to the label. The default aligns the top center of the label with the label's geographic
      * position, in order to keep the text South of the area.
      */
     public final static Offset DEFAULT_OFFSET = new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION);
 
-    /** Create a new area graphic. */
-    public Airhead()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super.setShowHostileIndicator(false);
+        return Arrays.asList(TacGrpSidc.C2GM_SPL_ARA_AHD);
+    }
+
+    /**
+     * Create a new area graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public Airhead(String sidc)
+    {
+        super(sidc);
+        this.setShowHostileIndicator(false);
     }
 
     @Override

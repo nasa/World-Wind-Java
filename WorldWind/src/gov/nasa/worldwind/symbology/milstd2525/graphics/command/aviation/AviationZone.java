@@ -9,7 +9,9 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
+
+import java.util.*;
 
 /**
  * Implementation of aviation area graphics. This class implements the following graphics:
@@ -24,25 +26,33 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
  */
 public class AviationZone extends BasicArea
 {
-    /** Function ID for Restricted Operations Zone (2.X.2.2.3.1). */
-    public final static String FUNCTION_ID_RESTRICTED_OPERATIONS_ZONE = "AAR---";
-    /** Function ID for Short Range Air Defense Engagement Zone (2.X.2.2.3.2). */
-    public final static String FUNCTION_ID_SHORT_RANGE_AIR_DEFENSE = "AAF---";
-    /** Function ID for High Altitude Missile Engagement Zone (2.X.2.2.3.4.2). */
-    public final static String FUNCTION_ID_HI_ALT_MISSILE_ZONE = "AAMH--";
-    /** Function ID for High Density Airspace Control Zone (2.X.2.2.3.3). */
-    public final static String FUNCTION_ID_HI_DENSITY_AIRSPACE = "AAH---";
-    /** Function ID for Missile Engagement Zone (2.X.2.2.3.4). */
-    public final static String FUNCTION_ID_MISSILE_ZONE = "AAML--";
-    /** Function ID for Low Altitude Missile Engagement Zone (2.X.2.2.3.4.1). */
-    public final static String FUNCTION_ID_LO_ALT_MISSILE_ZONE = "AAM---";
-
     /** Center text block on label position. */
     protected final static Offset LABEL_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
-    /** Create a new aviation area. */
-    public AviationZone()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(
+            TacGrpSidc.C2GM_AVN_ARS_ROZ,
+            TacGrpSidc.C2GM_AVN_ARS_SHRDEZ,
+            TacGrpSidc.C2GM_AVN_ARS_HIDACZ,
+            TacGrpSidc.C2GM_AVN_ARS_MEZ,
+            TacGrpSidc.C2GM_AVN_ARS_MEZ_LAMEZ,
+            TacGrpSidc.C2GM_AVN_ARS_MEZ_HAMEZ);
+    }
+
+    /**
+     * Create a new aviation area.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public AviationZone(String sidc)
+    {
+        super(sidc);
         // Do not draw "ENY" labels on hostile entities.
         this.setShowHostileIndicator(false);
     }
@@ -122,22 +132,23 @@ public class AviationZone extends BasicArea
         return sb.toString();
     }
 
+    @Override
     protected String getGraphicLabel()
     {
-        String functionId = this.getFunctionId();
+        String code = this.maskedSymbolCode;
 
-        if (FUNCTION_ID_RESTRICTED_OPERATIONS_ZONE.equals(functionId))
+        if (TacGrpSidc.C2GM_AVN_ARS_ROZ.equals(code))
             return "ROZ";
-        else if (FUNCTION_ID_SHORT_RANGE_AIR_DEFENSE.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_ARS_SHRDEZ.equals(code))
             return "SHORADEZ";
-        else if (FUNCTION_ID_HI_ALT_MISSILE_ZONE.equals(functionId))
-            return "HIMEZ";
-        else if (FUNCTION_ID_HI_DENSITY_AIRSPACE.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_ARS_HIDACZ.equals(code))
             return "HIDACZ";
-        else if (FUNCTION_ID_MISSILE_ZONE.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ.equals(code))
             return "MEZ";
-        else if (FUNCTION_ID_LO_ALT_MISSILE_ZONE.equals(functionId))
+        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ_LAMEZ.equals(code))
             return "LOMEZ";
+        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ_HAMEZ.equals(code))
+            return "HIMEZ";
 
         return "";
     }

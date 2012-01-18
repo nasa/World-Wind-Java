@@ -6,8 +6,10 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
-import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.TacticalGraphicUtil;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
+
+import java.util.*;
 
 /**
  * Implementation of the Smoke graphic (hierarchy 2.X.4.3.1.4, SIDC: G*FPATS---****X).
@@ -17,11 +19,19 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
  */
 public class Smoke extends BasicArea
 {
-    /** Function ID of this graphic. */
-    public final static String FUNCTION_ID = "ATS---";
-
-    public Smoke()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(TacGrpSidc.FSUPP_ARS_ARATGT_SMK);
+    }
+
+    public Smoke(String sidc)
+    {
+        super(sidc);
         // Do not draw "ENY" labels for hostile entities
         this.setShowHostileIndicator(false);
     }
@@ -46,12 +56,5 @@ public class Smoke extends BasicArea
         }
 
         return sb.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 }

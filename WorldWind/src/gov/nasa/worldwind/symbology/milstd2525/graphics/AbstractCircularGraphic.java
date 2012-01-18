@@ -25,9 +25,14 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
     protected SurfaceCircle circle;
     protected Object delegateOwner;
 
-    /** Create a new circular area. */
-    public AbstractCircularGraphic()
+    /**
+     * Create a new circular area.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public AbstractCircularGraphic(String sidc)
     {
+        super(sidc);
         this.circle = this.createShape();
     }
 

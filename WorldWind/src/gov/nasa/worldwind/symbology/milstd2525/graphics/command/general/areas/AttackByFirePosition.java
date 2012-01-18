@@ -11,8 +11,9 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicUtil;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -25,9 +26,6 @@ import java.util.*;
  */
 public class AttackByFirePosition extends MilStd2525TacticalGraphic
 {
-    /** Function ID for the Attack By Fire Position graphic (2.X.2.5.3.3). */
-    public final static String FUNCTION_ID = "OAF---";
-
     /** Default length of the arrowhead, as a fraction of the total line length. */
     public final static double DEFAULT_ARROWHEAD_LENGTH = 0.2;
     /** Default angle of the arrowhead. */
@@ -58,9 +56,24 @@ public class AttackByFirePosition extends MilStd2525TacticalGraphic
     /** Path used to render the graphic. */
     protected Path[] paths;
 
-    /** Create a new arrow graphic. */
-    public AttackByFirePosition()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(TacGrpSidc.C2GM_OFF_ARS_AFP);
+    }
+
+    /**
+     * Create a new arrow graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public AttackByFirePosition(String sidc)
+    {
+        super(sidc);
     }
 
     /**
@@ -152,12 +165,6 @@ public class AttackByFirePosition extends MilStd2525TacticalGraphic
         }
 
         this.legLength = legLength;
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /**

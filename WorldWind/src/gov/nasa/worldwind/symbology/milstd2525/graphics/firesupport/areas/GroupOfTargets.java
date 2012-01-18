@@ -8,10 +8,9 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Implementation of the Series or Group of Targets graphic (2.X.4.3.1.3).
@@ -22,20 +21,24 @@ import java.util.Iterator;
 // TODO: We might want to draw a white background behind the label to make it easier to read against the polygon line.
 public class GroupOfTargets extends BasicArea
 {
-    /** Function ID for the Series or Group of Targets graphic (2.X.4.3.1.3). */
-    public static final String FUNCTION_ID = "ATG---";
-
-    /** Create a new graphic. */
-    public GroupOfTargets()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super();
+        return Arrays.asList(TacGrpSidc.FSUPP_ARS_ARATGT_SGTGT);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getCategory()
+    /**
+     * Create a new graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public GroupOfTargets(String sidc)
     {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
+        super(sidc);
     }
 
     /**

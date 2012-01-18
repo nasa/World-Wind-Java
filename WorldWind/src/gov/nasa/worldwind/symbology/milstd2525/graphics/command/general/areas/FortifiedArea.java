@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -22,9 +22,6 @@ import java.util.*;
  */
 public class FortifiedArea extends BasicArea
 {
-    /** Function ID for Fortified Area (2.X.2.1.3.4). */
-    public final static String FUNCTION_ID = "GAF---";
-
     /** Default number of wave lengths for a simple shape. This number is used to compute a default wave length. */
     public static final int DEFAULT_NUM_WAVES = 20;
 
@@ -38,6 +35,21 @@ public class FortifiedArea extends BasicArea
 
     /** Indicates the wavelength of the square wave that forms the graphic's border. */
     protected double waveLength;
+
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
+    {
+        return Arrays.asList(TacGrpSidc.C2GM_GNL_ARS_FTFDAR);
+    }
+
+    public FortifiedArea(String sidc)
+    {
+        super(sidc);
+    }
 
     /** {@inheritDoc} */
     @Override

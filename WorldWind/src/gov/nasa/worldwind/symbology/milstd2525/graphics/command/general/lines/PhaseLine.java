@@ -10,10 +10,10 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Implementation of phase line graphics. This class implements the following graphics:
@@ -28,38 +28,37 @@ import java.util.Iterator;
  */
 public class PhaseLine extends MilStd2525TacticalGraphic
 {
-    /** Function ID for Phase Line (2.X.2.1.2.4). */
-    public final static String FUNCTION_ID_PHASE = "GLP---";
-    /** Function ID for Light Line (2.X.2.1.2.5). */
-    public final static String FUNCTION_ID_LIGHT = "GLL---";
-    /** Function ID for Final Coordination Line (2.X.2.5.2.3). */
-    public final static String FUNCTION_ID_FINAL = "OLF---";
-    /** Function ID for Limits of Advance (2.X.2.5.2.5). */
-    public final static String FUNCTION_ID_ADVANCE = "OLL---";
-    /** Function ID for Line of Departure (2.X.2.5.2.6). */
-    public final static String FUNCTION_ID_DEPARTURE = "OLT---";
-    /** Function ID for Line of Departure/Line of Contact (2.X.2.5.2.7). */
-    public final static String FUNCTION_ID_DEPARTURE_CONTACT = "OLC---";
-    /** Function ID for Line of Departure/Line of Contact (2.X.2.5.2.8). */
-    public final static String FUNCTION_ID_DEPLOYMENT = "OLP---";
-    /** Function ID for Release Line (2.X.2.6.1.3). */
-    public final static String FUNCTION_ID_RELEASE = "SLR---";
-    /** Function ID for No-Fire Line (2.X.4.2.2.3). */
-    public final static String FUNCTION_ID_NO_FIRE = "LCN---";
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
+    {
+        return Arrays.asList(
+            TacGrpSidc.C2GM_GNL_LNE_PHELNE,
+            TacGrpSidc.C2GM_GNL_LNE_LITLNE,
+            TacGrpSidc.C2GM_OFF_LNE_FCL,
+            TacGrpSidc.C2GM_OFF_LNE_LMTADV,
+            TacGrpSidc.C2GM_OFF_LNE_LD,
+            TacGrpSidc.C2GM_OFF_LNE_LDLC,
+            TacGrpSidc.C2GM_OFF_LNE_PLD,
+            TacGrpSidc.FSUPP_LNE_C2LNE_NFL
+        );
+    }
 
     /** Path used to render the line. */
     protected Path path;
 
-    /** Create a new Phase Line. */
-    public PhaseLine()
+    /**
+     * Create a new Phase Line.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public PhaseLine(String sidc)
     {
+        super(sidc);
         this.path = this.createPath();
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */
@@ -104,27 +103,27 @@ public class PhaseLine extends MilStd2525TacticalGraphic
 
     protected String getGraphicLabel()
     {
-        String functionId = this.getFunctionId();
+        String code = this.maskedSymbolCode;
 
         String pattern = null;
 
-        if (FUNCTION_ID_PHASE.equals(functionId))
+        if (TacGrpSidc.C2GM_GNL_LNE_PHELNE.equals(code))
             pattern = "PL %s";
-        else if (FUNCTION_ID_LIGHT.equals(functionId))
+        else if (TacGrpSidc.C2GM_GNL_LNE_LITLNE.equals(code))
             pattern = "LL\n(PL %s)";
-        else if (FUNCTION_ID_FINAL.equals(functionId))
+        else if (TacGrpSidc.C2GM_OFF_LNE_FCL.equals(code))
             pattern = "FINAL CL\n(PL %s)";
-        else if (FUNCTION_ID_ADVANCE.equals(functionId))
+        else if (TacGrpSidc.C2GM_OFF_LNE_LMTADV.equals(code))
             pattern = "LOA\n(PL %s)";
-        else if (FUNCTION_ID_DEPARTURE.equals(functionId))
+        else if (TacGrpSidc.C2GM_OFF_LNE_LD.equals(code))
             pattern = "LD\n(PL %s)";
-        else if (FUNCTION_ID_DEPARTURE_CONTACT.equals(functionId))
+        else if (TacGrpSidc.C2GM_OFF_LNE_LDLC.equals(code))
             pattern = "LD/LC\n(PL %s)";
-        else if (FUNCTION_ID_DEPLOYMENT.equals(functionId))
+        else if (TacGrpSidc.C2GM_OFF_LNE_PLD.equals(code))
             pattern = "PLD\n(PL %s)";
-        else if (FUNCTION_ID_RELEASE.equals(functionId))
+        else if (TacGrpSidc.C2GM_SPL_LNE_REL.equals(code))
             pattern = "RL\n(PL %s)";
-        else if (FUNCTION_ID_NO_FIRE.equals(functionId))
+        else if (TacGrpSidc.FSUPP_LNE_C2LNE_NFL.equals(code))
             pattern = "NFL\n(PL %s)";
 
         if (pattern != null)

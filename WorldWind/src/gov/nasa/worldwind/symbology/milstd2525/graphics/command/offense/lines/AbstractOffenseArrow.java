@@ -33,10 +33,14 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
     /** Positions computed from the control points, used to draw the arrow path. */
     protected List<? extends Position> arrowPositions;
 
-    /** Create a new arrow graphic. */
-    public AbstractOffenseArrow()
+    /**
+     * Create a new arrow graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public AbstractOffenseArrow(String sidc)
     {
-        this(1);
+        this(sidc, 1);
     }
 
     /**
@@ -44,10 +48,13 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
      * creates the requested number of paths. The first element in the array is the main path that outlines the arrow.
      * Subclasses are responsible for configuring the other paths.
      *
+     * @param sidc     Symbol code the identifies the graphic.
      * @param numPaths Number of paths to create.
      */
-    public AbstractOffenseArrow(int numPaths)
+    public AbstractOffenseArrow(String sidc, int numPaths)
     {
+        super(sidc);
+
         if (numPaths < 1)
         {
             String message = Logging.getMessage("generic.ArrayInvalidLength", numPaths);

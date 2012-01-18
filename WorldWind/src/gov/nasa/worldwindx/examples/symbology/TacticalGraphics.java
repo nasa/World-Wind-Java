@@ -89,6 +89,14 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createPoint("GFGPGPUSC-----X", Position.fromDegrees(35.2144, -117.9824, 0), null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Search Center (2.X.2.1.1.1.3.3)");
             layer.addRenderable(graphic);
+
+            /////////////////////////////////////////////
+            // Ground Zero (2.X.2.1.1.3.4)
+            /////////////////////////////////////////////
+
+            graphic = factory.createPoint("GFGPGPWG------X", Position.fromDegrees(35.2705, -117.8941, 0), null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Ground Zero (2.X.2.1.1.3.4)");
+            layer.addRenderable(graphic);
         }
 
         protected void createLineGraphics(RenderableLayer layer)
@@ -212,18 +220,18 @@ public class TacticalGraphics extends ApplicationTemplate
             List<TacticalPoint> controlPoints = new ArrayList<TacticalPoint>();
 
             // Create an Air Control Point
-            TacticalPoint point = factory.createPoint("GFFPAPP-------X", Position.fromDegrees(34.8802, -117.9773, 0),
+            TacticalPoint point = factory.createPoint("GFGPAPP-------X", Position.fromDegrees(34.8802, -117.9773, 0),
                 null);
             point.setText("1");
             controlPoints.add(point);
 
             // And another Air Control Point
-            point = factory.createPoint("GFFPAPP-------X", Position.fromDegrees(35.0947, -117.9578, 0), null);
+            point = factory.createPoint("GFGPAPP-------X", Position.fromDegrees(35.0947, -117.9578, 0), null);
             point.setText("2");
             controlPoints.add(point);
 
             // And a Communication Checkpoint
-            point = factory.createPoint("GFFPAPC-------X", Position.fromDegrees(35.1739, -117.6957, 0), null);
+            point = factory.createPoint("GFGPAPC-------X", Position.fromDegrees(35.1739, -117.6957, 0), null);
             point.setText("3");
             controlPoints.add(point);
 
@@ -257,7 +265,7 @@ public class TacticalGraphics extends ApplicationTemplate
             positions = Arrays.asList(
                 Position.fromDegrees(34.8917, -117.8344, 0),
                 Position.fromDegrees(34.8283, -117.6794, 0));
-            graphic = factory.createGraphic("GFGPLTF-------X", positions, null);
+            graphic = factory.createGraphic("GFFPLTF-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Final Protective Fire (2.X.4.2.1.2)");
             graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("AG1201", "2-22 INF MORT"));
             layer.addRenderable(graphic);
@@ -505,7 +513,7 @@ public class TacticalGraphics extends ApplicationTemplate
                 Position.fromDegrees(35.1701, -116.6773, 0),
                 Position.fromDegrees(35.1642, -116.7611, 0),
                 Position.fromDegrees(35.1192, -116.7790, 0));
-            graphic = factory.createGraphic("GFFPSAA-------X", positions, null);
+            graphic = factory.createGraphic("GFGPSAA-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Airhead (2.X.2.6.2.2)");
             graphic.setText("DELTA");
             layer.addRenderable(graphic);
@@ -519,7 +527,7 @@ public class TacticalGraphics extends ApplicationTemplate
                 Position.fromDegrees(34.9230, -116.6842, 0), // Radius of ring 1
                 Position.fromDegrees(34.8723, -116.6841, 0), // Radius of ring 2
                 Position.fromDegrees(34.8870, -116.7783, 0)); // Radius of ring 3
-            graphic = factory.createGraphic("GFFPNM--------X", positions, null);
+            graphic = factory.createGraphic("GFMPNM--------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Minimum Safe Distance Zones (2.X.3.4.1)");
             layer.addRenderable(graphic);
 
@@ -528,7 +536,7 @@ public class TacticalGraphics extends ApplicationTemplate
             ////////////////////////////////////////////////////////////
 
             position = Position.fromDegrees(35.2132, -117.8042, 0);
-            circle = factory.createCircle("GFFPAPU-------X", position, 2000.0, null);
+            circle = factory.createCircle("GFGPAPU-------X", position, 2000.0, null);
             circle.setValue(AVKey.DISPLAY_NAME, "Pull-Up Point (2.X.2.2.1.3)");
             layer.addRenderable(circle);
 

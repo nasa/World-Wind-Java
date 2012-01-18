@@ -48,144 +48,51 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
     /** Populate the map that maps function IDs to implementation classes. */
     protected void populateClassMap()
     {
-        this.mapClass(PhaseLine.class,
-            PhaseLine.FUNCTION_ID_PHASE,
-            PhaseLine.FUNCTION_ID_LIGHT,
-            PhaseLine.FUNCTION_ID_FINAL,
-            PhaseLine.FUNCTION_ID_ADVANCE,
-            PhaseLine.FUNCTION_ID_DEPARTURE,
-            PhaseLine.FUNCTION_ID_DEPARTURE_CONTACT,
-            PhaseLine.FUNCTION_ID_DEPLOYMENT,
-            PhaseLine.FUNCTION_ID_RELEASE,
-            PhaseLine.FUNCTION_ID_NO_FIRE);
+        // All point graphics are handled by one class
+        this.mapClass(MilStd2525PointGraphic.class, MilStd2525PointGraphic.getSupportedGraphics());
 
-        this.mapClass(BasicArea.class,
-            BasicArea.FUNCTION_ID_GENERAL,
-            BasicArea.FUNCTION_ID_ASSEMBLY,
-            BasicArea.FUNCTION_ID_ENGAGEMENT,
-            BasicArea.FUNCTION_ID_DROP,
-            BasicArea.FUNCTION_ID_EXTRACTION,
-            BasicArea.FUNCTION_ID_LANDING,
-            BasicArea.FUNCTION_ID_PICKUP);
+        // Command/Control/General Maneuver
 
-        this.mapClass(AirfieldZone.class, AirfieldZone.FUNCTION_ID);
-        this.mapClass(FortifiedArea.class, FortifiedArea.FUNCTION_ID);
-        this.mapClass(WeaponsFreeZone.class, WeaponsFreeZone.FUNCTION_ID);
+        this.mapClass(PhaseLine.class, PhaseLine.getSupportedGraphics());
+        this.mapClass(BasicArea.class, BasicArea.getSupportedGraphics());
+        this.mapClass(AirfieldZone.class, AirfieldZone.getSupportedGraphics());
+        this.mapClass(FortifiedArea.class, FortifiedArea.getSupportedGraphics());
+        this.mapClass(WeaponsFreeZone.class, WeaponsFreeZone.getSupportedGraphics());
+        this.mapClass(AviationZone.class, AviationZone.getSupportedGraphics());
+        this.mapClass(Route.class, Route.getSupportedGraphics());
+        this.mapClass(RoutePoint.class, RoutePoint.getSupportedGraphics());
+        this.mapClass(PullUpPoint.class, PullUpPoint.getSupportedGraphics());
+        this.mapClass(OffenseArea.class, OffenseArea.getSupportedGraphics());
+        this.mapClass(CombatSupportArea.class, CombatSupportArea.getSupportedGraphics());
+        this.mapClass(SpecialInterestArea.class, SpecialInterestArea.getSupportedGraphics());
+        this.mapClass(Airhead.class, Airhead.getSupportedGraphics());
+        this.mapClass(DirectionOfAttack.class, DirectionOfAttack.getSupportedGraphics());
+        this.mapClass(Aviation.class, Aviation.getSupportedGraphics());
+        this.mapClass(MainAttack.class, MainAttack.getSupportedGraphics());
+        this.mapClass(AttackRotaryWing.class, AttackRotaryWing.getSupportedGraphics());
+        this.mapClass(SupportingAttack.class, SupportingAttack.getSupportedGraphics());
+        this.mapClass(Dummy.class, Dummy.getSupportedGraphics());
+        this.mapClass(SupportByFirePosition.class, SupportByFirePosition.getSupportedGraphics());
+        this.mapClass(Ambush.class, Ambush.getSupportedGraphics());
 
-        this.mapClass(AviationZone.class,
-            AviationZone.FUNCTION_ID_RESTRICTED_OPERATIONS_ZONE,
-            AviationZone.FUNCTION_ID_SHORT_RANGE_AIR_DEFENSE,
-            AviationZone.FUNCTION_ID_HI_DENSITY_AIRSPACE,
-            AviationZone.FUNCTION_ID_MISSILE_ZONE,
-            AviationZone.FUNCTION_ID_LO_ALT_MISSILE_ZONE,
-            AviationZone.FUNCTION_ID_HI_ALT_MISSILE_ZONE);
+        // Mobility/survivability
 
-        this.mapClass(RoutePoint.class,
-            RoutePoint.FUNCTION_ID_AIR_CONTROL,
-            RoutePoint.FUNCTION_ID_COMMUNICATIONS_CHECKPOINT);
+        this.mapClass(MinimumSafeDistanceZones.class, MinimumSafeDistanceZones.getSupportedGraphics());
 
-        this.mapClass(PullUpPoint.class, PullUpPoint.FUNCTION_ID);
+        // Fire support
 
-        this.mapClass(Route.class,
-            Route.FUNCTION_ID_AIR_CORRIDOR,
-            Route.FUNCTION_ID_MINIMUM_RISK,
-            Route.FUNCTION_ID_LOW_LEVEL_TRANSIT,
-            Route.FUNCTION_ID_STANDARD_FLIGHT,
-            Route.FUNCTION_ID_UNMANNED_AIRCRAFT);
-
-        this.mapClass(OffenseArea.class,
-            OffenseArea.FUNCTION_ID_ASSAULT_POSITION,
-            OffenseArea.FUNCTION_ID_ATTACK_POSITION,
-            OffenseArea.FUNCTION_ID_OBJECTIVE,
-            OffenseArea.FUNCTION_ID_PENETRATION_BOX);
-
-        this.mapClass(CombatSupportArea.class,
-            CombatSupportArea.FUNCTION_ID_DETAINEE,
-            CombatSupportArea.FUNCTION_ID_EPW,
-            CombatSupportArea.FUNCTION_ID_FARP,
-            CombatSupportArea.FUNCTION_ID_REFUGEE,
-            CombatSupportArea.FUNCTION_ID_SUPPORT_BRIGADE,
-            CombatSupportArea.FUNCTION_ID_SUPPORT_DIVISION,
-            CombatSupportArea.FUNCTION_ID_SUPPORT_REGIMENTAL);
-
-        this.mapClass(SpecialInterestArea.class,
-            SpecialInterestArea.FUNCTION_ID_OPERATIONS,
-            SpecialInterestArea.FUNCTION_ID_NAMED,
-            SpecialInterestArea.FUNCTION_ID_TARGETED);
-
-        this.mapClass(Airhead.class, Airhead.FUNCTION_ID);
-
-        this.mapClass(DirectionOfAttack.class,
-            DirectionOfAttack.FUNCTION_ID_MAIN,
-            DirectionOfAttack.FUNCTION_ID_SUPPORTING);
-
-        this.mapClass(RectangularFireSupportArea.class,
-            RectangularFireSupportArea.FUNCTION_ID_FSA,
-            RectangularFireSupportArea.FUNCTION_ID_FFA,
-            RectangularFireSupportArea.FUNCTION_ID_RFA,
-            RectangularFireSupportArea.FUNCTION_ID_SENSOR_ZONE,
-            RectangularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA,
-            RectangularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
-            RectangularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP,
-            RectangularFireSupportArea.FUNCTION_ID_TARGET_VALUE,
-            RectangularFireSupportArea.FUNCTION_ID_ATI,
-            RectangularFireSupportArea.FUNCTION_ID_CFF,
-            RectangularFireSupportArea.FUNCTION_ID_CENSOR_ZONE,
-            RectangularFireSupportArea.FUNCTION_ID_CF);
-
-        this.mapClass(CircularFireSupportArea.class,
-            CircularFireSupportArea.FUNCTION_ID_TARGET,
-            CircularFireSupportArea.FUNCTION_ID_FFA,
-            CircularFireSupportArea.FUNCTION_ID_RFA,
-            CircularFireSupportArea.FUNCTION_ID_FSA,
-            CircularFireSupportArea.FUNCTION_ID_ACA,
-            CircularFireSupportArea.FUNCTION_ID_SENSOR_ZONE,
-            CircularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA,
-            CircularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
-            CircularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP,
-            CircularFireSupportArea.FUNCTION_ID_TARGET_VALUE);
-
-        this.mapClass(IrregularFireSupportArea.class,
-            IrregularFireSupportArea.FUNCTION_ID_FSA,
-            IrregularFireSupportArea.FUNCTION_ID_TARGET,
-            IrregularFireSupportArea.FUNCTION_ID_FFA,
-            IrregularFireSupportArea.FUNCTION_ID_RFA,
-            IrregularFireSupportArea.FUNCTION_ID_ACA,
-            IrregularFireSupportArea.FUNCTION_ID_BOMB,
-            IrregularFireSupportArea.FUNCTION_ID_TERMINALLY_GUIDED_MUNITIONS_FOOTPRINT,
-            IrregularFireSupportArea.FUNCTION_ID_SENSOR_ZONE,
-            IrregularFireSupportArea.FUNCTION_ID_DEAD_SPACE_AREA,
-            IrregularFireSupportArea.FUNCTION_ID_ZONE_OF_RESPONSIBILITY,
-            IrregularFireSupportArea.FUNCTION_ID_TARGET_BUILDUP,
-            IrregularFireSupportArea.FUNCTION_ID_TARGET_VALUE,
-            IrregularFireSupportArea.FUNCTION_ID_ATI,
-            IrregularFireSupportArea.FUNCTION_ID_CFF,
-            IrregularFireSupportArea.FUNCTION_ID_CENSOR_ZONE,
-            IrregularFireSupportArea.FUNCTION_ID_CF);
-
-        this.mapClass(LinearTarget.class,
-            LinearTarget.FUNCTION_ID_MAIN,
-            LinearTarget.FUNCTION_ID_SMOKE,
-            LinearTarget.FUNCTION_ID_FPF);
-
-        this.mapClass(Dummy.class, Dummy.FUNCTION_ID);
-        this.mapClass(SupportingAttack.class, SupportingAttack.FUNCTION_ID);
-        this.mapClass(Aviation.class, Aviation.FUNCTION_ID);
-        this.mapClass(MainAttack.class, MainAttack.FUNCTION_ID);
-        this.mapClass(AttackRotaryWing.class, AttackRotaryWing.FUNCTION_ID);
-        this.mapClass(RectangularTarget.class, RectangularTarget.FUNCTION_ID);
-        this.mapClass(Smoke.class, Smoke.FUNCTION_ID);
-        this.mapClass(CircularRangeFan.class, CircularRangeFan.FUNCTION_ID);
-        this.mapClass(SectorRangeFan.class, SectorRangeFan.FUNCTION_ID);
-        this.mapClass(CircularPositionArea.class, CircularPositionArea.FUNCTION_ID);
-        this.mapClass(RectangularPositionArea.class, RectangularPositionArea.FUNCTION_ID);
-        this.mapClass(GroupOfTargets.class, GroupOfTargets.FUNCTION_ID);
-        this.mapClass(MinimumSafeDistanceZones.class, MinimumSafeDistanceZones.FUNCTION_ID);
-        this.mapClass(AttackByFirePosition.class, AttackByFirePosition.FUNCTION_ID);
-        this.mapClass(SupportByFirePosition.class, SupportByFirePosition.FUNCTION_ID);
-        this.mapClass(Ambush.class, Ambush.FUNCTION_ID);
-
-        this.mapClass(MilStd2525PointGraphic.class, MilStd2525PointGraphic.POINT_GRAPHIC_FUNCTION_IDS);
+        this.mapClass(RectangularTarget.class, RectangularTarget.getSupportedGraphics());
+        this.mapClass(LinearTarget.class, LinearTarget.getSupportedGraphics());
+        this.mapClass(RectangularFireSupportArea.class, RectangularFireSupportArea.getSupportedGraphics());
+        this.mapClass(CircularFireSupportArea.class, CircularFireSupportArea.getSupportedGraphics());
+        this.mapClass(IrregularFireSupportArea.class, IrregularFireSupportArea.getSupportedGraphics());
+        this.mapClass(Smoke.class, Smoke.getSupportedGraphics());
+        this.mapClass(CircularRangeFan.class, CircularRangeFan.getSupportedGraphics());
+        this.mapClass(SectorRangeFan.class, SectorRangeFan.getSupportedGraphics());
+        this.mapClass(CircularPositionArea.class, CircularPositionArea.getSupportedGraphics());
+        this.mapClass(RectangularPositionArea.class, RectangularPositionArea.getSupportedGraphics());
+        this.mapClass(GroupOfTargets.class, GroupOfTargets.getSupportedGraphics());
+        this.mapClass(AttackByFirePosition.class, AttackByFirePosition.getSupportedGraphics());
     }
 
     /**
@@ -194,7 +101,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      * @param clazz       Class that implements one or more tactical graphics.
      * @param functionIds Function IDs of the graphics implemented by {@code clazz}.
      */
-    protected void mapClass(Class clazz, String... functionIds)
+    protected void mapClass(Class clazz, List<String> functionIds)
     {
         for (String functionId : functionIds)
         {
@@ -230,22 +137,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         MilStd2525TacticalGraphic graphic;
         try
         {
-            try
-            {
-                Constructor ct = clazz.getConstructor(String.class);
-                graphic = (MilStd2525TacticalGraphic) ct.newInstance(sidc);
-            }
-            catch (NoSuchMethodException e)
-            {
-                // TODO: all graphic classes should support the String constructor. Remove this code when they do.
-                graphic = (MilStd2525TacticalGraphic) clazz.newInstance();
-
-                graphic.setModifier(SymbologyConstants.STANDARD_IDENTITY, symbolCode.getStandardIdentity());
-                graphic.setModifier(SymbologyConstants.STATUS, symbolCode.getStatus());
-                graphic.setModifier(SymbologyConstants.FUNCTION_ID, symbolCode.getFunctionId());
-                graphic.setModifier(SymbologyConstants.COUNTRY_CODE, symbolCode.getCountryCode());
-                graphic.setModifier(SymbologyConstants.ECHELON, symbolCode.getEchelon());
-            }
+            Constructor ct = clazz.getConstructor(String.class);
+            graphic = (MilStd2525TacticalGraphic) ct.newInstance(sidc);
 
             if (positions != null)
             {
@@ -369,7 +262,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      */
     protected Class getClassForCode(SymbolCode symbolCode)
     {
-        String key = symbolCode.getFunctionId();
+        String key = symbolCode.toMaskedString();
         return key != null ? this.classMap.get(key) : null;
     }
 }

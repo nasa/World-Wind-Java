@@ -10,9 +10,9 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.TacticalPoint;
 import gov.nasa.worldwind.symbology.milstd2525.Label;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.AbstractCircularGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 
 import java.util.*;
 
@@ -24,27 +24,31 @@ import java.util.*;
  */
 public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoint, PreRenderable
 {
-    /** Function ID for Air Control Point (2.X.2.2.1.3). */
-    public final static String FUNCTION_ID = "APU---";
-
     /** Default radius, in meters, for the circle. */
     public final static double DEFAULT_RADIUS = 1000.0;
 
     /** Path to draw the bowtie in the middle of the circle. */
     protected Path bowtie;
 
-    /** Create a new point. */
-    public PullUpPoint()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super();
-        this.setRadius(DEFAULT_RADIUS);
+        return Arrays.asList(TacGrpSidc.C2GM_AVN_PNT_PUP);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public String getCategory()
+    /**
+     * Create a new point.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public PullUpPoint(String sidc)
     {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        super(sidc);
+        this.setRadius(DEFAULT_RADIUS);
     }
 
     /** Invalidate the bowtie shape when the circle changes. */

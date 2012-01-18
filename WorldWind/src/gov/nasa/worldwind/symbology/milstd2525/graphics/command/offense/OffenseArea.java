@@ -6,7 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense;
 
-import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
+
+import java.util.*;
 
 /**
  * Implementation of offense area graphics. This class implements the following graphics:
@@ -19,19 +21,29 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.BasicArea;
  */
 public class OffenseArea extends BasicArea
 {
-    /** Function ID for Assault Position (2.X.2.5.3.1). */
-    public final static String FUNCTION_ID_ASSAULT_POSITION = "OAA---";
-    /** Function ID for Attack Position (2.X.2.5.3.2). */
-    public final static String FUNCTION_ID_ATTACK_POSITION = "OAK---";
-    /** Function ID for Objective (2.X.2.5.3.5). */
-    public final static String FUNCTION_ID_OBJECTIVE = "OAO---";
-    /** Function ID for Penetration Box (2.X.2.5.3.6). */
-    public final static String FUNCTION_ID_PENETRATION_BOX = "OAP---";
-
-    /** Create a new area graphic. */
-    public OffenseArea()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super.setShowHostileIndicator(false);
+        return Arrays.asList(
+            TacGrpSidc.C2GM_OFF_ARS_ASTPSN,
+            TacGrpSidc.C2GM_OFF_ARS_ATKPSN,
+            TacGrpSidc.C2GM_OFF_ARS_OBJ,
+            TacGrpSidc.C2GM_OFF_ARS_PBX);
+    }
+
+    /**
+     * Create a new area graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public OffenseArea(String sidc)
+    {
+        super(sidc);
+        this.setShowHostileIndicator(false);
     }
 
     /** {@inheritDoc} */
@@ -39,7 +51,7 @@ public class OffenseArea extends BasicArea
     protected String createLabelText()
     {
         // Penetration box graphic does not support text modifiers.
-        if (FUNCTION_ID_PENETRATION_BOX.equals(this.getFunctionId()))
+        if (TacGrpSidc.C2GM_OFF_ARS_PBX.equals(this.maskedSymbolCode))
             return null;
 
         return super.createLabelText();
@@ -48,13 +60,13 @@ public class OffenseArea extends BasicArea
     @Override
     protected String getGraphicLabel()
     {
-        String functionId = this.getFunctionId();
+        String code = this.maskedSymbolCode;
 
-        if (FUNCTION_ID_ASSAULT_POSITION.equals(functionId))
+        if (TacGrpSidc.C2GM_OFF_ARS_ASTPSN.equals(code))
             return "ASLT\nPSN";
-        else if (FUNCTION_ID_ATTACK_POSITION.equals(functionId))
+        else if (TacGrpSidc.C2GM_OFF_ARS_ATKPSN.equals(code))
             return "ATK";
-        else if (FUNCTION_ID_ATTACK_POSITION.equals(functionId))
+        else if (TacGrpSidc.C2GM_OFF_ARS_OBJ.equals(code))
             return "OBJ";
 
         return "";

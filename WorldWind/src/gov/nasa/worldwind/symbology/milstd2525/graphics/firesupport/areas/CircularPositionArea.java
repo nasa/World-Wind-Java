@@ -8,8 +8,9 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.AbstractCircularGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
+
+import java.util.*;
 
 /**
  * Implementation of the Position Area for Artillery, Circular graphic (2.X.4.3.2.6.2).
@@ -19,19 +20,24 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.AbstractCircularGraphic;
  */
 public class CircularPositionArea extends AbstractCircularGraphic
 {
-    /** Function ID for the Position Area for Artillery, Circular graphic (2.X.4.3.2.6.2). */
-    public final static String FUNCTION_ID = "ACPC--";
-
-    /** Create a new circular area. */
-    public CircularPositionArea()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        super();
+        return Arrays.asList(TacGrpSidc.FSUPP_ARS_C2ARS_PAA_CIRCLR);
     }
 
-    /** {@inheritDoc} */
-    public String getCategory()
+    /**
+     * Create a new circular area.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public CircularPositionArea(String sidc)
     {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
+        super(sidc);
     }
 
     /** Create labels for the start and end of the path. */

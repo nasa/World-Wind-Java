@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -20,15 +21,27 @@ import java.util.*;
  */
 public class SupportByFirePosition extends AttackByFirePosition
 {
-    /** Function ID for the Support By Fire Position graphic (2.X.2.5.3.4). */
-    public final static String FUNCTION_ID = "OAS---";
-
     /** Fourth control point. */
     protected Position position4;
 
-    /** Create a new graphic. */
-    public SupportByFirePosition()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(TacGrpSidc.C2GM_OFF_ARS_SFP);
+    }
+
+    /**
+     * Create a new graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public SupportByFirePosition(String sidc)
+    {
+        super(sidc);
     }
 
     /**

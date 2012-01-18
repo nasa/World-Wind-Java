@@ -11,8 +11,9 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicUtil;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -28,11 +29,6 @@ import java.util.*;
  */
 public class DirectionOfAttack extends MilStd2525TacticalGraphic
 {
-    /** Function ID for the Direction of Main Attack graphic (2.X.2.5.2.2.2.1). */
-    public final static String FUNCTION_ID_MAIN = "OLKGM-";
-    /** Function ID for the Direction of Supporting Attack graphic (2.X.2.5.2.2.2.2). */
-    public final static String FUNCTION_ID_SUPPORTING = "OLKGS-";
-
     /** Default length of the arrowhead, as a fraction of the total line length. */
     public final static double DEFAULT_ARROWHEAD_LENGTH = 0.1;
     /** Default angle of the arrowhead. */
@@ -55,9 +51,27 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
     /** Path used to render the line. */
     protected Path[] paths;
 
-    /** Create a new arrow graphic. */
-    public DirectionOfAttack()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(
+            TacGrpSidc.C2GM_OFF_LNE_DIRATK_GRD_MANATK,
+            TacGrpSidc.C2GM_OFF_LNE_DIRATK_GRD_SUPATK
+        );
+    }
+
+    /**
+     * Create a new arrow graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public DirectionOfAttack(String sidc)
+    {
+        super(sidc);
     }
 
     /**
@@ -151,12 +165,6 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
         this.outlineWidth = outlineWidth;
     }
 
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
-    }
-
     /**
      * {@inheritDoc}
      *
@@ -221,7 +229,7 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
     protected boolean isDrawOutlined()
     {
         // Draw the arrow head outlined if this is a Main Attack graphic.
-        return FUNCTION_ID_MAIN.equals(this.getFunctionId());
+        return TacGrpSidc.C2GM_OFF_LNE_DIRATK_GRD_MANATK.equals(this.maskedSymbolCode);
     }
 
     /**

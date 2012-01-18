@@ -13,6 +13,7 @@ import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -28,13 +29,6 @@ import java.util.*;
  */
 public class LinearTarget extends MilStd2525TacticalGraphic
 {
-    /** Function ID for the Linear Target graphic (2.X.4.2.1). */
-    public final static String FUNCTION_ID_MAIN = "LT----";
-    /** Function ID for the Linear Smoke Target graphic (2.X.4.2.1.1). */
-    public final static String FUNCTION_ID_SMOKE = "LTS---";
-    /** Function ID for the Final Protective Fire graphic (2.X.4.2.1.2). */
-    public final static String FUNCTION_ID_FPF = "LTF---";
-
     /** Default length of the arrowhead, as a fraction of the total line length. */
     public final static double DEFAULT_VERTICAL_LENGTH = 0.25;
     /** Length of the vertical segments, as a fraction of the horizontal segment. */
@@ -67,9 +61,28 @@ public class LinearTarget extends MilStd2525TacticalGraphic
     /** Paths used to render the graphic. */
     protected Path[] paths;
 
-    /** Create a new target graphic. */
-    public LinearTarget()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(
+            TacGrpSidc.FSUPP_LNE_LNRTGT,
+            TacGrpSidc.FSUPP_LNE_LNRTGT_LSTGT,
+            TacGrpSidc.FSUPP_LNE_LNRTGT_FPF
+        );
+    }
+
+    /**
+     * Create a new target graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    public LinearTarget(String sidc)
+    {
+        super(sidc);
     }
 
     /**
@@ -156,12 +169,6 @@ public class LinearTarget extends MilStd2525TacticalGraphic
         {
             super.setModifier(key, value);
         }
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_FIRE_SUPPORT;
     }
 
     /**
@@ -313,12 +320,12 @@ public class LinearTarget extends MilStd2525TacticalGraphic
      */
     protected String getBottomLabelText()
     {
-        String functionId = this.getFunctionId();
-        if (FUNCTION_ID_SMOKE.equals(functionId))
+        String code = this.maskedSymbolCode;
+        if (TacGrpSidc.FSUPP_LNE_LNRTGT_LSTGT.equals(code))
         {
             return "SMOKE";
         }
-        else if (FUNCTION_ID_FPF.equals(functionId))
+        else if (TacGrpSidc.FSUPP_LNE_LNRTGT_FPF.equals(code))
         {
             StringBuilder sb = new StringBuilder("FPF");
             String additionalText = this.getAdditionalText();

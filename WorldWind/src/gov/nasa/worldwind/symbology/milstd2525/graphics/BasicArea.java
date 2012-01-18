@@ -27,21 +27,6 @@ import java.util.*;
  */
 public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    /** Function ID for General Area (2.X.2.1.3.1). */
-    public final static String FUNCTION_ID_GENERAL = "GAG---";
-    /** Function ID for Assembly Area (2.X.2.1.3.2). */
-    public final static String FUNCTION_ID_ASSEMBLY = "GAA---";
-    /** Function ID for Drop Zone (2.X.2.1.3.5). */
-    public final static String FUNCTION_ID_DROP = "GAD---";
-    /** Function ID for Engagement Area (2.X.2.1.3.3). */
-    public final static String FUNCTION_ID_ENGAGEMENT = "GAE---";
-    /** Function ID for Extraction Zone (2.X.2.1.3.6). */
-    public final static String FUNCTION_ID_EXTRACTION = "GAX---";
-    /** Function ID for Landing Zone (2.X.2.1.3.7). */
-    public final static String FUNCTION_ID_LANDING = "GAL---";
-    /** Function ID for Pickup Zone (2.X.2.1.3.8). */
-    public final static String FUNCTION_ID_PICKUP = "GAP---";
-
     protected SurfacePolygon polygon;
 
     /** First "ENY" label, for hostile entities. */
@@ -49,17 +34,28 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     /** Second "ENY" label, for hostile entities. */
     protected Label identityLabel2;
 
-    public BasicArea()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
+        return Arrays.asList(
+            TacGrpSidc.C2GM_GNL_ARS_GENARA,
+            TacGrpSidc.C2GM_GNL_ARS_ABYARA,
+            TacGrpSidc.C2GM_GNL_ARS_EMTARA,
+            TacGrpSidc.C2GM_GNL_ARS_EZ,
+            TacGrpSidc.C2GM_GNL_ARS_LZ,
+            TacGrpSidc.C2GM_GNL_ARS_PZ);
+    }
+
+    public BasicArea(String sidc)
+    {
+        super(sidc);
         this.polygon = new SurfacePolygon();
         this.polygon.setDelegateOwner(this);
         this.polygon.setAttributes(this.getActiveShapeAttributes());
-    }
-
-    /** {@inheritDoc} */
-    public String getCategory()
-    {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
     }
 
     /** {@inheritDoc} */
@@ -157,21 +153,21 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
 
     protected String getGraphicLabel()
     {
-        String functionId = this.getFunctionId();
+        String code = this.maskedSymbolCode;
 
-        if (FUNCTION_ID_GENERAL.equals(functionId))
+        if (TacGrpSidc.C2GM_GNL_ARS_GENARA.equals(code))
             return "";
-        else if (FUNCTION_ID_ASSEMBLY.equals(functionId))
+        else if (TacGrpSidc.C2GM_GNL_ARS_ABYARA.equals(code))
             return "AA";
-        else if (FUNCTION_ID_DROP.equals(functionId))
+        else if (TacGrpSidc.C2GM_GNL_ARS_DRPZ.equals(code))
             return "DZ";
-        else if (FUNCTION_ID_ENGAGEMENT.equals(functionId))
+        else if (TacGrpSidc.C2GM_GNL_ARS_EMTARA.equals(code))
             return "EA";
-        else if (FUNCTION_ID_EXTRACTION.equals(functionId))
+        else if (TacGrpSidc.C2GM_GNL_ARS_EZ.equals(code))
             return "EZ";
-        else if (FUNCTION_ID_LANDING.equals(functionId))
+        else if (TacGrpSidc.C2GM_GNL_ARS_LZ.equals(code))
             return "LZ";
-        else if (FUNCTION_ID_PICKUP.equals(functionId))
+        else if (TacGrpSidc.C2GM_GNL_ARS_PZ.equals(code))
             return "PZ";
 
         return "";

@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines;
 
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.AbstractOffenseArrow;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
+
+import java.util.*;
 
 /**
  * Implementation of the Supporting Attack graphic (hierarchy 2.X.2.5.2.1.4.2, SIDC: G*GPOLAGS-****X).
@@ -17,18 +18,18 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.Ab
  */
 public class SupportingAttack extends AbstractOffenseArrow
 {
-    /** Function ID for the Phase Line. */
-    public final static String FUNCTION_ID = "OLAGS-";
-
-    /** {@inheritDoc} */
-    public String getCategory()
+    /**
+     * Indicates the graphics supported by this class.
+     *
+     * @return List of masked SIDC strings that identify graphics that this class supports.
+     */
+    public static List<String> getSupportedGraphics()
     {
-        return SymbologyConstants.CATEGORY_COMMAND_CONTROL_GENERAL_MANEUVER;
+        return Arrays.asList(TacGrpSidc.C2GM_OFF_LNE_AXSADV_GRD_SUPATK);
     }
 
-    /** {@inheritDoc} */
-    public String getFunctionId()
+    public SupportingAttack(String sidc)
     {
-        return FUNCTION_ID;
+        super(sidc);
     }
 }
