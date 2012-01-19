@@ -7,11 +7,11 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -27,24 +27,11 @@ import java.util.*;
 // TODO: apply delegate owner to symbol.
 public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements TacticalPoint
 {
-    /** Offset to align the center of the graphic with the geographic position. */
-    protected static Offset CENTER_OFFSET = new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION);
-    /** Offset to align the center of the bottom edge of the graphic with the geographic position. */
-    protected static Offset BOTTOM_CENTER_OFFSET = new Offset(0.5, 0.0, AVKey.FRACTION, AVKey.FRACTION);
-
-    /** Default offset is the center of the graphic. */
-    protected static Offset DEFAULT_OFFSET = CENTER_OFFSET;
-
     /**
-     * Map that relates function IDs to offsets. Most graphics are centered on their position, but some require a
-     * different offset. This map provides those non-standard offsets.
+     * Object that provides the default offset for each point graphic. Most graphics are centered on their position, but
+     * some require a different offset.
      */
-    protected static Map<String, Offset> offsetOverrides = new HashMap<String, Offset>();
-
-    static
-    {
-        offsetOverrides.put(TacGrpSidc.C2GM_GNL_PNT_WPN_GRDZRO, BOTTOM_CENTER_OFFSET);
-    }
+    protected static DefaultOffsets defaultOffsets = new DefaultOffsets();
 
     /** Implementation of TacticalSymbol that is configured to create and layout tactical point graphics. */
     protected static class PointGraphicSymbol extends AbstractTacticalSymbol
@@ -80,8 +67,8 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             // TODO: replace default retrievers with per-instance objects that use the base URL to determine equality.
             this.setIconRetriever(DEFAULT_ICON_RETRIEVER);
 
-            Offset offset = offsetOverrides.get(this.symbolCode.getFunctionId());
-            this.setOffset(offset != null ? offset : DEFAULT_OFFSET);
+            Offset offset = defaultOffsets.get(this.symbolCode.toMaskedString());
+            this.setOffset(offset);
         }
 
         /** {@inheritDoc} */
@@ -368,7 +355,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             TacGrpSidc.MOBSU_CBRN_DECONP_ALTUSP,
             TacGrpSidc.MOBSU_CBRN_DECONP_TRP,
             TacGrpSidc.MOBSU_CBRN_DECONP_EQT,
-            TacGrpSidc.MOBSU_CBRN_DECONP_EQTTR,
+            TacGrpSidc.MOBSU_CBRN_DECONP_EQTTRP,
             TacGrpSidc.MOBSU_CBRN_DECONP_OPDECN,
             TacGrpSidc.MOBSU_CBRN_DECONP_TRGH,
             TacGrpSidc.FSUPP_PNT_TGT_PTGT,

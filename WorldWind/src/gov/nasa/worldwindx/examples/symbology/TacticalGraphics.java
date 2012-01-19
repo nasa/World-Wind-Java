@@ -97,6 +97,14 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createPoint("GFGPGPWG------X", Position.fromDegrees(35.2705, -117.8941, 0), null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Ground Zero (2.X.2.1.1.3.4)");
             layer.addRenderable(graphic);
+
+            /////////////////////////////////////////////
+            // Drop Point (2.X.2.1.1.3.2)
+            /////////////////////////////////////////////
+
+            graphic = factory.createPoint("GFGPGPWD------X", Position.fromDegrees(35.3514, -117.8941, 0), null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Drop Point (2.X.2.1.1.3.2)");
+            layer.addRenderable(graphic);
         }
 
         protected void createLineGraphics(RenderableLayer layer)

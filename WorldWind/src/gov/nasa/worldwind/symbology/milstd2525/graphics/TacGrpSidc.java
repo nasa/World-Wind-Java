@@ -623,7 +623,7 @@ public interface TacGrpSidc
     /** Decon , */
     final String MOBSU_CBRN_DECONP_EQT = "G-M-NDE-------X";
     /** Decon Site/Point (Equipment And Troops) */
-    final String MOBSU_CBRN_DECONP_EQTTR = "G-M-NDB-------X";
+    final String MOBSU_CBRN_DECONP_EQTTRP = "G-M-NDB-------X";
     /** Decon Site/Point (Operational Decontamination) */
     final String MOBSU_CBRN_DECONP_OPDECN = "G-M-NDO-------X";
     /** Decon Site/Point (Thorough Decontamination) */
