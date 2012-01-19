@@ -219,51 +219,6 @@ public class SurfacePolyline extends AbstractSurfaceShape implements Exportable
     //************************* Export *****************************//
     //**************************************************************//
 
-    /** {@inheritDoc} */
-    public String isExportFormatSupported(String mimeType)
-    {
-        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
-            return Exportable.FORMAT_SUPPORTED;
-        else
-            return Exportable.FORMAT_NOT_SUPPORTED;
-    }
-
-    public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException
-    {
-        if (mimeType == null)
-        {
-            String message = Logging.getMessage("nullValue.Format");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (output == null)
-        {
-            String message = Logging.getMessage("nullValue.OutputBufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
-        {
-            try
-            {
-                exportAsKML(output);
-            }
-            catch (XMLStreamException e)
-            {
-                Logging.logger().throwing(getClass().getName(), "export", e);
-                throw new IOException(e);
-            }
-        }
-        else
-        {
-            String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
-            Logging.logger().warning(message);
-            throw new UnsupportedOperationException(message);
-        }
-    }
-
     /**
      * Export the polyline to KML as a {@code <Placemark>} element. The {@code output} object will receive the data.
      * This object must be one of: java.io.Writer java.io.OutputStream javax.xml.stream.XMLStreamWriter

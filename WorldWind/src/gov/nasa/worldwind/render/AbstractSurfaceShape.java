@@ -6,17 +6,20 @@
 package gov.nasa.worldwind.render;
 
 import com.sun.opengl.util.BufferUtil;
-import gov.nasa.worldwind.Movable;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.measure.AreaMeasurer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
+import javax.xml.stream.XMLStreamException;
 import java.awt.*;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.List;
@@ -648,6 +651,8 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
 
                 this.activeAttrs.setOutlineMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
                 this.activeAttrs.setInteriorMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeAttrs.setOutlineOpacity(1);
+                this.activeAttrs.setInteriorOpacity(1);
             }
         }
         else if (this.getAttributes() != null)
@@ -1491,5 +1496,74 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
                 : 0L;
             return 31 * hash + (int) (temp ^ (temp >>> 32));
         }
+    }
+
+    /** {@inheritDoc} */
+    public String isExportFormatSupported(String format)
+    {
+        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(format))
+            return Exportable.FORMAT_SUPPORTED;
+        else
+            return Exportable.FORMAT_NOT_SUPPORTED;
+    }
+
+    /**
+     * Export the Polygon. The {@code output} object will receive the exported data. The type of this object depends on
+     * the export format. The formats and object types supported by this class are:
+     * <p/>
+     * <pre>
+     * Format                                         Supported output object types
+     * ================================================================================
+     * KML (application/vnd.google-earth.kml+xml)     java.io.Writer
+     *                                                java.io.OutputStream
+     *                                                javax.xml.stream.XMLStreamWriter
+     * </pre>
+     *
+     * @param mimeType MIME type of desired export format.
+     * @param output   An object that will receive the exported data. The type of this object depends on the export
+     *                 format (see above).
+     *
+     * @throws java.io.IOException If an exception occurs writing to the output object.
+     * @throws UnsupportedOperationException if the format is not supported by this object, or if the {@code output}
+     *                                       argument is not of a supported type.
+     */
+    public void export(String mimeType, Object output) throws IOException, UnsupportedOperationException
+    {
+        if (mimeType == null)
+        {
+            String message = Logging.getMessage("nullValue.Format");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (output == null)
+        {
+            String message = Logging.getMessage("nullValue.OutputBufferIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
+        {
+            try
+            {
+                exportAsKML(output);
+            }
+            catch (XMLStreamException e)
+            {
+                Logging.logger().throwing(getClass().getName(), "export", e);
+                throw new IOException(e);
+            }
+        }
+        else
+        {
+            String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
+            Logging.logger().warning(message);
+            throw new UnsupportedOperationException(message);
+        }
+    }
+    protected void exportAsKML(Object output) throws IOException, XMLStreamException
+    {
+        // This is a dummy method, here to enable a call to it above. It's expected to be overridden by subclasses.
     }
 }

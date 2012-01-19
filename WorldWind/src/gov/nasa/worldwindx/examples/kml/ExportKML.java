@@ -115,6 +115,11 @@ public class ExportKML
         return poly;
     }
 
+    protected static SurfaceQuad makeSurfaceQuad()
+    {
+        return new SurfaceQuad(LatLon.fromDegrees(45, 100), 1e4, 2e4, Angle.ZERO);
+    }
+
     /**
      * Generate sample PointPlacemarks, Paths, and Polygons, and write the KML representation to stdout.
      *
@@ -140,6 +145,7 @@ public class ExportKML
 
             // Export the objects
             kmlBuilder.writeObjects(
+                makeSurfaceQuad(),
                 makePointPlacemark(),
                 makePath(),
                 makePolygon());

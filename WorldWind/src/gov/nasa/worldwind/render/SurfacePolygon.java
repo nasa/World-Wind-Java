@@ -297,69 +297,6 @@ public class SurfacePolygon extends AbstractSurfaceShape implements Exportable
             this.setOuterBoundary(locations);
     }
 
-    /** {@inheritDoc} */
-    public String isExportFormatSupported(String format)
-    {
-        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(format))
-            return Exportable.FORMAT_SUPPORTED;
-        else
-            return Exportable.FORMAT_NOT_SUPPORTED;
-    }
-
-    /**
-     * Export the Polygon. The {@code output} object will receive the exported data. The type of this object depends on
-     * the export format. The formats and object types supported by this class are:
-     * <p/>
-     * <pre>
-     * Format                                         Supported output object types
-     * ================================================================================
-     * KML (application/vnd.google-earth.kml+xml)     java.io.Writer
-     *                                                java.io.OutputStream
-     *                                                javax.xml.stream.XMLStreamWriter
-     * </pre>
-     *
-     * @param mimeType MIME type of desired export format.
-     * @param output   An object that will receive the exported data. The type of this object depends on the export
-     *                 format (see above).
-     *
-     * @throws java.io.IOException If an exception occurs writing to the output object.
-     */
-    public void export(String mimeType, Object output) throws IOException
-    {
-        if (mimeType == null)
-        {
-            String message = Logging.getMessage("nullValue.Format");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (output == null)
-        {
-            String message = Logging.getMessage("nullValue.OutputBufferIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
-        if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
-        {
-            try
-            {
-                exportAsKML(output);
-            }
-            catch (XMLStreamException e)
-            {
-                Logging.logger().throwing(getClass().getName(), "export", e);
-                throw new IOException(e);
-            }
-        }
-        else
-        {
-            String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
-            Logging.logger().warning(message);
-            throw new UnsupportedOperationException(message);
-        }
-    }
-
     /**
      * Export the polygon to KML as a {@code <Placemark>} element. The {@code output} object will receive the data. This
      * object must be one of: java.io.Writer java.io.OutputStream javax.xml.stream.XMLStreamWriter

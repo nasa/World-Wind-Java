@@ -5,17 +5,23 @@
  */
 package gov.nasa.worldwind.render;
 
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.globes.*;
+import gov.nasa.worldwind.ogc.kml.KMLConstants;
+import gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil;
 import gov.nasa.worldwind.util.*;
 
+import javax.xml.stream.*;
+import java.io.*;
 import java.util.*;
 
 /**
  * @author dcollins
  * @version $Id$
  */
-public class SurfaceQuad extends AbstractSurfaceShape
+public class SurfaceQuad extends AbstractSurfaceShape implements Exportable
 {
     protected LatLon center = LatLon.ZERO;
     protected double width;
@@ -409,5 +415,116 @@ public class SurfaceQuad extends AbstractSurfaceShape
         Double od = rs.getStateValueAsDouble(context, "orientationDegrees");
         if (od != null)
             this.setHeading(Angle.fromDegrees(od));
+    }
+
+    /**
+     * Export the polygon to KML as a {@code <Placemark>} element. The {@code output} object will receive the data. This
+     * object must be one of: java.io.Writer java.io.OutputStream javax.xml.stream.XMLStreamWriter
+     *
+     * @param output Object to receive the generated KML.
+     *
+     * @throws javax.xml.stream.XMLStreamException If an exception occurs while writing the KML
+     * @throws java.io.IOException        if an exception occurs while exporting the data.
+     * @see #export(String, Object)
+     */
+    protected void exportAsKML(Object output) throws IOException, XMLStreamException
+    {
+        XMLStreamWriter xmlWriter = null;
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        boolean closeWriterWhenFinished = true;
+
+        if (output instanceof XMLStreamWriter)
+        {
+            xmlWriter = (XMLStreamWriter) output;
+            closeWriterWhenFinished = false;
+        }
+        else if (output instanceof Writer)
+        {
+            xmlWriter = factory.createXMLStreamWriter((Writer) output);
+        }
+        else if (output instanceof OutputStream)
+        {
+            xmlWriter = factory.createXMLStreamWriter((OutputStream) output);
+        }
+
+        if (xmlWriter == null)
+        {
+            String message = Logging.getMessage("Export.UnsupportedOutputObject");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        xmlWriter.writeStartElement("Placemark");
+
+        String property = (String) getValue(AVKey.DISPLAY_NAME);
+        if (property != null)
+        {
+            xmlWriter.writeStartElement("name");
+            xmlWriter.writeCharacters(property);
+            xmlWriter.writeEndElement();
+        }
+
+        xmlWriter.writeStartElement("visibility");
+        xmlWriter.writeCharacters(KMLExportUtil.kmlBoolean(this.isVisible()));
+        xmlWriter.writeEndElement();
+
+        String shortDescription = (String) getValue(AVKey.SHORT_DESCRIPTION);
+        if (shortDescription != null)
+        {
+            xmlWriter.writeStartElement("Snippet");
+            xmlWriter.writeCharacters(shortDescription);
+            xmlWriter.writeEndElement();
+        }
+
+        String description = (String) getValue(AVKey.BALLOON_TEXT);
+        if (description != null)
+        {
+            xmlWriter.writeStartElement("description");
+            xmlWriter.writeCharacters(description);
+            xmlWriter.writeEndElement();
+        }
+
+        // KML does not allow separate attributes for cap and side, so just use the side attributes.
+        final ShapeAttributes normalAttributes = getAttributes();
+        final ShapeAttributes highlightAttributes = getHighlightAttributes();
+
+        // Write style map
+        if (normalAttributes != null || highlightAttributes != null)
+        {
+            xmlWriter.writeStartElement("StyleMap");
+            KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.NORMAL, normalAttributes);
+            KMLExportUtil.exportAttributesAsKML(xmlWriter, KMLConstants.HIGHLIGHT, highlightAttributes);
+            xmlWriter.writeEndElement(); // StyleMap
+        }
+
+        // Write geometry
+        xmlWriter.writeStartElement("Polygon");
+
+        xmlWriter.writeStartElement("extrude");
+        xmlWriter.writeCharacters("0");
+        xmlWriter.writeEndElement();
+
+        xmlWriter.writeStartElement("altitudeMode");
+        xmlWriter.writeCharacters("clampToGround");
+        xmlWriter.writeEndElement();
+
+        String globeName = Configuration.getStringValue(AVKey.GLOBE_CLASS_NAME, "gov.nasa.worldwind.globes.Earth");
+        Globe globe = (Globe) WorldWind.createComponent(globeName);
+
+        // Outer boundary
+        Iterable<? extends LatLon> outerBoundary = this.getLocations(globe);
+        if (outerBoundary != null)
+        {
+            xmlWriter.writeStartElement("outerBoundaryIs");
+            KMLExportUtil.exportBoundaryAsLinearRing(xmlWriter, outerBoundary, null);
+            xmlWriter.writeEndElement(); // outerBoundaryIs
+        }
+
+        xmlWriter.writeEndElement(); // Polygon
+        xmlWriter.writeEndElement(); // Placemark
+
+        xmlWriter.flush();
+        if (closeWriterWhenFinished)
+            xmlWriter.close();
     }
 }
