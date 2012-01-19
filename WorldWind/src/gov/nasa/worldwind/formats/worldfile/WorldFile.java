@@ -786,9 +786,9 @@ public class WorldFile
     }
 
     /** Pattern matching the geographic coordinate system keyword in an OGC coordinate system well-known text. */
-    protected static final Pattern GEOGCS_WKT_PATTERN = Pattern.compile("GEOGCS[\\[\\(](.*)[\\]\\)]");
+    protected static final Pattern GEOGCS_WKT_PATTERN = Pattern.compile("\\{*GEOGCS[\\[\\(](.*)[\\]\\)]\\}*");
     /** Pattern matching the projected coordinate system keyword in an OGC coordinate system well-known text. */
-    protected static final Pattern PROJCS_WKT_PATTERN = Pattern.compile("PROJCS[\\[\\(](.*)[\\]\\)]");
+    protected static final Pattern PROJCS_WKT_PATTERN = Pattern.compile("\\{*PROJCS[\\[\\(](.*)[\\]\\)]\\}*");
     /** Pattern matching the UTM name in an projected coordinate system's well-known text. */
     protected static final Pattern UTM_NAME_WKT_PATTERN = Pattern.compile(".*UTM.*ZONE.*?(\\d+).*?([\\w\\s]+).*?");
 
@@ -836,11 +836,11 @@ public class WorldFile
         try
         {
             Matcher csMatcher = GEOGCS_WKT_PATTERN.matcher(text);
-            if (csMatcher.find())
+            if (csMatcher.matches())
             {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_GEOGRAPHIC);
             }
-            else if ((csMatcher = PROJCS_WKT_PATTERN.matcher(text)).find())
+            else if ((csMatcher = PROJCS_WKT_PATTERN.matcher(text)).matches())
             {
                 params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_PROJECTED);
 
