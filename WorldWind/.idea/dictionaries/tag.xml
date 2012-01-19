@@ -20,6 +20,7 @@
       <w>conformant</w>
       <w>conus</w>
       <w>coord</w>
+      <w>coordinate's</w>
       <w>coords</w>
       <w>crosshair</w>
       <w>dataimport</w>
@@ -49,6 +50,8 @@
       <w>hwnd</w>
       <w>ieee</w>
       <w>indices</w>
+      <w>interpolator</w>
+      <w>interpolator's</w>
       <w>intersector</w>
       <w>intersectors</w>
       <w>iter</w>
@@ -121,6 +124,7 @@
       <w>texturing</w>
       <w>tgaskins</w>
       <w>throwable</w>
+      <w>traverser</w>
       <w>tuple</w>
       <w>tuples</w>
       <w>unmark</w>
@@ -134,6 +138,9 @@
       <w>verts</w>
       <w>viewport</w>
       <w>viewport's</w>
+      <w>waypoint</w>
+      <w>waypoint's</w>
+      <w>waypoints</w>
       <w>wireframe</w>
       <w>worldmap</w>
       <w>worldwindow</w>
