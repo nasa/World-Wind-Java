@@ -4,7 +4,7 @@
   ~ All Rights Reserved.
   -->
 
-<!--$Id $-->
+<!--$Id$-->
 <project name="resources">
 
     <!-- BATIK_HOME environment variable must point to base of Batik installation. -->
@@ -36,6 +36,10 @@
             <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/metoc"/>
         </antcall>
 
+        <!-- Trim transparent pixels from the generated graphics -->
+        <antcall target="trim">
+            <param name="dir" value="${milstd2525.dest.dir}"/>
+        </antcall>
     </target>
 
     <!-- Utility target to rasterize a directory of SVG files to PNG. -->
@@ -57,6 +61,20 @@
 
             <fileset dir="${rasterize.src.dir}">
                 <include name="**/*.svg"/>
+            </fileset>
+        </apply>
+    </target>
+
+    <!-- Utility target to trim transparent pixels from teh edge of images. -->
+    <target name="trim"
+            description="Rasterize a directory of SVG files to PNG. Requires the ImageMagick tool to be installed (available from www.imagemagick.org).">
+        <!-- Invoke ImageMagick mogrify to trim the images. -->
+        <apply executable="mogrify" parallel="true">
+            <arg value="-trim"/>
+            <arg value="+repage"/>
+
+            <fileset dir="${dir}">
+                <include name="**/*.png"/>
             </fileset>
         </apply>
     </target>
