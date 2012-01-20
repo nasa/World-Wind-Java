@@ -236,13 +236,13 @@ public class MilStd2525Util
             }
             // Square icon for Special C2 Headquarters symbols. Must appear before Square icon for Ground symbols.
             else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
-                && si != null && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL)
+                && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL)
                 && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
                 && fi != null && fi.equalsIgnoreCase("UH----"))
             {
                 symbolInfo.iconOffset = SQUARE_OFFSET;
                 symbolInfo.iconSize = SQUARE_SIZE;
-                symbolInfo.iconOffset = SQUARE_C2_HQ_OFFSET;
+                symbolInfo.offset = SQUARE_C2_HQ_OFFSET;
                 symbolInfo.isGroundSymbol = true;
             }
             // Square icon for Ground symbols.
@@ -282,7 +282,7 @@ public class MilStd2525Util
             }
             // Diamond icon for Special C2 Headquarters symbols. Must appear before Diamond icon for Ground symbols.
             else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_WARFIGHTING)
-                && si != null && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_HOSTILE)
+                && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_HOSTILE)
                 && bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND)
                 && fi != null && fi.equalsIgnoreCase("UH----"))
             {
