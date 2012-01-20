@@ -143,8 +143,6 @@ public interface TacGrpSidc
     final String C2GM_GNL_PNT_REFPNT_CRDRTB = "G-G-GPRC------X";
     /** Point Of Interest */
     final String C2GM_GNL_PNT_REFPNT_PNTINR = "G-G-GPRI------X";
-    /** Weapon */
-    final String C2GM_GNL_PNT_WPN = "G-G-GPW-------X";
     /** Aim Point */
     final String C2GM_GNL_PNT_WPN_AIMPNT = "G-G-GPWA------X";
     /** Drop Point */
@@ -808,8 +806,6 @@ public interface TacGrpSidc
     final String CSS_PNT_TTP = "G-S-PI--------X";
     /** Unit Maintenance Collection Point */
     final String CSS_PNT_UMC = "G-S-PN--------X";
-    /** Supply Points */
-    final String CSS_PNT_SPT = "G-S-PS--------X";
     /** General */
     final String CSS_PNT_SPT_GNL = "G-S-PSZ-------X";
     /** Class I */
@@ -832,8 +828,6 @@ public interface TacGrpSidc
     final String CSS_PNT_SPT_CLS9 = "G-S-PSI-------X";
     /** Class X */
     final String CSS_PNT_SPT_CLS10 = "G-S-PSJ-------X";
-    /** Ammunition Points */
-    final String CSS_PNT_AP = "G-S-PA--------X";
     /** Ammunition Supply Point (ASP) */
     final String CSS_PNT_AP_ASP = "G-S-PAS-------X";
     /** Ammunition Transfer Point (ATP) */
@@ -872,7 +866,7 @@ public interface TacGrpSidc
     //////////////////////////////////////////////
 
     /** Ditched Aircraft */
-    final String OTH_ER_DTHAC = "G-O-ED------X";
+    final String OTH_ER_DTHAC = "G-O-ED--------X";
     /** Person In Water */
     final String OTH_ER_PIW = "G-O-EP--------X";
     /** Distressed Vessel */
