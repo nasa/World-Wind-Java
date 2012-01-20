@@ -254,27 +254,19 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         if (this.iconRect == null)
             return;
 
-        // Layout all of the graphic modifiers around the symbol's frame bounds. The location of each modifier is the
-        // same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4., page 34.
+        // Layout all of the graphic and text modifiers around the symbol's frame bounds. The location of each modifier
+        // is the same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4, page 34.
 
         if (this.mustDrawGraphicModifiers(dc))
         {
-            if (this.glyphVertices != null)
-                this.glyphVertices.clear(); // Reset the position and limit.
-            if (this.lineVertices != null)
-                this.lineVertices.clear(); // Reset the position and limit.
-
+            this.currentGlyphs.clear();
+            this.currentLines.clear();
             this.layoutGraphicModifiers(dc);
-
-            if (this.glyphVertices != null)
-                this.glyphVertices.flip(); // Set the limit to the current position.
-            if (this.lineVertices != null)
-                this.lineVertices.flip(); // Set the limit to the current position.
         }
 
         if (this.mustDrawTextModifiers(dc))
         {
-            this.textModifiers.clear();
+            this.currentLabels.clear();
             this.layoutTextModifiers(dc);
         }
     }
@@ -288,40 +280,40 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         String modifierCode = this.getModifierCode(SymbologyConstants.FEINT_DUMMY);
         if (modifierCode != null)
         {
-            this.layoutGlyphModifier(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, retrieverParams, null);
+            this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, retrieverParams, null);
         }
 
         // Installation modifier. Placed at the top of the symbol layout.
         modifierCode = this.getModifierCode(SymbologyConstants.INSTALLATION);
         if (modifierCode != null)
         {
-            this.layoutGlyphModifier(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
+            this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
 
         // Echelon / Task Force Indicator modifier. Placed at the top of the symbol layout.
         modifierCode = this.getModifierCode(SymbologyConstants.TASK_FORCE);
         if (modifierCode != null)
         {
-            this.layoutGlyphModifier(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
+            this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
         // Echelon modifier. Placed at the top of the symbol layout.
         else if ((modifierCode = this.getModifierCode(SymbologyConstants.ECHELON)) != null)
         {
-            this.layoutGlyphModifier(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
+            this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
 
         // Mobility Indicator modifier. Placed at the bottom of the symbol layout.
         modifierCode = this.getModifierCode(SymbologyConstants.MOBILITY);
         if (modifierCode != null)
         {
-            this.layoutGlyphModifier(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
+            this.addGlyph(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
 
         // Auxiliary Equipment Indicator modifier. Placed at the bottom of the symbol layout.
         modifierCode = this.getModifierCode(SymbologyConstants.AUXILIARY_EQUIPMENT);
         if (modifierCode != null)
         {
-            this.layoutGlyphModifier(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
+            this.addGlyph(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
 
         if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equalsIgnoreCase(this.symbolCode.getScheme()))
@@ -331,7 +323,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
             modifierCode = this.getModifierCode(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
             if (modifierCode != null)
             {
-                this.layoutGlyphModifier(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, retrieverParams,
+                this.addGlyph(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, retrieverParams,
                     LAYOUT_RELATIVE);
             }
         }
@@ -342,7 +334,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
             modifierCode = this.getModifierCode(SymbologyConstants.OPERATIONAL_CONDITION);
             if (modifierCode != null)
             {
-                this.layoutGlyphModifier(dc, CENTER_OFFSET, CENTER_OFFSET, modifierCode, null, null);
+                this.addGlyph(dc, CENTER_OFFSET, CENTER_OFFSET, modifierCode, null, null);
             }
         }
 
@@ -362,13 +354,13 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
             {
                 List<? extends Point2D> points = MilStd2525Util.computeGroundHeadingIndicatorPoints(dc, (Angle) o,
                     length, this.iconRect.getHeight());
-                this.layoutLineModifier(dc, BOTTOM_CENTER_OFFSET, points, LAYOUT_RELATIVE, points.size() - 1);
+                this.addLine(dc, BOTTOM_CENTER_OFFSET, points, LAYOUT_RELATIVE, points.size() - 1);
             }
             else
             {
                 List<? extends Point2D> points = MilStd2525Util.computeCenterHeadingIndicatorPoints(dc, (Angle) o,
                     length);
-                this.layoutLineModifier(dc, CENTER_OFFSET, points, null, 0);
+                this.addLine(dc, CENTER_OFFSET, points, null, 0);
             }
         }
     }
@@ -388,8 +380,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.QUANTITY, 9);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, sb.toString(), font, null,
-                LAYOUT_RELATIVE);
+            this.addLabel(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, sb.toString(), font, null, LAYOUT_RELATIVE);
             sb.delete(0, sb.length());
         }
 
@@ -397,7 +388,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.SPECIAL_C2_HEADQUARTERS, 9);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, CENTER_OFFSET, CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, CENTER_OFFSET, CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -413,7 +404,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         {
             // TODO: adjust location to edge of frame shape when present.
             Offset offset = Offset.fromFraction(1.1, 1.1);
-            this.layoutTextModifier(dc, offset, LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, offset, LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -421,8 +412,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.STAFF_COMMENTS, 20);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(1.1, 0.8), LEFT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(1.1, 0.8), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -430,8 +420,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.ADDITIONAL_INFORMATION, 20);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(1.1, 0.5), LEFT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(1.1, 0.5), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -439,8 +428,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.HIGHER_FORMATION, 21);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(1.1, 0.2), LEFT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(1.1, 0.2), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -453,8 +441,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.IFF_SIF, 5);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(1.1, -0.1), LEFT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(1.1, -0.1), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -462,8 +449,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.DATE_TIME_GROUP, 16); // TODO: compute value from modifier
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(-0.1, 1.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(-0.1, 1.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -472,8 +458,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.LOCATION, 19); // TODO: compute value from position
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(-0.1, 0.8), RIGHT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(-0.1, 0.8), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -481,8 +466,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.TYPE, 24);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(-0.1, 0.5), RIGHT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(-0.1, 0.5), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -490,8 +474,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.UNIQUE_DESIGNATION, 21);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(-0.1, 0.2), RIGHT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(-0.1, 0.2), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
@@ -499,8 +482,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.SPEED, 8);
         if (sb.length() > 0)
         {
-            this.layoutTextModifier(dc, Offset.fromFraction(-0.1, -0.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null,
-                null);
+            this.addLabel(dc, Offset.fromFraction(-0.1, -0.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
     }

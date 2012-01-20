@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology;
 
-import com.sun.opengl.util.BufferUtil;
 import com.sun.opengl.util.j2d.TextRenderer;
 import com.sun.opengl.util.texture.*;
 import gov.nasa.worldwind.*;
@@ -21,7 +20,6 @@ import javax.media.opengl.GL;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;
-import java.nio.FloatBuffer;
 import java.util.*;
 import java.util.List;
 
@@ -215,9 +213,23 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected static class IconAtlasElement extends TextureAtlasElement
     {
+        protected Point point;
+        /** Indicates the last time, in milliseconds, the element was requested or added. */
+        protected long lastUsed = System.currentTimeMillis();
+
         public IconAtlasElement(TextureAtlas atlas, IconSource source)
         {
             super(atlas, source);
+        }
+
+        public Point getPoint()
+        {
+            return this.point;
+        }
+
+        public void setPoint(Point point)
+        {
+            this.point = point;
         }
 
         @Override
@@ -259,14 +271,14 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    protected static class TextModifier
+    protected static class Label
     {
         protected TextRenderer renderer;
         protected String text;
         protected Point point;
         protected Color color;
 
-        public TextModifier(TextRenderer renderer, String text, Point point, Color color)
+        public Label(TextRenderer renderer, String text, Point point, Color color)
         {
             if (renderer == null)
             {
@@ -323,6 +335,37 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
+    protected static class Line
+    {
+        protected Iterable<? extends Point2D> points;
+
+        public Line()
+        {
+        }
+
+        public Line(Iterable<? extends Point2D> points)
+        {
+            if (points == null)
+            {
+                String msg = Logging.getMessage("nullValue.IterableIsNull");
+                Logging.logger().severe(msg);
+                throw new IllegalArgumentException(msg);
+            }
+
+            this.points = points;
+        }
+
+        public Iterable<? extends Point2D> getPoints()
+        {
+            return points;
+        }
+
+        public void setPoints(Iterable<? extends Point2D> points)
+        {
+            this.points = points;
+        }
+    }
+
     protected static final String LAYOUT_ABSOLUTE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutAbsolute";
     protected static final String LAYOUT_RELATIVE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutRelative";
     protected static final String LAYOUT_NONE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutNone";
@@ -331,6 +374,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * offset produced by existing screen elements such as PointPlacemark.
      */
     protected static final double DEFAULT_DEPTH_OFFSET = -8200;
+    protected static final long DEFAULT_MAX_TIME_SINCE_LAST_USED = 10000;
     // TODO: make this configurable
     /**
      * The default glyph texture atlas. This texture atlas holds all glyph images loaded by calls to
@@ -412,6 +456,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected TacticalSymbolAttributes activeAttrs = new BasicTacticalSymbolAttributes();
     protected Offset offset;
+    protected Offset iconOffset;
+    protected Size iconSize;
     protected Double depthOffset;
     protected IconRetriever iconRetriever;
     protected IconRetriever modifierRetriever;
@@ -464,16 +510,14 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected Rectangle layoutRect;
     protected Rectangle screenRect;
 
-    protected IconTexture iconTexture;
-    protected FloatBuffer iconVertices;
-    protected Offset iconOffset;
-    protected Size iconSize;
+    protected List<IconAtlasElement> currentGlyphs = new ArrayList<IconAtlasElement>();
+    protected List<Label> currentLabels = new ArrayList<Label>();
+    protected List<Line> currentLines = new ArrayList<Line>();
 
-    protected Map<String, IconAtlasElement> glyphModifiers = new HashMap<String, IconAtlasElement>();
-    protected List<TextModifier> textModifiers = new ArrayList<TextModifier>();
+    protected IconTexture iconTexture;
     protected TextureAtlas glyphAtlas;
-    protected FloatBuffer glyphVertices;
-    protected FloatBuffer lineVertices;
+    protected Map<String, IconAtlasElement> glyphMap = new HashMap<String, IconAtlasElement>();
+    protected long maxTimeSinceLastUsed = DEFAULT_MAX_TIME_SINCE_LAST_USED;
 
     /**
      * Support for setting up and restoring OpenGL state during rendering. Initialized to a new OGLStackHandler, and
@@ -885,6 +929,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (this.mustDrawGraphicModifiers(dc) || this.mustDrawTextModifiers(dc))
             this.layoutModifiers(dc);
+
+        this.removeDeadModifiers(System.currentTimeMillis());
     }
 
     protected void layoutIcon(DrawContext dc)
@@ -908,14 +954,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             Point2D point = this.iconOffset != null ? this.iconOffset.computeOffset(w, h, null, null) : new Point(0, 0);
             Dimension size = this.iconSize != null ? this.iconSize.compute(w, h, w, h) : new Dimension(w, h);
             this.iconRect = new Rectangle((int) point.getX(), (int) point.getY(), size.width, size.height);
-
-            // Compute the symbol icon's vertex points in local coordinates. This buffer is used during icon drawing to
-            // define the icon's location in screen coordinates.
-            if (this.iconVertices != null)
-                this.iconVertices.clear(); // Reset the position and limit.
-            this.iconVertices = this.addRectVertices(this.iconVertices, new Rectangle(0, 0, w, h),
-                this.iconTexture.getTexCoords());
-            this.iconVertices.flip(); // Set the limit to the current position.
         }
 
         if (this.iconRect != null)
@@ -936,80 +974,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
         // with this tactical symbol.
-    }
-
-    protected void layoutGlyphModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierCode)
-    {
-        this.layoutGlyphModifier(dc, offset, hotspot, modifierCode, null, null);
-    }
-
-    protected void layoutGlyphModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierCode,
-        AVList retrieverParams, Object layoutMode)
-    {
-        if (this.getGlyphAtlas() == null || this.getModifierRetriever() == null)
-            return;
-
-        IconAtlasElement elem = this.glyphModifiers.get(modifierCode);
-        if (elem == null)
-        {
-            IconSource source = new IconSource(this.getModifierRetriever(), modifierCode, retrieverParams);
-            elem = new IconAtlasElement(this.getGlyphAtlas(), source);
-            this.glyphModifiers.put(modifierCode, elem);
-        }
-
-        if (elem.load(dc))
-        {
-            Rectangle rect = this.layoutRect(offset, hotspot, elem.getSize(), layoutMode);
-            this.glyphVertices = this.addRectVertices(this.glyphVertices, rect, elem.getTexCoords());
-        }
-    }
-
-    protected void layoutTextModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierText)
-    {
-        this.layoutTextModifier(dc, offset, hotspot, modifierText, null, null, null);
-    }
-
-    protected void layoutTextModifier(DrawContext dc, Offset offset, Offset hotspot, String modifierText, Font font,
-        Color color, Object layoutMode)
-    {
-        if (font == null)
-        {
-            // Use either the currently specified text modifier font or compute a default if no font is specified.
-            font = this.getActiveAttributes().getTextModifierFont();
-            if (font == null)
-                font = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT;
-        }
-
-        if (color == null)
-        {
-            // Use either the currently specified text modifier material or the default if no material is specified.
-            Material material = this.getActiveAttributes().getTextModifierMaterial();
-            if (material == null)
-                material = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL;
-
-            // Use either the currently specified opacity or the default if no opacity is specified.
-            Double opacity = this.getActiveAttributes().getOpacity();
-            if (opacity == null)
-                opacity = BasicTacticalSymbolAttributes.DEFAULT_OPACITY;
-
-            int alpha = (int) (255 * opacity + 0.5);
-            Color diffuse = material.getDiffuse();
-            color = new Color(diffuse.getRed(), diffuse.getGreen(), diffuse.getBlue(), alpha);
-        }
-
-        TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-        Dimension size = tr.getBounds(modifierText).getBounds().getSize();
-
-        Rectangle rect = this.layoutRect(offset, hotspot, size, layoutMode);
-        this.textModifiers.add(new TextModifier(tr, modifierText, rect.getLocation(), color));
-    }
-
-    @SuppressWarnings( {"UnusedParameters"})
-    protected void layoutLineModifier(DrawContext dc, Offset offset, List<? extends Point2D> points, Object layoutMode,
-        int layoutCount)
-    {
-        points = this.layoutLines(offset, points, layoutMode, layoutCount);
-        this.lineVertices = this.addLineVertices(this.lineVertices, points);
     }
 
     protected Rectangle layoutRect(Offset offset, Offset hotspot, Dimension size, Object layoutMode)
@@ -1057,8 +1021,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         return rect;
     }
 
-    protected List<? extends Point2D> layoutLines(Offset offset, List<? extends Point2D> points, Object layoutMode,
-        int layoutCount)
+    protected List<? extends Point2D> layoutPoints(Offset offset, List<? extends Point2D> points, Object layoutMode,
+        int numPointsInLayout)
     {
         int x = 0;
         int y = 0;
@@ -1088,7 +1052,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             else
                 this.screenRect = new Rectangle((int) p.getX(), (int) p.getY(), 0, 0);
 
-            if (i < layoutCount && (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode)))
+            if (i < numPointsInLayout && (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode)))
             {
                 if (this.layoutRect != null)
                     this.layoutRect.add(p);
@@ -1098,6 +1062,122 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
 
         return points;
+    }
+
+    protected void addGlyph(DrawContext dc, Offset offset, Offset hotspot, String modifierCode)
+    {
+        this.addGlyph(dc, offset, hotspot, modifierCode, null, null);
+    }
+
+    protected void addGlyph(DrawContext dc, Offset offset, Offset hotspot, String modifierCode, AVList retrieverParams,
+        Object layoutMode)
+    {
+        IconAtlasElement elem = this.getGlyph(modifierCode, retrieverParams);
+
+        if (elem.load(dc))
+        {
+            Rectangle rect = this.layoutRect(offset, hotspot, elem.getSize(), layoutMode);
+            elem.setPoint(rect.getLocation());
+            this.currentGlyphs.add(elem);
+        }
+    }
+
+    protected void addLabel(DrawContext dc, Offset offset, Offset hotspot, String modifierText)
+    {
+        this.addLabel(dc, offset, hotspot, modifierText, null, null, null);
+    }
+
+    protected void addLabel(DrawContext dc, Offset offset, Offset hotspot, String modifierText, Font font, Color color,
+        Object layoutMode)
+    {
+        if (font == null)
+        {
+            // Use either the currently specified text modifier font or compute a default if no font is specified.
+            font = this.getActiveAttributes().getTextModifierFont();
+            if (font == null)
+                font = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT;
+        }
+
+        if (color == null)
+        {
+            // Use either the currently specified text modifier material or the default if no material is specified.
+            Material material = this.getActiveAttributes().getTextModifierMaterial();
+            if (material == null)
+                material = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL;
+
+            // Use either the currently specified opacity or the default if no opacity is specified.
+            Double opacity = this.getActiveAttributes().getOpacity();
+            if (opacity == null)
+                opacity = BasicTacticalSymbolAttributes.DEFAULT_OPACITY;
+
+            int alpha = (int) (255 * opacity + 0.5);
+            Color diffuse = material.getDiffuse();
+            color = new Color(diffuse.getRed(), diffuse.getGreen(), diffuse.getBlue(), alpha);
+        }
+
+        TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
+        Dimension size = tr.getBounds(modifierText).getBounds().getSize();
+
+        Rectangle rect = this.layoutRect(offset, hotspot, size, layoutMode);
+        this.currentLabels.add(new Label(tr, modifierText, rect.getLocation(), color));
+    }
+
+    protected void addLine(DrawContext dc, Offset offset, List<? extends Point2D> points)
+    {
+        this.addLine(dc, offset, points, null, 0);
+    }
+
+    @SuppressWarnings( {"UnusedParameters"})
+    protected void addLine(DrawContext dc, Offset offset, List<? extends Point2D> points, Object layoutMode,
+        int numPointsInLayout)
+    {
+        points = this.layoutPoints(offset, points, layoutMode, numPointsInLayout);
+        this.currentLines.add(new Line(points));
+    }
+
+    protected IconAtlasElement getGlyph(String modifierCode, AVList retrieverParams)
+    {
+        if (this.getGlyphAtlas() == null || this.getModifierRetriever() == null)
+            return null;
+
+        IconAtlasElement elem = this.glyphMap.get(modifierCode);
+
+        if (elem == null)
+        {
+            IconSource source = new IconSource(this.getModifierRetriever(), modifierCode, retrieverParams);
+            elem = new IconAtlasElement(this.getGlyphAtlas(), source);
+            this.glyphMap.put(modifierCode, elem);
+        }
+
+        elem.lastUsed = System.currentTimeMillis();
+
+        return elem;
+    }
+
+    protected void removeDeadModifiers(long now)
+    {
+        if (this.glyphMap.isEmpty())
+            return;
+
+        List<String> deadKeys = null; // Lazily created below to avoid unnecessary allocation.
+
+        for (Map.Entry<String, IconAtlasElement> entry : this.glyphMap.entrySet())
+        {
+            if (entry.getValue().lastUsed + this.maxTimeSinceLastUsed < now)
+            {
+                if (deadKeys == null)
+                    deadKeys = new ArrayList<String>();
+                deadKeys.add(entry.getKey());
+            }
+        }
+
+        if (deadKeys == null)
+            return;
+
+        for (String key : deadKeys)
+        {
+            this.glyphMap.remove(key);
+        }
     }
 
     protected void computeTransform(DrawContext dc)
@@ -1399,41 +1479,79 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected void drawIcon(DrawContext dc)
     {
-        if (this.iconVertices != null && this.iconVertices.remaining() >= 16)
+        if (this.iconTexture == null || this.iconRect == null)
+            return;
+
+        if (!this.iconTexture.bind(dc))
+            return;
+
+        GL gl = dc.getGL();
+        try
         {
-            if (this.iconTexture != null && this.iconTexture.bind(dc))
-            {
-                this.drawRects(dc, this.iconVertices);
-            }
+            gl.glPushMatrix();
+            gl.glScaled(this.iconTexture.getWidth(dc), this.iconTexture.getHeight(dc), 1d);
+            dc.drawUnitQuad(this.iconTexture.getTexCoords());
+        }
+        finally
+        {
+            gl.glPopMatrix();
         }
     }
 
     protected void drawGraphicModifiers(DrawContext dc)
     {
-        if (this.glyphVertices != null && this.glyphVertices.remaining() >= 16)
-        {
-            if (this.glyphAtlas != null && this.glyphAtlas.bind(dc))
-            {
-                this.drawRects(dc, this.glyphVertices);
-            }
-        }
+        this.drawGlyphs(dc);
+        this.drawLines(dc);
+    }
 
-        if (this.lineVertices != null && this.lineVertices.remaining() >= 4)
+    protected void drawTextModifiers(DrawContext dc)
+    {
+        this.drawLabels(dc);
+    }
+
+    protected void drawGlyphs(DrawContext dc)
+    {
+        if (this.glyphAtlas == null || this.currentGlyphs.isEmpty())
+            return;
+
+        if (!this.glyphAtlas.bind(dc))
+            return;
+
+        GL gl = dc.getGL();
+
+        for (IconAtlasElement atlasElem : this.currentGlyphs)
         {
-            this.drawLines(dc, this.lineVertices);
+            Point point = atlasElem.getPoint();
+            Dimension size = atlasElem.getSize();
+            TextureCoords texCoords = atlasElem.getTexCoords();
+
+            if (point == null || size == null || texCoords == null)
+                continue;
+
+            try
+            {
+                gl.glPushMatrix();
+                gl.glTranslated(point.getX(), point.getY(), 0d);
+                gl.glScaled(size.getWidth(), size.getHeight(), 1d);
+                dc.drawUnitQuad(texCoords);
+            }
+            finally
+            {
+                gl.glPopMatrix();
+            }
         }
     }
 
     @SuppressWarnings( {"UnusedParameters"})
-    protected void drawTextModifiers(DrawContext dc)
+    protected void drawLabels(DrawContext dc)
     {
-        if (this.textModifiers.isEmpty())
+        if (this.currentLabels.isEmpty())
             return;
 
         TextRenderer tr = null;
         try
         {
-            for (TextModifier modifier : this.textModifiers)
+            for (Label modifier : this.currentLabels)
             {
                 if (tr == null || tr != modifier.getTextRenderer())
                 {
@@ -1455,18 +1573,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    protected void drawRects(DrawContext dc, FloatBuffer verts)
-    {
-        GL gl = dc.getGL();
-
-        gl.glVertexPointer(2, GL.GL_FLOAT, 16, verts);
-        gl.glTexCoordPointer(2, GL.GL_FLOAT, 16, verts.position(2));
-        verts.rewind(); // Restore the position to 0 after changing it to specify the tex coord pointer.
-
-        gl.glDrawArrays(GL.GL_QUADS, 0, verts.remaining() / 4);
-    }
-
-    protected void drawLines(DrawContext dc, FloatBuffer verts)
+    protected void drawLines(DrawContext dc)
     {
         // Use either the currently specified opacity or the default if no opacity is specified.
         Double opacity = this.getActiveAttributes().getOpacity() != null ? this.getActiveAttributes().getOpacity()
@@ -1488,8 +1595,22 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (!dc.isPickingMode())
                 gl.glColor4f(0f, 0f, 0f, opacity.floatValue());
 
-            gl.glVertexPointer(2, GL.GL_FLOAT, 0, verts);
-            gl.glDrawArrays(GL.GL_LINES, 0, verts.remaining() / 2);
+            for (Line lm : this.currentLines)
+            {
+                try
+                {
+                    gl.glBegin(GL.GL_LINE_STRIP);
+
+                    for (Point2D p : lm.getPoints())
+                    {
+                        gl.glVertex2d(p.getX(), p.getY());
+                    }
+                }
+                finally
+                {
+                    gl.glEnd();
+                }
+            }
         }
         finally
         {
@@ -1502,59 +1623,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (!dc.isPickingMode())
                 gl.glColor4f(opacity.floatValue(), opacity.floatValue(), opacity.floatValue(), opacity.floatValue());
         }
-    }
-
-    protected FloatBuffer addRectVertices(FloatBuffer verts, Rectangle rect, TextureCoords texCoords)
-    {
-        int numCoords = 16;
-        if (verts == null)
-            verts = BufferUtil.newFloatBuffer(numCoords);
-        else if (verts.remaining() < numCoords)
-        {
-            FloatBuffer newBuffer = BufferUtil.newFloatBuffer(verts.capacity() + numCoords);
-            verts.flip(); // Flip the vertex buffer so the elements between 0 and its current position are copied.
-            newBuffer.put(verts); // Copy the current data into the new buffer, and advance the new buffer's position.
-            verts = newBuffer;
-        }
-
-        verts.put((float) rect.getMinX()).put((float) rect.getMinY());
-        verts.put(texCoords.left()).put(texCoords.bottom());
-        verts.put((float) rect.getMaxX()).put((float) rect.getMinY());
-        verts.put(texCoords.right()).put(texCoords.bottom());
-        verts.put((float) rect.getMaxX()).put((float) rect.getMaxY());
-        verts.put(texCoords.right()).put(texCoords.top());
-        verts.put((float) rect.getMinX()).put((float) rect.getMaxY());
-        verts.put(texCoords.left()).put(texCoords.top());
-
-        return verts;
-    }
-
-    protected FloatBuffer addLineVertices(FloatBuffer verts, List<? extends Point2D> points)
-    {
-        int numCoords = 4 * (points.size() - 1);
-        if (verts == null)
-            verts = BufferUtil.newFloatBuffer(numCoords);
-        else if (verts.remaining() < numCoords)
-        {
-            FloatBuffer newBuffer = BufferUtil.newFloatBuffer(verts.capacity() + numCoords);
-            verts.flip(); // Flip the vertex buffer so the elements between 0 and its current position are copied.
-            newBuffer.put(verts); // Copy the current data into the new buffer, and advance the new buffer's position.
-            verts = newBuffer;
-        }
-
-        Point2D lastPoint = null;
-        for (Point2D p : points)
-        {
-            if (lastPoint != null)
-            {
-                verts.put((float) lastPoint.getX()).put((float) lastPoint.getY());
-                verts.put((float) p.getX()).put((float) p.getY());
-            }
-
-            lastPoint = p;
-        }
-
-        return verts;
     }
 
     protected PickedObject createPickedObject(int colorCode)
