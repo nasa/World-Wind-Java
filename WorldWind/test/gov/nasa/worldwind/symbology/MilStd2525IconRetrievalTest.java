@@ -376,11 +376,10 @@ public class MilStd2525IconRetrievalTest
         public void testIconOverlayRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(URL);
-            BufferedImage img = null;
 
             for (String s : IconOverlays)
             {
-                img = symGen.retrieveImageFromURL(s, img);
+                BufferedImage img = symGen.retrieveImageFromURL(s, null);
                 assertNotNull("Icon overlay " + s + " not found.", img);
             }
         }

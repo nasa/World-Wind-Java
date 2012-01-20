@@ -6,11 +6,12 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.*;
+import java.io.InputStream;
 import java.net.URL;
 
 /**
@@ -19,58 +20,79 @@ import java.net.URL;
  */
 public abstract class AbstractIconRetriever implements IconRetriever
 {
-    protected String iconRepository;
+    protected String retrieverPath;
 
     // Must specify in the constructor the URL where the icons for this
     // symbology set can be found.
-    public AbstractIconRetriever(String url)
+    public AbstractIconRetriever(String retrieverPath)
     {
-        if (url == null)
-        {
-            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-
-        // make sure last character in URL is '/'
-        if (!url.endsWith("/"))
-            url = url + "/";
-
-        iconRepository = url;
+        this.retrieverPath = retrieverPath;
     }
 
-    public String getRepository()
+    public String getRetrieverPath()
     {
-        return iconRepository;
+        return this.retrieverPath;
     }
 
-    public BufferedImage retrieveImageFromURL(String filename, BufferedImage img)
+    public BufferedImage retrieveImageFromURL(String path, BufferedImage img)
     {
-        if (filename == null)
+        if (path == null)
         {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
-            Logging.logger().severe(msg);
-            throw new IllegalArgumentException(msg);
-        }
-        if (this.getRepository() == null)
-        {
-            String msg = Logging.getMessage("Symbology.RepositoryURLIsNull");
+            String msg = Logging.getMessage("nullValue.PathIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
+        StringBuilder sb = new StringBuilder();
+
+        if (!WWUtil.isEmpty(this.getRetrieverPath()))
+        {
+            sb.append(WWIO.stripTrailingSeparator(this.getRetrieverPath()));
+            sb.append("/");
+        }
+
+        sb.append(WWIO.stripLeadingSeparator(path));
+
+        InputStream is = null;
         try
         {
-            URL myURL = new URL(this.getRepository() + filename);
-            img = ImageIO.read(myURL);
+            URL url = WWIO.makeURL(sb.toString());
+            if (url != null)
+                return ImageIO.read(url);
+
+            is = WWIO.openFileOrResourceStream(sb.toString(), this.getClass());
+            if (is != null)
+                return ImageIO.read(is);
         }
         catch (Exception e)
         {
-            // TODO: error handling
-            return null;
+            String msg = Logging.getMessage("generic.ExceptionWhileReading", sb.toString());
+            Logging.logger().fine(msg);
+        }
+        finally
+        {
+            WWIO.closeStream(is, sb.toString());
         }
 
-        return img;
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+            return true;
+        if (o == null || this.getClass() != o.getClass())
+            return false;
+
+        AbstractIconRetriever that = (AbstractIconRetriever) o;
+        return this.retrieverPath != null ? this.retrieverPath.equals(that.retrieverPath) : that.retrieverPath == null;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.retrieverPath != null ? this.retrieverPath.hashCode() : 0;
     }
 
     /*

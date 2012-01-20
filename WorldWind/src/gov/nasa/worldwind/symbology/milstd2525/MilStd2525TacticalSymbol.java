@@ -6,12 +6,12 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -22,39 +22,17 @@ import java.util.List;
  * the <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a> symbology
  * set. See the <a title="Tactical Symbol Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/"
  * target="_blank">Tactical Symbol Usage Guide</a> for instructions on using TacticalSymbol in an application.
- * <p/>
- * <strong>Note</strong>: MilStd2525TacticalSymbol is currently an in-development stub class, and does not yet implement
- * the TacticalSymbol interface or any of its functionality.
  *
  * @author dcollins
  * @version $Id$
  */
 public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 {
-    protected static final String DEFAULT_RETRIEVER_BASE_URL = "http://worldwindserver.net/milstd2525/";
-    /** Note that we use a static default retriever instance in order to cache the results it returns. */
-    protected static final IconRetriever DEFAULT_ICON_RETRIEVER = new MilStd2525IconRetriever(
-        DEFAULT_RETRIEVER_BASE_URL);
-    /** Note that we use a static default retriever instance in order to cache the results it returns. */
-    protected static final IconRetriever DEFAULT_MODIFIER_RETRIEVER = new MilStd2525ModifierRetriever(
-        DEFAULT_RETRIEVER_BASE_URL);
-    // TODO: make this configurable
-    // Create a texture atlas with the default initial size and maximum size. The maximum size is either the default
-    // maximum size or the maximum texture size, whichever is less.
-    protected static final TextureAtlas DEFAULT_MODIFIER_ATLAS = new TextureAtlas(128, 128, 2048, 2048);
-
     protected static final Offset CENTER_OFFSET = Offset.fromFraction(0.5, 0.5);
     protected static final Offset BOTTOM_CENTER_OFFSET = Offset.fromFraction(0.5, 0.0);
     protected static final Offset TOP_CENTER_OFFSET = Offset.fromFraction(0.5, 1.0);
     protected static final Offset LEFT_CENTER_OFFSET = Offset.fromFraction(0.0, 0.5);
     protected static final Offset RIGHT_CENTER_OFFSET = Offset.fromFraction(1.0, 0.5);
-
-    static
-    {
-        // Configure the atlas to remove old modifier elements that are likely no longer used to make room for new
-        // modifiers when the atlas is full.
-        DEFAULT_MODIFIER_ATLAS.setEvictOldElements(true);
-    }
 
     /**
      * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
@@ -69,7 +47,8 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     /**
      * Constructs a tactical symbol for the MIL-STD-2525 symbology set with the specified symbol identifier and
      * position. This constructor does not accept any supplemental modifiers, so the symbol contains only the attributes
-     * specified by its symbol identifier.
+     * specified by its symbol identifier. This constructor does not accept any icon retrieval path, so the created
+     * symbol retrieves its icons from the default location.
      * <p/>
      * The symbolId specifies the tactical symbol's appearance. The symbolId must be a 15-character alphanumeric symbol
      * identification code (SIDC). The symbol's shape, fill color, outline color, and icon are all defined by the symbol
@@ -88,12 +67,13 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     {
         super(position);
 
-        this.init(symbolId, null);
+        this.init(symbolId, null, null);
     }
 
     /**
      * Constructs a tactical symbol for the MIL-STD-2525 symbology set with the specified symbol identifier, position,
-     * and list of modifiers.
+     * and list of modifiers. This constructor does not accept any icon retrieval path, so the created symbol retrieves
+     * its icons from the default location.
      * <p/>
      * The symbolId specifies the tactical symbol's appearance. The symbolId must be a 15-character alphanumeric symbol
      * identification code (SIDC). The symbol's shape, fill color, outline color, and icon are all defined by the symbol
@@ -118,10 +98,74 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     {
         super(position);
 
-        this.init(symbolId, modifiers);
+        this.init(symbolId, modifiers, null);
     }
 
-    protected void init(String symbolId, AVList modifiers)
+    /**
+     * Constructs a tactical symbol for the MIL-STD-2525 symbology set with the specified symbol identifier, position,
+     * and icon retrieval path. This constructor does not accept any supplemental modifiers, so the symbol contains only
+     * the attributes specified by its symbol identifier.
+     * <p/>
+     * The symbolId specifies the tactical symbol's appearance. The symbolId must be a 15-character alphanumeric symbol
+     * identification code (SIDC). The symbol's shape, fill color, outline color, and icon are all defined by the symbol
+     * identifier. Use the '-' character to specify null entries in the symbol identifier.
+     * <p/>
+     * The position specifies the latitude, longitude, and altitude where the symbol is drawn on the globe. The
+     * position's altitude component is interpreted according to the altitudeMode.
+     * <p/>
+     * The iconRetrieverPath specifies the location where the symbol icons are retrieved from. This can be a URL to a
+     * remote server, a URL to a ZIP/JAR file, a path to folder on the local file system, or the empty string to
+     * indicate that icons are retrieved from the class path. This path may be <code>null</code>, in which case the
+     * default path is used.
+     *
+     * @param symbolId          a 15-character alphanumeric symbol identification code (SIDC).
+     * @param position          the latitude, longitude, and altitude where the symbol is drawn.
+     * @param iconRetrieverPath a path specifying where the MIL-STD-2525 icons are retrieved from, or <code>null</code>
+     *                          to use the default path.
+     */
+    public MilStd2525TacticalSymbol(String symbolId, Position position, String iconRetrieverPath)
+    {
+        super(position);
+
+        this.init(symbolId, null, iconRetrieverPath);
+    }
+
+    /**
+     * Constructs a tactical symbol for the MIL-STD-2525 symbology set with the specified symbol identifier, position,
+     * list of modifiers, and icon retrieval path.
+     * <p/>
+     * The symbolId specifies the tactical symbol's appearance. The symbolId must be a 15-character alphanumeric symbol
+     * identification code (SIDC). The symbol's shape, fill color, outline color, and icon are all defined by the symbol
+     * identifier. Use the '-' character to specify null entries in the symbol identifier.
+     * <p/>
+     * The position specifies the latitude, longitude, and altitude where the symbol is drawn on the globe. The
+     * position's altitude component is interpreted according to the altitudeMode.
+     * <p/>
+     * The modifiers specify supplemental graphic and text attributes as key-value pairs. See the
+     * MilStd2525TacticalSymbol class documentation for the list of recognized modifiers. In the case where both the
+     * symbol identifier and the modifiers list specify the same attribute, the modifiers list has priority.
+     * <p/>
+     * The iconRetrieverPath specifies the location where the symbol icons are retrieved from. This can be a URL to a
+     * remote server, a URL to a ZIP/JAR file, a path to folder on the local file system, or the empty string to
+     * indicate that icons are retrieved from the class path. This path may be <code>null</code>, in which case the
+     * default path is used.
+     *
+     * @param symbolId          a 15-character alphanumeric symbol identification code (SIDC).
+     * @param position          the latitude, longitude, and altitude where the symbol is drawn.
+     * @param modifiers         an optional list of key-value pairs specifying the symbol's modifiers. May be
+     *                          <code>null</code> to specify that the symbol contains only the attributes in its symbol
+     *                          identifier.
+     * @param iconRetrieverPath a path specifying where the MIL-STD-2525 icons are retrieved from, or <code>null</code>
+     *                          to use the default path.
+     */
+    public MilStd2525TacticalSymbol(String symbolId, Position position, AVList modifiers, String iconRetrieverPath)
+    {
+        super(position);
+
+        this.init(symbolId, modifiers, iconRetrieverPath);
+    }
+
+    protected void init(String symbolId, AVList modifiers, String iconRetrieverPath)
     {
         // Initialize the symbol code from the symbol identifier specified at construction.
         this.symbolCode = new SymbolCode(symbolId);
@@ -132,12 +176,17 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         if (modifiers != null)
             this.modifiers.setValues(modifiers);
 
-        // Configure this tactical symbol with the default tactical icon retriever, the default modifier retriever,
-        // and the default modifier atlas.
-        // TODO: replace default retrievers with per-instance objects that use the base URL to determine equality.
-        this.setIconRetriever(DEFAULT_ICON_RETRIEVER);
-        this.setGlyphAtlas(DEFAULT_MODIFIER_ATLAS);
-        this.setModifierRetriever(DEFAULT_MODIFIER_RETRIEVER);
+        // Configure this tactical symbol's icon retriever and modifier retriever with either the icon retriever path
+        // specified at construction, the corresponding configuration value, or the default value (in that order of
+        // precedence). Note that the empty string is valid and indicates that icons are retrieved from the class path.
+        if (iconRetrieverPath == null)
+        {
+            iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+                MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
+        }
+
+        this.setIconRetriever(new MilStd2525IconRetriever(iconRetrieverPath));
+        this.setModifierRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
 
         // Initialize this tactical symbol's icon offset, icon size, and altitude mode from its symbol code.
         this.initIconLayout();

@@ -326,8 +326,18 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected static final String LAYOUT_ABSOLUTE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutAbsolute";
     protected static final String LAYOUT_RELATIVE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutRelative";
     protected static final String LAYOUT_NONE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutNone";
-    /** Configured to match the depth offset produced by existing screen elements such as PointPlacemark. */
+    /**
+     * The default depth offset in device independent depth units: -8200. This value is configured to match the depth
+     * offset produced by existing screen elements such as PointPlacemark.
+     */
     protected static final double DEFAULT_DEPTH_OFFSET = -8200;
+    // TODO: make this configurable
+    /**
+     * The default glyph texture atlas. This texture atlas holds all glyph images loaded by calls to
+     * <code>layoutGlyphModifier</code>. Initialized with initial dimensions of 128x128 and maximum dimensions of
+     * 2048x2048. Configured to remove the least recently used texture elements when more space is needed.
+     */
+    protected static final TextureAtlas DEFAULT_GLYPH_ATLAS = new TextureAtlas(128, 128, 2048, 2048);
 
     /** The attributes used if attributes are not specified. */
     protected static TacticalSymbolAttributes defaultAttrs;
@@ -340,6 +350,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         defaultAttrs.setScale(BasicTacticalSymbolAttributes.DEFAULT_SCALE);
         //defaultAttrs.setTextModifierFont(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT);
         defaultAttrs.setTextModifierMaterial(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL);
+
+        // Configure the atlas to remove old texture elements that are likely no longer used to make room for new
+        // modifiers when the atlas is full.
+        DEFAULT_GLYPH_ATLAS.setEvictOldElements(true);
     }
 
     /**
@@ -498,6 +512,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
 
         this.position = position;
+        this.setGlyphAtlas(DEFAULT_GLYPH_ATLAS);
     }
 
     /** {@inheritDoc} */

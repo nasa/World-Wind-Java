@@ -6,8 +6,8 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -36,12 +36,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
     /** Implementation of TacticalSymbol that is configured to create and layout tactical point graphics. */
     protected static class PointGraphicSymbol extends AbstractTacticalSymbol
     {
-        /** Default icon retrieval URL. */
-        protected static final String DEFAULT_RETRIEVER_BASE_URL = "http://worldwindserver.net/milstd2525/";
-        /** Note that we use a static default retriever instance in order to cache the results it returns. */
-        protected static final IconRetriever DEFAULT_ICON_RETRIEVER = new MilStd2525PointGraphicRetriever(
-            DEFAULT_RETRIEVER_BASE_URL);
-
         protected SymbolCode symbolCode;
 
         /**
@@ -62,10 +56,12 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             this.symbolCode = new SymbolCode(symbolId);
             this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 
-            // Configure this tactical graphic with the default tactical icon retriever, the default modifier retriever,
-            // and the default modifier atlas.
-            // TODO: replace default retrievers with per-instance objects that use the base URL to determine equality.
-            this.setIconRetriever(DEFAULT_ICON_RETRIEVER);
+            // Configure this tactical point graphic's icon retriever and modifier retriever with either the
+            // configuration value or the default value (in that order of precedence). Note that the empty string is
+            // valid and indicates that icons are retrieved from the class path.
+            String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+                MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
+            this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));
 
             Offset offset = defaultOffsets.get(this.symbolCode.toMaskedString());
             this.setOffset(offset);
