@@ -67,7 +67,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     {
         super(position);
 
-        this.init(symbolId, null, null);
+        this.init(symbolId, null);
     }
 
     /**
@@ -98,74 +98,10 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     {
         super(position);
 
-        this.init(symbolId, modifiers, null);
+        this.init(symbolId, modifiers);
     }
 
-    /**
-     * Constructs a tactical symbol for the MIL-STD-2525 symbology set with the specified symbol identifier, position,
-     * and icon retrieval path. This constructor does not accept any supplemental modifiers, so the symbol contains only
-     * the attributes specified by its symbol identifier.
-     * <p/>
-     * The symbolId specifies the tactical symbol's appearance. The symbolId must be a 15-character alphanumeric symbol
-     * identification code (SIDC). The symbol's shape, fill color, outline color, and icon are all defined by the symbol
-     * identifier. Use the '-' character to specify null entries in the symbol identifier.
-     * <p/>
-     * The position specifies the latitude, longitude, and altitude where the symbol is drawn on the globe. The
-     * position's altitude component is interpreted according to the altitudeMode.
-     * <p/>
-     * The iconRetrieverPath specifies the location where the symbol icons are retrieved from. This can be a URL to a
-     * remote server, a URL to a ZIP/JAR file, a path to folder on the local file system, or the empty string to
-     * indicate that icons are retrieved from the class path. This path may be <code>null</code>, in which case the
-     * default path is used.
-     *
-     * @param symbolId          a 15-character alphanumeric symbol identification code (SIDC).
-     * @param position          the latitude, longitude, and altitude where the symbol is drawn.
-     * @param iconRetrieverPath a path specifying where the MIL-STD-2525 icons are retrieved from, or <code>null</code>
-     *                          to use the default path.
-     */
-    public MilStd2525TacticalSymbol(String symbolId, Position position, String iconRetrieverPath)
-    {
-        super(position);
-
-        this.init(symbolId, null, iconRetrieverPath);
-    }
-
-    /**
-     * Constructs a tactical symbol for the MIL-STD-2525 symbology set with the specified symbol identifier, position,
-     * list of modifiers, and icon retrieval path.
-     * <p/>
-     * The symbolId specifies the tactical symbol's appearance. The symbolId must be a 15-character alphanumeric symbol
-     * identification code (SIDC). The symbol's shape, fill color, outline color, and icon are all defined by the symbol
-     * identifier. Use the '-' character to specify null entries in the symbol identifier.
-     * <p/>
-     * The position specifies the latitude, longitude, and altitude where the symbol is drawn on the globe. The
-     * position's altitude component is interpreted according to the altitudeMode.
-     * <p/>
-     * The modifiers specify supplemental graphic and text attributes as key-value pairs. See the
-     * MilStd2525TacticalSymbol class documentation for the list of recognized modifiers. In the case where both the
-     * symbol identifier and the modifiers list specify the same attribute, the modifiers list has priority.
-     * <p/>
-     * The iconRetrieverPath specifies the location where the symbol icons are retrieved from. This can be a URL to a
-     * remote server, a URL to a ZIP/JAR file, a path to folder on the local file system, or the empty string to
-     * indicate that icons are retrieved from the class path. This path may be <code>null</code>, in which case the
-     * default path is used.
-     *
-     * @param symbolId          a 15-character alphanumeric symbol identification code (SIDC).
-     * @param position          the latitude, longitude, and altitude where the symbol is drawn.
-     * @param modifiers         an optional list of key-value pairs specifying the symbol's modifiers. May be
-     *                          <code>null</code> to specify that the symbol contains only the attributes in its symbol
-     *                          identifier.
-     * @param iconRetrieverPath a path specifying where the MIL-STD-2525 icons are retrieved from, or <code>null</code>
-     *                          to use the default path.
-     */
-    public MilStd2525TacticalSymbol(String symbolId, Position position, AVList modifiers, String iconRetrieverPath)
-    {
-        super(position);
-
-        this.init(symbolId, modifiers, iconRetrieverPath);
-    }
-
-    protected void init(String symbolId, AVList modifiers, String iconRetrieverPath)
+    protected void init(String symbolId, AVList modifiers)
     {
         // Initialize the symbol code from the symbol identifier specified at construction.
         this.symbolCode = new SymbolCode(symbolId);
@@ -176,15 +112,11 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         if (modifiers != null)
             this.modifiers.setValues(modifiers);
 
-        // Configure this tactical symbol's icon retriever and modifier retriever with either the icon retriever path
-        // specified at construction, the corresponding configuration value, or the default value (in that order of
-        // precedence). Note that the empty string is valid and indicates that icons are retrieved from the class path.
-        if (iconRetrieverPath == null)
-        {
-            iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
-                MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
-        }
-
+        // Configure this tactical symbol's icon retriever and modifier retriever with either the configuration value or
+        // the default value (in that order of precedence). Note that the empty string is valid and indicates that icons
+        // are retrieved from the class path.
+        String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
+            MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525IconRetriever(iconRetrieverPath));
         this.setModifierRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
 

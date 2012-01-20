@@ -34,9 +34,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     // TODO: add more error checking
 
-    public MilStd2525IconRetriever(String URL)
+    public MilStd2525IconRetriever(String retrieverPath)
     {
-        super(URL);
+        super(retrieverPath);
     }
 
     public BufferedImage createIcon(String symbolIdentifier)
@@ -228,15 +228,9 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER) ||
             stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))
         {
-            String overlayPath;
-            if (stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER))
-                overlayPath = "j_overlay.png";
-            else if (stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))
-                overlayPath = "k_overlay.png";
-            else
-                overlayPath = "x_overlay.png";
-
+            String overlayPath = this.composeExerciseAmplifyingOverlayPath(symbolCode);
             BufferedImage overlay = this.retrieveImageFromURL(overlayPath, null);
+
             if (overlay == null)
             {
                 String msg = Logging.getMessage("Symbology.SymbolIconOverlayNotFound", symbolCode);
@@ -539,6 +533,26 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         {
             filename = "installation_" + filename;
         }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(OVERLAY_PATH_PREFIX);
+        sb.append(filename);
+        sb.append(PATH_SUFFIX);
+
+        return sb.toString();
+    }
+
+    protected String composeExerciseAmplifyingOverlayPath(SymbolCode symbolCode)
+    {
+        String stdid = symbolCode.getStandardIdentity();
+
+        String filename;
+        if (stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER))
+            filename = "j_overlay";
+        else if (stdid.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))
+            filename = "k_overlay";
+        else
+            filename = "x_overlay";
 
         StringBuilder sb = new StringBuilder();
         sb.append(OVERLAY_PATH_PREFIX);

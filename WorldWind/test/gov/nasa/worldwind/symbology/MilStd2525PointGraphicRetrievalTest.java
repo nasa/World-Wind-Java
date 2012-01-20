@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.symbology;
 
+import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525PointGraphicRetriever;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import junit.framework.TestCase;
 
 import java.awt.image.*;
@@ -21,7 +22,8 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     // TODO: test all possible values for Standard Identity and Status
 
     // This path should correspond to the location of the appropriate symbology source icons on your system
-    private final static String URL = "http://worldwindserver.net/milstd2525/";
+    private final static String ICON_RETRIEVER_PATH = Configuration.getStringValue(
+        AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH, MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
 
     //////////////////////////////////////////////////////////
     // Test retrieval of a MilStd2525 point graphic from both a remote
@@ -31,7 +33,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     @org.junit.Test
     public void testServerRetrieval()
     {
-        IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+        IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
         BufferedImage img = symGen.createIcon("GFFPPCB-------X", null);
         assertNotNull(img);
     }
@@ -46,7 +48,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         try
         {
-            IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+            IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("SUAPC", null);
             fail("Should raise an IllegalArgumentException");
         }
@@ -60,7 +62,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         try
         {
-            IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+            IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("SUAPCTEST", null);
             fail("Should raise an IllegalArgumentException");
         }
@@ -74,7 +76,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         try
         {
-            IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+            IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon(null, null);
             fail("Should raise an IllegalArgumentException");
         }
@@ -94,7 +96,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         try
         {
-            IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+            IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon(".FFPPCB-------X", null);
             fail("Should raise an IllegalArgumentException");
         }
@@ -108,7 +110,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         try
         {
-            IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+            IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("G.FPPCB-------X", null);
             fail("Should raise an IllegalArgumentException");
         }
@@ -122,7 +124,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         try
         {
-            IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+            IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("GFF.PCB-------X", null);
             fail("Should raise an IllegalArgumentException");
         }
@@ -136,7 +138,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         try
         {
-            IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+            IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("GFFP...-------X", null);
             fail("Should raise an IllegalArgumentException");
         }
@@ -149,7 +151,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     @org.junit.Test
     public void testTacticalGraphicRetrieval()
     {
-        IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+        IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
         AVList params = new AVListImpl();
         BufferedImage img;
 
@@ -166,7 +168,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     @org.junit.Test
     public void testMeteorologicalSymbolRetrieval()
     {
-        IconRetriever symGen = new MilStd2525PointGraphicRetriever(URL);
+        IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
         AVList params = new AVListImpl();
         BufferedImage img;
 
