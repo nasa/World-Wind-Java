@@ -317,6 +317,11 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
 
     public boolean addAll(Collection<? extends Layer> layers)
     {
+        for (Layer layer : layers)
+        {
+            layer.addPropertyChangeListener(this);
+        }
+
         LayerList copy = makeShallowCopy(this);
         boolean added = super.addAll(layers);
         if (added)
@@ -340,7 +345,7 @@ public class LayerList extends CopyOnWriteArrayList<Layer> implements WWObject
         return added;
     }
 
-    @SuppressWarnings({"SuspiciousMethodCalls"})
+    @SuppressWarnings( {"SuspiciousMethodCalls"})
     public boolean retainAll(Collection<?> objects)
     {
         for (Layer layer : this)
