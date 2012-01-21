@@ -57,8 +57,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 
             // Configure this tactical point graphic's icon retriever and modifier retriever with either the
-            // configuration value or the default value (in that order of precedence). Note that the empty string is
-            // valid and indicates that icons are retrieved from the class path.
+            // configuration value or the default value (in that order of precedence).
             String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
                 MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
             this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));

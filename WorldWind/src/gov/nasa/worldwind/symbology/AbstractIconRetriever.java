@@ -26,6 +26,13 @@ public abstract class AbstractIconRetriever implements IconRetriever
     // symbology set can be found.
     public AbstractIconRetriever(String retrieverPath)
     {
+        if (retrieverPath == null || retrieverPath.length() == 0)
+        {
+            String msg = Logging.getMessage("nullValue.PathIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         this.retrieverPath = retrieverPath;
     }
 
@@ -44,13 +51,8 @@ public abstract class AbstractIconRetriever implements IconRetriever
         }
 
         StringBuilder sb = new StringBuilder();
-
-        if (!WWUtil.isEmpty(this.getRetrieverPath()))
-        {
-            sb.append(WWIO.stripTrailingSeparator(this.getRetrieverPath()));
-            sb.append("/");
-        }
-
+        sb.append(WWIO.stripTrailingSeparator(this.getRetrieverPath()));
+        sb.append("/");
         sb.append(WWIO.stripLeadingSeparator(path));
 
         InputStream is = null;

@@ -229,8 +229,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     /**
      * Indicates the location that MIL-STD-2525 tactical symbols and tactical point graphics retrieve their icons from.
      * When used as a key, the corresponding value must be a string indicating a URL to a remote server, a URL to a
-     * ZIP/JAR file, a path to folder on the local file system, or the empty string to indicate that icons are retrieved
-     * from the class path.
+     * ZIP/JAR file, or a path to folder on the local file system.
      */
     final String MIL_STD_2525_ICON_RETRIEVER_PATH = "gov.nasa.worldwind.avkey.MilStd2525IconRetrieverPath";
     final String MIME_TYPE = "gov.nasa.worldwind.avkey.MimeType";

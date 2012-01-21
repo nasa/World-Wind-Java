@@ -113,8 +113,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
             this.modifiers.setValues(modifiers);
 
         // Configure this tactical symbol's icon retriever and modifier retriever with either the configuration value or
-        // the default value (in that order of precedence). Note that the empty string is valid and indicates that icons
-        // are retrieved from the class path.
+        // the default value (in that order of precedence).
         String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
             MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
         this.setIconRetriever(new MilStd2525IconRetriever(iconRetrieverPath));
