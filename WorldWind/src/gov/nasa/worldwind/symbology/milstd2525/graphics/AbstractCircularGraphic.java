@@ -23,7 +23,6 @@ import java.util.*;
 public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic implements TacticalCircle, PreRenderable
 {
     protected SurfaceCircle circle;
-    protected Object delegateOwner;
 
     /**
      * Create a new circular area.
@@ -60,18 +59,6 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
     public void setPosition(Position position)
     {
         this.moveTo(position);
-    }
-
-    /** {@inheritDoc} */
-    public Object getDelegateOwner()
-    {
-        return this.delegateOwner;
-    }
-
-    /** {@inheritDoc} */
-    public void setDelegateOwner(Object owner)
-    {
-        this.delegateOwner = owner;
     }
 
     /**
@@ -187,10 +174,16 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
         }
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        this.circle.setDelegateOwner(owner);
+    }
+
     protected SurfaceCircle createShape()
     {
         SurfaceCircle circle = new SurfaceCircle();
-        circle.setDelegateOwner(this);
+        circle.setDelegateOwner(this.getActiveDelegateOwner());
         circle.setAttributes(this.activeShapeAttributes);
         return circle;
     }

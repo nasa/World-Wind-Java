@@ -30,22 +30,4 @@ public interface TacticalPoint extends TacticalGraphic
      * @param position New position.
      */
     void setPosition(Position position);
-
-    /**
-     * Returns the delegate owner of the graphic. If non-null, the returned object replaces the graphic as the pickable
-     * object returned during picking. If null, the graphic itself is the pickable object returned during picking.
-     *
-     * @return the object used as the pickable object returned during picking, or null to indicate the the graphic is
-     *         returned during picking.
-     */
-    Object getDelegateOwner();
-
-    /**
-     * Specifies the delegate owner of the graphic. If non-null, the delegate owner replaces the graphic as the
-     * pickable object returned during picking. If null, the graphic itself is the pickable object returned during
-     * picking.
-     *
-     * @param owner the object to use as the pickable object returned during picking, or null to return the graphic.
-     */
-    void setDelegateOwner(Object owner);
 }

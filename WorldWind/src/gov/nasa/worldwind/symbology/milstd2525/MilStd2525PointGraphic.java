@@ -170,18 +170,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         this.position = position;
     }
 
-    /** {@inheritDoc} */
-    public Object getDelegateOwner()
-    {
-        return this.delegateOwner;
-    }
-
-    /** {@inheritDoc} */
-    public void setDelegateOwner(Object owner)
-    {
-        this.delegateOwner = owner;
-    }
-
     /////////////////////////////
     // Movable interface
     /////////////////////////////
@@ -210,6 +198,12 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         }
 
         this.symbol.render(dc);
+    }
+
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        // TODO
     }
 
     /**

@@ -520,6 +520,23 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         }
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        if (this.paths != null)
+        {
+            for (Path path : this.paths)
+            {
+                path.setDelegateOwner(owner);
+            }
+        }
+
+        if (this.arrowHead != null)
+        {
+            this.arrowHead.setDelegateOwner(owner);
+        }
+    }
+
     /** Regenerate the graphics positions on the next frame. */
     protected void reset()
     {
@@ -966,7 +983,7 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         path.setFollowTerrain(true);
         path.setPathType(AVKey.GREAT_CIRCLE);
         path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-        path.setDelegateOwner(this);
+        path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
     }
@@ -979,7 +996,7 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     protected SurfacePolygon createPolygon()
     {
         SurfacePolygon polygon = new SurfacePolygon();
-        polygon.setDelegateOwner(this);
+        polygon.setDelegateOwner(this.getActiveDelegateOwner());
         polygon.setAttributes(this.getActiveShapeAttributes());
         return polygon;
     }

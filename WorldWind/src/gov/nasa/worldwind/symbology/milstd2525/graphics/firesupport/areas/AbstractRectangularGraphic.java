@@ -193,10 +193,16 @@ public class AbstractRectangularGraphic extends MilStd2525TacticalGraphic implem
         this.quad.render(dc);
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        this.quad.setDelegateOwner(owner);
+    }
+
     protected SurfaceQuad createShape()
     {
         SurfaceQuad quad = new SurfaceQuad();
-        quad.setDelegateOwner(this);
+        quad.setDelegateOwner(this.getActiveDelegateOwner());
         quad.setAttributes(this.getActiveShapeAttributes());
         return quad;
     }

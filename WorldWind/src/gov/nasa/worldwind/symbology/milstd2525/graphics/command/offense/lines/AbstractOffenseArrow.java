@@ -132,6 +132,18 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
         }
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        if (this.paths == null)
+            return;
+
+        for (Path path : this.paths)
+        {
+            path.setDelegateOwner(owner);
+        }
+    }
+
     /**
      * Create the list of positions that describe the arrow.
      *
@@ -340,8 +352,8 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
         Path path = new Path();
         path.setFollowTerrain(true);
         path.setPathType(AVKey.GREAT_CIRCLE);
-        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
-        path.setDelegateOwner(this);
+        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+        path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
     }

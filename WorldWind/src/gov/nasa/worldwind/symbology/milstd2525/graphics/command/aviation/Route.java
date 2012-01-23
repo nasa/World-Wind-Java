@@ -221,6 +221,26 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
         }
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        if (this.paths != null)
+        {
+            for (Path path : this.paths)
+            {
+                path.setDelegateOwner(owner);
+            }
+        }
+
+        if (this.children != null)
+        {
+            for (TacticalGraphic child : this.children)
+            {
+                child.setDelegateOwner(owner);
+            }
+        }
+    }
+
     /**
      * Create the paths used to draw the route.
      *
@@ -470,7 +490,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
         path.setFollowTerrain(true);
         path.setPathType(AVKey.GREAT_CIRCLE);
         path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-        path.setDelegateOwner(this);
+        path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
     }

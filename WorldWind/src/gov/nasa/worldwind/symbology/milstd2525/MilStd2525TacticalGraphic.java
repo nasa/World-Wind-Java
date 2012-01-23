@@ -89,6 +89,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected boolean visible = true;
     protected boolean showModifiers = true;
     protected boolean showHostileIndicator = true;
+    protected Object delegateOwner;
 
     protected TacticalGraphicAttributes normalAttributes;
     protected TacticalGraphicAttributes highlightAttributes;
@@ -107,6 +108,15 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected boolean mustCreateLabels = true;
 
     protected abstract void doRenderGraphic(DrawContext dc);
+
+    /**
+     * Invoked each frame to apply to the current delegate owner to all renderable objects used to draw the graphic.
+     * This base class will apply the delegate owner to Label objects. Subclasses must implement this method to apply
+     * the delegate owner to any Renderables that they will draw in order to render the graphic.
+     *
+     * @param owner Current delegate owner.
+     */
+    protected abstract void applyDelegateOwner(Object owner);
 
     protected MilStd2525TacticalGraphic(String symbolCode)
     {
@@ -261,6 +271,18 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         this.onModifierChanged();
     }
 
+    /** {@inheritDoc} */
+    public Object getDelegateOwner()
+    {
+        return this.delegateOwner;
+    }
+
+    /** {@inheritDoc} */
+    public void setDelegateOwner(Object owner)
+    {
+        this.delegateOwner = owner;
+    }
+
     /////////////////////////////
     // Movable interface
     /////////////////////////////
@@ -354,6 +376,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             }
 
             this.determineActiveAttributes();
+            this.determineDelegateOwner();
+
             this.computeGeometry(dc);
             this.frameTimestamp = timeStamp;
         }
@@ -422,7 +446,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
         Label label = new Label();
         label.setText(text);
-        label.setDelegateOwner(this);
+        label.setDelegateOwner(this.getActiveDelegateOwner());
         label.setTextAlign(AVKey.CENTER);
         this.labels.add(label);
 
@@ -433,6 +457,38 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     {
         // Allow the subclass to decide where to put the labels
         this.determineLabelPositions(dc);
+    }
+
+    /**
+     * Determine the delegate owner for the current frame, and apply the owner to all renderable objects used to draw
+     * the graphic.
+     */
+    protected void determineDelegateOwner()
+    {
+        Object owner = this.getActiveDelegateOwner();
+
+        // Apply the delegate owner to all label objects.
+        if (this.labels != null)
+        {
+            for (Label label : this.labels)
+            {
+                label.setDelegateOwner(owner);
+            }
+        }
+
+        // Give subclasses a chance to apply the delegate owner to shapes they own.
+        this.applyDelegateOwner(owner);
+    }
+
+    /**
+     * Indicates the object attached to the pick list to represent this graphic.
+     *
+     * @return Delegate owner, if specified, or {@code this} if an owner is not specified.
+     */
+    protected Object getActiveDelegateOwner()
+    {
+        Object owner = this.getDelegateOwner();
+        return owner != null ? owner : this;
     }
 
     /** Determine active attributes for this frame. */

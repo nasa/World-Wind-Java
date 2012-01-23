@@ -54,7 +54,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     {
         super(sidc);
         this.polygon = new SurfacePolygon();
-        this.polygon.setDelegateOwner(this);
+        this.polygon.setDelegateOwner(this.getActiveDelegateOwner());
         this.polygon.setAttributes(this.getActiveShapeAttributes());
     }
 
@@ -287,5 +287,11 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
             count++;
         }
         return count;
+    }
+
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        this.polygon.setDelegateOwner(owner);
     }
 }

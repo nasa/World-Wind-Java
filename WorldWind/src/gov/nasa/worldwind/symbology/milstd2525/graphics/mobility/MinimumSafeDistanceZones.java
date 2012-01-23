@@ -196,6 +196,18 @@ public class MinimumSafeDistanceZones extends MilStd2525TacticalGraphic implemen
         }
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        if (this.rings == null)
+            return;
+
+        for (SurfaceCircle ring : this.rings)
+        {
+            ring.setDelegateOwner(owner);
+        }
+    }
+
     /**
      * Create the circles used to draw this graphic.
      *
@@ -272,8 +284,8 @@ public class MinimumSafeDistanceZones extends MilStd2525TacticalGraphic implemen
     protected SurfaceCircle createCircle()
     {
         SurfaceCircle circle = new SurfaceCircle();
-        circle.setDelegateOwner(this);
-        circle.setAttributes(this.activeShapeAttributes);
+        circle.setDelegateOwner(this.getActiveDelegateOwner());
+        circle.setAttributes(this.getActiveShapeAttributes());
         return circle;
     }
 }

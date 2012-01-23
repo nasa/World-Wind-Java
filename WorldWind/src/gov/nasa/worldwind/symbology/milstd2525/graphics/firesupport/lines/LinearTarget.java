@@ -227,6 +227,18 @@ public class LinearTarget extends MilStd2525TacticalGraphic
         }
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        if (this.paths == null)
+            return;
+
+        for (Path path : this.paths)
+        {
+            path.setDelegateOwner(owner);
+        }
+    }
+
     /**
      * Create the list of positions that describe the shape.
      *
@@ -415,7 +427,7 @@ public class LinearTarget extends MilStd2525TacticalGraphic
         path.setFollowTerrain(true);
         path.setPathType(AVKey.GREAT_CIRCLE);
         path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-        path.setDelegateOwner(this);
+        path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
     }

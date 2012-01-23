@@ -294,6 +294,18 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         }
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        if (this.rings == null)
+            return;
+
+        for (SurfaceCircle ring : this.rings)
+        {
+            ring.setDelegateOwner(owner);
+        }
+    }
+
     /**
      * Create a circle for a range ring.
      *
@@ -302,7 +314,7 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
     protected SurfaceCircle createCircle()
     {
         SurfaceCircle circle = new SurfaceCircle();
-        circle.setDelegateOwner(this);
+        circle.setDelegateOwner(this.getActiveDelegateOwner());
         circle.setAttributes(this.activeShapeAttributes);
         return circle;
     }

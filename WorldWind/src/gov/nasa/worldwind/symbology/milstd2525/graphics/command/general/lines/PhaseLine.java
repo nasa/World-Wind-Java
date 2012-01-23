@@ -85,6 +85,12 @@ public class PhaseLine extends MilStd2525TacticalGraphic
         this.path.render(dc);
     }
 
+    /** {@inheritDoc} */
+    protected void applyDelegateOwner(Object owner)
+    {
+        this.path.setDelegateOwner(owner);
+    }
+
     /**
      * Create and configure the Path used to render this graphic.
      *
@@ -95,8 +101,8 @@ public class PhaseLine extends MilStd2525TacticalGraphic
         Path path = new Path();
         path.setFollowTerrain(true);
         path.setPathType(AVKey.GREAT_CIRCLE);
-        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND); // TODO how to handle altitude mode?
-        path.setDelegateOwner(this);
+        path.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
+        path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
     }
