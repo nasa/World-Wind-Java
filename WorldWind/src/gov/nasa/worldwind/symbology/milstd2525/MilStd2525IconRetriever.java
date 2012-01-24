@@ -62,17 +62,25 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             throw new IllegalArgumentException(msg);
         }
 
-        Boolean showFrame = (Boolean) params.getValue(SymbologyConstants.SHOW_FRAME);
-        Boolean showFill = (Boolean) params.getValue(SymbologyConstants.SHOW_FILL);
-        Boolean showIcon = (Boolean) params.getValue(SymbologyConstants.SHOW_ICON);
+        boolean showFrame = true;
+        if (params != null && params.getValue(SymbologyConstants.SHOW_FRAME) != null)
+            showFrame = (Boolean) params.getValue(SymbologyConstants.SHOW_FRAME);
+
+        boolean showFill = true;
+        if (params != null && params.getValue(SymbologyConstants.SHOW_FILL) != null)
+            showFill = (Boolean) params.getValue(SymbologyConstants.SHOW_FILL);
+
+        boolean showIcon = true;
+        if (params != null && params.getValue(SymbologyConstants.SHOW_ICON) != null)
+            showIcon = (Boolean) params.getValue(SymbologyConstants.SHOW_ICON);
 
         // return null if neither frame nor icon are showing
-        if (showFrame != null && showIcon != null && showFrame == false && showIcon == false)
+        if (!showFrame && !showIcon)
             return null;
 
         // if Icon visibility is OFF, use symbolIdentifier sans function ID
         // TODO: opportunity for optimization here
-        if (showIcon != null && !showIcon)
+        if (!showIcon)
         {
             char battleDim = symbolIdentifier.charAt(2);
             if (battleDim == 'g' || battleDim == 'G')   // Ground Battle Dimension
@@ -102,7 +110,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         // if unframed, remove frame where necessary
-        if (showFrame != null && !showFrame)
+        if (!showFrame)
         {
             // Check if image actually does have a frame to remove, i.e. the prefix # is < 4.
             // Ignore special cases of <Warfighting, Sea Surface, Own Track> and <Warfighting, Subsurface, Non-submarine Diver> icons,
@@ -154,7 +162,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }       // Framed, but no Fill
         // handle special cases of S*UPE, S*UPV, and S*UPX
         // ignore special case S*SPO.
-        else if (showFill != null && !showFill)
+        else if (!showFill)
         {
             if (symbolCode.getScheme().equals("S") &&
                 symbolCode.getBattleDimension().equals(SymbologyConstants.BATTLE_DIMENSION_SEA_SUBSURFACE) &&
@@ -188,7 +196,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             Graphics2D g = dest.createGraphics();
             g.setComposite(AlphaComposite.SrcOver);
 
-            if (showFrame != null && !showFrame)
+            if (!showFrame)
             {
                 // set background color to grey
                 g.setBackground(new Color(128, 128, 128, 255));
@@ -309,11 +317,14 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         }
 
         // Unframed icons:
-        Boolean showFrame = (Boolean) params.getValue(SymbologyConstants.SHOW_FRAME);
+        boolean showFrame = true;
+        if (params != null && params.getValue(SymbologyConstants.SHOW_FRAME) != null)
+            showFrame = (Boolean) params.getValue(SymbologyConstants.SHOW_FRAME);
+
         // Some icons already have an unframed version available. In these cases, you must
         // add 4 to the prefix to get the unframed version of the icon.
         // In all other cases, the unframed version must be derived later from the framed icon.
-        if (showFrame != null && !showFrame && functionID != null)
+        if (!showFrame && functionID != null)
         {
             if (SymbologyConstants.SCHEME_WARFIGHTING.equals(scheme) &&
                 // Warfighting, Ground, Equipment (S*GPE)
