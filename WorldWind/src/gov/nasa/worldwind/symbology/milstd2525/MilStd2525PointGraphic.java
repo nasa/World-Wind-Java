@@ -93,7 +93,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         /** {@inheritDoc} */
         public String getIdentifier()
         {
-            return this.symbolCode.toString();
+            return MilStd2525PointGraphic.this.getIdentifier();
         }
 
         @Override
@@ -123,6 +123,12 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
 
                 Object value = this.getLabelValue(key);
 
+                // If we're retrieving the date modifier, maybe add a hyphen to the first value to indicate a date range.
+                if (SymbologyConstants.DATE_TIME_GROUP.equals(key) && (value instanceof Iterable))
+                {
+                    value = this.addHyphenToDateRange((Iterable) value, layouts);
+                }
+
                 // Some graphics support multiple instances of the same modifier. Handle this case differently than the
                 // single instance case.
                 if (value instanceof Iterable)
@@ -134,6 +140,36 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
                     this.layoutLabel(dc, font, layouts.get(0), value.toString());
                 }
             }
+        }
+
+        /**
+         * Add a hyphen to the first element in a list of dates to indicate a date range. This method only modifiers the
+         * date list if exactly two dates are displayed in the graphic.
+         *
+         * @param value   Iterable of date modifiers.
+         * @param layouts Layouts for the date modifiers.
+         *
+         * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
+         *         modification was required.
+         */
+        protected Iterable addHyphenToDateRange(Iterable value, List<LabelLayout> layouts)
+        {
+            // Only add a hyphen if exactly two dates are displayed in the graphic.
+            if (layouts.size() != 2)
+                return value;
+
+            // Make sure that two date values are provided.
+            Iterator iterator = value.iterator();
+            Object date1 = iterator.hasNext() ? iterator.next() : null;
+            Object date2 = iterator.hasNext() ? iterator.next() : null;
+
+            // If only two dates were provided, add a hyphen to indicate a date range. If more or less
+            // date were provided it's not a date range, so don't change anything.
+            if (date1 != null && date2 != null)
+            {
+                return Arrays.asList(date1 + "-", date2);
+            }
+            return value;
         }
 
         protected void layoutLabel(DrawContext dc, Font font, LabelLayout layout, String value)
@@ -181,13 +217,21 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             return value;
         }
 
+        /**
+         * Indicates the Type modifier. This modifier is only used by Nuclear/Chemical/Biological graphics. In the case
+         * of Nuclear graphics the modifier is specfied by the application. In the case of chemical or biological this
+         * method returns the string "CML" or "BIO".
+         *
+         * @return The value of the type modifier. Returns null if no type modifier has been set, and the graphics is
+         *         not Chemical or Biological.
+         */
         protected String getType()
         {
-            if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(maskedSymbolCode))
+            if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
             {
                 return "BIO";
             }
-            else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(maskedSymbolCode))
+            else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
             {
                 return "CML";
             }
@@ -197,9 +241,16 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             }
         }
 
+        @Override
         public Object getModifier(String key)
         {
             return MilStd2525PointGraphic.this.getModifier(key);
+        }
+
+        @Override
+        public void setModifier(String key, Object value)
+        {
+            MilStd2525PointGraphic.this.setModifier(key, value);
         }
     }
 

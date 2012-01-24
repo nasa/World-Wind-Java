@@ -193,7 +193,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** {@inheritDoc} */
     public Object getModifier(String modifier)
     {
-        if (SymbologyConstants.UNIQUE_DESIGNATION.equals(modifier))
+        if (SymbologyConstants.UNIQUE_DESIGNATION.equals(modifier) && this.text != null)
         {
             return this.text;
         }
@@ -261,7 +261,19 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** {@inheritDoc} */
     public String getText()
     {
-        return this.text;
+        if (this.text != null)
+            return this.text;
+
+        // If a simple string has not been set check for an iterable. Return the first value, if present.
+        Object value = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
+        if (value instanceof Iterable)
+        {
+            Iterator iterator = ((Iterable) value).iterator();
+            Object o = iterator.hasNext() ? iterator.next() : null;
+            if (o != null)
+                return o.toString();
+        }
+        return null;
     }
 
     /** {@inheritDoc} */

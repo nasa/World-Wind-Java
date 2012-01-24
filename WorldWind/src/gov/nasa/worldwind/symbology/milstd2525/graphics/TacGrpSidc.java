@@ -361,7 +361,7 @@ public interface TacGrpSidc
     final String C2GM_DCPN_DAFF = "G-G-PF--------X";
     /** Decoy Mined Area */
     final String C2GM_DCPN_DMA = "G-G-PM--------X";
-    /** "Decoy Mined Area,  Fenced" */
+    /** Decoy Mined Area,  Fenced */
     final String C2GM_DCPN_DMAF = "G-G-PY--------X";
     /** Dummy Minefield (Static) */
     final String C2GM_DCPN_DMYMS = "G-G-PN--------X";
@@ -399,7 +399,7 @@ public interface TacGrpSidc
     final String C2GM_OFF_LNE_AXSADV_AVN = "G-G-OLAV------X";
     /** Airborne */
     final String C2GM_OFF_LNE_AXSADV_ABN = "G-G-OLAA------X";
-    /** "Attack, Rotary Wing" */
+    /** Attack, Rotary Wing */
     final String C2GM_OFF_LNE_AXSADV_ATK = "G-G-OLAR------X";
     /** Ground */
     final String C2GM_OFF_LNE_AXSADV_GRD = "G-G-OLAG------X";
@@ -474,9 +474,9 @@ public interface TacGrpSidc
     final String MOBSU_OBST_GNL_ORA = "G-M-OGR-------X";
     /** Abatis */
     final String MOBSU_OBST_ABS = "G-M-OS--------X";
-    /** "Antitank Ditch, Under Construction" */
+    /** Antitank Ditch, Under Construction */
     final String MOBSU_OBST_ATO_ATD_ATDUC = "G-M-OADU------X";
-    /** "Antitank Ditch, Complete" */
+    /** Antitank Ditch, Complete */
     final String MOBSU_OBST_ATO_ATD_ATDC = "G-M-OADC------X";
     /** Antitank Ditch Reinforced With Antitank Mines */
     final String MOBSU_OBST_ATO_ATDATM = "G-M-OAR-------X";
@@ -524,9 +524,9 @@ public interface TacGrpSidc
     final String MOBSU_OBST_UXO = "G-M-OU--------X";
     /** Planned */
     final String MOBSU_OBST_RCBB_PLND = "G-M-ORP-------X";
-    /** "Explosives, State Of Readiness 1 (Safe)" */
+    /** Explosives, State Of Readiness 1 (Safe) */
     final String MOBSU_OBST_RCBB_SAFE = "G-M-ORS-------X";
-    /** "Explosives, State Of Readiness 2 (Armed-But Passable)" */
+    /** Explosives, State Of Readiness 2 (Armed-But Passable) */
     final String MOBSU_OBST_RCBB_ABP = "G-M-ORA-------X";
     /** Roadblock Complete (Executed) */
     final String MOBSU_OBST_RCBB_EXCD = "G-M-ORC-------X";
@@ -582,13 +582,13 @@ public interface TacGrpSidc
     final String MOBSU_OBSTBP_CSGSTE_RFT = "G-M-BCR-------X";
     /** Engineer Regulating Point */
     final String MOBSU_OBSTBP_CSGSTE_ERP = "G-M-BCP-------X";
-    /** "Earthwork, Small Trench Or Fortification" */
+    /** Earthwork, Small Trench Or Fortification */
     final String MOBSU_SU_ESTOF = "G-M-SE--------X";
     /** Fort */
     final String MOBSU_SU_FRT = "G-M-SF--------X";
     /** Fortified Line */
     final String MOBSU_SU_FTFDLN = "G-M-SL--------X";
-    /** "Foxhole, Emplacement Or Weapon Site" */
+    /** Foxhole, Emplacement Or Weapon Site */
     final String MOBSU_SU_FEWS = "G-M-SW--------X";
     /** Strong Point */
     final String MOBSU_SU_STRGPT = "G-M-SP--------X";
@@ -677,103 +677,103 @@ public interface TacGrpSidc
     final String FSUPP_ARS_ARATGT_SMK = "G-F-ATS-------X";
     /** Bomb Area */
     final String FSUPP_ARS_ARATGT_BMARA = "G-F-ATB-------X";
-    /** "Fire Support Area (FSA), Irregula" */
+    /** Fire Support Area (FSA), Irregular */
     final String FSUPP_ARS_C2ARS_FSA_IRR = "G-F-ACSI------X";
-    /** "Fire Support Area (FSA), Rectangular" */
+    /** Fire Support Area (FSA), Rectangular */
     final String FSUPP_ARS_C2ARS_FSA_RTG = "G-F-ACSR------X";
-    /** "Fire Support Area (FSA), Circular" */
+    /** Fire Support Area (FSA), Circular */
     final String FSUPP_ARS_C2ARS_FSA_CIRCLR = "G-F-ACSC------X";
-    /** "Airspace Coordination Area (ACA), Irregular" */
+    /** Airspace Coordination Area (ACA), Irregular */
     final String FSUPP_ARS_C2ARS_ACA_IRR = "G-F-ACAI------X";
-    /** "Airspace Coordination Area (ACA), Rectangular" */
+    /** Airspace Coordination Area (ACA), Rectangular */
     final String FSUPP_ARS_C2ARS_ACA_RTG = "G-F-ACAR------X";
-    /** "Airspace Coordination Area (ACA), Circular" */
+    /** Airspace Coordination Area (ACA), Circular */
     final String FSUPP_ARS_C2ARS_ACA_CIRCLR = "G-F-ACAC------X";
-    /** "Free Fire Area (FFA), Irregular" */
+    /** Free Fire Area (FFA), Irregular */
     final String FSUPP_ARS_C2ARS_FFA_IRR = "G-F-ACFI------X";
-    /** "Free Fire Area (FFA), Rectangular" */
+    /** Free Fire Area (FFA), Rectangular */
     final String FSUPP_ARS_C2ARS_FFA_RTG = "G-F-ACFR------X";
-    /** "Free Fire Area (FFA), Circular" */
+    /** Free Fire Area (FFA), Circular */
     final String FSUPP_ARS_C2ARS_FFA_CIRCLR = "G-F-ACFC------X";
-    /** "No Fire Area (NFA), Irregular" */
+    /** No Fire Area (NFA), Irregular */
     final String FSUPP_ARS_C2ARS_NFA_IRR = "G-F-ACNI------X";
-    /** "No Fire Area (NFA), Rectangular" */
+    /** No Fire Area (NFA), Rectangular */
     final String FSUPP_ARS_C2ARS_NFA_RTG = "G-F-ACNR------X";
-    /** "No , Circular" */
+    /** No , Circular */
     final String FSUPP_ARS_C2ARS_NFA_CIRCLR = "G-F-ACNC------X";
-    /** "Restrictive Fire Area (RFA), Irregular" */
+    /** Restrictive Fire Area (RFA), Irregular */
     final String FSUPP_ARS_C2ARS_RFA_IRR = "G-F-ACRI------X";
-    /** "Restrictive Fire Area (RFA), Rectangular" */
+    /** Restrictive Fire Area (RFA), Rectangular */
     final String FSUPP_ARS_C2ARS_RFA_RTG = "G-F-ACRR------X";
-    /** "Restrictive Fire Area (RFA), Circular" */
+    /** Restrictive Fire Area (RFA), Circular */
     final String FSUPP_ARS_C2ARS_RFA_CIRCLR = "G-F-ACRC------X";
-    /** "Position Area For Artillery (PAA), Rectangular" */
+    /** Position Area For Artillery (PAA), Rectangular */
     final String FSUPP_ARS_C2ARS_PAA_RTG = "G-F-ACPR------X";
-    /** "Position Area For Artillery (PAA), Circular" */
+    /** Position Area For Artillery (PAA), Circular */
     final String FSUPP_ARS_C2ARS_PAA_CIRCLR = "G-F-ACPC------X";
-    /** "Sensor Zone, Irregular" */
+    /** Sensor Zone, Irregular */
     final String FSUPP_ARS_C2ARS_SNSZ_IRR = "G-F-ACEI------X";
-    /** "Sensor Zone, Rectangular" */
+    /** Sensor Zone, Rectangular */
     final String FSUPP_ARS_C2ARS_SNSZ_RTG = "G-F-ACER------X";
-    /** "Sensor Zone ,  Circular" */
+    /** Sensor Zone ,  Circular */
     final String FSUPP_ARS_C2ARS_SNSZ_CIRCLR = "G-F-ACEC------X";
-    /** "Dead Space Area (DA),  Irregular" */
+    /** Dead Space Area (DA),  Irregular */
     final String FSUPP_ARS_C2ARS_DA_IRR = "G-F-ACDI------X";
-    /** "Dead Space Area (DA),  Rectangular" */
+    /** Dead Space Area (DA),  Rectangular */
     final String FSUPP_ARS_C2ARS_DA_RTG = "G-F-ACDR------X";
-    /** "Dead Space Area (DA),  Circular" */
+    /** Dead Space Area (DA),  Circular */
     final String FSUPP_ARS_C2ARS_DA_CIRCLR = "G-F-ACDC------X";
-    /** "Zone Of Responsibility (ZOR), Irregular" */
+    /** Zone Of Responsibility (ZOR), Irregular */
     final String FSUPP_ARS_C2ARS_ZOR_IRR = "G-F-ACZI------X";
-    /** "Zone Of Responsibility (ZOR), Rectangular" */
+    /** Zone Of Responsibility (ZOR), Rectangular */
     final String FSUPP_ARS_C2ARS_ZOR_RTG = "G-F-ACZR------X";
-    /** "Zone Of Responsibility (ZOR), Circular" */
+    /** Zone Of Responsibility (ZOR), Circular */
     final String FSUPP_ARS_C2ARS_ZOR_CIRCLR = "G-F-ACZC------X";
-    /** "Target Build Up Area (TBA), Irregular" */
+    /** Target Build Up Area (TBA), Irregular */
     final String FSUPP_ARS_C2ARS_TBA_IRR = "G-F-ACBI------X";
-    /** "Target Build Up Area (TBA),Rectangular" */
+    /** Target Build Up Area (TBA),Rectangular */
     final String FSUPP_ARS_C2ARS_TBA_RTG = "G-F-ACBR------X";
-    /** "Target Build Up Area (TBA), Circular" */
+    /** Target Build Up Area (TBA), Circular */
     final String FSUPP_ARS_C2ARS_TBA_CIRCLR = "G-F-ACBC------X";
-    /** "Target , Irregular" */
+    /** Target , Irregular */
     final String FSUPP_ARS_C2ARS_TVAR_IRR = "G-F-ACVI------X";
-    /** "Target Value Area (TVAR), Rectangular" */
+    /** Target Value Area (TVAR), Rectangular */
     final String FSUPP_ARS_C2ARS_TVAR_RTG = "G-F-ACVR------X";
-    /** "Target Value Area (TVAR), Circular" */
+    /** Target Value Area (TVAR), Circular */
     final String FSUPP_ARS_C2ARS_TVAR_CIRCLR = "G-F-ACVC------X";
     /** Terminally Guided Munition Footprint (TGMF) */
     final String FSUPP_ARS_C2ARS_TGMF = "G-F-ACT-------X";
-    /** "Artillery Target Intelligence (ATI) Zone, Irregular" */
+    /** Artillery Target Intelligence (ATI) Zone, Irregular */
     final String FSUPP_ARS_TGTAQZ_ATIZ_IRR = "G-F-AZII------X";
-    /** "Artillery Target Intelligence (ATI) Zone, Rectangular" */
+    /** Artillery Target Intelligence (ATI) Zone, Rectangular */
     final String FSUPP_ARS_TGTAQZ_ATIZ_RTG = "G-F-AZIR------X";
-    /** "Call For Fire Zone (CFFZ), Irregular" */
+    /** Call For Fire Zone (CFFZ), Irregular */
     final String FSUPP_ARS_TGTAQZ_CFFZ_IRR = "G-F-AZXI------X";
-    /** "Call For Fire Zone (CFFZ), Rectangular" */
+    /** Call For Fire Zone (CFFZ), Rectangular */
     final String FSUPP_ARS_TGTAQZ_CFFZ_RTG = "G-F-AZXR------X";
-    /** "Censor Zone,  Irregular" */
+    /** Censor Zone,  Irregular */
     final String FSUPP_ARS_TGTAQZ_CNS_IRR = "G-F-AZCI------X";
-    /** "Censor Zone, Rectangular" */
+    /** Censor Zone, Rectangular */
     final String FSUPP_ARS_TGTAQZ_CNS_RTG = "G-F-AZCR------X";
-    /** "Critical Friendly Zone (CFZ), Irregular" */
+    /** Critical Friendly Zone (CFZ), Irregular */
     final String FSUPP_ARS_TGTAQZ_CFZ_IRR = "G-F-AZFI------X";
-    /** "Critical Friendly Zone (CFZ), Rectangular" */
+    /** Critical Friendly Zone (CFZ), Rectangular */
     final String FSUPP_ARS_TGTAQZ_CFZ_RTG = "G-F-AZFR------X";
-    /** "Weapon/Sensor Range Fan, Circular" */
+    /** Weapon/Sensor Range Fan, Circular */
     final String FSUPP_ARS_WPNRF_CIRCLR = "G-F-AXC-------X";
-    /** "Weapon/Sensor Range Fan, Sector" */
+    /** Weapon/Sensor Range Fan, Sector */
     final String FSUPP_ARS_WPNRF_SCR = "G-F-AXS-------X";
-    /** "Blue Kill Box,  Circular" */
+    /** Blue Kill Box,  Circular */
     final String FSUPP_ARS_KLBOX_BLUE_CIRCLR = "G-F-AKBC------X";
-    /** "Blue Kill Box, Irregular" */
+    /** Blue Kill Box, Irregular */
     final String FSUPP_ARS_KLBOX_BLUE_IRR = "G-F-AKBI------X";
-    /** "Blue , Rectangular" */
+    /** Blue , Rectangular */
     final String FSUPP_ARS_KLBOX_BLUE_RTG = "G-F-AKBR------X";
-    /** "Purple Kill Box, Circular" */
+    /** Purple Kill Box, Circular */
     final String FSUPP_ARS_KLBOX_PURPLE_CIRCLR = "G-F-AKPC------X";
-    /** "Purple Kill Box, Irregular" */
+    /** Purple Kill Box, Irregular */
     final String FSUPP_ARS_KLBOX_PURPLE_IRR = "G-F-AKPI------X";
-    /** "Purple Kill Box, Rectangular" */
+    /** Purple Kill Box, Rectangular */
     final String FSUPP_ARS_KLBOX_PURPLE_RTG = "G-F-AKPR------X";
 
     ////////////////////////////////////////////////
@@ -796,7 +796,7 @@ public interface TacGrpSidc
     final String CSS_PNT_LRP = "G-S-PL--------X";
     /** Maintenance Collection Point */
     final String CSS_PNT_MCP = "G-S-PM--------X";
-    /** "Rearm, Refuel And Resupply Point" */
+    /** Rearm, Refuel And Resupply Point */
     final String CSS_PNT_RRRP = "G-S-PR--------X";
     /** Refuel On The Move (ROM) Point */
     final String CSS_PNT_ROM = "G-S-PU--------X";
@@ -883,15 +883,15 @@ public interface TacGrpSidc
     final String OTH_SSUBSR_BTMRTN = "G-O-SB--------X";
     /** Installation/Manmade */
     final String OTH_SSUBSR_BTMRTN_INS = "G-O-SBM-------X";
-    /** "Seabed Rock/Stone,  Obstacle,Other" */
+    /** Seabed Rock/Stone,  Obstacle,Other */
     final String OTH_SSUBSR_BTMRTN_SBRSOO = "G-O-SBN-------X";
-    /** "Wreck,  Non Dangerous" */
+    /** Wreck,  Non Dangerous */
     final String OTH_SSUBSR_BTMRTN_WRKND = "G-O-SBW-------X";
-    /** "Wreck,  Dangerous" */
+    /** Wreck,  Dangerous */
     final String OTH_SSUBSR_BTMRTN_WRKD = "G-O-SBX-------X";
     /** Marine Life */
     final String OTH_SSUBSR_MARLFE = "G-O-SM--------X";
-    /** "Sea Anomaly (Wake, Current, Knuckle)" */
+    /** Sea Anomaly (Wake, Current, Knuckle) */
     final String OTH_SSUBSR_SA = "G-O-SS--------X";
     /** Bearing Line */
     final String OTH_BERLNE = "G-O-B---------X";

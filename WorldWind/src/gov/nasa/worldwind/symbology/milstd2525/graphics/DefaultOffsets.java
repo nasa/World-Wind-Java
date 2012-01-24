@@ -11,6 +11,8 @@ import gov.nasa.worldwind.render.Offset;
 
 import java.util.*;
 
+import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc.*;
+
 /**
  * Object to provide default offsets for MIL-STD-2525C tactical point graphics. The offset is used to align a point on
  * the graphic with the graphic's geographic position. This class automatically populates the map with values
@@ -20,7 +22,7 @@ import java.util.*;
  * @version $Id$
  * @see gov.nasa.worldwind.symbology.AbstractTacticalSymbol#setOffset(gov.nasa.worldwind.render.Offset)
  */
-public class DefaultOffsets implements TacGrpSidc
+public class DefaultOffsets
 {
     /** Offset to align the center of the graphic with the geographic position. */
     protected static Offset DEFAULT_OFFSET = new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION);
@@ -159,6 +161,7 @@ public class DefaultOffsets implements TacGrpSidc
 
         // Sonobouy and a few other graphics are anchored a point 25% up from the bottom edge.
         this.putAll(OFFSET_BOTTOM_QUARTER,
+            C2GM_GNL_PNT_USW_SNBY,
             C2GM_GNL_PNT_USW_SNBY_PTNCTR,
             C2GM_GNL_PNT_USW_SNBY_DIFAR,
             C2GM_GNL_PNT_USW_SNBY_LOFAR,

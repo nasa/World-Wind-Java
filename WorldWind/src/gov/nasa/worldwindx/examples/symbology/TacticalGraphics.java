@@ -572,6 +572,25 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createGraphic("GFGPOAS-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Support by Fire Position (2.X.2.5.3.4)");
             layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Biologically Contaminated Area (2.X.3.4.5)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.4916, -117.3427),
+                Position.fromDegrees(34.5770, -117.2273),
+                Position.fromDegrees(34.5666, -117.0920),
+                Position.fromDegrees(34.4943, -117.0629),
+                Position.fromDegrees(34.4570, -117.1613),
+                Position.fromDegrees(34.4508, -117.3106));
+            graphic = factory.createGraphic("GFMPNB--------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Biologically Contaminated Area (2.X.3.4.5)");
+            layer.addRenderable(graphic);
+
+            graphic = factory.createPoint("GFMPNEB-------X", Position.fromDegrees(34.5059, -117.2020), null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Biological Release Event (2.X.3.4.7.1)");
+            layer.addRenderable(graphic);
         }
     }
 
