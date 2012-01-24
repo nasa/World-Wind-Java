@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="_2.G-G-GPAA------X" xmlns:svg="http://www.w3.org/2000/svg"
+<svg version="1.1" id="_0.G-MPOAOF------X" xmlns:svg="http://www.w3.org/2000/svg"
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="400px"
      height="400px"
      viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
-    <g>
-        <line fill="none" stroke="#000000" stroke-width="10" x1="99.5" y1="24.5" x2="99.5" y2="374.5"/>
-        <line fill="none" stroke="#000000" stroke-width="10" x1="299.5" y1="24.5" x2="299.5" y2="374.5"/>
-    </g>
-    <text transform="matrix(1 0 0 1 116.1909 231.4834)" font-family="'ArialMT'" font-size="119.943">RS</text>
+    <path stroke="#000000" stroke-width="2" d="M289.129,199.902L200,45.526l-89.129,154.376L21.742,354.277H200h178.258
+	L289.129,199.902z M38.782,343.566l80.609-139.617L200,64.331l80.609,139.619l80.608,139.617H200H38.782z"/>
 </svg>

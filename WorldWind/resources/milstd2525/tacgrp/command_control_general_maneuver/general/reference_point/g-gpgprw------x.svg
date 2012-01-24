@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="_2.G-G-GPAA------X" xmlns:svg="http://www.w3.org/2000/svg"
+<svg version="1.1" id="_0.G-GPGPRD------X" xmlns:svg="http://www.w3.org/2000/svg"
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="400px"
      height="400px"
      viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
     <g>
-        <line fill="none" stroke="#000000" stroke-width="10" x1="99.5" y1="24.5" x2="99.5" y2="374.5"/>
-        <line fill="none" stroke="#000000" stroke-width="10" x1="299.5" y1="24.5" x2="299.5" y2="374.5"/>
+        <rect x="74.5" y="74.03" fill="none" stroke="#000000" stroke-width="5" width="250" height="250"/>
+        <circle fill="#231F20" cx="199.5" cy="199.03" r="39.5"/>
+        <text transform="matrix(1 0 0 1 165.5215 304.3643)" font-family="'Arial-BoldMT'" font-size="72">W</text>
     </g>
-    <text transform="matrix(1 0 0 1 116.1909 231.4834)" font-family="'ArialMT'" font-size="119.943">RS</text>
 </svg>
