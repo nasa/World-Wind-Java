@@ -12,9 +12,11 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Implementation of MIL-STD-2525 point graphics. Point graphics are rendered in the same way as tactical symbols: by
@@ -33,8 +35,30 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
      */
     protected static DefaultOffsets defaultOffsets = new DefaultOffsets();
 
+    /** Object that provides the default label layouts for each point graphic. */
+    protected static DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
+
+    /** Default icon retrieval URL. */
+    protected static final String DEFAULT_RETRIEVER_BASE_URL = "http://worldwindserver.net/milstd2525/";
+    /** Note that we use a static default retriever instance in order to cache the results it returns. */
+    protected static final IconRetriever DEFAULT_ICON_RETRIEVER = new MilStd2525PointGraphicRetriever(
+        DEFAULT_RETRIEVER_BASE_URL);
+
+    public static class LabelLayout
+    {
+        public Offset offset;
+        public Offset hotSpot;
+
+        public LabelLayout(Offset offset, Offset hotSpot)
+        {
+            this.offset = offset;
+            this.hotSpot = hotSpot;
+        }
+    }
+
     /** Implementation of TacticalSymbol that is configured to create and layout tactical point graphics. */
-    protected static class PointGraphicSymbol extends AbstractTacticalSymbol
+    // TODO methods in this inner class should call to the outer class for easier extensibility.
+    protected class PointGraphicSymbol extends AbstractTacticalSymbol
     {
         protected SymbolCode symbolCode;
 
@@ -70,6 +94,112 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         public String getIdentifier()
         {
             return this.symbolCode.toString();
+        }
+
+        @Override
+        protected void layoutModifiers(DrawContext dc)
+        {
+            if (this.iconRect == null)
+                return;
+
+            this.currentLabels.clear();
+
+            // We compute a default font rather than using a static default in order to choose a font size that is
+            // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
+            // height must be 0.3x the symbol's frame height.
+            Font font = this.getActiveAttributes().getTextModifierFont();
+            if (font == null)
+                font = MilStd2525Util.computeTextModifierFont(this.iconRect.getHeight());
+
+            Map<String, List<LabelLayout>> allLayouts = defaultLayouts.get(this.symbolCode.toMaskedString());
+
+            for (Map.Entry<String, List<LabelLayout>> entry : allLayouts.entrySet())
+            {
+                String key = entry.getKey();
+                List<LabelLayout> layouts = entry.getValue();
+
+                if (WWUtil.isEmpty(layouts))
+                    continue;
+
+                Object value = this.getLabelValue(key);
+
+                // Some graphics support multiple instances of the same modifier. Handle this case differently than the
+                // single instance case.
+                if (value instanceof Iterable)
+                {
+                    this.layoutMultiLabel(dc, font, layouts, (Iterable) value);
+                }
+                else if (value != null)
+                {
+                    this.layoutLabel(dc, font, layouts.get(0), value.toString());
+                }
+            }
+        }
+
+        protected void layoutLabel(DrawContext dc, Font font, LabelLayout layout, String value)
+        {
+            if (!WWUtil.isEmpty(value))
+            {
+                this.addLabel(dc, layout.offset, layout.hotSpot, value, font, null, null);
+            }
+        }
+
+        protected void layoutMultiLabel(DrawContext dc, Font font, List<LabelLayout> layouts, Iterable values)
+        {
+            Iterator valueIterator = values.iterator();
+            Iterator<LabelLayout> layoutIterator = layouts.iterator();
+
+            while (layoutIterator.hasNext() && valueIterator.hasNext())
+            {
+                LabelLayout layout = layoutIterator.next();
+                Object value = valueIterator.next();
+                if (value != null)
+                {
+                    this.layoutLabel(dc, font, layout, value.toString());
+                }
+            }
+        }
+
+        protected Object getLabelValue(String key)
+        {
+            Object value = null;
+            if (SymbologyConstants.HOSTILE_ENEMY.equals(key))
+            {
+                if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity()))
+                {
+                    value = SymbologyConstants.HOSTILE_ENEMY;
+                }
+            }
+            else if (SymbologyConstants.TYPE.equals(key))
+            {
+                value = this.getType();
+            }
+            else
+            {
+                value = this.getModifier(key);
+            }
+            return value;
+        }
+
+        protected String getType()
+        {
+            if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(maskedSymbolCode))
+            {
+                return "BIO";
+            }
+            else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(maskedSymbolCode))
+            {
+                return "CML";
+            }
+            else
+            {
+                return (String) this.getModifier(SymbologyConstants.TYPE);
+            }
+        }
+
+        public Object getModifier(String key)
+        {
+            return MilStd2525PointGraphic.this.getModifier(key);
         }
     }
 

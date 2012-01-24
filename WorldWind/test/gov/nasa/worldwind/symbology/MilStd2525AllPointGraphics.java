@@ -65,11 +65,18 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
 
                 StringBuffer sidc = new StringBuffer(allGraphics.get(i));
 
-                sidc.setCharAt(1, 'F'); // Standard identify: Friend
+                sidc.setCharAt(1, 'H'); // Standard identify: Friend
                 sidc.setCharAt(3, 'P'); // Status: Present
 
                 TacticalPoint graphic = new MilStd2525PointGraphic(sidc.toString());
                 graphic.setPosition(pos);
+
+                graphic.setText("T");
+                graphic.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, "H");
+                graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "X");
+                graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, "W");//Arrays.asList("W", "W1"));
+                graphic.setModifier(SymbologyConstants.QUANTITY, "C");
+                graphic.setModifier(SymbologyConstants.TYPE, "V");
 
                 layer.addRenderable(graphic);
 
