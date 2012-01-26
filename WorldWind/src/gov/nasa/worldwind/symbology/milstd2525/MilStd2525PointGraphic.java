@@ -25,7 +25,6 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-// TODO: apply attributes to symbol
 // TODO: apply delegate owner to symbol.
 public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements TacticalPoint
 {
@@ -254,13 +253,13 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         }
     }
 
-    protected Object delegateOwner;
-
     /** Position of this graphic. */
     protected Position position;
 
     /** Symbol used to render this graphic. */
     protected TacticalSymbol symbol;
+
+    protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
 
     /**
      * Create a new point graphic.
@@ -282,19 +281,9 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         // precedence.
         if (modifiers != null)
             this.modifiers.setValues(modifiers);
-    }
 
-    /**
-     * Create a tactical symbol to render this graphic.
-     *
-     * @param symbolId SIDC of the symbol.
-     * @param position Position of the symbol.
-     *
-     * @return A new tactical symbol.
-     */
-    protected TacticalSymbol createSymbol(String symbolId, Position position)
-    {
-        return new PointGraphicSymbol(symbolId, position);
+        // Point graphics do no use shape attributes, so don't allocate memory for them.
+        this.activeShapeAttributes = null;
     }
 
     /**
@@ -381,10 +370,84 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         this.symbol.render(dc);
     }
 
+    /**
+     * Create a tactical symbol to render this graphic.
+     *
+     * @param symbolId SIDC of the symbol.
+     * @param position Position of the symbol.
+     *
+     * @return A new tactical symbol.
+     */
+    protected TacticalSymbol createSymbol(String symbolId, Position position)
+    {
+        TacticalSymbol symbol = new PointGraphicSymbol(symbolId, position);
+        symbol.setAttributes(this.activeSymbolAttributes);
+        return symbol;
+    }
+
     /** {@inheritDoc} */
     protected void applyDelegateOwner(Object owner)
     {
         // TODO
+    }
+
+    /** Determine active attributes for this frame. */
+    @Override
+    protected void determineActiveAttributes()
+    {
+        if (this.isHighlighted())
+        {
+            TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
+
+            // If the application specified overrides to the highlight attributes, then apply the overrides
+            if (highlightAttributes != null)
+            {
+                this.activeOverrides.copy(highlightAttributes);
+
+                // Apply overrides specified by application
+                this.applyAttributesToSymbol(highlightAttributes, this.activeSymbolAttributes);
+            }
+        }
+        else
+        {
+            // Apply overrides specified by application
+            TacticalGraphicAttributes normalAttributes = this.getAttributes();
+            if (normalAttributes != null)
+            {
+                this.activeOverrides.copy(normalAttributes);
+                this.applyAttributesToSymbol(normalAttributes, this.activeSymbolAttributes);
+            }
+        }
+    }
+
+    /**
+     * Apply graphic attributes to the symbol.
+     *
+     * @param graphicAttributes Tactical graphic attributes to apply to the tactical symbol.
+     * @param symbolAttributes  Symbol attributes to be modified.
+     */
+    protected void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
+        TacticalSymbolAttributes symbolAttributes)
+    {
+        // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
+        // opacity, so use the interior opacity.
+        Double value = graphicAttributes.getInteriorOpacity();
+        if (value != null)
+        {
+            symbolAttributes.setOpacity(value);
+        }
+
+        Font font = graphicAttributes.getTextModifierFont();
+        if (font != null)
+        {
+            symbolAttributes.setTextModifierFont(font);
+        }
+
+        Material material = graphicAttributes.getTextModifierMaterial();
+        if (material != null)
+        {
+            symbolAttributes.setTextModifierMaterial(material);
+        }
     }
 
     /**
