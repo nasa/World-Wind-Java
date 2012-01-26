@@ -37,12 +37,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
     /** Object that provides the default label layouts for each point graphic. */
     protected static DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
 
-    /** Default icon retrieval URL. */
-    protected static final String DEFAULT_RETRIEVER_BASE_URL = "http://worldwindserver.net/milstd2525/";
-    /** Note that we use a static default retriever instance in order to cache the results it returns. */
-    protected static final IconRetriever DEFAULT_ICON_RETRIEVER = new MilStd2525PointGraphicRetriever(
-        DEFAULT_RETRIEVER_BASE_URL);
-
     public static class LabelLayout
     {
         public Offset offset;
@@ -56,27 +50,22 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
     }
 
     /** Implementation of TacticalSymbol that is configured to create and layout tactical point graphics. */
-    // TODO methods in this inner class should call to the outer class for easier extensibility.
     protected class PointGraphicSymbol extends AbstractTacticalSymbol
     {
-        protected SymbolCode symbolCode;
-
         /**
          * Constructs a new symbol with the specified position. The position specifies the latitude, longitude, and
          * altitude where this symbol is drawn on the globe. The position's altitude component is interpreted according
          * to the altitudeMode.
          *
-         * @param symbolId 2525 SIDC for this symbol.
          * @param position The latitude, longitude, and altitude where the symbol is drawn.
          *
          * @throws IllegalArgumentException if the position is <code>null</code>.
          */
-        protected PointGraphicSymbol(String symbolId, Position position)
+        protected PointGraphicSymbol(Position position)
         {
             super(position);
 
             // Initialize the symbol code from the symbol identifier specified at construction.
-            this.symbolCode = new SymbolCode(symbolId);
             this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 
             // Configure this tactical point graphic's icon retriever and modifier retriever with either the
@@ -85,7 +74,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
                 MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
             this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));
 
-            Offset offset = defaultOffsets.get(this.symbolCode.toMaskedString());
+            Offset offset = defaultOffsets.get(MilStd2525PointGraphic.this.symbolCode.toMaskedString());
             this.setOffset(offset);
         }
 
@@ -103,141 +92,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
 
             this.currentLabels.clear();
 
-            // We compute a default font rather than using a static default in order to choose a font size that is
-            // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
-            // height must be 0.3x the symbol's frame height.
-            Font font = this.getActiveAttributes().getTextModifierFont();
-            if (font == null)
-                font = MilStd2525Util.computeTextModifierFont(this.iconRect.getHeight());
-
-            Map<String, List<LabelLayout>> allLayouts = defaultLayouts.get(this.symbolCode.toMaskedString());
-
-            for (Map.Entry<String, List<LabelLayout>> entry : allLayouts.entrySet())
-            {
-                String key = entry.getKey();
-                List<LabelLayout> layouts = entry.getValue();
-
-                if (WWUtil.isEmpty(layouts))
-                    continue;
-
-                Object value = this.getLabelValue(key);
-
-                // If we're retrieving the date modifier, maybe add a hyphen to the first value to indicate a date range.
-                if (SymbologyConstants.DATE_TIME_GROUP.equals(key) && (value instanceof Iterable))
-                {
-                    value = this.addHyphenToDateRange((Iterable) value, layouts);
-                }
-
-                // Some graphics support multiple instances of the same modifier. Handle this case differently than the
-                // single instance case.
-                if (value instanceof Iterable)
-                {
-                    this.layoutMultiLabel(dc, font, layouts, (Iterable) value);
-                }
-                else if (value != null)
-                {
-                    this.layoutLabel(dc, font, layouts.get(0), value.toString());
-                }
-            }
-        }
-
-        /**
-         * Add a hyphen to the first element in a list of dates to indicate a date range. This method only modifiers the
-         * date list if exactly two dates are displayed in the graphic.
-         *
-         * @param value   Iterable of date modifiers.
-         * @param layouts Layouts for the date modifiers.
-         *
-         * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
-         *         modification was required.
-         */
-        protected Iterable addHyphenToDateRange(Iterable value, List<LabelLayout> layouts)
-        {
-            // Only add a hyphen if exactly two dates are displayed in the graphic.
-            if (layouts.size() != 2)
-                return value;
-
-            // Make sure that two date values are provided.
-            Iterator iterator = value.iterator();
-            Object date1 = iterator.hasNext() ? iterator.next() : null;
-            Object date2 = iterator.hasNext() ? iterator.next() : null;
-
-            // If only two dates were provided, add a hyphen to indicate a date range. If more or less
-            // date were provided it's not a date range, so don't change anything.
-            if (date1 != null && date2 != null)
-            {
-                return Arrays.asList(date1 + "-", date2);
-            }
-            return value;
-        }
-
-        protected void layoutLabel(DrawContext dc, Font font, LabelLayout layout, String value)
-        {
-            if (!WWUtil.isEmpty(value))
-            {
-                this.addLabel(dc, layout.offset, layout.hotSpot, value, font, null, null);
-            }
-        }
-
-        protected void layoutMultiLabel(DrawContext dc, Font font, List<LabelLayout> layouts, Iterable values)
-        {
-            Iterator valueIterator = values.iterator();
-            Iterator<LabelLayout> layoutIterator = layouts.iterator();
-
-            while (layoutIterator.hasNext() && valueIterator.hasNext())
-            {
-                LabelLayout layout = layoutIterator.next();
-                Object value = valueIterator.next();
-                if (value != null)
-                {
-                    this.layoutLabel(dc, font, layout, value.toString());
-                }
-            }
-        }
-
-        protected Object getLabelValue(String key)
-        {
-            Object value = null;
-            if (SymbologyConstants.HOSTILE_ENEMY.equals(key))
-            {
-                if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity()))
-                {
-                    value = SymbologyConstants.HOSTILE_ENEMY;
-                }
-            }
-            else if (SymbologyConstants.TYPE.equals(key))
-            {
-                value = this.getType();
-            }
-            else
-            {
-                value = this.getModifier(key);
-            }
-            return value;
-        }
-
-        /**
-         * Indicates the Type modifier. This modifier is only used by Nuclear/Chemical/Biological graphics. In the case
-         * of Nuclear graphics the modifier is specfied by the application. In the case of chemical or biological this
-         * method returns the string "CML" or "BIO".
-         *
-         * @return The value of the type modifier. Returns null if no type modifier has been set, and the graphics is
-         *         not Chemical or Biological.
-         */
-        protected String getType()
-        {
-            if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
-            {
-                return "BIO";
-            }
-            else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
-            {
-                return "CML";
-            }
-            else
-            {
-                return (String) this.getModifier(SymbologyConstants.TYPE);
-            }
+            MilStd2525PointGraphic.this.doLayoutModifiers(dc, this.iconRect);
         }
 
         @Override
@@ -251,13 +106,18 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         {
             MilStd2525PointGraphic.this.setModifier(key, value);
         }
+
+        public void addPointGraphicLabel(DrawContext dc, Offset offset, Offset hotspot, String text, Font font)
+        {
+            this.addLabel(dc, offset, hotspot, text, font, null, null);
+        }
     }
 
     /** Position of this graphic. */
     protected Position position;
 
     /** Symbol used to render this graphic. */
-    protected TacticalSymbol symbol;
+    protected PointGraphicSymbol symbol;
 
     protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
 
@@ -364,7 +224,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         // Create the symbol used to render the graphic, if it has not been created already.
         if (this.symbol == null)
         {
-            this.symbol = this.createSymbol(this.getIdentifier(), position);
+            this.symbol = this.createSymbol();
         }
 
         this.symbol.render(dc);
@@ -373,14 +233,11 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
     /**
      * Create a tactical symbol to render this graphic.
      *
-     * @param symbolId SIDC of the symbol.
-     * @param position Position of the symbol.
-     *
      * @return A new tactical symbol.
      */
-    protected TacticalSymbol createSymbol(String symbolId, Position position)
+    protected PointGraphicSymbol createSymbol()
     {
-        TacticalSymbol symbol = new PointGraphicSymbol(symbolId, position);
+        PointGraphicSymbol symbol = new PointGraphicSymbol(this.getPosition());
         symbol.setAttributes(this.activeSymbolAttributes);
         return symbol;
     }
@@ -447,6 +304,155 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         if (material != null)
         {
             symbolAttributes.setTextModifierMaterial(material);
+        }
+    }
+
+    //////////////////////////////////////////////
+    // Modifier layout
+    //////////////////////////////////////////////
+
+    /**
+     * Layout text and graphic modifiers around the symbol.
+     *
+     * @param dc       Current draw context.
+     * @param iconRect Symbol's screen rectangle.
+     */
+    protected void doLayoutModifiers(DrawContext dc, Rectangle iconRect)
+    {
+        // We compute a default font rather than using a static default in order to choose a font size that is
+        // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
+        // height must be 0.3x the symbol's frame height.
+        Font font = this.activeSymbolAttributes.getTextModifierFont();
+        if (font == null)
+            font = MilStd2525Util.computeTextModifierFont(iconRect.getHeight());
+
+        Map<String, List<LabelLayout>> allLayouts = defaultLayouts.get(this.symbolCode.toMaskedString());
+
+        for (Map.Entry<String, List<LabelLayout>> entry : allLayouts.entrySet())
+        {
+            String key = entry.getKey();
+            List<LabelLayout> layouts = entry.getValue();
+
+            if (WWUtil.isEmpty(layouts))
+                continue;
+
+            Object value = this.getLabelValue(key);
+
+            // If we're retrieving the date modifier, maybe add a hyphen to the first value to indicate a date range.
+            if (SymbologyConstants.DATE_TIME_GROUP.equals(key) && (value instanceof Iterable))
+            {
+                value = this.addHyphenToDateRange((Iterable) value, layouts);
+            }
+
+            // Some graphics support multiple instances of the same modifier. Handle this case differently than the
+            // single instance case.
+            if (value instanceof Iterable)
+            {
+                this.layoutMultiLabel(dc, font, layouts, (Iterable) value);
+            }
+            else if (value != null)
+            {
+                this.layoutLabel(dc, font, layouts.get(0), value.toString());
+            }
+        }
+    }
+
+    /**
+     * Add a hyphen to the first element in a list of dates to indicate a date range. This method only modifiers the
+     * date list if exactly two dates are displayed in the graphic.
+     *
+     * @param value   Iterable of date modifiers.
+     * @param layouts Layouts for the date modifiers.
+     *
+     * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
+     *         modification was required.
+     */
+    protected Iterable addHyphenToDateRange(Iterable value, List<LabelLayout> layouts)
+    {
+        // Only add a hyphen if exactly two dates are displayed in the graphic.
+        if (layouts.size() != 2)
+            return value;
+
+        // Make sure that two date values are provided.
+        Iterator iterator = value.iterator();
+        Object date1 = iterator.hasNext() ? iterator.next() : null;
+        Object date2 = iterator.hasNext() ? iterator.next() : null;
+
+        // If only two dates were provided, add a hyphen to indicate a date range. If more or less
+        // date were provided it's not a date range, so don't change anything.
+        if (date1 != null && date2 != null)
+        {
+            return Arrays.asList(date1 + "-", date2);
+        }
+        return value;
+    }
+
+    protected void layoutLabel(DrawContext dc, Font font, LabelLayout layout, String value)
+    {
+        if (!WWUtil.isEmpty(value))
+        {
+            this.symbol.addPointGraphicLabel(dc, layout.offset, layout.hotSpot, value, font);
+        }
+    }
+
+    protected void layoutMultiLabel(DrawContext dc, Font font, List<LabelLayout> layouts, Iterable values)
+    {
+        Iterator valueIterator = values.iterator();
+        Iterator<LabelLayout> layoutIterator = layouts.iterator();
+
+        while (layoutIterator.hasNext() && valueIterator.hasNext())
+        {
+            LabelLayout layout = layoutIterator.next();
+            Object value = valueIterator.next();
+            if (value != null)
+            {
+                this.layoutLabel(dc, font, layout, value.toString());
+            }
+        }
+    }
+
+    protected Object getLabelValue(String key)
+    {
+        Object value = null;
+        if (SymbologyConstants.HOSTILE_ENEMY.equals(key))
+        {
+            if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity()))
+            {
+                value = SymbologyConstants.HOSTILE_ENEMY;
+            }
+        }
+        else if (SymbologyConstants.TYPE.equals(key))
+        {
+            value = this.getType();
+        }
+        else
+        {
+            value = this.getModifier(key);
+        }
+        return value;
+    }
+
+    /**
+     * Indicates the Type modifier. This modifier is only used by Nuclear/Chemical/Biological graphics. In the case of
+     * Nuclear graphics the modifier is specfied by the application. In the case of chemical or biological this method
+     * returns the string "CML" or "BIO".
+     *
+     * @return The value of the type modifier. Returns null if no type modifier has been set, and the graphics is not
+     *         Chemical or Biological.
+     */
+    protected String getType()
+    {
+        if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
+        {
+            return "BIO";
+        }
+        else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
+        {
+            return "CML";
+        }
+        else
+        {
+            return (String) this.getModifier(SymbologyConstants.TYPE);
         }
     }
 
