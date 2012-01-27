@@ -8,7 +8,7 @@ package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525PointGraphic;
 import gov.nasa.worldwind.util.WWUtil;
@@ -72,14 +72,19 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                 TacticalPoint graphic = new MilStd2525PointGraphic(sidc.toString());
                 graphic.setPosition(pos);
 
+                // Set all modifiers, even on graphics that do not support them. This allows us to confirm
+                // that modifiers are only drawn for graphics that ^do^ support them.
                 graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("T", "T1"));
                 graphic.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, Arrays.asList("H", "H1"));
                 graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "X");
                 graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("W", "W1"));
-                graphic.setModifier(SymbologyConstants.QUANTITY, "C");
-                graphic.setModifier(SymbologyConstants.TYPE, "V");
+                graphic.setModifier(SymbologyConstants.QUANTITY, "C"); // Only applies to Nuclear graphic
+                graphic.setModifier(SymbologyConstants.TYPE, "V"); // Applies only to Nuclear graphic
+
+                // Location and Direction of Movement apply only to CBRN graphics.
                 graphic.setModifier(SymbologyConstants.LOCATION,
                     "45'35\"N009'59\"E"); // TODO should be computed from position
+                graphic.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
 
                 layer.addRenderable(graphic);
 

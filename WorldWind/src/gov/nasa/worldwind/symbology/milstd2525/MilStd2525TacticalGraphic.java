@@ -248,14 +248,14 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** {@inheritDoc} */
     public boolean isShowLocation()
     {
-        // Most 2525 graphics do no support the location modifier. Graphics that do support it can override this method.
+        // Most 2525 graphics do not support the location modifier. Graphics that do support it can override this method.
         return false;
     }
 
     /** {@inheritDoc} */
     public void setShowLocation(boolean showLocation)
     {
-        // Most 2525 graphics do no support the location modifier. Graphics that do support it can override this method.
+        // Most 2525 graphics do not support the location modifier. Graphics that do support it can override this method.
     }
 
     /** {@inheritDoc} */

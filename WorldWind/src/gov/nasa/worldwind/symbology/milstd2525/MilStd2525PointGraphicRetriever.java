@@ -109,7 +109,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         String category = code.getCategory();
         String functionId = code.getFunctionId();
 
-        // MIL-STD-2525C includes the order of battle in the symbol identifier, but X is the only valid
+        // MIL-STD-2525C Tactical Graphics includes the order of battle in the symbol identifier, but X is the only valid
         // value. Just pass X so retrieval will still work even if the symbol code is specified incorrectly.
         char orderOfBattle = 'x';
 

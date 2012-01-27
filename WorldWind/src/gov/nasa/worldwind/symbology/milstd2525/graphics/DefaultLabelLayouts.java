@@ -13,8 +13,8 @@ import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
-import static gov.nasa.worldwind.symbology.milstd2525.MilStd2525PointGraphic.LabelLayout;
 import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc.*;
+import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacticalGraphicSymbol.LabelLayout;
 
 /**
  * Object to provide default label layouts for MIL-STD-2525C tactical point graphics. The layout is used to arrange text

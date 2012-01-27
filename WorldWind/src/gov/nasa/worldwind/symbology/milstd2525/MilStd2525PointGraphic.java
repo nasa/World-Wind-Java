@@ -6,13 +6,12 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
 import java.util.*;
@@ -26,100 +25,23 @@ import java.util.List;
  * @version $Id$
  */
 // TODO: apply delegate owner to symbol.
-public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements TacticalPoint
+public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
 {
-    /**
-     * Object that provides the default offset for each point graphic. Most graphics are centered on their position, but
-     * some require a different offset.
-     */
-    protected static DefaultOffsets defaultOffsets = new DefaultOffsets();
-
-    /** Object that provides the default label layouts for each point graphic. */
-    protected static DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
-
-    public static class LabelLayout
-    {
-        public Offset offset;
-        public Offset hotSpot;
-
-        public LabelLayout(Offset offset, Offset hotSpot)
-        {
-            this.offset = offset;
-            this.hotSpot = hotSpot;
-        }
-    }
-
-    /** Implementation of TacticalSymbol that is configured to create and layout tactical point graphics. */
-    protected class PointGraphicSymbol extends AbstractTacticalSymbol
-    {
-        /**
-         * Constructs a new symbol with the specified position. The position specifies the latitude, longitude, and
-         * altitude where this symbol is drawn on the globe. The position's altitude component is interpreted according
-         * to the altitudeMode.
-         *
-         * @param position The latitude, longitude, and altitude where the symbol is drawn.
-         *
-         * @throws IllegalArgumentException if the position is <code>null</code>.
-         */
-        protected PointGraphicSymbol(Position position)
-        {
-            super(position);
-
-            // Initialize the symbol code from the symbol identifier specified at construction.
-            this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-
-            // Configure this tactical point graphic's icon retriever and modifier retriever with either the
-            // configuration value or the default value (in that order of precedence).
-            String iconRetrieverPath = Configuration.getStringValue(AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH,
-                MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
-            this.setIconRetriever(new MilStd2525PointGraphicRetriever(iconRetrieverPath));
-
-            Offset offset = defaultOffsets.get(MilStd2525PointGraphic.this.symbolCode.toMaskedString());
-            this.setOffset(offset);
-        }
-
-        /** {@inheritDoc} */
-        public String getIdentifier()
-        {
-            return MilStd2525PointGraphic.this.getIdentifier();
-        }
-
-        @Override
-        protected void layoutModifiers(DrawContext dc)
-        {
-            if (this.iconRect == null)
-                return;
-
-            this.currentLabels.clear();
-
-            MilStd2525PointGraphic.this.doLayoutModifiers(dc, this.iconRect);
-        }
-
-        @Override
-        public Object getModifier(String key)
-        {
-            return MilStd2525PointGraphic.this.getModifier(key);
-        }
-
-        @Override
-        public void setModifier(String key, Object value)
-        {
-            MilStd2525PointGraphic.this.setModifier(key, value);
-        }
-
-        public void addPointGraphicLabel(DrawContext dc, Offset offset, Offset hotspot, String text, Font font)
-        {
-            this.addLabel(dc, offset, hotspot, text, font, null, null);
-        }
-    }
-
-    /** Position of this graphic. */
-    protected Position position;
+    // This class wraps an instance of TacticalGraphicSymbol. TacticalGraphicSymbol implements the logic for rendering
+    // point graphics using the TacticalSymbol base classes. This class adapts the TacticalGraphic interface to
+    // the TacticalSymbol interface.
 
     /** Symbol used to render this graphic. */
-    protected PointGraphicSymbol symbol;
+    protected TacticalGraphicSymbol symbol; // TODO can this be any TacticalSymbol?
+
+    protected boolean highlighted;
+
+    protected TacticalGraphicAttributes normalAttributes;
+    protected TacticalGraphicAttributes highlightAttributes;
 
     protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
+
+    protected long frameTimestamp = -1L;
 
     /**
      * Create a new point graphic.
@@ -128,22 +50,116 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
      */
     public MilStd2525PointGraphic(String sidc)
     {
-        super(sidc);
-        this.init(sidc, modifiers);
+        this.symbol = this.createSymbol(sidc,
+            Position.ZERO); // TODO do we really need to provide a position in constructor?
     }
 
-    protected void init(String symbolId, AVList modifiers)
+    /**
+     * Create a tactical symbol to render this graphic.
+     *
+     * @param sidc     Symbol code that identifies the graphic.
+     * @param position Initial position of the graphic.
+     *
+     * @return A new tactical symbol.
+     */
+    protected TacticalGraphicSymbol createSymbol(String sidc, Position position)
     {
-        // Initialize the symbol code from the symbol identifier specified at construction.
-        this.symbolCode = new SymbolCode(symbolId);
+        // TODO apply delegate owner to symbol
+        TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc, position);
+        symbol.setAttributes(this.activeSymbolAttributes);
+        return symbol;
+    }
 
-        // Apply any caller-specified key-value pairs to the modifiers list. We apply these pairs last to give them
-        // precedence.
-        if (modifiers != null)
-            this.modifiers.setValues(modifiers);
+    /** {@inheritDoc} */
+    public boolean isVisible()
+    {
+        return this.symbol.isVisible();
+    }
 
-        // Point graphics do no use shape attributes, so don't allocate memory for them.
-        this.activeShapeAttributes = null;
+    /** {@inheritDoc} */
+    public void setVisible(boolean visible)
+    {
+        this.symbol.setVisible(visible);
+    }
+
+    /** {@inheritDoc} */
+    public Object getModifier(String modifier)
+    {
+        return this.symbol.getModifier(modifier);
+    }
+
+    /** {@inheritDoc} */
+    public void setModifier(String modifier, Object value)
+    {
+        this.symbol.setModifier(modifier, value);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowModifiers()
+    {
+        return this.symbol.isShowTextModifiers();
+    }
+
+    /** {@inheritDoc} */
+    public void setShowModifiers(boolean showModifiers)
+    {
+        this.symbol.setShowGraphicModifiers(showModifiers);
+        this.symbol.setShowTextModifiers(showModifiers);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowLocation()
+    {
+        return this.symbol.isShowLocation();
+    }
+
+    /** {@inheritDoc} */
+    public void setShowLocation(boolean show)
+    {
+        this.symbol.setShowLocation(show);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowHostileIndicator()
+    {
+        return this.symbol.isShowHostileIndicator();
+    }
+
+    /** {@inheritDoc} */
+    public void setShowHostileIndicator(boolean show)
+    {
+        this.symbol.setShowHostileIndicator(show);
+    }
+
+    /** {@inheritDoc} */
+    public String getIdentifier()
+    {
+        return this.symbol.getIdentifier();
+    }
+
+    /** {@inheritDoc} */
+    public void setText(String text)
+    {
+        this.symbol.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, text);
+    }
+
+    /** {@inheritDoc} */
+    public String getText()
+    {
+        // Get the Unique Designation modifier. If it's an iterable, return the first value.
+        Object value = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
+        if (value instanceof String)
+        {
+            return (String) value;
+        }
+        else if (value instanceof Iterable)
+        {
+            Iterator iterator = ((Iterable) value).iterator();
+            Object o = iterator.hasNext() ? iterator.next() : null;
+            if (o != null)
+                return o.toString();
+        }
+        return null;
     }
 
     /**
@@ -182,9 +198,57 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
     }
 
     /** {@inheritDoc} */
+    public TacticalGraphicAttributes getAttributes()
+    {
+        return this.normalAttributes;
+    }
+
+    /** {@inheritDoc} */
+    public void setAttributes(TacticalGraphicAttributes attributes)
+    {
+        this.normalAttributes = attributes;
+    }
+
+    /** {@inheritDoc} */
+    public TacticalGraphicAttributes getHighlightAttributes()
+    {
+        return this.highlightAttributes;
+    }
+
+    /** {@inheritDoc} */
+    public void setHighlightAttributes(TacticalGraphicAttributes attributes)
+    {
+        this.highlightAttributes = attributes;
+    }
+
+    /** {@inheritDoc} */
+    public Offset getLabelOffset()
+    {
+        return null; // Does not apply to point graphic
+    }
+
+    /** {@inheritDoc} */
+    public void setLabelOffset(Offset offset)
+    {
+        // Does not apply to point graphic
+    }
+
+    /** {@inheritDoc} */
+    public Object getDelegateOwner()
+    {
+        return null; // TODO
+    }
+
+    /** {@inheritDoc} */
+    public void setDelegateOwner(Object owner)
+    {
+        // TODO
+    }
+
+    /** {@inheritDoc} */
     public Position getPosition()
     {
-        return this.position;
+        return this.symbol.getPosition();
     }
 
     /** {@inheritDoc} */
@@ -197,7 +261,7 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             throw new IllegalArgumentException(message);
         }
 
-        this.position = position;
+        this.symbol.setPosition(position);
     }
 
     /////////////////////////////
@@ -210,46 +274,66 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         return this.getPosition();
     }
 
+    /** {@inheritDoc} */
+    public void move(Position delta)
+    {
+        if (delta == null)
+        {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Position refPos = this.getReferencePosition();
+
+        // The reference position is null if this shape has no positions. In this case moving the shape by a
+        // relative delta is meaningless. Therefore we fail softly by exiting and doing nothing.
+        if (refPos == null)
+            return;
+
+        this.moveTo(refPos.add(delta));
+    }
+
+    /** {@inheritDoc} */
+    public void moveTo(Position position)
+    {
+        this.symbol.setPosition(position);
+    }
+
+    /////////////////////////////
+    // Highlightable interface
+    /////////////////////////////
+
+    /** {@inheritDoc} */
+    public boolean isHighlighted()
+    {
+        return this.highlighted;
+    }
+
+    /** {@inheritDoc} */
+    public void setHighlighted(boolean highlighted)
+    {
+        this.highlighted = highlighted;
+    }
+
     /////////////////////////////
     // Rendering
     /////////////////////////////
 
-    @Override
-    protected void doRenderGraphic(DrawContext dc)
+    /** {@inheritDoc} */
+    public void render(DrawContext dc)
     {
-        Position position = this.getPosition();
-        if (position == null)
-            return;
-
-        // Create the symbol used to render the graphic, if it has not been created already.
-        if (this.symbol == null)
+        long timestamp = dc.getFrameTimeStamp();
+        if (this.frameTimestamp != timestamp)
         {
-            this.symbol = this.createSymbol();
+            this.determineActiveAttributes();
+            this.frameTimestamp = timestamp;
         }
 
         this.symbol.render(dc);
     }
 
-    /**
-     * Create a tactical symbol to render this graphic.
-     *
-     * @return A new tactical symbol.
-     */
-    protected PointGraphicSymbol createSymbol()
-    {
-        PointGraphicSymbol symbol = new PointGraphicSymbol(this.getPosition());
-        symbol.setAttributes(this.activeSymbolAttributes);
-        return symbol;
-    }
-
-    /** {@inheritDoc} */
-    protected void applyDelegateOwner(Object owner)
-    {
-        // TODO
-    }
-
     /** Determine active attributes for this frame. */
-    @Override
     protected void determineActiveAttributes()
     {
         if (this.isHighlighted())
@@ -259,8 +343,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             // If the application specified overrides to the highlight attributes, then apply the overrides
             if (highlightAttributes != null)
             {
-                this.activeOverrides.copy(highlightAttributes);
-
                 // Apply overrides specified by application
                 this.applyAttributesToSymbol(highlightAttributes, this.activeSymbolAttributes);
             }
@@ -271,7 +353,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
             TacticalGraphicAttributes normalAttributes = this.getAttributes();
             if (normalAttributes != null)
             {
-                this.activeOverrides.copy(normalAttributes);
                 this.applyAttributesToSymbol(normalAttributes, this.activeSymbolAttributes);
             }
         }
@@ -304,155 +385,6 @@ public class MilStd2525PointGraphic extends MilStd2525TacticalGraphic implements
         if (material != null)
         {
             symbolAttributes.setTextModifierMaterial(material);
-        }
-    }
-
-    //////////////////////////////////////////////
-    // Modifier layout
-    //////////////////////////////////////////////
-
-    /**
-     * Layout text and graphic modifiers around the symbol.
-     *
-     * @param dc       Current draw context.
-     * @param iconRect Symbol's screen rectangle.
-     */
-    protected void doLayoutModifiers(DrawContext dc, Rectangle iconRect)
-    {
-        // We compute a default font rather than using a static default in order to choose a font size that is
-        // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
-        // height must be 0.3x the symbol's frame height.
-        Font font = this.activeSymbolAttributes.getTextModifierFont();
-        if (font == null)
-            font = MilStd2525Util.computeTextModifierFont(iconRect.getHeight());
-
-        Map<String, List<LabelLayout>> allLayouts = defaultLayouts.get(this.symbolCode.toMaskedString());
-
-        for (Map.Entry<String, List<LabelLayout>> entry : allLayouts.entrySet())
-        {
-            String key = entry.getKey();
-            List<LabelLayout> layouts = entry.getValue();
-
-            if (WWUtil.isEmpty(layouts))
-                continue;
-
-            Object value = this.getLabelValue(key);
-
-            // If we're retrieving the date modifier, maybe add a hyphen to the first value to indicate a date range.
-            if (SymbologyConstants.DATE_TIME_GROUP.equals(key) && (value instanceof Iterable))
-            {
-                value = this.addHyphenToDateRange((Iterable) value, layouts);
-            }
-
-            // Some graphics support multiple instances of the same modifier. Handle this case differently than the
-            // single instance case.
-            if (value instanceof Iterable)
-            {
-                this.layoutMultiLabel(dc, font, layouts, (Iterable) value);
-            }
-            else if (value != null)
-            {
-                this.layoutLabel(dc, font, layouts.get(0), value.toString());
-            }
-        }
-    }
-
-    /**
-     * Add a hyphen to the first element in a list of dates to indicate a date range. This method only modifiers the
-     * date list if exactly two dates are displayed in the graphic.
-     *
-     * @param value   Iterable of date modifiers.
-     * @param layouts Layouts for the date modifiers.
-     *
-     * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
-     *         modification was required.
-     */
-    protected Iterable addHyphenToDateRange(Iterable value, List<LabelLayout> layouts)
-    {
-        // Only add a hyphen if exactly two dates are displayed in the graphic.
-        if (layouts.size() != 2)
-            return value;
-
-        // Make sure that two date values are provided.
-        Iterator iterator = value.iterator();
-        Object date1 = iterator.hasNext() ? iterator.next() : null;
-        Object date2 = iterator.hasNext() ? iterator.next() : null;
-
-        // If only two dates were provided, add a hyphen to indicate a date range. If more or less
-        // date were provided it's not a date range, so don't change anything.
-        if (date1 != null && date2 != null)
-        {
-            return Arrays.asList(date1 + "-", date2);
-        }
-        return value;
-    }
-
-    protected void layoutLabel(DrawContext dc, Font font, LabelLayout layout, String value)
-    {
-        if (!WWUtil.isEmpty(value))
-        {
-            this.symbol.addPointGraphicLabel(dc, layout.offset, layout.hotSpot, value, font);
-        }
-    }
-
-    protected void layoutMultiLabel(DrawContext dc, Font font, List<LabelLayout> layouts, Iterable values)
-    {
-        Iterator valueIterator = values.iterator();
-        Iterator<LabelLayout> layoutIterator = layouts.iterator();
-
-        while (layoutIterator.hasNext() && valueIterator.hasNext())
-        {
-            LabelLayout layout = layoutIterator.next();
-            Object value = valueIterator.next();
-            if (value != null)
-            {
-                this.layoutLabel(dc, font, layout, value.toString());
-            }
-        }
-    }
-
-    protected Object getLabelValue(String key)
-    {
-        Object value = null;
-        if (SymbologyConstants.HOSTILE_ENEMY.equals(key))
-        {
-            if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity()))
-            {
-                value = SymbologyConstants.HOSTILE_ENEMY;
-            }
-        }
-        else if (SymbologyConstants.TYPE.equals(key))
-        {
-            value = this.getType();
-        }
-        else
-        {
-            value = this.getModifier(key);
-        }
-        return value;
-    }
-
-    /**
-     * Indicates the Type modifier. This modifier is only used by Nuclear/Chemical/Biological graphics. In the case of
-     * Nuclear graphics the modifier is specfied by the application. In the case of chemical or biological this method
-     * returns the string "CML" or "BIO".
-     *
-     * @return The value of the type modifier. Returns null if no type modifier has been set, and the graphics is not
-     *         Chemical or Biological.
-     */
-    protected String getType()
-    {
-        if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
-        {
-            return "BIO";
-        }
-        else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(MilStd2525PointGraphic.this.maskedSymbolCode))
-        {
-            return "CML";
-        }
-        else
-        {
-            return (String) this.getModifier(SymbologyConstants.TYPE);
         }
     }
 

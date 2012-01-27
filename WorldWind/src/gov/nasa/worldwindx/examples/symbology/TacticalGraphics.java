@@ -75,35 +75,24 @@ public class TacticalGraphics extends ApplicationTemplate
             TacticalGraphic graphic;
 
             /////////////////////////////////////////////
-            // Underwater Datum (2.X.2.1.1.1.1.1)
+            // Nuclear Event (2.X.3.4.2)
             /////////////////////////////////////////////
 
-            graphic = factory.createPoint("GFGPGPUUD-----X", Position.fromDegrees(35.2144, -117.8824), null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Underwater Datum (2.X.2.1.1.1.1.1)");
+            graphic = factory.createPoint("GHMPNZ--------X", Position.fromDegrees(35.2144, -117.8824), null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Nuclear Event (2.X.3.4.2)");
+            graphic.setText("X691");
+            graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, "10095900ZJAN92");
+            graphic.setModifier(SymbologyConstants.QUANTITY, "15");
+            graphic.setModifier(SymbologyConstants.TYPE, "B83");
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
-            // Search Center (2.X.2.1.1.1.3.3)
+            // High tower
             /////////////////////////////////////////////
 
-            graphic = factory.createPoint("GFGPGPUSC-----X", Position.fromDegrees(35.2144, -117.9824), null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Search Center (2.X.2.1.1.1.3.3)");
-            layer.addRenderable(graphic);
-
-            /////////////////////////////////////////////
-            // Ground Zero (2.X.2.1.1.3.4)
-            /////////////////////////////////////////////
-
-            graphic = factory.createPoint("GFGPGPWG------X", Position.fromDegrees(35.2705, -117.8941), null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Ground Zero (2.X.2.1.1.3.4)");
-            layer.addRenderable(graphic);
-
-            /////////////////////////////////////////////
-            // Drop Point (2.X.2.1.1.3.2)
-            /////////////////////////////////////////////
-
-            graphic = factory.createPoint("GFGPGPWD------X", Position.fromDegrees(35.3514, -117.8941), null);
-            graphic.setValue(AVKey.DISPLAY_NAME, "Drop Point (2.X.2.1.1.3.2)");
+            graphic = factory.createPoint("GHMPOHTH------X", Position.fromDegrees(35.2544, -117.724), null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "High Tower");
+            graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "2562");
             layer.addRenderable(graphic);
         }
 
