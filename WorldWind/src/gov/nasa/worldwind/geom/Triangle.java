@@ -867,6 +867,379 @@ public class Triangle
         }
     }
 
+    /**
+     * Defines a line segment representing the intersection of a line with and in the plane of a triangle. Used only
+     * within {@link #intersectTriangles}.
+     */
+    protected static class TriangleIntersection
+    {
+        public Vec4 p0; // the first point of the line
+        public Vec4 p1; // the second point of the line
+        public double s0; // the distance along the line to the first intersection with the triangle
+        public double s1; // the distance along the line to the second intersection with the triangle
+    }
+
+    /**
+     * Intersects two triangles and returns their intersection vertices.
+     *
+     * @param v                    the Cartesian coordinates of the first triangle.
+     * @param u                    the Cartesian coordinates of the second triangle.
+     * @param intersectionVertices a pre-allocated two-element array in which the intersection vertices, if any, are
+     *                             returned.
+     *
+     * @return -1 if there is no intersection, 1 if there is an intersection, or 0 if the triangles are co-planar.
+     */
+    public static int intersectTriangles(Vec4[] v, Vec4[] u, Vec4[] intersectionVertices)
+    {
+        // Taken from http://jgt.akpeters.com/papers/Moller97/tritri.html#ISECTLINE
+
+        // Compute plane equation of first triangle: n1 * x + d1 = 0.
+        Vec4 e1 = v[1].subtract3(v[0]);
+        Vec4 e2 = v[2].subtract3(v[0]);
+        Vec4 n1 = e1.cross3(e2);
+        double d1 = -n1.dot3(v[0]);
+
+        // Evaluate second triangle with plane equation 1 to determine signed distances to the plane.
+        double du0 = n1.dot3(u[0]) + d1;
+        double du1 = n1.dot3(u[1]) + d1;
+        double du2 = n1.dot3(u[2]) + d1;
+
+        // Coplanarity robustness check.
+        if (Math.abs(du0) < EPSILON)
+            du0 = 0;
+        if (Math.abs(du1) < EPSILON)
+            du1 = 0;
+        if (Math.abs(du2) < EPSILON)
+            du2 = 0;
+
+        double du0du1 = du0 * du1;
+        double du0du2 = du0 * du2;
+
+        if (du0du1 > 0 && du0du2 > 0) // same sign on all of them + != 0 ==> no intersection
+            return -1;
+
+        // Compute plane equation of second triangle: n2 * x + d2 = 0
+        e1 = u[1].subtract3(u[0]);
+        e2 = u[2].subtract3(u[0]);
+        Vec4 n2 = e1.cross3(e2);
+        double d2 = -n2.dot3(u[0]);
+
+        // Evaluate first triangle with plane equation 2 to determine signed distances to the plane.
+        double dv0 = n2.dot3(v[0]) + d2;
+        double dv1 = n2.dot3(v[1]) + d2;
+        double dv2 = n2.dot3(v[2]) + d2;
+
+        // Coplanarity robustness check.
+        if (Math.abs(dv0) < EPSILON)
+            dv0 = 0;
+        if (Math.abs(dv1) < EPSILON)
+            dv1 = 0;
+        if (Math.abs(dv2) < EPSILON)
+            dv2 = 0;
+
+        double dv0dv1 = dv0 * dv1;
+        double dv0dv2 = dv0 * dv2;
+
+        if (dv0dv1 > 0 && dv0dv2 > 0) // same sign on all of them + != 0 ==> no intersection
+            return -1;
+
+        // Compute direction of intersection line.
+        Vec4 ld = n1.cross3(n2);
+
+        // Compute an index to the largest component of line direction.
+        double max = Math.abs(ld.x);
+        int index = 0;
+        double b = Math.abs(ld.y);
+        double c = Math.abs(ld.z);
+        if (b > max)
+        {
+            max = b;
+            index = 1;
+        }
+        if (c > max)
+        {
+            index = 2;
+        }
+
+        // This is the simplified projection onto the line of intersection.
+        double vp0 = v[0].x;
+        double vp1 = v[1].x;
+        double vp2 = v[2].x;
+
+        double up0 = u[0].x;
+        double up1 = u[1].x;
+        double up2 = u[2].x;
+        if (index == 1)
+        {
+            vp0 = v[0].y;
+            vp1 = v[1].y;
+            vp2 = v[2].y;
+
+            up0 = u[0].y;
+            up1 = u[1].y;
+            up2 = u[2].y;
+        }
+        else if (index == 2)
+        {
+            vp0 = v[0].z;
+            vp1 = v[1].z;
+            vp2 = v[2].z;
+
+            up0 = u[0].z;
+            up1 = u[1].z;
+            up2 = u[2].z;
+        }
+
+        // Compute interval for triangle 1.
+        TriangleIntersection isectA = compute_intervals_isectline(v, vp0, vp1, vp2, dv0, dv1, dv2, dv0dv1, dv0dv2);
+
+        if (isectA == null)
+            return coplanarTriangles(n1, v, u) ? 0 : -1;
+
+        int smallest1 = 0;
+        if (isectA.s0 > isectA.s1)
+        {
+            double cc = isectA.s0;
+            isectA.s0 = isectA.s1;
+            isectA.s1 = cc;
+            smallest1 = 1;
+        }
+
+        // Compute interval for triangle 2.
+        TriangleIntersection isectB = compute_intervals_isectline(u, up0, up1, up2, du0, du1, du2, du0du1, du0du2);
+
+        int smallest2 = 0;
+        if (isectB.s0 > isectB.s1)
+        {
+            double cc = isectB.s0;
+            isectB.s0 = isectB.s1;
+            isectB.s1 = cc;
+            smallest2 = 1;
+        }
+
+        if (isectA.s1 < isectB.s0 || isectB.s1 < isectA.s0)
+            return -1;
+
+        // At this point we know that the triangles intersect: there's an intersection line, the triangles are not
+        // coplanar, and they overlap.
+
+        if (isectB.s0 < isectA.s0)
+        {
+            if (smallest1 == 0)
+                intersectionVertices[0] = isectA.p0;
+            else
+                intersectionVertices[0] = isectA.p1;
+
+            if (isectB.s1 < isectA.s1)
+            {
+                if (smallest2 == 0)
+                    intersectionVertices[1] = isectB.p1;
+                else
+                    intersectionVertices[1] = isectB.p0;
+            }
+            else
+            {
+                if (smallest1 == 0)
+                    intersectionVertices[1] = isectA.p1;
+                else
+                    intersectionVertices[1] = isectA.p0;
+            }
+        }
+        else
+        {
+            if (smallest2 == 0)
+                intersectionVertices[0] = isectB.p0;
+            else
+                intersectionVertices[0] = isectB.p1;
+
+            if (isectB.s1 > isectA.s1)
+            {
+                if (smallest1 == 0)
+                    intersectionVertices[1] = isectA.p1;
+                else
+                    intersectionVertices[1] = isectA.p0;
+            }
+            else
+            {
+                if (smallest2 == 0)
+                    intersectionVertices[1] = isectB.p1;
+                else
+                    intersectionVertices[1] = isectB.p0;
+            }
+        }
+
+        return 1;
+    }
+
+    protected static TriangleIntersection compute_intervals_isectline(Vec4[] v, double vv0, double vv1, double vv2,
+                                                                      double d0, double d1, double d2,
+                                                                      double d0d1, double d0d2)
+    {
+        if (d0d1 > 0) // D0, D1 are on the same side, D2 on the other or on the plane
+            return intersect(v[2], v[0], v[1], vv2, vv0, vv1, d2, d0, d1);
+        else if (d0d2 > 0)
+            return intersect(v[1], v[0], v[2], vv1, vv0, vv2, d1, d0, d2);
+        else if (d1 * d2 > 0 || d0 != 0)
+            return intersect(v[0], v[1], v[2], vv0, vv1, vv2, d0, d1, d2);
+        else if (d1 != 0)
+            return intersect(v[1], v[0], v[2], vv1, vv0, vv2, d1, d0, d2);
+        else if (d2 != 0)
+            return intersect(v[2], v[0], v[1], vv2, vv0, vv1, d2, d0, d1);
+        else
+            return null; // triangles are coplanar
+    }
+
+    protected static TriangleIntersection intersect(Vec4 v0, Vec4 v1, Vec4 v2, double vv0, double vv1, double vv2,
+                                                    double d0, double d1, double d2)
+    {
+        TriangleIntersection intersection = new TriangleIntersection();
+
+        double tmp = d0 / (d0 - d1);
+        intersection.s0 = vv0 + (vv1 - vv0) * tmp;
+        Vec4 diff = v1.subtract3(v0);
+        diff = diff.multiply3(tmp);
+        intersection.p0 = diff.add3(v0);
+
+        tmp = d0 / (d0 - d2);
+        intersection.s1 = vv0 + (vv2 - vv0) * tmp;
+        diff = v2.subtract3(v0);
+        diff = diff.multiply3(tmp);
+        intersection.p1 = diff.add3(v0);
+
+        return intersection;
+    }
+
+    protected static boolean coplanarTriangles(Vec4 n, Vec4[] v, Vec4[] u)
+    {
+        // First project onto an axis-aligned plane that maximizes the are of the triangles.
+        int i0;
+        int i1;
+
+        double[] a = new double[]{Math.abs(n.x), Math.abs(n.y), Math.abs(n.z)};
+        if (a[0] > a[1]) // X > Y
+        {
+            if (a[0] > a[2])
+            { // X is greatest
+                i0 = 1;
+                i1 = 2;
+            }
+            else
+            { // Z is greatest
+                i0 = 0;
+                i1 = 1;
+            }
+        }
+        else // X < Y
+        {
+            if (a[2] > a[1])
+            { // Z is greatest
+                i0 = 0;
+                i1 = 1;
+            }
+            else
+            { // Y is greatest
+                i0 = 0;
+                i1 = 2;
+            }
+        }
+
+        // Test all edges of triangle 1 against the edges of triangle 2.
+        double[] v0 = new double[]{v[0].x, v[0].y, v[0].z};
+        double[] v1 = new double[]{v[1].x, v[1].y, v[1].z};
+        double[] v2 = new double[]{v[2].x, v[2].y, v[2].z};
+
+        double[] u0 = new double[]{u[0].x, u[0].y, u[0].z};
+        double[] u1 = new double[]{u[1].x, u[1].y, u[1].z};
+        double[] u2 = new double[]{u[2].x, u[2].y, u[2].z};
+
+        boolean tf = triangleEdgeTest(v0, v1, u0, u1, u2, i0, i1);
+        if (tf)
+            return true;
+
+        tf = triangleEdgeTest(v1, v2, u0, u1, u2, i0, i1);
+        if (tf)
+            return true;
+
+        tf = triangleEdgeTest(v2, v0, u0, u1, u2, i0, i1);
+        if (tf)
+            return true;
+
+        // Finally, test whether one triangle is contained in the other one.
+        tf = pointInTri(v0, u0, u1, u2, i0, i1);
+        if (tf)
+            return true;
+
+        return pointInTri(u0, v0, v1, v2, i0, i1);
+    }
+
+    protected static boolean triangleEdgeTest(double[] v0, double[] v1, double[] u0, double[] u1, double[] u2, int i0,
+                                              int i1)
+    {
+        double ax = v1[i0] - v0[i0];
+        double ay = v1[i1] - v0[i1];
+
+        // Test edge u0:u1 against v0:v1
+        boolean tf = edgeEdgeTest(v0, u0, u1, i0, i1, ax, ay);
+        if (tf)
+            return true;
+
+        // Test edge u1:u2 against v0:v1
+        tf = edgeEdgeTest(v0, u1, u2, i0, i1, ax, ay);
+        if (tf)
+            return true;
+
+        // Test edge u2:u0 against v0:v1
+        return edgeEdgeTest(v0, u2, u0, i0, i1, ax, ay);
+    }
+
+    protected static boolean edgeEdgeTest(double[] v0, double[] u0, double[] u1, int i0, int i1, double ax, double ay)
+    {
+        double bx = u0[i0] - u1[i0];
+        double by = u0[i1] - u1[i1];
+        double cx = v0[i0] - u0[i0];
+        double cy = v0[i1] - u0[i1];
+
+        double f = ay * bx - ax * by;
+        double d = by * cx - bx * cy;
+
+        if ((f > 0 && d >= 0 && d <= f) || (f < 0 && d <= 0 && d >= f))
+        {
+            double e = ax * cy - ay * cx;
+            if (f > 0)
+            {
+                if (e >= 0 && e <= f)
+                    return true;
+            }
+            else
+            {
+                if (e <= 0 && e >= f)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static boolean pointInTri(double[] v0, double[] u0, double[] u1, double[] u2, int i0, int i1)
+    {
+        double a = u1[i1] - u0[i1];
+        double b = -(u1[i0] - u0[i0]);
+        double c = -a * u0[i0] - b * u0[i1];
+        double d0 = a * v0[i0] + b * v0[i1] + c;
+
+        a = u2[i1] - u1[i1];
+        b = -(u2[i0] - u1[i0]);
+        c = -a * u1[i0] - b * u1[i1];
+        double d1 = a * v0[i0] + b * v0[i1] + c;
+
+        a = u0[i1] - u2[i1];
+        b = -(u0[i0] - u2[i0]);
+        c = -a * u2[i0] - b * u2[i1];
+        double d2 = a * v0[i0] + b * v0[i1] + c;
+
+        return d0 * d1 > 0 && d0 * d2 > 0;
+    }
+
     public String toString()
     {
         return "Triangle (" + a + ", " + b + ", " + c + ")";
