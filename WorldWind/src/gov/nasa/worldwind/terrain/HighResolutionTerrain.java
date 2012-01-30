@@ -35,12 +35,23 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         protected final int density;
         protected final Vec4 referenceCenter; // all vertices are relative to this point
         protected final float[] vertices;
+        protected double minElevation;
+        protected double maxElevation;
 
         protected RenderInfo(int density, float[] vertices, Vec4 refCenter)
         {
             this.density = density;
             this.referenceCenter = refCenter;
             this.vertices = vertices;
+        }
+
+        protected RenderInfo(int density, float[] vertices, Vec4 refCenter, double minElevation, double maxElevation)
+        {
+            this.density = density;
+            this.referenceCenter = refCenter;
+            this.vertices = vertices;
+            this.minElevation = minElevation;
+            this.maxElevation = maxElevation;
         }
 
         protected long getSizeInBytes()
@@ -237,6 +248,24 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         this.timeout = timeout;
     }
 
+    public int getDensity()
+    {
+        return density;
+    }
+
+    /**
+     * Specifies the number of intervals within a single terrain tile. Density does not affect precision, it just
+     * determines how many sample points to include with each internal terrain tile. The precision -- the distance
+     * between each sample point -- is governed by the terrain tolerance specified in this object's constructor.
+     *
+     * @param density the number of intervals used to form a terrain tile.
+     */
+    public void setDensity(int density)
+    {
+        this.density = density;
+        this.computeDimensions();
+    }
+
     /**
      * Indicates the current cache capacity.
      *
@@ -396,13 +425,10 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
      * to those subsequent calculations.
      * <p/>
      * Pre-caching is unnecessary and is useful only when it can occur before the intersection calculations are needed.
-     * It will incur extra overhead otherwise. The normal intersection calculations cause the same caching, so that
-     * subsequent calculations on the same area will be faster.
+     * It will incur extra overhead otherwise. The normal intersection calculations cause the same caching.
      *
-     * @param pA the line's first position. Identical to the same argument of {@link #intersect(gov.nasa.worldwind.geom.Position,
-     *           gov.nasa.worldwind.geom.Position)}.
-     * @param pB the line's second position. Identical to the same argument of {@link #intersect(gov.nasa.worldwind.geom.Position,
-     *           gov.nasa.worldwind.geom.Position)}.
+     * @param pA the line's first position.
+     * @param pB the line's second position.
      *
      * @throws IllegalArgumentException if either position is null.
      * @throws WWRuntimeException       if the operation is interrupted. if the current timeout is exceeded while
@@ -492,6 +518,11 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 
         this.lonTileSize = this.sector.getDeltaLonDegrees() / this.numCols;
         this.latTileSize = this.sector.getDeltaLatDegrees() / this.numRows;
+
+        if (this.geometryCache != null)
+            this.geometryCache.clear();
+        if (this.tileCache != null)
+            this.tileCache.clear();
     }
 
     /**
@@ -718,6 +749,27 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         return tiles.size() > 0 ? tiles : null;
     }
 
+    protected List<RectTile> getIntersectingTiles(Sector sector)
+    {
+        int rowA = this.computeRow(this.sector, sector.getMinLatitude());
+        int colA = this.computeColumn(this.sector, sector.getMinLongitude());
+        int rowB = this.computeRow(this.sector, sector.getMaxLatitude());
+        int colB = this.computeColumn(this.sector, sector.getMaxLongitude());
+
+        int n = (1 + (rowB - rowA)) * (1 + (colB - colA));
+        List<RectTile> tiles = new ArrayList<RectTile>(n);
+
+        for (int col = colA; col <= colB; col++)
+        {
+            for (int row = rowA; row <= rowB; row++)
+            {
+                tiles.add(this.createTile(row, col));
+            }
+        }
+
+        return tiles;
+    }
+
     /**
      * Computes a terrain tile's vertices of draws them from the cache.
      *
@@ -784,6 +836,9 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         LatLon centroid = tile.sector.getCentroid();
         Vec4 refCenter = globe.computePointFromPosition(centroid.getLatitude(), centroid.getLongitude(), 0d);
 
+        double minElevation = Double.MAX_VALUE;
+        double maxElevation = -Double.MAX_VALUE;
+
         int ie = 0;
         int iv = 0;
         Iterator<LatLon> latLonIter = latlons.iterator();
@@ -794,6 +849,11 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
                 LatLon latlon = latLonIter.next();
                 double elevation = this.verticalExaggeration * elevations[ie++];
 
+                if (elevation < minElevation)
+                    minElevation = elevation;
+                if (elevation > maxElevation)
+                    maxElevation = elevation;
+
                 Vec4 p = this.globe.computePointFromPosition(latlon.getLatitude(), latlon.getLongitude(), elevation);
                 verts[iv++] = (float) (p.x - refCenter.x);
                 verts[iv++] = (float) (p.y - refCenter.y);
@@ -801,7 +861,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             }
         }
 
-        return new RenderInfo(density, verts, refCenter);
+        return new RenderInfo(density, verts, refCenter, minElevation, maxElevation);
     }
 
     protected double getElevations(Sector sector, List<LatLon> latlons, double targetResolution, double[] elevations)
@@ -1138,6 +1198,165 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         });
 
         return hits;
+    }
+
+    /**
+     * Computes the intersection of a triangle with a terrain tile.
+     * @param tile the terrain tile
+     * @param triangle the Cartesian coordinates of the triangle.
+     * @return a list of the intersection points at which the triangle intersects the tile, or null if there are no
+     * intersections. If there are intersections, each entry in the returned list contains a two-element array holding
+     * the Cartesian coordinates of the intersection point with one terrain triangle. In the cases of co-planar
+     * triangles, all three vertices of the terrain triangle are returned, in a three-element array.
+     * @throws InterruptedException if the operation is interrupted before it completes.
+     */
+    protected List<Vec4[]> intersect(RectTile tile, Vec4[] triangle) throws InterruptedException
+    {
+        if (tile.ri == null)
+            this.makeVerts(tile);
+
+        if (tile.ri == null)
+            return null;
+
+        ArrayList<Vec4[]> intersections = new ArrayList<Vec4[]>();
+
+        double cx = tile.ri.referenceCenter.x;
+        double cy = tile.ri.referenceCenter.y;
+        double cz = tile.ri.referenceCenter.z;
+
+        // Loop through all the tile's triangles
+        int n = tile.density + 1;
+        float[] coords = tile.ri.vertices;
+
+        Vec4[] triA = new Vec4[3];
+        Vec4[] triB = new Vec4[3];
+
+        Vec4[] iVerts = new Vec4[3];
+
+        for (int j = 0; j < n - 1; j++)
+        {
+            for (int i = 0; i < n - 1; i++)
+            {
+                int k = (j * n + i) * 3;
+                triA[0] = new Vec4(coords[k] + cx, coords[k + 1] + cy, coords[k + 2] + cz);
+                triB[0] = triA[0];
+
+                k += 3;
+                triA[1] = new Vec4(coords[k] + cx, coords[k + 1] + cy, coords[k + 2] + cz);
+
+                k += n * 3;
+                triA[2] = new Vec4(coords[k] + cx, coords[k + 1] + cy, coords[k + 2] + cz);
+                triB[1] = triA[1];
+
+                k -= 3;
+                triB[2] = new Vec4(coords[k] + cx, coords[k + 1] + cy, coords[k + 2] + cz);
+
+                // Intersect triangles with input triangle
+
+                int status = Triangle.intersectTriangles(triangle, triA, iVerts);
+                if (status == 1)
+                {
+                    intersections.add(new Vec4[]{iVerts[0], iVerts[1]});
+//                    intersections.add(new Vec4[] {triA[0], triA[1], triA[2], triA[0]});
+                }
+                else if (status == 0)
+                {
+                    intersections.add(new Vec4[]{triA[0], triA[1], triA[2]});
+                }
+
+                status = Triangle.intersectTriangles(triangle, triB, iVerts);
+                if (status == 1)
+                {
+                    intersections.add(new Vec4[]{iVerts[0], iVerts[1]});
+//                    intersections.add(new Vec4[] {triB[0], triB[1], triB[2], triB[0]});
+                }
+                else if (status == 0)
+                {
+                    intersections.add(new Vec4[]{triB[0], triB[1], triB[2]});
+                }
+            }
+        }
+
+        int numHits = intersections.size();
+        if (numHits == 0)
+            return null;
+
+        return intersections;
+    }
+
+    /**
+     * Intersects a specified triangle with the terrain.
+     *
+     * @param triangleCoordinates   The Cartesian coordinates of the triangle.
+     * @param trianglePositions     The geographic coordinates of the triangle.
+     * @param intersectPositionsOut A list in which to place the intersection positions. May not be null.
+     *
+     * @throws InterruptedException if the operation is interrupted before it completes.
+     */
+    public void intersectTriangle(Vec4[] triangleCoordinates, Position[] trianglePositions,
+                                  List<Position[]> intersectPositionsOut) throws InterruptedException
+    {
+        // Get the tiles intersecting the specified sector. Compute the sector from geographic coordinates.
+        Sector sector = Sector.boundingSector(Arrays.asList(trianglePositions));
+        List<RectTile> tiles = this.getIntersectingTiles(sector);
+
+        // Eliminate tiles with max altitude below specified min altitude. Determine min altitude using triangle's
+        // geographic coordinates.
+        double minAltitude = trianglePositions[0].getAltitude();
+        for (int i = 1; i < trianglePositions.length; i++)
+        {
+            if (trianglePositions[i].getAltitude() < minAltitude)
+                minAltitude = trianglePositions[i].getAltitude();
+        }
+
+        tiles = this.eliminateLowAltitudeTiles(tiles, minAltitude);
+
+        // Intersect triangles of remaining tiles with input triangle.
+        List<Vec4[]> intersections = new ArrayList<Vec4[]>();
+        for (RectTile tile : tiles)
+        {
+            List<Vec4[]> iSects = intersect(tile, triangleCoordinates);
+            if (iSects != null)
+                intersections.addAll(iSects);
+        }
+
+        // Convert intersection points to positions.
+        this.convertPointsToPositions(intersections, intersectPositionsOut);
+    }
+
+    protected List<RectTile> eliminateLowAltitudeTiles(List<RectTile> tiles, double minAltitude)
+        throws InterruptedException
+    {
+        List<RectTile> filteredTiles = new ArrayList<RectTile>();
+
+        for (RectTile tile : tiles)
+        {
+            if (tile.ri == null)
+                this.makeVerts(tile);
+
+            if (tile.ri == null)
+                return null;
+
+            if (tile.ri.maxElevation >= minAltitude)
+                filteredTiles.add(tile);
+        }
+
+        return filteredTiles;
+    }
+
+    protected void convertPointsToPositions(List<Vec4[]> points, List<Position[]> positions)
+    {
+        for (Vec4[] pts : points)
+        {
+            Position[] pos = new Position[pts.length];
+
+            for (int i = 0; i < pts.length; i++)
+            {
+                pos[i] = this.getGlobe().computePositionFromPoint(pts[i]);
+            }
+
+            positions.add(pos);
+        }
     }
 
     /**
