@@ -831,7 +831,7 @@ public class WorldFile
 
         // Convert the coordinate system text to upper case. The coordinate system regular expressions match against
         // upper case characters.
-        text = text.toUpperCase();
+        text = text.trim().toUpperCase();
 
         try
         {
