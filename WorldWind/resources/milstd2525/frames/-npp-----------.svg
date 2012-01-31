@@ -9,8 +9,6 @@ All Rights Reserved.
 <!--
 MIL-STD-2525 Neutral Space Present frame. During icon composition this image is multiplied by the desired frame color
 (e.g. black), then drawn on top of the fill image.
-
-$Id$
 -->
 <svg viewBox="0 0 400 400" width="400px" height="400px">
     <!-- Outline. -->
