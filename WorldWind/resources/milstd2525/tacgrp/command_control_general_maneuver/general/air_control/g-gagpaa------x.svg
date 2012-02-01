@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*GPGPAA--****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-G-GPA-------1" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <line x1="100" y1="25" x2="100" y2="375" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:27"/>
+            <line x1="300" y1="25" x2="300" y2="375" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:27"/>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.G-G-GPA-------2" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <circle cx="200" cy="200" r="50" transform="matrix(1 0 0 1 0 0)"
+                    style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:1"/>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_2.G-G-GPAA------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <text x="163px" y="365px" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:120;font-family:@Arial Unicode MS">F
+            </text>
+        </svg>
+
+    </g>
+</svg>
