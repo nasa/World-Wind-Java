@@ -5,10 +5,11 @@
 <svg id="G*GPGPHA--****X" width="400px" height="400px" viewBox="0 0 400 400">
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-GPGPHA------X" width="400px" height="400px">
-            <g transform="translate(30 70) scale(6 6)">
-                <path
-                    d="M0 0 L55.98 0.057 L54.48 1.25 L1.561 1.25 zM0 0 L1.547 1.281 L16.994 41.996 L15.66      42 zM31.92 23.955 L30.66 20.375 L26.221 20.375 L25.02 23.955 L22.74 23.955      L27.301 11.75 L29.401 11.75 L34.381 23.955 zM28.381 14.355 L26.941 18.5 L29.88      18.5 zM55.98 0 L54.48 1.262 L39.061 42 L40.381 42 z"></path>
-            </g>
+            <polyline points="127,320 35,75 360,75 273,320" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
+            <text x="150px" y="240px" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:120;font-family:Arial">A
+            </text>
         </svg>
 
     </g>

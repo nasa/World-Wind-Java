@@ -5,10 +5,8 @@
 <svg id="G*GPGPH---****X" width="400px" height="400px" viewBox="0 0 400 400">
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-GPGPH-------X" width="400px" height="400px">
-            <g transform="translate(35 70) scale(6 6)">
-                <path
-                    d="M0 0 L55.98 0.057 L54.48 1.25 L1.561 1.25 zM0 0 L1.547 1.281 L16.994 41.996 L15.66     42 zM55.98 0 L54.48 1.262 L39.061 42 L40.381 42 z"></path>
-            </g>
+            <polyline points="127,320 35,75 360,75 273,320" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
         </svg>
 
     </g>

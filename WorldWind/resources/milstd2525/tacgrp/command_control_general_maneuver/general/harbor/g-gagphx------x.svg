@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*GPGPHX--****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-GPGPHX------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <polyline points="127,320 35,75 360,75 273,320" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+            <text x="150px" y="240px" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:120;font-family:Arial">X
+            </text>
+        </svg>
+
+    </g>
+</svg>
