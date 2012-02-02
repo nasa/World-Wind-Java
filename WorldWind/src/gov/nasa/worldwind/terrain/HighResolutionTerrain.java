@@ -99,7 +99,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
     protected double lonTileSize;
     protected int numRows;
     protected int numCols;
-    protected int[] indices;
     protected MemoryCache geometryCache;
     protected MemoryCache tileCache;
     protected ThreadLocal<Long> startTime = new ThreadLocal<Long>();
@@ -148,8 +147,6 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             this.targetResolution = this.globe.getElevationModel().getBestResolution(null);
 
         this.verticalExaggeration = verticalExaggeration != null ? verticalExaggeration : 1;
-
-        this.indices = this.getIndices(this.density);
 
         this.computeDimensions();
 
@@ -1246,7 +1243,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 
                 k += n * 3;
                 triA[2] = new Vec4(coords[k] + cx, coords[k + 1] + cy, coords[k + 2] + cz);
-                triB[1] = triA[1];
+                triB[1] = triA[2];
 
                 k -= 3;
                 triB[2] = new Vec4(coords[k] + cx, coords[k + 1] + cy, coords[k + 2] + cz);
@@ -1357,58 +1354,5 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 
             positions.add(pos);
         }
-    }
-
-    /**
-     * Computes the buffer of indices forming a tile.
-     *
-     * @param density the tile density.
-     *
-     * @return the buffer of indices.
-     */
-    protected int[] getIndices(int density)
-    {
-        if (density < 1)
-            density = 1;
-
-        int sideSize = density;
-
-        int indexCount = 2 * sideSize * sideSize + 4 * sideSize - 2;
-        int[] indexBuffer = new int[indexCount];
-        int ib = 0;
-        int k = 0;
-
-        for (int i = 0; i < sideSize; i++)
-        {
-            indexBuffer[ib++] = k;
-            if (i > 0)
-            {
-                indexBuffer[ib++] = ++k;
-                indexBuffer[ib++] = k;
-            }
-
-            if (i % 2 == 0) // even
-            {
-                indexBuffer[ib++] = ++k;
-                for (int j = 0; j < sideSize; j++)
-                {
-                    k += sideSize;
-                    indexBuffer[ib++] = k;
-                    indexBuffer[ib++] = ++k;
-                }
-            }
-            else // odd
-            {
-                indexBuffer[ib++] = --k;
-                for (int j = 0; j < sideSize; j++)
-                {
-                    k -= sideSize;
-                    indexBuffer[ib++] = k;
-                    indexBuffer[ib++] = --k;
-                }
-            }
-        }
-
-        return indexBuffer;
     }
 }
