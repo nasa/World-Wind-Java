@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*MPOME---****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-MPOME-------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <circle cx="199" cy="200.5" r="49" transform="matrix(1 0 0 1 0 0)"
+                    style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:10"/>
+            <line x1="200" y1="64" x2="200" y2="152" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(0,0,0);stroke-width:3;stroke-dasharray:6 3"/>
+            <polyline points="192,70 200,62 208,70" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+        </svg>
+
+    </g>
+</svg>

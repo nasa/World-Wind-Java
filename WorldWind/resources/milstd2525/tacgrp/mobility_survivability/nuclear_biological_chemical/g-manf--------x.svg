@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*MPNF----****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-MPNF--------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <defs>
+                <linearGradient id="black-white-stripes" x1="0%" y1="0%" x2="10%" y2="20%" spreadMethod="repeat"
+                                gradientUnits="objectBoundingBox" xlink:type="simple" xlink:show="other"
+                                xlink:actuate="onLoad">
+                    <stop offset="85%" style="stop-color:rgb(255,255,255);stop-opacity:1"/>
+                    <stop offset="85%" style="stop-color:rgb(0,0,0);stop-opacity:1"/>
+                </linearGradient>
+            </defs>
+            <path d="M200 10 C277.319 10 340 72.6808 340 150 L60 150 C60 72.6808 122.681 10 200 10 z"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+            <rect x="150" y="150" width="100" height="200"
+                  style="fill:url(#black-white-stripes);stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+            <text x="174px" y="276px"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-family:@Arial Unicode MS;font-size:72;font-weight:bold;   ">
+                N
+            </text>
+        </svg>
+
+    </g>
+</svg>

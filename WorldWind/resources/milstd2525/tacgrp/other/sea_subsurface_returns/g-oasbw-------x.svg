@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*OPSBW---****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-OPSBW-------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <line x1="50" y1="200" x2="350" y2="200" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:10"/>
+            <line x1="200" y1="125" x2="200" y2="275" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:10"/>
+            <line x1="100" y1="150" x2="100" y2="250" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:10"/>
+            <line x1="299" y1="150" x2="300" y2="250" transform="matrix(1 0 0 1 0 0)"
+                  style="stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:10"/>
+        </svg>
+
+    </g>
+</svg>

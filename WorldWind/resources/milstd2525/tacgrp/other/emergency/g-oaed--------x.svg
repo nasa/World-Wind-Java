@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*OPED----****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-O-E---------W" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <polyline points="50,300 100,250 150,300"
+                      style="stroke-linecap:square;fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+            <polyline points="250,300 300,250 350,300"
+                      style="stroke-linecap:square;fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.G-O-ED--------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <polygon
+                points="141.833,287.793 260.333,146.833 233,92.1666 249.5,74.5 294.333,130 250,300 200,250    150,300"
+                style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+        </svg>
+
+    </g>
+</svg>

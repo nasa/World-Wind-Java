@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*MPSF----****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-MPSF--------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <g transform="translate(-790 -690) scale(4 4)">
+                <rect x="160" y="170" width="52" height="53" transform="matrix(1 0 0 1 61 27)"
+                      style="fill:rgb(255,255,255);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+                <line x1="272" y1="197" x2="288" y2="180" transform="matrix(1 0 0 1 1 0)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:8"/>
+                <line x1="258" y1="259" x2="242" y2="242" transform="matrix(1 0 0 1 -37.6667 -62.6667)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:8"/>
+                <line x1="258" y1="259" x2="242" y2="242" transform="matrix(1 0 0 1 30.3333 7.33333)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:8"/>
+                <line x1="242" y1="259" x2="258" y2="242" transform="matrix(1 0 0 1 -37 7.33333)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:8"/>
+            </g>
+        </svg>
+
+    </g>
+</svg>

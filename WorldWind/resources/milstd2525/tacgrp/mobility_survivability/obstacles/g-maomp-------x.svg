@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*MPOMP---****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-MPOMP-------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <g transform="translate(-490 -530) scale(3.5 3.5)">
+                <circle cx="218" cy="204.5" r="34" transform="matrix(1 0 0 1 -19 20)"
+                        style="fill:none;stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+                <line x1="178" y1="198" x2="146.5" y2="160"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+                <line x1="260" y1="272" x2="229.5" y2="235" transform="matrix(-1 0 0 1 490 -82) translate(12 7)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+            </g>
+        </svg>
+
+    </g>
+</svg>

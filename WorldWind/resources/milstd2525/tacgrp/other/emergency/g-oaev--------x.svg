@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*OPEV----****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-O-E---------W" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <polyline points="50,300 100,250 150,300 200,250 250,300 300,250 350,300"
+                      style="stroke-linecap:square;fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.G-O-EV--------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <polygon points="190,260 120,190 120,110 280,270 250,300 200,250"
+                     style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+            <line x1="210" y1="200" x2="320" y2="90" transform="matrix(1 0 0 1 0 0)"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+        </svg>
+
+    </g>
+</svg>

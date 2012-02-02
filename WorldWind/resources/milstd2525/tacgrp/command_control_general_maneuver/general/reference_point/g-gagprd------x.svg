@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*GPGPRD--****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-GPGPRD------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <g transform="translate(0 -20)">
+                <rect x="100" y="75" width="250" height="250" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+                <line x1="100" y1="325" x2="350" y2="75" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+                <line x1="100" y1="75" x2="350" y2="325" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+                <text x="28px" y="325px" transform="matrix(1 0 0 1 0 0)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:72;font-family:Arial">D
+                </text>
+            </g>
+        </svg>
+
+    </g>
+</svg>

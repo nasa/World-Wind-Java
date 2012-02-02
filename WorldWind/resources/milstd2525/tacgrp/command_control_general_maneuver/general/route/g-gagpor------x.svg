@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*GPGPOR--****X" width="400px"
+     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+     contentScriptType="application/ecmascript" contentStyleType="text/css">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-GPGPO-------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <line x1="25" y1="200" x2="375" y2="200"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:15;stroke-dasharray:20"/>
+            <path
+                d="M25 125 C35 85 85 85 95 125 C105 165 155 165 165 125 C175 85 225 85 235 125 C245    165 295 165 305 125 C315 85 365 85 375 125"
+                style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+            <path transform="translate(0 150)"
+                  d="M25 125 C35 85 85 85 95 125 C105 165 155 165 165 125 C175 85 225 85 235 125 C245    165 295 165 305 125 C315 85 365 85 375 125"
+                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+        </svg>
+
+    </g>
+    <g>
+        <svg viewBox="0 0 400 400" id="_1.G-GPGPOR------X" width="400px" height="400px"
+             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
+             contentScriptType="application/ecmascript" contentStyleType="text/css">
+            <text x="170px" y="385px"
+                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:90;font-family:@Arial Unicode MS">P
+            </text>
+        </svg>
+
+    </g>
+</svg>
