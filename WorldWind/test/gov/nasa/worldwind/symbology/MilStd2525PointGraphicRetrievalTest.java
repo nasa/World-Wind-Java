@@ -19,11 +19,12 @@ import java.awt.image.*;
  */
 public class MilStd2525PointGraphicRetrievalTest extends TestCase
 {
-    // TODO: test all possible values for Standard Identity and Status
-
     // This path should correspond to the location of the appropriate symbology source icons on your system
     private final static String ICON_RETRIEVER_PATH = Configuration.getStringValue(
         AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH, MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
+
+    /** Valid status characters for MIL-STD-2525C tactical graphics (see Table B-I, pg. 305). */
+    protected static final char[] ALL_STATUS = {'A', 'S', 'P', 'K'};
 
     //////////////////////////////////////////////////////////
     // Test retrieval of a MilStd2525 point graphic from both a remote
@@ -152,13 +153,18 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     public void testTacticalGraphicRetrieval()
     {
         IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
-        AVList params = new AVListImpl();
-        BufferedImage img;
 
         for (String s : TacticalGraphicSymbolCodes)
         {
-            img = symGen.createIcon(s, params);
-            assertNotNull("Icon " + s.toLowerCase() + "-----.png not found.", img);
+            StringBuffer sidc = new StringBuffer(s);
+
+            for (char status : ALL_STATUS)
+            {
+                sidc.setCharAt(3, status);
+
+                BufferedImage img = symGen.createIcon(sidc.toString(), null);
+                assertNotNull("Icon " + s.toLowerCase() + "-----.png not found.", img);
+            }
         }
     }
 
@@ -195,7 +201,6 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
         "GFFPPCL-------X",
         "GFFPPCR-------X",
         "GFFPPCS-------X",
-        "GFFPPS--------X",
         "GFFPPTN-------X",
         "GFFPPTS-------X",
         "GFGPAPD-------X",
@@ -291,7 +296,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
         "GFOPSBM-------X",
         "GFOPSBN-------X",
         "GFOPSBW-------X",
-        "GFOPSBWD------X",
+        "GFOPSBX-------X",
         "GFOPSM--------X",
         "GFOPSS--------X",
         "GFSPPAS-------X",

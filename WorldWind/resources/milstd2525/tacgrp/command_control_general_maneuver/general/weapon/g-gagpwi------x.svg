@@ -1,16 +1,13 @@
 <?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
 <!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*GPGPWI--****X" width="400px"
-     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
-     contentScriptType="application/ecmascript" contentStyleType="text/css">
+<svg id="G*GPGPWP--****X" width="400px" height="400px" viewBox="0 0 400 400">
     <g>
-        <svg viewBox="0 0 400 400" id="_0.G-GPGPWI------X" width="400px" height="400px"
-             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
-             contentScriptType="application/ecmascript" contentStyleType="text/css">
+        <svg viewBox="0 0 400 400" id="_0.G-GPGPWP------X" width="400px" height="400px">
             <polygon points="200,25 230,170 375,200 230,230 200,375 170,230 25,200 170,170"
                      transform="matrix(1 0 0 1 0 0)"
-                     style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                     style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:40 10"></polygon>
         </svg>
 
     </g>

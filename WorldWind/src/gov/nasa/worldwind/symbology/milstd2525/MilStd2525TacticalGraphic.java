@@ -620,6 +620,9 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         Material material = this.getDefaultOutlineMaterial();
         attributes.setOutlineMaterial(material);
 
+        // MIL-STD-2525C section 5.5.1.2 (pg. 37) states that graphics (in general) must be drawn with solid lines
+        // when in the Present status, and dashed lines when the status is not Present. Note that the default is
+        //  overridden by some graphics, which always draw with dashed lines.
         String status = this.getStatus();
         if (!SymbologyConstants.STATUS_PRESENT.equals(status))
         {

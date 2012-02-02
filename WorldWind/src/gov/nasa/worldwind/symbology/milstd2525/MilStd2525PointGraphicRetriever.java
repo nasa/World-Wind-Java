@@ -109,6 +109,11 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         String category = code.getCategory();
         String functionId = code.getFunctionId();
 
+        // Two images are provided for each graphic: one for Present status and one for all other statuses.
+        // MIL-STD-2525C section 5.5.1.2 (pg. 37) states that graphics must draw using solid lines when Present, and
+        // dashed lines in other states.
+        char status = SymbologyConstants.STATUS_PRESENT.equals(code.getStatus()) ? 'p' : 'a';
+
         // MIL-STD-2525C Tactical Graphics includes the order of battle in the symbol identifier, but X is the only valid
         // value. Just pass X so retrieval will still work even if the symbol code is specified incorrectly.
         char orderOfBattle = 'x';
@@ -121,7 +126,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             .append(scheme.toLowerCase())
             .append('-') // Standard identity
             .append(category.toLowerCase())
-            .append('p') // TODO need to handle "Anticipated status differently
+            .append(status)
             .append(functionId.toLowerCase())
             .append("----") // Echelon, Country Code
             .append(orderOfBattle) // Order of Battle

@@ -47,12 +47,14 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
             WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
 
+        protected static final char[] ALL_STATUS = new char[] {'P', 'A'};
+
         protected void displayPoints(RenderableLayer layer)
         {
             List<String> allGraphics = MilStd2525PointGraphic.getSupportedGraphics();
 
             int numGraphics = allGraphics.size();
-            int cols = (int) Math.sqrt(numGraphics);
+            int cols = (int) Math.sqrt(numGraphics * 2);
 
             double startLon = -118.5439;
 
@@ -62,40 +64,43 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
 
             for (int i = 0; i < numGraphics; i++)
             {
-                Position pos = Position.fromDegrees(latitude, longitude, 0);
-
-                StringBuffer sidc = new StringBuffer(allGraphics.get(i));
-
-                sidc.setCharAt(1, 'F'); // Standard identify: Friend
-                sidc.setCharAt(3, 'P'); // Status: Present
-
-                TacticalPoint graphic = new MilStd2525PointGraphic(sidc.toString());
-                graphic.setPosition(pos);
-
-                // Set all modifiers, even on graphics that do not support them. This allows us to confirm
-                // that modifiers are only drawn for graphics that ^do^ support them.
-                graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("T", "T1"));
-                graphic.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, Arrays.asList("H", "H1"));
-                graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "X");
-                graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("W", "W1"));
-                graphic.setModifier(SymbologyConstants.QUANTITY, "C"); // Only applies to Nuclear graphic
-                graphic.setModifier(SymbologyConstants.TYPE, "V"); // Applies only to Nuclear graphic
-
-                // Location and Direction of Movement apply only to CBRN graphics.
-                graphic.setModifier(SymbologyConstants.LOCATION,
-                    "45'35\"N009'59\"E"); // TODO should be computed from position
-                graphic.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
-
-                layer.addRenderable(graphic);
-
-                if ((i + 1) % cols == 0)
+                for (int j = 0; j < ALL_STATUS.length; j++)
                 {
-                    latitude -= delta;
-                    longitude = startLon;
-                }
-                else
-                {
-                    longitude += delta;
+                    Position pos = Position.fromDegrees(latitude, longitude, 0);
+
+                    StringBuffer sidc = new StringBuffer(allGraphics.get(i));
+
+                    sidc.setCharAt(1, 'F'); // Standard identify: Friend
+                    sidc.setCharAt(3, ALL_STATUS[j]);
+
+                    TacticalPoint graphic = new MilStd2525PointGraphic(sidc.toString());
+                    graphic.setPosition(pos);
+
+                    // Set all modifiers, even on graphics that do not support them. This allows us to confirm
+                    // that modifiers are only drawn for graphics that ^do^ support them.
+                    graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("T", "T1"));
+                    graphic.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, Arrays.asList("H", "H1"));
+                    graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "X");
+                    graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("W", "W1"));
+                    graphic.setModifier(SymbologyConstants.QUANTITY, "C"); // Only applies to Nuclear graphic
+                    graphic.setModifier(SymbologyConstants.TYPE, "V"); // Applies only to Nuclear graphic
+
+                    // Location and Direction of Movement apply only to CBRN graphics.
+                    graphic.setModifier(SymbologyConstants.LOCATION,
+                        "45'35\"N009'59\"E"); // TODO should be computed from position
+                    graphic.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
+
+                    layer.addRenderable(graphic);
+
+                    if ((i * ALL_STATUS.length + j + 1) % cols == 0)
+                    {
+                        latitude -= delta;
+                        longitude = startLon;
+                    }
+                    else
+                    {
+                        longitude += delta;
+                    }
                 }
             }
         }
