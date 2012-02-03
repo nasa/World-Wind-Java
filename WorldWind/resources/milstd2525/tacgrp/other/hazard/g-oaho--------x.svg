@@ -1,19 +1,18 @@
-<?xml version="1.0"?>
-<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
-<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*OPHO----****X" width="400px"
-     height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
-     contentScriptType="application/ecmascript" contentStyleType="text/css">
-    <g>
-        <svg viewBox="0 0 400 400" id="_0.G-OPHO--------X" width="400px" height="400px"
-             preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
-             contentScriptType="application/ecmascript" contentStyleType="text/css">
-            <g transform="translate(10 80) scale(7 7)">
-                <path
-                    d="M0 31.5 L0 16.125 L0.875 16.125 L0.875 31.5 zM0.875 17.125 L53.4 17.125 L53.4 16.125     L0.875 16.125 zM9.48 16.125 L10.38 16.125 L10.38 0 L9.42 0 zM18.721 16.125     L18.721 9.08 L10.381 9.08 L10.381 16.125 zM38 31.75 L38 17.125 L39 17.125     L39 31.75 zM47.875 31.75 L48.84 31.75 L48.84 16.881 L47.875 16.881 z"
-                    style="fill:none;stroke:rgb(0,0,0);stroke-width:1;stroke-dasharray:2"/>
-            </g>
-        </svg>
-
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="_0.G-OPHO--------X" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     x="0px"
+     y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400"
+     xml:space="preserve">
+    <polyline fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" points="13.355,300.947 13.537,196.74 383.8,196.74
+	"/>
+    <line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="279.715" y1="302.611" x2="279.896"
+          y2="198.404"/>
+    <line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="348.227" y1="302.126" x2="348.408"
+          y2="197.918"/>
+    <line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="79.482" y1="194.771" x2="79.664"
+          y2="81.561"/>
+    <polyline fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" points="139.687,194.119 139.687,144.804
+	81.307,144.804 "/>
 </svg>
