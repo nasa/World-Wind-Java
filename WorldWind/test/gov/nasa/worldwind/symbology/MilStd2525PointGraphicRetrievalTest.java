@@ -154,12 +154,13 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
 
-        for (String s : TacticalGraphicSymbolCodes)
+        for (String s : MilStd2525PointGraphic.getSupportedGraphics())
         {
             StringBuffer sidc = new StringBuffer(s);
 
             for (char status : ALL_STATUS)
             {
+                sidc.setCharAt(1, 'F'); // Standard identity: friendly
                 sidc.setCharAt(3, status);
 
                 BufferedImage img = symGen.createIcon(sidc.toString(), null);
@@ -189,143 +190,6 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
     {
         new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(MilStd2525PointGraphicRetrievalTest.class));
     }
-
-    /**
-     * Appendix B: Military Symbology
-     * <p/>
-     * Note that this list includes only point graphics. Line and area graphics are not retrieved from the server.
-     */
-    protected final static String[] TacticalGraphicSymbolCodes = {
-        "GFFPPCB-------X",
-        "GFFPPCH-------X",
-        "GFFPPCL-------X",
-        "GFFPPCR-------X",
-        "GFFPPCS-------X",
-        "GFFPPTN-------X",
-        "GFFPPTS-------X",
-        "GFGPAPD-------X",
-        "GFGPDPT-------X",
-        "GFGPGPAA------X",
-        "GFGPGPAC------X",
-        "GFGPGPAH------X",
-        "GFGPGPAK------X",
-        "GFGPGPAL------X",
-        "GFGPGPAM------X",
-        "GFGPGPAO------X",
-        "GFGPGPAP------X",
-        "GFGPGPAR------X",
-        "GFGPGPAS------X",
-        "GFGPGPAT------X",
-        "GFGPGPAW------X",
-        "GFGPGPF-------X",
-        "GFGPGPH-------X",
-        "GFGPGPHA------X",
-        "GFGPGPHQ------X",
-        "GFGPGPHX------X",
-        "GFGPGPHY------X",
-        "GFGPGPO-------X",
-        "GFGPGPOD------X",
-        "GFGPGPOP------X",
-        "GFGPGPOR------X",
-        "GFGPGPOW------X",
-        "GFGPGPOZ------X",
-        "GFGPGPP-------X",
-        "GFGPGPPC------X",
-        "GFGPGPPD------X",
-        "GFGPGPPE------X",
-        "GFGPGPPK------X",
-        "GFGPGPPL------X",
-        "GFGPGPPO------X",
-        "GFGPGPPP------X",
-        "GFGPGPPR------X",
-        "GFGPGPPS------X",
-        "GFGPGPPW------X",
-        "GFGPGPRD------X",
-        "GFGPGPRI------X",
-        "GFGPGPRN------X",
-        "GFGPGPRS------X",
-        "GFGPGPUS------X",
-        "GFGPGPUSA-----X",
-        "GFGPGPUSC-----X",
-        "GFGPGPUSD-----X",
-        "GFGPGPUUB-----X",
-        "GFGPGPUUD-----X",
-        "GFGPGPUUL-----X",
-        "GFGPGPUUS-----X",
-        "GFGPGPUY------X",
-        "GFGPGPUYA-----X",
-        "GFGPGPUYK-----X",
-        "GFGPGPUYP-----X",
-        "GFGPGPUYR-----X",
-        "GFGPGPUYT-----X",
-        "GFGPGPWA------X",
-        "GFGPGPWD------X",
-        "GFGPGPWE------X",
-        "GFGPGPWG------X",
-        "GFGPGPWI------X",
-        "GFGPGPWM------X",
-        "GFGPGPWP------X",
-        "GFGPOPP-------X",
-        "GFMPBCP-------X",
-        "GFMPNEB-------X",
-        "GFMPNEC-------X",
-        "GFMPNF--------X",
-        "GFMPNZ--------X",
-        "GFMPOB--------X",
-        "GFMPOMD-------X",
-        "GFMPOME-------X",
-        "GFMPOMP-------X",
-        "GFMPOMT-------X",
-        "GFMPOMU-------X",
-        "GFMPOMW-------X",
-        "GFMPSE--------X",
-        "GFMPSF--------X",
-        "GFMPSS--------X",
-        "GFMPSU--------X",
-        "GFMPNDP-------X",
-        "GFOPED--------X",
-        "GFOPEP--------X",
-        "GFOPEV--------X",
-        "GFOPFA--------X",
-        "GFOPFE--------X",
-        "GFOPFO--------X",
-        "GFOPHI--------X",
-        "GFOPHM--------X",
-        "GFOPHO--------X",
-        "GFOPSB--------X",
-        "GFOPSBM-------X",
-        "GFOPSBN-------X",
-        "GFOPSBW-------X",
-        "GFOPSBX-------X",
-        "GFOPSM--------X",
-        "GFOPSS--------X",
-        "GFSPPAS-------X",
-        "GFSPPAT-------X",
-        "GFSPPC--------X",
-        "GFSPPD--------X",
-        "GFSPPE--------X",
-        "GFSPPI--------X",
-        "GFSPPL--------X",
-        "GFSPPM--------X",
-        "GFSPPN--------X",
-        "GFSPPO--------X",
-        "GFSPPR--------X",
-        "GFSPPSA-------X",
-        "GFSPPSB-------X",
-        "GFSPPSC-------X",
-        "GFSPPSD-------X",
-        "GFSPPSE-------X",
-        "GFSPPSF-------X",
-        "GFSPPSG-------X",
-        "GFSPPSH-------X",
-        "GFSPPSI-------X",
-        "GFSPPSJ-------X",
-        "GFSPPSZ-------X",
-        "GFSPPT--------X",
-        "GFSPPU--------X",
-        "GFSPPX--------X",
-        "GFSPPY--------X"
-    };
 
     /**
      * Appendix C: Meteorological and Oceanographic Symbology
