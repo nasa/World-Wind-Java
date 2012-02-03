@@ -57,10 +57,22 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         }
     }
 
+    /**
+     * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
+     * this graphic belongs. For symbols belonging to the MIL-STD-2525 symbol set, this returns a 15-character
+     * alphanumeric symbol identification code (SIDC). Calculated from the current modifiers at construction and during
+     * each call to {@link #setModifier(String, Object)}. Initially <code>null</code>.
+     */
     protected SymbolCode symbolCode;
+    /**
+     * Symbol identifier with fields that do not influence the type of graphic replaced with hyphens. See {@link
+     * SymbolCode#toMaskedString}.
+     */
     protected String maskedSymbolCode;
 
+    /** Indicates whether or not to render the location modifier. */
     protected boolean showLocation = true;
+    /** Indicates whether or not to render the hostile/enemy modifier. */
     protected boolean showHostileIndicator = true;
 
     /**
@@ -99,28 +111,55 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         return this.symbolCode.toString();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Indicates whether or not this graphic will display a text indicator when the graphic represents a hostile entity.
+     * See comments on {@link #setShowHostileIndicator(boolean) setShowHostileIndicator} for more information.
+     *
+     * @return true if an indicator may be drawn when this graphic represents a hostile entity, if supported by the
+     *         graphic implementation. Note that some graphics may not display an indicator, even when representing a
+     *         hostile entity.
+     */
     public boolean isShowHostileIndicator()
     {
         return this.showHostileIndicator;
     }
 
-    /** {@inheritDoc} */
-    public void setShowHostileIndicator(boolean showHostileIndicator)
+    /**
+     * Specifies whether or not to display a text indicator when the symbol or graphic represents a hostile entity. In
+     * the case of MIL-STD-2525C, the indicator is the letters "ENY". The indicator is determined by the symbology set,
+     * and may not apply to all graphics in the symbol set.
+     *
+     * @param show true if this graphic should display an indicator when this graphic represents a hostile entity and
+     *             the graphic implementation supports such an indicator. Note that some graphics may not display an
+     *             indicator, even when representing a hostile entity.
+     */
+    public void setShowHostileIndicator(boolean show)
     {
-        this.showHostileIndicator = showHostileIndicator;
+        this.showHostileIndicator = show;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Indicates whether or not the graphic should display its location as a text modifier. Not all graphics support the
+     * location modifier.
+     *
+     * @return true if the graphic will display the location modifier. Note that not all graphics support this
+     *         modifier.
+     */
     public boolean isShowLocation()
     {
         return this.showLocation;
     }
 
-    /** {@inheritDoc} */
-    public void setShowLocation(boolean showLocation)
+    /**
+     * Specifies whether or not the graphic should display its location as a text modifier. Not all graphics support the
+     * location modifier. Setting showLocation on a graphic that does not support the modifier will have no effect.
+     *
+     * @param show true if the graphic will display the location modifier. Note that not all graphics support this
+     *             modifier.
+     */
+    public void setShowLocation(boolean show)
     {
-        this.showLocation = showLocation;
+        this.showLocation = show;
     }
 
     @Override
@@ -129,7 +168,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         if (this.iconRect == null)
             return;
 
-        if (this.mustDrawTextModifiers(dc)) // TODO need to get this setting from graphic
+        if (this.mustDrawTextModifiers(dc))
         {
             this.currentLabels.clear();
             this.doLayoutModifiers(dc, this.iconRect);

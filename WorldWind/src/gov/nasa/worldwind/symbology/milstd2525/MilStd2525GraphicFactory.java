@@ -15,7 +15,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.combatsupport.CombatSupp
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.deception.Dummy;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.PhaseLine;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.OffenseArea;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.special.*;
@@ -74,6 +74,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(Dummy.class, Dummy.getSupportedGraphics());
         this.mapClass(SupportByFirePosition.class, SupportByFirePosition.getSupportedGraphics());
         this.mapClass(Ambush.class, Ambush.getSupportedGraphics());
+        this.mapClass(ForwardEdgeOfBattleArea.class, ForwardEdgeOfBattleArea.getSupportedGraphics());
 
         // Mobility/survivability
 

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (C) 2012 United States Government as represented by the Administrator of the
+  ~ National Aeronautics and Space Administration.
+  ~ All Rights Reserved.
+  -->
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
+<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
+<svg id="G*GPDLF---****X" width="400px" height="400px" viewBox="0 0 400 400">
+    <g>
+        <svg viewBox="0 0 400 400" id="_0.G-GPDLF-------X" width="400px" height="400px">
+            <g transform="translate(-60 -30)">
+                <circle cx="113" cy="107" r="17" transform="matrix(1 0 0 1 59.4167 88.417)"
+                        style="fill:none;stroke:rgb(0,0,0);stroke-width:2"></circle>
+                <line x1="99" y1="118" x2="124.669" y2="94.899" transform="matrix(1 0 0 1 60.1667 89.167)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                <line x1="99.6692" y1="94.5657" x2="124.669" y2="117.899" transform="matrix(1 0 0 1 60.1667 89.167)"
+                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+            </g>
+        </svg>
+
+    </g>
+</svg>

@@ -74,6 +74,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
 
+    /** Factor applied to the stipple pattern used to draw graphics in anticipated state. */
+    protected static final int OUTLINE_STIPPLE_FACTOR = 6;
+    /** Stipple pattern applied to graphics in the anticipated state. */
+    protected static final short OUTLINE_STIPPLE_PATTERN = (short) 0xAAAA;
+
     /**
      * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
      * this graphic belongs. For symbols belonging to the MIL-STD-2525 symbol set, this returns a 15-character
@@ -81,18 +86,33 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
      * each call to {@link #setModifier(String, Object)}. Initially <code>null</code>.
      */
     protected SymbolCode symbolCode;
+    /**
+     * Symbol identifier with fields that do not influence the type of graphic replaced with hyphens. See {@link
+     * SymbolCode#toMaskedString}.
+     */
     protected String maskedSymbolCode;
 
+    /**
+     * The graphic's text string. This field corresponds to the {@link SymbologyConstants#UNIQUE_DESIGNATION} modifier.
+     * Note that this field is not used if an Iterable is specified as the unique designation.
+     */
     protected String text;
 
+    /** Indicates whether or not the graphic is highlighted. */
     protected boolean highlighted;
+    /** Indicates whether or not to render the graphic. */
     protected boolean visible = true;
+    /** Indicates whether or not to render text modifiers. */
     protected boolean showModifiers = true;
+    /** Indicates whether or not to render the hostile/enemy modifier. */
     protected boolean showHostileIndicator = true;
     protected Object delegateOwner;
 
+    /** Attributes applied when the graphic is not highlighted. */
     protected TacticalGraphicAttributes normalAttributes;
+    /** Attributes applied when the graphic is highlighted. */
     protected TacticalGraphicAttributes highlightAttributes;
+    /** Offset applied to the graphic's main label. */
     protected Offset labelOffset;
 
     protected AVList modifiers;
@@ -101,7 +121,12 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
 
     protected long frameTimestamp = -1L;
 
+    /** Override attributes for the current frame. */
     protected TacticalGraphicAttributes activeOverrides = new BasicTacticalGraphicAttributes();
+    /**
+     * Shape attributes shared by all shapes that make up this graphic. The graphic's active attributes are copied into
+     * this attribute bundle on each frame.
+     */
     protected ShapeAttributes activeShapeAttributes = new BasicShapeAttributes();
 
     /** Flag to indicate that labels must be recreated before the graphic is rendered. */
@@ -626,12 +651,37 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         String status = this.getStatus();
         if (!SymbologyConstants.STATUS_PRESENT.equals(status))
         {
-            attributes.setOutlineStippleFactor(6);
-            attributes.setOutlineStipplePattern((short) 0xAAAA);
+            attributes.setOutlineStippleFactor(this.getOutlineStippleFactor());
+            attributes.setOutlineStipplePattern(this.getOutlineStipplePattern());
         }
 
         // Most 2525 area graphic do not have a fill.
         attributes.setDrawInterior(false);
+    }
+
+    /**
+     * Indicates the factor applied to the stipple pattern used to draw dashed lines when the graphic is "anticipated".
+     * This value is not used when the graphic is "present".
+     *
+     * @return Factor applied to the stipple pattern.
+     *
+     * @see gov.nasa.worldwind.render.ShapeAttributes#getOutlineStippleFactor()
+     */
+    protected int getOutlineStippleFactor()
+    {
+        return OUTLINE_STIPPLE_FACTOR;
+    }
+
+    /**
+     * Indicates the stipple pattern used to draw dashed lines when the graphic is "anticipated". ç
+     *
+     * @return Factor applied to the stipple pattern.
+     *
+     * @see gov.nasa.worldwind.render.ShapeAttributes#getOutlineStipplePattern()
+     */
+    protected short getOutlineStipplePattern()
+    {
+        return OUTLINE_STIPPLE_PATTERN;
     }
 
     protected Material getDefaultOutlineMaterial()

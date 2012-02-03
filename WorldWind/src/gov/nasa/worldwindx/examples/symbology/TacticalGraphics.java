@@ -278,6 +278,17 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createGraphic("GFGPSLA-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Ambush (2.X.2.6.1.1)");
             layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Forward Edge of Battle Area (FEBA) (2.X.2.4.2.1)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.2805, -117.5978),
+                Position.fromDegrees(35.2978, -117.3702));
+            graphic = factory.createGraphic("GFGPDLF-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Forward Edge of Battle Area (2.X.2.4.2.1)");
+            layer.addRenderable(graphic);
         }
 
         protected void createAreaGraphics(RenderableLayer layer)
