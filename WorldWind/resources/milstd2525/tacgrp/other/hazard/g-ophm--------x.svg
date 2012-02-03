@@ -1,15 +1,11 @@
-<?xml version="1.0"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
-<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
-<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
-<svg id="G*OPHM----****X" width="400px" height="400px" viewBox="0 0 400 400">
-    <g>
-        <svg viewBox="0 0 400 400" id="_0.G-OPHM--------X" width="400px" height="400px">
-            <g transform="translate(20 15) scale(11 11)">
-                <path
-                    d="M0 5.506 L8.1 13.606 L7.379 14.446 L0 7.125 zM21.121 10.125 L27.961 16.957 L27.961      26.668 L21.121 33.5 L11.459 33.5 L4.439 26.727 L4.439 17.018 L11.22 10.305      zM16.75 10.125 L16.75 0 L15.5 0 L15.5 10.125 zM32.58 5.445 L32.58 6.945 L25.199      14.324 L24.42 13.664 z"></path>
-            </g>
-        </svg>
-
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="_0.G-OPHM--------X" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+<polygon fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="27" points="252.331,126.375 327.571,201.527 
+	327.571,308.348 252.331,383.5 146.049,383.5 68.829,308.997 68.829,202.198 143.42,128.355 "/>
+<line fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="26" x1="197.5" y1="14.5" x2="197.5" y2="125.5"/>
+<line fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="26" x1="20.255" y1="84.755" x2="98.744" y2="163.244"/>
+<line fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="26" x1="375.744" y1="85.755" x2="297.256" y2="164.244"/>
 </svg>

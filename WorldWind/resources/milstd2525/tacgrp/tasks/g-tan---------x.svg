@@ -1,32 +1,24 @@
-<?xml version="1.0"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
-<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
-<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
-<svg id="G*TPN-----****X" width="400px" height="400px" viewBox="0 0 400 400">
-    <g>
-        <svg viewBox="0 0 400 400" id="_0.G-TPN---------X" width="400px" height="400px">
-            <g transform="translate(-230 -200) scale(1.75 1.75)">
-                <line x1="104.322" y1="280.81" x2="125.656" y2="267.31"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2" transform="matrix(1 0 0 1 39 6)"></line>
-                <line x1="132.938" y1="262.787" x2="151.656" y2="251.143"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2" transform="matrix(1 0 0 1 39 6)"></line>
-                <line x1="157.756" y1="247.377" x2="181.422" y2="232.543"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2" transform="matrix(1 0 0 1 39 6)"></line>
-                <line x1="192.821" y1="226.003" x2="216.154" y2="211.336"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"
-                      transform="matrix(1 0 0 1 39 6) translate(-4.08163 2.04082)"></line>
-                <line x1="220.889" y1="208.01" x2="238.389" y2="196.843"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2" transform="matrix(1 0 0 1 39 6)"></line>
-                <line x1="245.722" y1="192.343" x2="259.656" y2="183.543"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2" transform="matrix(1 0 0 1 39 6)"></line>
-                <line x1="266.322" y1="179.543" x2="284.322" y2="168.377"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2" transform="matrix(1 0 0 1 39 6)"></line>
-                <line x1="291.689" y1="163.91" x2="303.856" y2="156.077"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2" transform="matrix(1 0 0 1 39 6)"></line>
-                <line x1="100" y1="153" x2="310" y2="285" style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"
-                      transform="matrix(1 0 0 1 39 6)"></line>
-            </g>
-        </svg>
-
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="_0.G-TPN---------X" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+<g>
+	<g transform="translate(-230 -200) scale(1.75 1.75)">
+		<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="143.322" y1="286.81" x2="164.656" y2="273.31"/>
+		
+			<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="171.938" y1="268.787" x2="190.656" y2="257.143"/>
+		
+			<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="196.756" y1="253.377" x2="220.422" y2="238.543"/>
+		
+			<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="227.739" y1="234.044" x2="251.073" y2="219.377"/>
+		<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="259.889" y1="214.01" x2="277.389" y2="202.843"/>
+		
+			<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="284.722" y1="198.343" x2="298.656" y2="189.543"/>
+		
+			<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="305.322" y1="185.543" x2="323.322" y2="174.377"/>
+		<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="330.689" y1="169.91" x2="342.856" y2="162.077"/>
+		<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="26" x1="139" y1="159" x2="349" y2="291"/>
+	</g>
+</g>
 </svg>

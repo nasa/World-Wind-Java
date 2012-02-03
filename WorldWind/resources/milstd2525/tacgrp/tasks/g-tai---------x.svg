@@ -1,25 +1,12 @@
-<?xml version="1.0"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
-<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
-<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
-<svg id="G*TPI-----****X" width="400px" height="400px" viewBox="0 0 400 400">
-    <g>
-        <svg viewBox="0 0 400 400" id="_0.G-TPI---------X" width="400px" height="400px">
-            <g transform="translate(-170 -180) scale(1.75 1.75)">
-                <line x1="118.791" y1="286.772" x2="311" y2="151"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
-                <line x1="105" y1="217" x2="321" y2="217"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
-                <line x1="320.425" y1="216.685" x2="296.337" y2="192.525"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
-                <line x1="320.258" y1="217.352" x2="298.758" y2="238.852"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
-                <line x1="310.258" y1="151.352" x2="281.337" y2="151.325"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
-                <line x1="310.425" y1="151.685" x2="310.462" y2="178.7"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
-            </g>
-        </svg>
-
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="_0.G-TPI---------X" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="27" x1="37.884" y1="321.852" x2="374.25" y2="84.25"/>
+<line fill="none" stroke="#000000" stroke-width="2" stroke-dasharray="27" x1="13.75" y1="199.75" x2="391.75" y2="199.75"/>
+<line fill="none" stroke="#000000" stroke-width="2" x1="390.744" y1="199.199" x2="348.59" y2="156.919"/>
+<line fill="none" stroke="#000000" stroke-width="2" x1="390.451" y1="200.366" x2="352.826" y2="237.991"/>
+<line fill="none" stroke="#000000" stroke-width="2" x1="372.951" y1="84.866" x2="322.34" y2="84.819"/>
+<line fill="none" stroke="#000000" stroke-width="2" x1="373.244" y1="85.449" x2="373.309" y2="132.725"/>
 </svg>

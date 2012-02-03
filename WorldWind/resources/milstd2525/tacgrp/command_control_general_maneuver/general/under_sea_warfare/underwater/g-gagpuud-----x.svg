@@ -1,26 +1,9 @@
-<?xml version="1.0"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
-<!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
-<!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
-<svg id="G*GPGPUUD-****X" width="400px" height="400px" viewBox="0 0 400 400">
-    <g>
-        <svg viewBox="0 0 400 400" id="_0.G-GPGPUUD-----X" width="400px" height="400px">
-            <g transform="translate(80 80) scale(5 5)">
-                <path d="M50.52 25.342 C50.52 32.467 48.088 38.463 43.229 43.328 C38.37 48.191 32.379 50.625
-				25.26 50.625 C18.221 50.625 12.25 48.172 7.35 43.27 C2.451 38.363 0 32.389
-				0 25.342 C0 18.217 2.432 12.211 7.289 7.326 C12.15 2.443 18.141 0 25.26 0
-				C32.338 0 38.319 2.453 43.199 7.357 C48.078 12.262 50.52 18.256 50.52 25.342
-				zM26.58 48.75 C25.939 48.832 25.279 48.875 24.6 48.875 C18.6 48.875 13.301
-				46.521 8.702 41.814 C6.382 39.459 4.712 37.115 3.69 34.783 C2.672 32.447 2.102
-				29.644 1.981 26.375 L25.751 26.375 L25.751 48.75 zM25.5 26.125 L25.5 1.875
-				C18.918 1.875 13.332 4.176 8.742 8.777 C3.996 13.539 1.781 19.322 2.1 26.125
-				zM41.645 9.117 C44.883 12.375 46.942 15.15 47.821 17.443 C48.421 18.931 48.721
-				21.306 48.721 24.564 C48.721 25.169 48.688 25.773 48.625 26.375 L25.75
-				26.375 L25.75 1.875 C31.627 1.957 36.926 4.371 41.645 9.117 zM48.625 26.375
-				L25.98 26.375 L25.98 48.75 C32.027 48.43 37.271 46.15 41.716 41.912 C46.322
-				37.512 48.625 32.332 48.625 26.375 z"></path>
-            </g>
-        </svg>
-
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="_0.G-GPGPUUD-----X" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+<circle fill="none" stroke="#000000" stroke-width="7" stroke-dasharray="27" cx="199.5" cy="199.5" r="123"/>
+<path d="M202.673,79.794v122.877H319.1c0.064-1.602,0.106-3.21,0.106-4.829C319.206,133.149,267.171,80.618,202.673,79.794z"/>
+<path d="M79.794,202.672h122.879v116.427c-1.603,0.065-3.211,0.106-4.829,0.106C133.148,319.205,80.617,267.17,79.794,202.672z"/>
 </svg>
