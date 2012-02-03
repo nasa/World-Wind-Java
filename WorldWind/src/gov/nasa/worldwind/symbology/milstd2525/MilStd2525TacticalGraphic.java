@@ -673,7 +673,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     }
 
     /**
-     * Indicates the stipple pattern used to draw dashed lines when the graphic is "anticipated". ç
+     * Indicates the stipple pattern used to draw dashed lines when the graphic is "anticipated".
      *
      * @return Factor applied to the stipple pattern.
      *
