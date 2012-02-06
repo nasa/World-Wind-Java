@@ -46,8 +46,8 @@ public class BarycentricTriangle implements BarycentricPlanarShape
     public BarycentricTriangle(Point p00, Point p10, Point p01)
     {
         this.p00 = new Vec4(p00.x, p00.y, 0);
-        this.p10 = new Vec4(p01.x, p01.y, 0);
-        this.p01 = new Vec4(p10.x, p10.y, 0);
+        this.p10 = new Vec4(p10.x, p10.y, 0);
+        this.p01 = new Vec4(p01.x, p01.y, 0);
 
         q1 = this.p10.subtract3(this.p00);
         q3 = this.p01.subtract3(this.p00);
