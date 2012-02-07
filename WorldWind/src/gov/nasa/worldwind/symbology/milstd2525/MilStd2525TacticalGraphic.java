@@ -268,6 +268,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     public void setShowHostileIndicator(boolean showHostileIndicator)
     {
         this.showHostileIndicator = showHostileIndicator;
+        this.onModifierChanged();
     }
 
     /** {@inheritDoc} */

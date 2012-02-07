@@ -45,9 +45,8 @@ public class WeaponsFreeZone extends AviationZone
     }
 
     @Override
-    protected void doRenderGraphic(DrawContext dc)
+    protected void doRenderModifiers(DrawContext dc)
     {
-        super.doRenderGraphic(dc);
         this.annotation.render(dc);
     }
 

@@ -234,9 +234,14 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         if (this.children != null)
         {
+            boolean showModifiers = this.isShowModifiers();
+            boolean showHostile = this.isShowHostileIndicator();
+
             for (TacticalGraphic child : this.children)
             {
                 child.setDelegateOwner(owner);
+                child.setShowModifiers(showModifiers);
+                child.setShowHostileIndicator(showHostile);
             }
         }
     }

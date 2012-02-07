@@ -10,13 +10,16 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
+import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -34,32 +37,42 @@ public class TacticalGraphics extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
+        protected RenderableLayer pointLayer;
+        protected RenderableLayer lineLayer;
+        protected RenderableLayer areaLayer;
+
+        protected TacticalGraphicAttributes sharedAttrs;
+
         public AppFrame()
         {
             super(true, true, false);
 
-            RenderableLayer pointLayer = new RenderableLayer();
-            pointLayer.setName("Tactical Graphics (Points)");
+            this.pointLayer = new RenderableLayer();
+            this.pointLayer.setName("Tactical Graphics (Points)");
 
-            RenderableLayer lineLayer = new RenderableLayer();
-            lineLayer.setName("Tactical Graphics (Lines)");
+            this.lineLayer = new RenderableLayer();
+            this.lineLayer.setName("Tactical Graphics (Lines)");
 
-            RenderableLayer areaLayer = new RenderableLayer();
-            areaLayer.setName("Tactical Graphics (Areas)");
+            this.areaLayer = new RenderableLayer();
+            this.areaLayer.setName("Tactical Graphics (Areas)");
+
+            this.sharedAttrs = new BasicTacticalGraphicAttributes();
 
             // Create tactical symbols and graphics and add them to the layer
-            this.createPointGraphics(pointLayer);
-            this.createLineGraphics(lineLayer);
-            this.createAreaGraphics(areaLayer);
+            this.createPointGraphics(this.pointLayer);
+            this.createLineGraphics(this.lineLayer);
+            this.createAreaGraphics(this.areaLayer);
 
-            insertBeforePlacenames(getWwd(), pointLayer);
-            insertBeforePlacenames(getWwd(), lineLayer);
-            insertBeforePlacenames(getWwd(), areaLayer);
+            insertBeforePlacenames(getWwd(), this.pointLayer);
+            insertBeforePlacenames(getWwd(), this.lineLayer);
+            insertBeforePlacenames(getWwd(), this.areaLayer);
 
             this.getLayerPanel().update(this.getWwd());
 
             // Add a BasicDragger so that graphics can be moved by clicking and dragging.
             this.getWwd().addSelectListener(new BasicDragger(this.getWwd()));
+
+            this.addGraphicControls();
 
             // Size the World Window to provide enough screen space for the graphics, and center the World Window
             // on the screen.
@@ -94,6 +107,9 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "High Tower");
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "2562");
             layer.addRenderable(graphic);
+
+            // Apply shared attributes to all graphics on this layer
+            this.setAttributes(layer, this.sharedAttrs);
         }
 
         protected void createLineGraphics(RenderableLayer layer)
@@ -289,6 +305,9 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createGraphic("GFGPDLF-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Forward Edge of Battle Area (2.X.2.4.2.1)");
             layer.addRenderable(graphic);
+
+            // Apply shared attributes to all graphics on this layer
+            this.setAttributes(layer, this.sharedAttrs);
         }
 
         protected void createAreaGraphics(RenderableLayer layer)
@@ -591,6 +610,117 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createPoint("GFMPNEB-------X", Position.fromDegrees(34.5059, -117.2020), null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Biological Release Event (2.X.3.4.7.1)");
             layer.addRenderable(graphic);
+
+            // Apply shared attributes to all graphics on this layer
+            this.setAttributes(layer, this.sharedAttrs);
+        }
+
+        /**
+         * Apply attributes to all TacticalGraphics on a layer.
+         *
+         * @param layer Layer of graphics to modify.
+         * @param attrs Attributes to apply to graphics.
+         */
+        protected void setAttributes(RenderableLayer layer, TacticalGraphicAttributes attrs)
+        {
+            for (Renderable renderable : layer.getRenderables())
+            {
+                if (renderable instanceof TacticalGraphic)
+                {
+                    // Apply attributes if the graphic does not already have attributes.
+                    TacticalGraphic graphic = (TacticalGraphic) renderable;
+                    if (graphic.getAttributes() == null)
+                    {
+                        graphic.setAttributes(attrs);
+                    }
+                }
+            }
+        }
+
+        protected void addGraphicControls()
+        {
+            javax.swing.Box box = javax.swing.Box.createVerticalBox();
+            box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Create a slider that controls the opacity of all symbols.
+            JLabel label = new JLabel("Opacity");
+            JSlider slider = new JSlider(0, 100, 100);
+            slider.addChangeListener(new ChangeListener()
+            {
+                public void stateChanged(ChangeEvent changeEvent)
+                {
+                    // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
+                    // when highlighted. Changes in these attributes are reflected in all symbols that use them.
+                    JSlider slider = (JSlider) changeEvent.getSource();
+                    double opacity = (double) slider.getValue() / 100d;
+                    sharedAttrs.setInteriorOpacity(opacity);
+                    sharedAttrs.setOutlineOpacity(opacity);
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            slider.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(label);
+            box.add(slider);
+
+            // Create a check box that toggles the visibility of text and graphic modifiers for all symbols.
+            JCheckBox cb = new JCheckBox("Modifiers", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    this.setShowModifiers(pointLayer, tf);
+                    this.setShowModifiers(lineLayer, tf);
+                    this.setShowModifiers(areaLayer, tf);
+
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+
+                protected void setShowModifiers(RenderableLayer layer, boolean show)
+                {
+                    for (Renderable r : layer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowModifiers(show);
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the visibility of text and graphic modifiers for all symbols.
+            cb = new JCheckBox("Hostile indicator", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    this.setShowHostile(pointLayer, tf);
+                    this.setShowHostile(lineLayer, tf);
+                    this.setShowHostile(areaLayer, tf);
+
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+
+                protected void setShowHostile(RenderableLayer layer, boolean show)
+                {
+                    for (Renderable r : layer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowHostileIndicator(show);
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            this.getLayerPanel().add(box, BorderLayout.SOUTH);
         }
     }
 

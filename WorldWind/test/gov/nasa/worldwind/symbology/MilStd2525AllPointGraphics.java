@@ -10,11 +10,15 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525PointGraphic;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
+import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -29,15 +33,25 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
+        protected RenderableLayer graphicLayer;
+
+        protected TacticalGraphicAttributes sharedAttrs;
+        protected TacticalGraphicAttributes sharedHighlightAttrs;
+
         public AppFrame()
         {
             super(true, true, false);
 
-            RenderableLayer layer = new RenderableLayer();
+            this.graphicLayer = new RenderableLayer();
 
-            this.displayPoints(layer);
+            this.sharedAttrs = new BasicTacticalGraphicAttributes();
+            this.sharedHighlightAttrs = new BasicTacticalGraphicAttributes();
 
-            this.getWwd().getModel().getLayers().add(layer);
+            this.displayPoints(this.graphicLayer);
+
+            this.getWwd().getModel().getLayers().add(this.graphicLayer);
+
+            this.addGraphicControls();
 
             // Size the World Window to provide enough screen space for the graphics, and center the World Window
             // on the screen.
@@ -90,6 +104,9 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                         "45'35\"N009'59\"E"); // TODO should be computed from position
                     graphic.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
 
+                    graphic.setAttributes(this.sharedAttrs);
+                    graphic.setHighlightAttributes(this.sharedHighlightAttrs);
+
                     layer.addRenderable(graphic);
 
                     if ((i * ALL_STATUS.length + j + 1) % cols == 0)
@@ -103,6 +120,55 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                     }
                 }
             }
+        }
+
+        protected void addGraphicControls()
+        {
+            javax.swing.Box box = javax.swing.Box.createVerticalBox();
+            box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Create a slider that controls the opacity of all symbols.
+            JLabel label = new JLabel("Opacity");
+            JSlider slider = new JSlider(0, 100, 100);
+            slider.addChangeListener(new ChangeListener()
+            {
+                public void stateChanged(ChangeEvent changeEvent)
+                {
+                    // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
+                    // when highlighted. Changes in these attributes are reflected in all symbols that use them.
+                    JSlider slider = (JSlider) changeEvent.getSource();
+                    double opacity = (double) slider.getValue() / 100d;
+                    sharedAttrs.setInteriorOpacity(opacity);
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            slider.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(label);
+            box.add(slider);
+
+            // Create a check box that toggles the visibility of text and graphic modifiers for all symbols.
+            JCheckBox cb = new JCheckBox("Modifiers", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : graphicLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowModifiers(tf);
+                        getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            this.getLayerPanel().add(box, BorderLayout.SOUTH);
         }
     }
 
