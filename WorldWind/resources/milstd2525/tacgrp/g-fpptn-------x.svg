@@ -6,15 +6,15 @@
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-F-PTN-------X" width="400px" height="400px">
             <circle cx="200" cy="200" r="10" transform="matrix(1 0 0 1 0 0)"
-                    style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:1"></circle>
+                    style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:1"></circle>
             <line x1="220" y1="200" x2="350" y2="200" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></line>
             <line x1="180" y1="200" x2="50" y2="200" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></line>
             <line x1="200" y1="180" x2="200" y2="50" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></line>
             <line x1="200" y1="220" x2="200" y2="350" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></line>
         </svg>
 
     </g>

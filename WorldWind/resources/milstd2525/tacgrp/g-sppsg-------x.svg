@@ -5,16 +5,17 @@
 <svg id="G*SPPSG---****X" width="400px" height="400px" viewBox="0 0 400 400">
     <g>
         <svg viewBox="0 0 400 400" id="_0.GP------------X" width="400px" height="400px">
-            <rect x="130" y="100" width="140" height="180" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></rect>
+            <rect x="130" y="100" width="140" height="180"
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></rect>
             <polyline points="130,281 200,375 270,281" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></polyline>
         </svg>
 
     </g>
     <g>
         <svg viewBox="0 0 400 400" id="_1.GSP-----------X" width="400px" height="400px">
             <line x1="130" y1="250" x2="270" y2="250" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></line>
         </svg>
 
     </g>
@@ -22,10 +23,11 @@
         <svg viewBox="0 0 400 400" id="_2.G-S-PSG-------X" width="400px" height="400px">
             <g transform="translate(-200 -200) scale(0.75 0.75) translate(334 300) translate(200 218) scale(1 1) translate(-200 -218)">
                 <ellipse cx="140" cy="200" rx="18" ry="18"
-                         style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:10"></ellipse>
+                         style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:10"></ellipse>
                 <ellipse cx="260" cy="200" rx="18" ry="18"
-                         style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:10"></ellipse>
-                <path d="M145 190 C180 160 220 160 255 190" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></path>
+                         style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:10"></ellipse>
+                <path d="M145 190 C180 160 220 160 255 190"
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></path>
             </g>
         </svg>
 

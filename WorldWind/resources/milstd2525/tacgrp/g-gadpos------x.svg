@@ -7,14 +7,14 @@
      viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
     <g>
         <g>
-            <polygon fill="none" stroke="#000000" stroke-width="5" stroke-dasharray="25,26" points="258.834,328.5 139.5,328.5
+            <polygon fill="none" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="25,26" points="258.834,328.5 139.5,328.5
 			109.833,263.834 288.5,263.834 		"/>
-            <line fill="none" stroke="#000000" stroke-width="5" stroke-dasharray="25,26" x1="58.833" y1="294.5"
+            <line fill="none" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="25,26" x1="58.833" y1="294.5"
                   x2="122.167" y2="294.5"/>
-            <line fill="none" stroke="#000000" stroke-width="5" stroke-dasharray="25,26" x1="276.501" y1="294.5"
+            <line fill="none" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="25,26" x1="276.501" y1="294.5"
                   x2="339.833" y2="294.5"/>
         </g>
     </g>
-    <polygon fill="none" stroke="#000000" stroke-width="5" stroke-dasharray="25,26" points="22.436,354.092 110.969,200.75
+    <polygon fill="none" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="25,26" points="22.436,354.092 110.969,200.75
 	199.501,47.409 288.033,200.752 376.564,354.092 199.501,354.092 "/>
 </svg>

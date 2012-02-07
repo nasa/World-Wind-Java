@@ -7,11 +7,11 @@
         <svg viewBox="0 0 400 400" id="_0.G-MPOMP-------X" width="400px" height="400px">
             <g transform="translate(-490 -530) scale(3.5 3.5)">
                 <circle cx="218" cy="204.5" r="34" transform="matrix(1 0 0 1 -19 20)"
-                        style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></circle>
+                        style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></circle>
                 <line x1="178" y1="198" x2="146.5" y2="160"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
                 <line x1="260" y1="272" x2="229.5" y2="235" transform="matrix(-1 0 0 1 490 -82) translate(12 7)"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
             </g>
         </svg>
 

@@ -7,10 +7,10 @@
      viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
     <circle cx="199.5" cy="251" r="60.5"/>
     <g>
-        <polygon fill="none" stroke="#000000" stroke-width="5" stroke-dasharray="25,26" points="22.436,354.092 110.968,200.749
+        <polygon fill="none" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="25,26" points="22.436,354.092 110.968,200.749
 		199.501,47.408 288.032,200.751 376.564,354.091 199.5,354.091 	"/>
 
-        <line fill="none" stroke="#000000" stroke-width="5" stroke-dasharray="24,24" x1="27.567" y1="351.129"
+        <line fill="none" stroke="#FFFFFF" stroke-width="5" stroke-dasharray="24,24" x1="27.567" y1="351.129"
               x2="285.932" y2="201.963"/>
     </g>
 </svg>

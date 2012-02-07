@@ -6,10 +6,11 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
 import java.awt.image.*;
 import java.util.MissingResourceException;
 
@@ -61,19 +62,55 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         // Retrieve desired symbol and convert to BufferedImage
         SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
 
-        BufferedImage img = null;
         String filename = getFilename(symbolCode);
 
-        img = retrieveImageFromURL(filename, img);
+        BufferedImage srcImg = retrieveImageFromURL(filename, null);
 
-        if (img == null)
+        if (srcImg == null)
         {
             String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
             Logging.logger().severe(msg);
             throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
         }
 
-        return img;
+        BufferedImage destImg = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(),
+            BufferedImage.TYPE_INT_ARGB_PRE);
+
+        this.drawImage(srcImg, destImg);
+
+        Color color = this.getColorFromParams(params);
+        if (color == null)
+            color = this.getColorForStandardIdentity(symbolCode);
+
+        this.multiply(destImg, color);
+
+        return destImg;
+    }
+
+    /**
+     * Retrieves the value of the AVKey.COLOR parameter.
+     *
+     * @param params Parameter list.
+     *
+     * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
+     *         null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a
+     *         Color.
+     */
+    protected Color getColorFromParams(AVList params)
+    {
+        if (params == null)
+            return null;
+
+        Object o = params.getValue(AVKey.COLOR);
+        return (o instanceof Color) ? (Color) o : null;
+    }
+
+    protected Color getColorForStandardIdentity(SymbolCode code)
+    {
+        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(code.getStandardIdentity()))
+            return MilStd2525TacticalGraphic.MATERIAL_HOSTILE.getDiffuse();
+        else
+            return MilStd2525TacticalGraphic.MATERIAL_FRIEND.getDiffuse();
     }
 
     /**

@@ -9,11 +9,13 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <line x1="25" y1="375" x2="375" y2="25"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:27"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:27"/>
             <line x1="25" y1="25" x2="375" y2="375"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:27"/>
-            <polygon points="200,200 130,130 270,130" style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:10"/>
-            <polygon points="200,200 270,270 130,270" style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:10"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:27"/>
+            <polygon points="200,200 130,130 270,130"
+                     style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:10"/>
+            <polygon points="200,200 270,270 130,270"
+                     style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:10"/>
         </svg>
 
     </g>
@@ -22,10 +24,10 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <text x="25px" y="245px"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:120;font-family:@Arial Unicode MS">D
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:120;font-family:@Arial Unicode MS">D
             </text>
             <text x="285px" y="245px"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:120;font-family:@Arial Unicode MS">P
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:120;font-family:@Arial Unicode MS">P
             </text>
         </svg>
 

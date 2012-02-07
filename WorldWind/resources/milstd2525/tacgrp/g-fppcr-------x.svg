@@ -6,16 +6,17 @@
     <g transform="translate(0 -55)">
         <svg viewBox="0 0 400 400" id="_1.RLP------------" width="400px" height="400px">
             <text x="167px" y="168px" transform="matrix(1 0 0 1 -27.81 53.48)"
-                  style="fill:rgb(0,0,0);font-size:60;font-family:Arial;font-weight:bold">RLP
+                  style="fill:rgb(255,255,255);font-size:60;font-family:Arial;font-weight:bold">RLP
             </text>
         </svg>
 
     </g>
     <g>
         <svg viewBox="0 0 400 400" id="_2.GP------------X" width="400px" height="400px">
-            <rect x="130" y="100" width="140" height="180" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></rect>
+            <rect x="130" y="100" width="140" height="180"
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></rect>
             <polyline points="130,281 200,375 270,281" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></polyline>
         </svg>
 
     </g>

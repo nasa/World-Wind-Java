@@ -9,9 +9,9 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <rect x="130" y="100" width="140" height="180"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
             <polyline points="130,281 200,375 270,281" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
         </svg>
 
     </g>
@@ -20,7 +20,7 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <line x1="130" y1="250" x2="270" y2="250" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
         </svg>
 
     </g>
@@ -29,23 +29,23 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <circle cx="200" cy="175" r="40" transform="matrix(1 0 0 1 0 0)"
-                    style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                    style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="200" y1="135" x2="200" y2="115" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="200" y1="215" x2="200" y2="235" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="240" y1="175" x2="260" y2="175" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="160" y1="175" x2="140" y2="175" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="170" y1="150" x2="155" y2="135" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="230" y1="150" x2="245" y2="135" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="230" y1="200" x2="245" y2="215" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
             <line x1="170" y1="200" x2="155" y2="215" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"/>
         </svg>
 
     </g>

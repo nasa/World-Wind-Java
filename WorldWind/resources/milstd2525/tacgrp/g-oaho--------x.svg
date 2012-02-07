@@ -5,14 +5,14 @@
      x="0px"
      y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400"
      xml:space="preserve">
-    <polyline fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" points="13.355,300.947 13.537,196.74 383.8,196.74
+    <polyline fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27" points="13.355,300.947 13.537,196.74 383.8,196.74
 	"/>
-    <line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="279.715" y1="302.611" x2="279.896"
+    <line fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27" x1="279.715" y1="302.611" x2="279.896"
           y2="198.404"/>
-    <line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="348.227" y1="302.126" x2="348.408"
+    <line fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27" x1="348.227" y1="302.126" x2="348.408"
           y2="197.918"/>
-    <line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="79.482" y1="194.771" x2="79.664"
+    <line fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27" x1="79.482" y1="194.771" x2="79.664"
           y2="81.561"/>
-    <polyline fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" points="139.687,194.119 139.687,144.804
+    <polyline fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27" points="139.687,194.119 139.687,144.804
 	81.307,144.804 "/>
 </svg>

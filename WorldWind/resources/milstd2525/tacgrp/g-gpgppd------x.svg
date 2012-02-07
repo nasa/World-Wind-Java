@@ -8,7 +8,7 @@
             <polygon
                 points="200,57.3415 235.228,166.574 350,166.323 257,233.581 292.705,342.658 200,274.994 107.295,342.658 143,233.581 50,166.323 164.772,166.574"
                 transform="matrix(1 0 0 1.05146 1.42109e-014 -10.2924)"
-                style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polygon>
+                style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></polygon>
         </svg>
 
     </g>

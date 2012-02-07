@@ -2,13 +2,16 @@
 <!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="_1.G-G-GPUYD-----X" xmlns:svg="http://www.w3.org/2000/svg"
-	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="400px" height="400px"
-	 viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
-<g>
-	<text transform="matrix(1 0 0 1 163.373 320.8789)" font-family="'ArialMT'" font-size="110">D</text>
-	<text transform="matrix(1 0 0 1 163.373 320.8789)" fill="none" stroke="#000000" font-family="'ArialMT'" font-size="110">D             </text>
-</g>
-<polyline fill="none" stroke="#231F20" stroke-width="7" stroke-dasharray="25,24" points="222.998,31.306 222.998,146.654 
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="400px"
+     height="400px"
+     viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+    <g>
+        <text transform="matrix(1 0 0 1 163.373 320.8789)" font-family="'ArialMT'" font-size="110">D</text>
+        <text transform="matrix(1 0 0 1 163.373 320.8789)" fill="none" stroke="#FFFFFF" font-family="'ArialMT'"
+              font-size="110">D
+        </text>
+    </g>
+    <polyline fill="none" stroke="#231F20" stroke-width="7" stroke-dasharray="25,24" points="222.998,31.306 222.998,146.654
 	199.17,118.366 199.17,196.312 "/>
-<circle fill="none" stroke="#231F20" stroke-width="7" stroke-dasharray="25,24" cx="199.5" cy="281.383" r="84.201"/>
+    <circle fill="none" stroke="#231F20" stroke-width="7" stroke-dasharray="25,24" cx="199.5" cy="281.383" r="84.201"/>
 </svg>

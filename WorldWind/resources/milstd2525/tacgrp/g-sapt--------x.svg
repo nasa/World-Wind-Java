@@ -9,9 +9,9 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <rect x="130" y="100" width="140" height="180"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
             <polyline points="130,281 200,375 270,281" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
         </svg>
 
     </g>
@@ -20,7 +20,7 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <text x="148px" y="160px"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:60;font-family:@Arial Unicode MS">CIV
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:60;font-family:@Arial Unicode MS">CIV
             </text>
         </svg>
 

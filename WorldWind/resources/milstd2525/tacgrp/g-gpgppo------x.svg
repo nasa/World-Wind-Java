@@ -6,11 +6,11 @@
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-G-GPPO------X" width="400px" height="400px">
             <circle cx="200" cy="200" r="150" transform="matrix(1 0 0 1 0 7.10543e-015)"
-                    style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></circle>
+                    style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></circle>
             <line x1="94" y1="306" x2="306" y2="94" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></line>
             <line x1="94" y1="94" x2="306" y2="306" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></line>
         </svg>
 
     </g>

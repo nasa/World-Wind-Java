@@ -9,13 +9,13 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <line x1="25" y1="200" x2="375" y2="200"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:15;stroke-dasharray:20"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:15;stroke-dasharray:20"/>
             <path
                 d="M25 125 C35 85 85 85 95 125 C105 165 155 165 165 125 C175 85 225 85 235 125 C245    165 295 165 305 125 C315 85 365 85 375 125"
-                style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+                style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:20"/>
             <path transform="translate(0 150)"
                   d="M25 125 C35 85 85 85 95 125 C105 165 155 165 165 125 C175 85 225 85 235 125 C245    165 295 165 305 125 C315 85 365 85 375 125"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:20"/>
         </svg>
 
     </g>
@@ -24,7 +24,7 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <text x="170px" y="385px"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:90;font-family:@Arial Unicode MS">R
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:90;font-family:@Arial Unicode MS">R
             </text>
         </svg>
 

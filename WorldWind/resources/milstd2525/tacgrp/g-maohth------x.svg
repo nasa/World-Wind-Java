@@ -5,7 +5,8 @@
      height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve"
      preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" contentScriptType="application/ecmascript"
      contentStyleType="text/css">
-    <circle stroke-dasharray="5" fill="none" stroke="rgb(0,0,0)" stroke-width="5" cx="195.367" cy="300" r="21.334"/>
-    <path fill="none" stroke="rgb(0,0,0)" stroke-width="5" stroke-dasharray="15"
+    <circle stroke-dasharray="5" fill="none" stroke="rgb(255,255,255)" stroke-width="5" cx="195.367" cy="300"
+            r="21.334"/>
+    <path fill="none" stroke="rgb(255,255,255)" stroke-width="5" stroke-dasharray="15"
           d="M200.982,74.333h-5.911v0h-5.318c-6.5,88.045-10.637,212.728-87.455,234.296l3.25,12.704c0,0,76.29-22.142,89.818-92.721  c13.529,70.578,89.818,92.721,89.818,92.721l3.25-12.705C211.619,287.062,207.482,162.379,200.982,74.333z"/>
 </svg>

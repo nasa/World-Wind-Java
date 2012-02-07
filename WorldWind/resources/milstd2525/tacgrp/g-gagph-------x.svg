@@ -9,7 +9,7 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <polyline points="127,320 35,75 360,75 273,320" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:27"/>
         </svg>
 
     </g>

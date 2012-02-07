@@ -11,16 +11,17 @@
 <svg id="G*SPPN----****X" width="400px" height="400px" viewBox="0 0 400 400">
     <g>
         <svg viewBox="0 0 400 400" id="_0.GP------------X" width="400px" height="400px">
-            <rect x="130" y="100" width="140" height="180" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></rect>
+            <rect x="130" y="100" width="140" height="180"
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></rect>
             <polyline points="130,281 200,375 270,281" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></polyline>
         </svg>
 
     </g>
     <g>
         <svg viewBox="0 0 400 400" id="_1.G-S-PN--------X" width="400px" height="400px">
             <text x="150px" y="150px"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:45;font-family:@Arial Unicode MS">DCN
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:45;font-family:@Arial Unicode MS">DCN
             </text>
         </svg>
 

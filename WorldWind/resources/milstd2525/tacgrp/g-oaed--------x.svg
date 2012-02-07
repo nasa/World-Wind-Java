@@ -9,9 +9,9 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <polyline points="50,300 100,250 150,300"
-                      style="stroke-linecap:square;fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+                      style="stroke-linecap:square;fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:20"/>
             <polyline points="250,300 300,250 350,300"
-                      style="stroke-linecap:square;fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+                      style="stroke-linecap:square;fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:20"/>
         </svg>
 
     </g>
@@ -21,7 +21,7 @@
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <polygon
                 points="141.833,287.793 260.333,146.833 233,92.1666 249.5,74.5 294.333,130 250,300 200,250    150,300"
-                style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:20"/>
+                style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:20"/>
         </svg>
 
     </g>

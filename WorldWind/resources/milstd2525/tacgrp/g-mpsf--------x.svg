@@ -7,15 +7,15 @@
         <svg viewBox="0 0 400 400" id="_0.G-MPSF--------X" width="400px" height="400px">
             <g transform="translate(-790 -690) scale(4 4)">
                 <rect x="160" y="170" width="52" height="53" transform="matrix(1 0 0 1 61 27)"
-                      style="fill:rgb(255,255,255);stroke:rgb(0,0,0);stroke-width:2"></rect>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:2"></rect>
                 <line x1="272" y1="197" x2="288" y2="180" transform="matrix(1 0 0 1 1 0)"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
                 <line x1="258" y1="259" x2="242" y2="242" transform="matrix(1 0 0 1 -37.6667 -62.6667)"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
                 <line x1="258" y1="259" x2="242" y2="242" transform="matrix(1 0 0 1 30.3333 7.33333)"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
                 <line x1="242" y1="259" x2="258" y2="242" transform="matrix(1 0 0 1 -37 7.33333)"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
             </g>
         </svg>
 

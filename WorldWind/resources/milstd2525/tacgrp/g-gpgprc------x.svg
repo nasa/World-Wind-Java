@@ -6,7 +6,7 @@
      height="400px"
      viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
     <g>
-        <rect x="74.5" y="74.03" fill="none" stroke="#000000" stroke-width="5" width="250" height="250"/>
+        <rect x="74.5" y="74.03" fill="none" stroke="#FFFFFF" stroke-width="5" width="250" height="250"/>
         <circle fill="#231F20" cx="199.5" cy="199.03" r="39.5"/>
         <text transform="matrix(1 0 0 1 173.502 304.3643)" font-family="'Arial-BoldMT'" font-size="72">C</text>
     </g>

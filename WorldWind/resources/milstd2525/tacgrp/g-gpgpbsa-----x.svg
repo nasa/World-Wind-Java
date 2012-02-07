@@ -6,8 +6,8 @@
      height="400px"
      viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
     <g>
-        <line fill="none" stroke="#000000" stroke-width="10" x1="24.417" y1="299.5" x2="374.416" y2="299.5"/>
-        <line fill="none" stroke="#000000" stroke-width="10" stroke-dasharray="27" x1="24.417" y1="99.5" x2="374.416"
+        <line fill="none" stroke="#FFFFFF" stroke-width="10" x1="24.417" y1="299.5" x2="374.416" y2="299.5"/>
+        <line fill="none" stroke="#FFFFFF" stroke-width="10" stroke-dasharray="27" x1="24.417" y1="99.5" x2="374.416"
               y2="99.5"/>
     </g>
     <polygon points="354.24,238.74 311.156,213.866 268.516,189.247 268.516,188.89 203.645,188.89 203.645,176.677 247.076,176.677

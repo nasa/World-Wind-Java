@@ -5,7 +5,7 @@
      height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve"
      preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" contentScriptType="application/ecmascript"
      contentStyleType="text/css">
-    <polygon stroke="#000000" stroke-width="2"
+    <polygon stroke="#FFFFFF" stroke-width="2"
              points="195.604,99.385 249.382,225.064 292.362,325.506 302.558,325.506  248.779,199.828 195,74.148 141.222,199.828 87.441,325.506 98.845,325.506 141.824,225.064 "/>
     <circle cx="195" cy="297.506" r="29"/>
 </svg>

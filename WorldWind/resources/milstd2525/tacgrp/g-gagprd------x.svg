@@ -10,13 +10,13 @@
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <g transform="translate(0 -20)">
                 <rect x="100" y="75" width="250" height="250" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:27"/>
                 <line x1="100" y1="325" x2="350" y2="75" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:27"/>
                 <line x1="100" y1="75" x2="350" y2="325" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:27"/>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:27"/>
                 <text x="28px" y="325px" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:72;font-family:Arial">D
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:72;font-family:Arial">D
                 </text>
             </g>
         </svg>

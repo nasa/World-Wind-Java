@@ -11,9 +11,9 @@
      preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" contentScriptType="application/ecmascript"
      contentStyleType="text/css">
     <g>
-        <line stroke-dasharray="27" fill="none" stroke="#000000" stroke-width="10" x1="99.5" y1="24.5" x2="99.5"
+        <line stroke-dasharray="27" fill="none" stroke="#FFFFFF" stroke-width="10" x1="99.5" y1="24.5" x2="99.5"
               y2="374.5"/>
-        <line stroke-dasharray="27" fill="none" stroke="#000000" stroke-width="10" x1="299.5" y1="24.5" x2="299.5"
+        <line stroke-dasharray="27" fill="none" stroke="#FFFFFF" stroke-width="10" x1="299.5" y1="24.5" x2="299.5"
               y2="374.5"/>
     </g>
     <text transform="matrix(1 0 0 1 128.8662 142.9712)" font-family="'Arial-BoldMT'" font-size="68.7537">MIW</text>

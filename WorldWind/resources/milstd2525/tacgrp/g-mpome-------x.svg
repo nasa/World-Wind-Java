@@ -6,11 +6,11 @@
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-MPOME-------X" width="400px" height="400px">
             <circle cx="199" cy="200.5" r="49" transform="matrix(1 0 0 1 0 0)"
-                    style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:5"></circle>
+                    style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:5"></circle>
             <line x1="200" y1="64" x2="200" y2="152" transform="matrix(1 0 0 1 0 0)"
-                  style="stroke:rgb(0,0,0);stroke-width:3;stroke-dasharray:6 3"></line>
+                  style="stroke:rgb(255,255,255);stroke-width:3;stroke-dasharray:6 3"></line>
             <polyline points="192,70 200,62 208,70" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></polyline>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></polyline>
         </svg>
 
     </g>

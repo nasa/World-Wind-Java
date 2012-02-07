@@ -9,9 +9,9 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <rect x="130" y="100" width="140" height="180"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
             <polyline points="130,281 200,375 270,281" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
         </svg>
 
     </g>
@@ -20,7 +20,7 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <line x1="130" y1="250" x2="270" y2="250" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
         </svg>
 
     </g>
@@ -28,8 +28,9 @@
         <svg viewBox="0 0 400 400" id="_2.G-S-PSC-------X" width="400px" height="400px"
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
-            <polyline points="200,195 240,120 160,120 200,195" style="stroke:rgb(0,0,0);stroke-width:5;fill:none"/>
-            <line x1="200" y1="190" x2="200" y2="240" style="fill:none;stroke:rgb(0,0,0);stroke-width:5"
+            <polyline points="200,195 240,120 160,120 200,195"
+                      style="stroke:rgb(255,255,255);stroke-width:5;fill:none"/>
+            <line x1="200" y1="190" x2="200" y2="240" style="fill:none;stroke:rgb(255,255,255);stroke-width:5"
                   transform="translate(200 217.5) scale(1 1) translate(-200 -217.5)"/>
         </svg>
 

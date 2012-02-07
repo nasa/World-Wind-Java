@@ -7,13 +7,13 @@
         <svg viewBox="0 0 400 400" id="_0.G-GPGPRD------X" width="400px" height="400px">
             <g transform="translate(0 -20)">
                 <rect x="100" y="75" width="250" height="250" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></rect>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></rect>
                 <line x1="100" y1="325" x2="350" y2="75" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></line>
                 <line x1="100" y1="75" x2="350" y2="325" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:5"></line>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:5"></line>
                 <text x="28px" y="325px" transform="matrix(1 0 0 1 0 0)"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:72;font-family:Arial">D
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:72;font-family:Arial">D
                 </text>
             </g>
         </svg>

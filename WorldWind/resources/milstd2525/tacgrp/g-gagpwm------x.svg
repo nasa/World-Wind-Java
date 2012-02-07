@@ -11,7 +11,7 @@
             <g transform="translate(20 10) scale(8 8)">
                 <path
                     d="M0.061 47.625 L0 46.25 L44.34 46.25 L44.401 47.625 zM14.102 13.904 L23.041 0 L31.801     13.904 zM25 13.846 L25 46.545 L20.5 46.545 L20.5 13.846 z"
-                    style="fill:none;stroke:rgb(0,0,0);stroke-width:1;stroke-dasharray:3"/>
+                    style="fill:none;stroke:rgb(255,255,255);stroke-width:1;stroke-dasharray:3"/>
             </g>
         </svg>
 

@@ -10,7 +10,7 @@
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <g transform="translate(-890 -820) scale(5 5)">
                 <circle cx="218" cy="204.5" r="34"
-                        style="fill:rgb(255,255,255);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+                        style="fill:none;stroke:rgb(255,255,255);stroke-width:2;stroke-dasharray:10"/>
             </g>
         </svg>
 

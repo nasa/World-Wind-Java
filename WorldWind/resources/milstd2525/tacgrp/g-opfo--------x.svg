@@ -6,13 +6,13 @@
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-OPFO--------X" width="400px" height="400px">
             <line x1="200" y1="49" x2="200" y2="351" transform="matrix(1 0 0 1 0 0)"
-                  style="stroke:rgb(0,0,0);stroke-width:3"></line>
+                  style="stroke:rgb(255,255,255);stroke-width:3"></line>
             <line x1="50" y1="50" x2="350" y2="351" transform="matrix(1 0 0 1 0 0)"
-                  style="stroke:rgb(0,0,0);stroke-width:3"></line>
+                  style="stroke:rgb(255,255,255);stroke-width:3"></line>
             <line x1="349" y1="49" x2="50" y2="349" transform="matrix(1 0 0 1 0 0)"
-                  style="stroke:rgb(0,0,0);stroke-width:3"></line>
+                  style="stroke:rgb(255,255,255);stroke-width:3"></line>
             <ellipse cx="200" cy="200" rx="125" ry="25" transform="matrix(1 0 0 1 0 0)"
-                     style="fill:none;stroke:rgb(0,0,0);stroke-width:3"></ellipse>
+                     style="fill:none;stroke:rgb(255,255,255);stroke-width:3"></ellipse>
         </svg>
 
     </g>

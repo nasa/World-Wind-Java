@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="_0.G-GPGPUUL-----X" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
-	 y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
-<polygon fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" points="341.6,278.35 194.366,364.75 50,278.35 "/>
-<polygon points="120.5,209.5 120.5,133.75 129.5,133.75 129.5,201.25 165.5,201.25 165.5,209.5 "/>
-<path d="M269.996,182.596l10.044,2.508c-4.524,16.266-14.532,24.396-30,24.396c-15,0-25.128-6.246-30.366-18.762
+<svg version="1.1" id="_0.G-GPGPUUL-----X" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     x="0px"
+     y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400"
+     xml:space="preserve">
+    <polygon fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27"
+             points="341.6,278.35 194.366,364.75 50,278.35 "/>
+    <polygon points="120.5,209.5 120.5,133.75 129.5,133.75 129.5,201.25 165.5,201.25 165.5,209.5 "/>
+    <path d="M269.996,182.596l10.044,2.508c-4.524,16.266-14.532,24.396-30,24.396c-15,0-25.128-6.246-30.366-18.762
 	c-2.628-6.246-3.924-12.858-3.924-19.842c0-15.87,5.473-26.802,16.428-32.826c5.227-2.88,11.178-4.326,17.85-4.326
 	c15.234,0,24.75,7.158,28.572,21.456l-9.689,2.178C265.79,147.13,259.46,142,249.896,142c-16.267,0-24.396,9.63-24.396,28.896
 	c0,20.238,7.77,30.354,23.322,30.354C260.54,201.25,267.607,195.04,269.996,182.596z"/>
-<line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="98" y1="43.5" x2="287.5" y2="43.5"/>
-<line fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="27" x1="195.5" y1="43.5" x2="195.5" y2="279"/>
+    <line fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27" x1="98" y1="43.5" x2="287.5" y2="43.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-width="6" stroke-dasharray="27" x1="195.5" y1="43.5" x2="195.5" y2="279"/>
 </svg>

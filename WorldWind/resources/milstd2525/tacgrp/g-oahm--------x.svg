@@ -5,12 +5,12 @@
      x="0px"
      y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400"
      xml:space="preserve">
-    <polygon fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="27" points="252.331,126.375 327.571,201.527
+    <polygon fill="none" stroke="#FFFFFF" stroke-width="11" stroke-dasharray="27" points="252.331,126.375 327.571,201.527
 	327.571,308.348 252.331,383.5 146.049,383.5 68.829,308.997 68.829,202.198 143.42,128.355 "/>
-    <line fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="26" x1="197.5" y1="14.5" x2="197.5"
+    <line fill="none" stroke="#FFFFFF" stroke-width="11" stroke-dasharray="26" x1="197.5" y1="14.5" x2="197.5"
           y2="125.5"/>
-    <line fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="26" x1="20.255" y1="84.755" x2="98.744"
+    <line fill="none" stroke="#FFFFFF" stroke-width="11" stroke-dasharray="26" x1="20.255" y1="84.755" x2="98.744"
           y2="163.244"/>
-    <line fill="none" stroke="#000000" stroke-width="11" stroke-dasharray="26" x1="375.744" y1="85.755" x2="297.256"
+    <line fill="none" stroke="#FFFFFF" stroke-width="11" stroke-dasharray="26" x1="375.744" y1="85.755" x2="297.256"
           y2="164.244"/>
 </svg>

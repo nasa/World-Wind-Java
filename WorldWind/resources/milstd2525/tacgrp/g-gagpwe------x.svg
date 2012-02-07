@@ -9,13 +9,13 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <line x1="10" y1="300" x2="390" y2="300" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:15"/>
             <line x1="200" y1="300" x2="200" y2="65" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:15"/>
             <line x1="200" y1="300" x2="365" y2="135" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:15"/>
             <line x1="200" y1="300" x2="35" y2="135" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:15"/>
         </svg>
 
     </g>

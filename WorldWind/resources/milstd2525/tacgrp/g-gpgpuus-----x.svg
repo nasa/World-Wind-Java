@@ -6,11 +6,11 @@
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-GPGPUUS-----X" width="400px" height="400px">
             <polygon points="200,385 75,300 325,300"
-                     style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:10"></polygon>
+                     style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:10"></polygon>
             <line x1="200" y1="300" x2="200" y2="85" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></line>
             <polyline points="55,85 110,25 200,85 290,25 345,85"
-                      style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></polyline>
+                      style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></polyline>
         </svg>
 
     </g>

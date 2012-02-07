@@ -7,9 +7,9 @@
      contentStyleType="text/css">
     <g>
         <g>
-            <rect stroke-dasharray="27" x="129.083" y="93.542" fill="none" stroke="#000000" stroke-width="5" width="140"
+            <rect stroke-dasharray="27" x="129.083" y="93.542" fill="none" stroke="#FFFFFF" stroke-width="5" width="140"
                   height="180"/>
-            <polyline stroke-dasharray="27" fill="none" stroke="#000000" stroke-width="5"
+            <polyline stroke-dasharray="27" fill="none" stroke="#FFFFFF" stroke-width="5"
                       points="129.083,274.542 199.083,368.542 269.083,274.542   "/>
         </g>
         <g>

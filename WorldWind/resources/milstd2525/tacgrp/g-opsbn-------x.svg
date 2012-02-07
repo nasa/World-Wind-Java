@@ -6,7 +6,7 @@
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-OPSBN-------X" width="400px" height="400px">
             <polygon points="50,250 350,250 300,135 250,235 200,50 150,235 100,150" transform="matrix(1 0 0 1 0 0)"
-                     style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:3"></polygon>
+                     style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:3"></polygon>
         </svg>
 
     </g>

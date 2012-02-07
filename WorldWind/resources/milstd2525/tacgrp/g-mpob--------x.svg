@@ -7,12 +7,12 @@
         <svg viewBox="0 0 400 400" id="_0.G-MPOB--------X" width="400px" height="400px">
             <g transform="translate(-660 -660) scale(3.5 3.5)">
                 <line x1="216" y1="253" x2="244.718" y2="192.941"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
                 <line x1="244.625" y1="192.129" x2="275" y2="253"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2"></line>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2"></line>
                 <ellipse cx="256" cy="281" rx="48" ry="33"
                          transform="translate(-10 -3) translate(256 248) scale(1 0.818182) translate(-256 -248) translate(208 281) scale(0.895833 1) translate(-208 -281) translate(5.5814 0) translate(304 281) scale(0.895349 1) translate(-304 -281) translate(-4.98701 -3.66667)"
-                         style="fill:rgb(255,255,255);stroke:rgb(0,0,0);stroke-width:2"></ellipse>
+                         style="fill:none;stroke:rgb(255,255,255);stroke-width:2"></ellipse>
             </g>
         </svg>
 

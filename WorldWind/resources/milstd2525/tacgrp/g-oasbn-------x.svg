@@ -9,7 +9,7 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <polygon points="50,250 350,250 300,135 250,235 200,50 150,235 100,150" transform="matrix(1 0 0 1 0 0)"
-                     style="fill:none;stroke:rgb(0,0,0);stroke-width:8;stroke-dasharray:15"/>
+                     style="fill:none;stroke:rgb(255,255,255);stroke-width:8;stroke-dasharray:15"/>
         </svg>
 
     </g>

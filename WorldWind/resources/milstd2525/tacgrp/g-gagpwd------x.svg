@@ -9,7 +9,7 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <path d="M50 75 L50 250 C60 350 190 350 200 275 L200 75 L200 275 C210 350 340 350 350 250    L350 75"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10;stroke-dasharray:15"/>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:15"/>
         </svg>
 
     </g>

@@ -7,11 +7,11 @@
         <svg viewBox="0 0 400 400" id="_0.G-G-GPWG------X" width="400px" height="400px">
             <path d="M125 300 C125 300 59.6926 302.842 75 286 C90.3074 269.158 175 267 175 267 L200 125
 			L225 267 C225 267 309.857 269.74 325 286 C340.143 302.26 275 300 275 300 z"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:5"></path>
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:5"></path>
             <path transform="matrix(1 0 0 1 0 0)" d="M200 21 C282.842 21 350 83.579 350 125 C350 154.938 306.098 186.631 270 188 C234.85
 			189.333 235.945 125.82 200 125.5 C164.055 125.18 166.857 188.831 131 188 C94.3078
 			187.15 50 155.758 50 125 C50 83.579 117.158 21 200 21 z"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:5"></path>
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:5"></path>
         </svg>
 
     </g>

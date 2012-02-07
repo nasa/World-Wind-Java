@@ -6,9 +6,9 @@
     <g>
         <svg viewBox="0 0 400 400" id="_0.G-F-PTS-------X" width="400px" height="400px">
             <line x1="200" y1="50" x2="200" y2="350" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></line>
             <line x1="50" y1="200" x2="350" y2="200" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(0,0,0);stroke-width:10"></line>
+                  style="fill:none;stroke:rgb(255,255,255);stroke-width:10"></line>
         </svg>
 
     </g>

@@ -6,8 +6,8 @@
      height="400px"
      viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
     <g>
-        <rect x="129.5" y="61.157" fill="none" stroke="#000000" stroke-width="5" width="140" height="180"/>
-        <polyline fill="none" stroke="#000000" stroke-width="5"
+        <rect x="129.5" y="61.157" fill="none" stroke="#FFFFFF" stroke-width="5" width="140" height="180"/>
+        <polyline fill="none" stroke="#FFFFFF" stroke-width="5"
                   points="129.5,242.157 199.5,336.157 269.5,242.157 	"/>
     </g>
 </svg>

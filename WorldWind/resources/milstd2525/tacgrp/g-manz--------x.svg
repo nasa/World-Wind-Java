@@ -9,12 +9,12 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <rect x="182" y="175" width="36" height="100" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:rgb(255,255,128);stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:rgb(255,255,128);stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
             <text x="188px" y="235px" transform="matrix(1 0 0 1 0 0) translate(0 0)"
-                  style="fill:rgb(0,0,0);stroke:rgb(0,0,0);font-size:32;font-family:@Arial Unicode MS">N
+                  style="fill:rgb(255,255,255);stroke:rgb(255,255,255);font-size:32;font-family:@Arial Unicode MS">N
             </text>
             <path d="M200 175 L150 175 C150 175 150 125 200 125 C250 125 250 175 250 175 z"
-                  style="fill:rgb(255,255,128);stroke:rgb(0,0,0);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:rgb(255,255,128);stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
         </svg>
 
     </g>

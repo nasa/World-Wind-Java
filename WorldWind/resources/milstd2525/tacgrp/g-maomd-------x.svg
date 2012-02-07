@@ -10,11 +10,11 @@
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <g transform="translate(-440 -470) scale(2.5 2.5)">
                 <circle cx="218" cy="204.5" r="34" transform="matrix(1 0 0 1 40 27)"
-                        style="fill:none;stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+                        style="fill:none;stroke:rgb(255,255,255);stroke-width:2;stroke-dasharray:10"/>
                 <line x1="258" y1="266" x2="258" y2="341"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2;stroke-dasharray:10"/>
                 <line x1="258.231" y1="340.395" x2="274" y2="321"
-                      style="fill:rgb(0,0,0);stroke:rgb(0,0,0);stroke-width:2;stroke-dasharray:10"/>
+                      style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:2;stroke-dasharray:10"/>
             </g>
         </svg>
 
