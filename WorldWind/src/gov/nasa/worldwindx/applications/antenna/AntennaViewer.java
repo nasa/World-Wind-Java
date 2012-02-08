@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwindx.applications.antenna;
 
-import com.sun.org.apache.bcel.internal.classfile.InnerClass;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
@@ -85,7 +84,7 @@ public class AntennaViewer extends ApplicationTemplate
         try
         {
             InputStream is = WWIO.openFileOrResourceStream(
-                "gov/nasa/worldwindx/examples/data/ThetaPhi3.antennaTestFile.txt", InnerClass.class);
+                "gov/nasa/worldwindx/examples/data/ThetaPhi3.antennaTestFile.txt", AntennaViewer.class);
             interpolator.addFromStream(is);
         }
         catch (Exception e)
