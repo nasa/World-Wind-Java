@@ -1,14 +1,6 @@
 <?xml version="1.0"?>
-<!--
-  ~ Copyright (C) 2012 United States Government as represented by the Administrator of the
-  ~ National Aeronautics and Space Administration.
-  ~ All Rights Reserved.
-  -->
-
 <!-- SVG content generated using Symbology Configuration Management System (SCMS) -->
 <!-- Systematic Software Engineering Ltd. - www.systematic.co.uk - do not remove  -->
-
-<!-- Frame for the Nuclear Detonation graphic. -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="G*MPNZ----****X" width="400px"
      height="400px" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
      contentScriptType="application/ecmascript" contentStyleType="text/css">
@@ -17,9 +9,9 @@
              preserveAspectRatio="xMidYMid meet" zoomAndPan="magnify" version="1.1"
              contentScriptType="application/ecmascript" contentStyleType="text/css">
             <rect x="182" y="175" width="36" height="100" transform="matrix(1 0 0 1 0 0)"
-                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:rgb(255,255,128);stroke:none"/>
             <path d="M200 175 L150 175 C150 175 150 125 200 125 C250 125 250 175 250 175 z"
-                  style="fill:none;stroke:rgb(255,255,255);stroke-width:5;stroke-dasharray:15"/>
+                  style="fill:rgb(255,255,128);stroke:none"/>
         </svg>
 
     </g>

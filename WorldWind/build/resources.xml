@@ -36,6 +36,12 @@
             <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/metoc"/>
         </antcall>
 
+        <!-- Rasterize fill graphics -->
+        <antcall target="rasterize">
+            <param name="rasterize.src.dir" value="${milstd2525.src.dir}/fills"/>
+            <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/fills"/>
+        </antcall>
+
         <!-- Trim transparent pixels from the generated graphics -->
         <antcall target="trim">
             <param name="dir" value="${milstd2525.dest.dir}"/>

@@ -8,6 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -39,6 +40,8 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     protected static final String DIR_TACTICAL_GRAPHICS = "tacgrp";
     /** Subdirectory for graphics in the Meteorological and Oceanographic scheme. */
     protected static final String DIR_METOC = "metoc";
+    /** Subdirectory for fill graphics. */
+    protected static final String DIR_FILL = "fills";
 
     /**
      * Create a new icon retriever.
@@ -62,7 +65,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         // Retrieve desired symbol and convert to BufferedImage
         SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
 
-        String filename = getFilename(symbolCode);
+        String filename = composeFilename(symbolCode);
 
         BufferedImage srcImg = retrieveImageFromURL(filename, null);
 
@@ -73,8 +76,10 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
         }
 
-        BufferedImage destImg = new BufferedImage(srcImg.getWidth(), srcImg.getHeight(),
-            BufferedImage.TYPE_INT_ARGB_PRE);
+        int width = srcImg.getWidth();
+        int height = srcImg.getHeight();
+
+        BufferedImage destImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
 
         this.drawImage(srcImg, destImg);
 
@@ -84,7 +89,61 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
 
         this.multiply(destImg, color);
 
+        if (this.mustDrawFill(symbolCode))
+        {
+            destImg = this.composeFilledImage(destImg, symbolCode);
+        }
+
         return destImg;
+    }
+
+    /**
+     * Create an image by drawing over a fill image.
+     *
+     * @param srcImg     Image to draw over fill.
+     * @param symbolCode Symbol code that identifies the graphic.
+     *
+     * @return A new image with the {@code srcImg} drawn over the appropriate fill.
+     */
+    protected BufferedImage composeFilledImage(BufferedImage srcImg, SymbolCode symbolCode)
+    {
+        String fillPath = this.composeFillPath(symbolCode);
+        BufferedImage fill = retrieveImageFromURL(fillPath, null);
+
+        if (fill == null)
+        {
+            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolCode);
+            Logging.logger().severe(msg);
+            throw new MissingResourceException(msg, BufferedImage.class.getName(), fillPath);
+        }
+
+        int width = srcImg.getWidth();
+        int height = srcImg.getHeight();
+
+        BufferedImage filledImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+
+        this.drawImage(fill, filledImg);
+        this.drawImage(srcImg, filledImg);
+
+        return filledImg;
+    }
+
+    /**
+     * Indicates whether or not a fill must be drawn for a graphic.
+     *
+     * @param code Symbol code of a point graphic.
+     *
+     * @return True if the graphic has a fill image. False if not. Only three graphics in MIL-STD-2525C Appendix B use a
+     *         fill pattern: Nuclear Detonation Ground Zero (2.X.3.4.2), Biological Release Event (2.X.3.4.7.1), and
+     *         Chemical Release Event (2.X.3.4.7.2).
+     */
+    protected boolean mustDrawFill(SymbolCode code)
+    {
+        String masked = code.toMaskedString();
+
+        return TacGrpSidc.MOBSU_CBRN_NDGZ.equals(masked)
+            || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(masked)
+            || TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(masked);
     }
 
     /**
@@ -105,12 +164,32 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         return (o instanceof Color) ? (Color) o : null;
     }
 
+    /**
+     * Indicates the color to apply to a graphic based on the graphic's standard identity.
+     *
+     * @param code Symbol code that identifies the graphic.
+     *
+     * @return Color to apply based on the standard identity. (Red for hostile entities, black for others.)
+     */
     protected Color getColorForStandardIdentity(SymbolCode code)
     {
         if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(code.getStandardIdentity()))
             return MilStd2525TacticalGraphic.MATERIAL_HOSTILE.getDiffuse();
         else
             return MilStd2525TacticalGraphic.MATERIAL_FRIEND.getDiffuse();
+    }
+
+    /**
+     * Compose a file path to the fill icon for a graphic.
+     *
+     * @param code Code the identifies the graphic.
+     *
+     * @return Path to the appropriate fill image.
+     */
+    protected String composeFillPath(SymbolCode code)
+    {
+        // Note: Metoc symbols currently do not use fill, so only handle tactical graphics here.
+        return this.composeFilenameTacticalGraphic(code, DIR_FILL);
     }
 
     /**
@@ -121,14 +200,14 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
      * @return The file name of the image file that corresponds to the specified graphic, or null if the graphic's
      *         scheme is not recognized.
      */
-    protected String getFilename(SymbolCode code)
+    protected String composeFilename(SymbolCode code)
     {
         String scheme = code.getScheme();
 
         if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equals(scheme))
-            return this.getFilenameTacticalGraphic(code);
+            return this.composeFilenameTacticalGraphic(code, DIR_TACTICAL_GRAPHICS);
         else if (SymbologyConstants.SCHEME_METOC.equals(scheme))
-            return this.getFilenameMetoc(code);
+            return this.composeFilenameMetoc(code);
 
         return null;
     }
@@ -137,10 +216,11 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
      * Indicates the filename of a graphic in the Tactical Graphics scheme (MIL-STD-2525C Appendix B).
      *
      * @param code Code that identifies a graphic in the Tactical Graphics scheme.
+     * @param dir  Directory to prepend to file name.
      *
      * @return The filename of the icon for the specified graphic.
      */
-    protected String getFilenameTacticalGraphic(SymbolCode code)
+    protected String composeFilenameTacticalGraphic(SymbolCode code, String dir)
     {
         String scheme = code.getScheme();
         String category = code.getCategory();
@@ -159,7 +239,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             functionId = "------";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(DIR_TACTICAL_GRAPHICS).append("/")
+        sb.append(dir).append("/")
             .append(scheme.toLowerCase())
             .append('-') // Standard identity
             .append(category.toLowerCase())
@@ -179,7 +259,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
      *
      * @return The filename of the icon for the specified graphic.
      */
-    protected String getFilenameMetoc(SymbolCode code)
+    protected String composeFilenameMetoc(SymbolCode code)
     {
         String scheme = code.getScheme();
         String category = code.getCategory();
