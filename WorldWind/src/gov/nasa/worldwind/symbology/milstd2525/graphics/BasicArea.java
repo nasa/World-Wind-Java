@@ -47,7 +47,8 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
             TacGrpSidc.C2GM_GNL_ARS_EMTARA,
             TacGrpSidc.C2GM_GNL_ARS_EZ,
             TacGrpSidc.C2GM_GNL_ARS_LZ,
-            TacGrpSidc.C2GM_GNL_ARS_PZ);
+            TacGrpSidc.C2GM_GNL_ARS_PZ,
+            TacGrpSidc.C2GM_DEF_ARS_EMTARA);
     }
 
     public BasicArea(String sidc)
@@ -161,7 +162,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
             return "AA";
         else if (TacGrpSidc.C2GM_GNL_ARS_DRPZ.equals(code))
             return "DZ";
-        else if (TacGrpSidc.C2GM_GNL_ARS_EMTARA.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_ARS_EMTARA.equals(code) || TacGrpSidc.C2GM_DEF_ARS_EMTARA.equals(code))
             return "EA";
         else if (TacGrpSidc.C2GM_GNL_ARS_EZ.equals(code))
             return "EZ";
