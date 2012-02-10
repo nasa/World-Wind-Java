@@ -100,6 +100,7 @@ public class WeaponsFreeZone extends AviationZone
 
         Color backgroundColor = this.computeBackgroundColor(color);
         attributes.setBackgroundColor(backgroundColor);
+        attributes.setOpacity(this.getActiveShapeAttributes().getInteriorOpacity());
     }
 
     /** {@inheritDoc} */

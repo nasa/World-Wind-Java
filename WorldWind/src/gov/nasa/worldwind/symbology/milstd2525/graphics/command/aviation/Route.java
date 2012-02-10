@@ -177,6 +177,38 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
         return null;
     }
 
+    /** {@inheritDoc} Overridden to apply new attributes to route control points. */
+    @Override
+    public void setAttributes(TacticalGraphicAttributes attributes)
+    {
+        super.setAttributes(attributes);
+
+        // Apply the highlight state to the child graphics
+        if (this.children != null)
+        {
+            for (TacticalGraphic child : this.children)
+            {
+                child.setAttributes(attributes);
+            }
+        }
+    }
+
+    /** {@inheritDoc} Overridden to apply new attributes to route control points. */
+    @Override
+    public void setHighlightAttributes(TacticalGraphicAttributes attributes)
+    {
+        super.setHighlightAttributes(attributes);
+
+        // Apply the highlight state to the child graphics
+        if (this.children != null)
+        {
+            for (TacticalGraphic child : this.children)
+            {
+                child.setAttributes(attributes);
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     public void preRender(DrawContext dc)
     {

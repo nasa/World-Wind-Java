@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.util.*;
@@ -566,6 +566,8 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
                 // to cause highlighting.
                 this.activeShapeAttributes.setOutlineMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
                 this.activeShapeAttributes.setInteriorMaterial(DEFAULT_HIGHLIGHT_MATERIAL);
+                this.activeShapeAttributes.setInteriorOpacity(1.0);
+                this.activeShapeAttributes.setOutlineOpacity(1.0);
             }
         }
         else
@@ -585,7 +587,7 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     /** Apply the active attributes to the graphic's labels. */
     protected void applyLabelAttributes()
     {
-        if (this.labels == null || labels.isEmpty())
+        if (WWUtil.isEmpty(this.labels))
             return;
 
         Material labelMaterial = this.getLabelMaterial();
@@ -594,10 +596,13 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         if (font == null)
             font = Label.DEFAULT_FONT;
 
+        double opacity = this.getActiveShapeAttributes().getInteriorOpacity();
+
         for (Label label : this.labels)
         {
             label.setMaterial(labelMaterial);
             label.setFont(font);
+            label.setOpacity(opacity);
         }
 
         // Apply the offset to the main label.

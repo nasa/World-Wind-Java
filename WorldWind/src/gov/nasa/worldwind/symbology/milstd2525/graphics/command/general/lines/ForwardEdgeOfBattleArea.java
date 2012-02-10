@@ -154,8 +154,21 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
     public ForwardEdgeOfBattleArea(String sidc)
     {
         super(sidc);
+        this.init(sidc);
+    }
+
+    /**
+     * Create the symbols used to render the graphic.
+     *
+     * @param sidc Symbol code the identifies the graphic.
+     */
+    protected void init(String sidc)
+    {
         this.symbol1 = new FEBASymbol(sidc, Position.ZERO);
         this.symbol2 = new FEBASymbol(sidc, Position.ZERO);
+
+        this.symbol1.setAttributes(this.activeSymbolAttributes);
+        this.symbol2.setAttributes(this.activeSymbolAttributes);
     }
 
     /** {@inheritDoc} */

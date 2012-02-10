@@ -52,6 +52,8 @@ public class Label implements OrderedRenderable
 
     /** Material used to draw the label. */
     protected Material material = Material.BLACK;
+    /** Opacity of the text, as a value between 0 and 1. */
+    protected double opacity = 1.0;
     /** Font used to draw the label. */
     protected Font font = DEFAULT_FONT;
     /** Space (in pixels) between lines in a multi-line label. */
@@ -283,6 +285,39 @@ public class Label implements OrderedRenderable
         }
 
         this.material = material;
+    }
+
+    /**
+     * Indicates the opacity of the text as a floating-point value in the range 0.0 to 1.0. A value of 1.0 specifies a
+     * completely opaque text, and 0.0 specifies a completely transparent text. Values in between specify a partially
+     * transparent text.
+     *
+     * @return the opacity of the text as a floating-point value from 0.0 to 1.0.
+     */
+    public double getOpacity()
+    {
+        return this.opacity;
+    }
+
+    /**
+     * Specifies the opacity of the text as a floating-point value in the range 0.0 to 1.0. A value of 1.0 specifies a
+     * completely opaque text, and 0.0 specifies a completely transparent text. Values in between specify a partially
+     * transparent text.
+     *
+     * @param opacity the opacity of text as a floating-point value from 0.0 to 1.0.
+     *
+     * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
+     */
+    public void setOpacity(double opacity)
+    {
+        if (opacity < 0 || opacity > 1)
+        {
+            String message = Logging.getMessage("generic.OpacityOutOfRange", opacity);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.opacity = opacity;
     }
 
     /**
@@ -800,17 +835,22 @@ public class Label implements OrderedRenderable
 
         Color color = this.material.getDiffuse();
         Color backgroundColor = this.computeBackgroundColor(color);
+        float opacity = (float) this.getOpacity();
 
         int x = this.screenPoint.x;
         int y = this.screenPoint.y;
 
+        float[] compArray = new float[3];
         if (backgroundColor != null)
         {
-            textRenderer.setColor(backgroundColor);
+            backgroundColor.getRGBColorComponents(compArray);
+
+            textRenderer.setColor(compArray[0], compArray[1], compArray[2], opacity);
             mltr.draw(this.text, x + 1, y - 1);
         }
 
-        textRenderer.setColor(color);
+        color.getRGBColorComponents(compArray);
+        textRenderer.setColor(compArray[0], compArray[1], compArray[2], opacity);
         mltr.draw(this.text, x, y);
     }
 
