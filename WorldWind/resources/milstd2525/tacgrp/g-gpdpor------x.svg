@@ -1,11 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="_0.G-MPOAOF------X" xmlns:svg="http://www.w3.org/2000/svg"
-     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="400px"
-     height="400px"
-     viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
-    <path d="M288.629,199.891L199.5,45.515l-89.129,154.376L21.242,354.268H199.5h178.258L288.629,199.891z M29.165,349.404
-	l85.167-147.514L199.5,54.376l85.167,147.515l85.168,147.514H199.5H29.165L29.165,349.404z"/>
-    <rect x="154.5" y="126.384" transform="matrix(-0.5 -0.866 0.866 -0.5 -3.0887 549.2168)" width="5" height="298.232"/>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="_0.G-MPOAOF------X"
+   x="0px"
+   y="0px"
+   width="400px"
+   height="400px"
+   viewBox="0 0 400 400"
+   enable-background="new 0 0 400 400"
+   xml:space="preserve"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="g-gpdpor------x.svg"><metadata
+   id="metadata11"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs9" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="640"
+   inkscape:window-height="480"
+   id="namedview7"
+   showgrid="false"
+   inkscape:zoom="0.59"
+   inkscape:cx="200"
+   inkscape:cy="200"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="_0.G-MPOAOF------X" />
+    <path
+   d="M288.629,199.891L199.5,45.515l-89.129,154.376L21.242,354.268H199.5h178.258L288.629,199.891z M29.165,349.404  l85.167-147.514L199.5,54.376l85.167,147.515l85.168,147.514H199.5H29.165L29.165,349.404z"
+   id="path3"
+   style="fill:#ffffff" />
+    <rect
+   x="154.5"
+   y="126.384"
+   transform="matrix(-0.5 -0.866 0.866 -0.5 -3.0887 549.2168)"
+   width="5"
+   height="298.232"
+   id="rect5"
+   style="fill:#ffffff" />
 </svg>

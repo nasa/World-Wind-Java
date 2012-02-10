@@ -1,27 +1,72 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 13.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 14948)  -->
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="_1.G-G-GPUYD-----X" xmlns:svg="http://www.w3.org/2000/svg"
-     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="400px"
-     height="400px"
-     viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
-    <g>
-        <g>
-            <g transform="translate(110 30) scale(6 6)">
-                <path d="M29.479,41.966c0,4.125-1.398,7.588-4.195,10.393c-2.797,2.801-6.254,4.203-10.367,4.203
-				c-4.074,0-7.521-1.412-10.338-4.234c-2.817-2.825-4.225-6.278-4.225-10.362c0-4.123,1.398-7.596,4.195-10.42
-				c2.797-2.822,6.254-4.234,10.367-4.234c4.074,0,7.521,1.422,10.338,4.266S29.479,37.884,29.479,41.966z M28.354,41.966
-				c0-3.809-1.291-7.016-3.869-9.621c-2.58-2.605-5.77-3.908-9.568-3.908s-6.988,1.303-9.568,3.908
-				c-2.578,2.605-3.869,5.813-3.869,9.621c0,3.77,1.301,6.957,3.898,9.563c2.602,2.605,5.781,3.908,9.539,3.908
-				s6.938-1.303,9.537-3.908S28.354,45.736,28.354,41.966z M18.229-0.063v17.77l-4.016-5.039l0.061,14.586l1.205,0.059V16.386
-				l4.074,4.621v-21.07H18.229z"/>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="_1.G-G-GPUYD-----X"
+   x="0px"
+   y="0px"
+   width="400px"
+   height="400px"
+   viewBox="0 0 400 400"
+   enable-background="new 0 0 400 400"
+   xml:space="preserve"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="g-gpgpuyd-----x.svg"><metadata
+   id="metadata21"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+   id="defs19" /><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="640"
+   inkscape:window-height="480"
+   id="namedview17"
+   showgrid="false"
+   inkscape:zoom="0.59"
+   inkscape:cx="200"
+   inkscape:cy="200"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="g3" />
+    <g
+   id="g3">
+        <g
+   id="g5">
+            <g
+   transform="translate(110 30) scale(6 6)"
+   id="g7">
+                <path
+   d="M29.479,41.966c0,4.125-1.398,7.588-4.195,10.393c-2.797,2.801-6.254,4.203-10.367,4.203     c-4.074,0-7.521-1.412-10.338-4.234c-2.817-2.825-4.225-6.278-4.225-10.362c0-4.123,1.398-7.596,4.195-10.42     c2.797-2.822,6.254-4.234,10.367-4.234c4.074,0,7.521,1.422,10.338,4.266S29.479,37.884,29.479,41.966z M28.354,41.966     c0-3.809-1.291-7.016-3.869-9.621c-2.58-2.605-5.77-3.908-9.568-3.908s-6.988,1.303-9.568,3.908     c-2.578,2.605-3.869,5.813-3.869,9.621c0,3.77,1.301,6.957,3.898,9.563c2.602,2.605,5.781,3.908,9.539,3.908     s6.938-1.303,9.537-3.908S28.354,45.736,28.354,41.966z M18.229-0.063v17.77l-4.016-5.039l0.061,14.586l1.205,0.059V16.386     l4.074,4.621v-21.07H18.229z"
+   id="path9"
+   style="fill:#ffffff" />
             </g>
         </g>
-        <g>
-            <text transform="matrix(1 0 0 1 163.373 320.8789)" font-family="'ArialMT'" font-size="110">D</text>
-            <text transform="matrix(1 0 0 1 163.373 320.8789)" fill="none" stroke="#FFFFFF" font-family="'ArialMT'"
-                  font-size="110">D
-            </text>
+        <g
+   id="g11"
+   style="fill:#ffffff">
+            <text
+   transform="matrix(1 0 0 1 163.373 320.8789)"
+   font-family="'ArialMT'"
+   font-size="110"
+   id="text13"
+   style="fill:#ffffff">D</text>
+
+            
         </g>
     </g>
 </svg>
