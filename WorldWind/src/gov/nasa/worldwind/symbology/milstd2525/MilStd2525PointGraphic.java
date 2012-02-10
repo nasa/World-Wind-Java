@@ -27,21 +27,31 @@ import java.util.List;
 // TODO: apply delegate owner to symbol.
 public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
 {
-    // This class wraps an instance of TacticalGraphicSymbol. TacticalGraphicSymbol implements the logic for rendering
-    // point graphics using the TacticalSymbol base classes. This class adapts the TacticalGraphic interface to
-    // the TacticalSymbol interface.
+    // Implementation note: This class wraps an instance of TacticalGraphicSymbol. TacticalGraphicSymbol implements the
+    // logic for rendering point graphics using the TacticalSymbol base classes. This class adapts the TacticalGraphic
+    // interface to the TacticalSymbol interface.
 
     /** Symbol used to render this graphic. */
     protected TacticalGraphicSymbol symbol; // TODO can this be any TacticalSymbol?
 
+    /** Indicates whether or not the graphic is highlighted. */
     protected boolean highlighted;
 
+    /**
+     * Attributes to apply when the graphic is not highlighted. These attributes override defaults determined by the
+     * graphic's symbol code.
+     */
     protected TacticalGraphicAttributes normalAttributes;
+    /**
+     * Attributes to apply when the graphic is highlighted. These attributes override defaults determined by the
+     * graphic's symbol code.
+     */
     protected TacticalGraphicAttributes highlightAttributes;
 
-    protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
-
+    /** Current frame timestamp. */
     protected long frameTimestamp = -1L;
+    /** Attributes to use for the current frame. */
+    protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
 
     /**
      * Create a new point graphic.

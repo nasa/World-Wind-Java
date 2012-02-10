@@ -106,19 +106,32 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected boolean showModifiers = true;
     /** Indicates whether or not to render the hostile/enemy modifier. */
     protected boolean showHostileIndicator = true;
+    /** Object returned during picking to represent this graphic. */
     protected Object delegateOwner;
 
-    /** Attributes applied when the graphic is not highlighted. */
+    /**
+     * Attributes to apply when the graphic is not highlighted. These attributes override defaults determined by the
+     * graphic's symbol code.
+     */
     protected TacticalGraphicAttributes normalAttributes;
-    /** Attributes applied when the graphic is highlighted. */
+    /**
+     * Attributes to apply when the graphic is highlighted. These attributes override defaults determined by the
+     * graphic's symbol code.
+     */
     protected TacticalGraphicAttributes highlightAttributes;
+
     /** Offset applied to the graphic's main label. */
     protected Offset labelOffset;
-
-    protected AVList modifiers;
-
+    /** Labels to render with the graphic. */
     protected List<Label> labels;
 
+    /**
+     * Map of modifiers applied to this graphic. Note that implementations may not store all modifiers in this map. Some
+     * modifiers may be handled specially.
+     */
+    protected AVList modifiers;
+
+    /** Current frame timestamp. */
     protected long frameTimestamp = -1L;
 
     /** Override attributes for the current frame. */
@@ -641,6 +654,13 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             return this.activeShapeAttributes.getOutlineMaterial();
     }
 
+    /**
+     * Apply defaults to the active attributes bundle. The default attributes are determined by the type of graphic.
+     * This method is called each frame to reset the active shape attributes to the appropriate default state. Override
+     * attributes specified by the application may be applied after the defaults have been set.
+     *
+     * @param attributes Attributes bundle to receive defaults.
+     */
     protected void applyDefaultAttributes(ShapeAttributes attributes)
     {
         Material material = this.getDefaultOutlineMaterial();
@@ -685,6 +705,11 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
         return OUTLINE_STIPPLE_PATTERN;
     }
 
+    /**
+     * Indicates the default outline Material for this graphic.
+     *
+     * @return The default outline material, determined by the graphic's standard identity.
+     */
     protected Material getDefaultOutlineMaterial()
     {
         String identity = this.getStandardIdentity();
@@ -694,6 +719,13 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
             return MATERIAL_FRIEND;
     }
 
+    /**
+     * Apply override attributes specified in a TacticalGraphicAttributes bundle to the active ShapeAttributes. Any
+     * non-null properties of {@code graphicAttributes} will be applied to {@code shapeAttributes}.
+     *
+     * @param graphicAttributes Override attributes.
+     * @param shapeAttributes   Shape attributes to receive overrides.
+     */
     protected void applyOverrideAttributes(TacticalGraphicAttributes graphicAttributes, ShapeAttributes shapeAttributes)
     {
         Material material = graphicAttributes.getInteriorMaterial();
