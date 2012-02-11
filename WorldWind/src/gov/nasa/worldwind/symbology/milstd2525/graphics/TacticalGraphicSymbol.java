@@ -76,6 +76,17 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     protected boolean showHostileIndicator = true;
 
     /**
+     * Constructs a new symbol with no position.
+     *
+     * @param sidc Code that identifies the graphic.
+     */
+    public TacticalGraphicSymbol(String sidc)
+    {
+        super();
+        init(sidc);
+    }
+
+    /**
      * Constructs a new symbol with the specified position. The position specifies the latitude, longitude, and altitude
      * where this symbol is drawn on the globe. The position's altitude component is interpreted according to the
      * altitudeMode.
@@ -88,7 +99,16 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     public TacticalGraphicSymbol(String sidc, Position position)
     {
         super(position);
+        init(sidc);
+    }
 
+    /**
+     * Initialize the new symbol.
+     *
+     * @param sidc Code that identifies the graphic.
+     */
+    protected void init(String sidc)
+    {
         this.symbolCode = new SymbolCode(sidc);
         this.maskedSymbolCode = this.symbolCode.toMaskedString();
 

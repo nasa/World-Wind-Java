@@ -54,13 +54,10 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
          * to the altitudeMode.
          *
          * @param symbolCode MIL-STD-2525C SIDC that identifies the graphic.
-         * @param position   the latitude, longitude, and altitude where the symbol is drawn.
-         *
-         * @throws IllegalArgumentException if the position is <code>null</code>.
          */
-        protected FEBASymbol(String symbolCode, Position position)
+        protected FEBASymbol(String symbolCode)
         {
-            super(position);
+            super();
             this.symbolCode = symbolCode;
 
             this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
@@ -164,8 +161,8 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
      */
     protected void init(String sidc)
     {
-        this.symbol1 = new FEBASymbol(sidc, Position.ZERO);
-        this.symbol2 = new FEBASymbol(sidc, Position.ZERO);
+        this.symbol1 = new FEBASymbol(sidc);
+        this.symbol2 = new FEBASymbol(sidc);
 
         this.symbol1.setAttributes(this.activeSymbolAttributes);
         this.symbol2.setAttributes(this.activeSymbolAttributes);
@@ -198,7 +195,15 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(this.symbol1.getPosition(), this.symbol2.getPosition());
+        Position position1 = this.symbol1.getPosition();
+        Position position2 = this.symbol2.getPosition();
+
+        // This graphic requires exactly two positions. If we don't have two positions
+        // for some reason return an empty list.
+        if (position1 != null && position2 != null)
+            return Arrays.asList(position1, position2);
+        else
+            return Collections.emptyList();
     }
 
     /** {@inheritDoc} */
@@ -223,6 +228,9 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
 
         Position position1 = this.symbol1.getPosition();
         Position position2 = this.symbol2.getPosition();
+
+        if (position1 == null || position2 == null)
+            return;
 
         // Project the first control point onto the screen
         Vec4 placePoint1 = dc.computeTerrainPoint(position1.getLatitude(), position1.getLongitude(), 0);

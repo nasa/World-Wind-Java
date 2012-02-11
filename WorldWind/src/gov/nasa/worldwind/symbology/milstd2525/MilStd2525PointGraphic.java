@@ -60,22 +60,20 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
      */
     public MilStd2525PointGraphic(String sidc)
     {
-        this.symbol = this.createSymbol(sidc,
-            Position.ZERO); // TODO do we really need to provide a position in constructor?
+        this.symbol = this.createSymbol(sidc);
     }
 
     /**
      * Create a tactical symbol to render this graphic.
      *
-     * @param sidc     Symbol code that identifies the graphic.
-     * @param position Initial position of the graphic.
+     * @param sidc Symbol code that identifies the graphic.
      *
      * @return A new tactical symbol.
      */
-    protected TacticalGraphicSymbol createSymbol(String sidc, Position position)
+    protected TacticalGraphicSymbol createSymbol(String sidc)
     {
         // TODO apply delegate owner to symbol
-        TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc, position);
+        TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc);
         symbol.setAttributes(this.activeSymbolAttributes);
         return symbol;
     }

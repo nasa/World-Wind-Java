@@ -537,6 +537,12 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected Layer pickLayer;
 
+    /** Constructs a new symbol with no position. */
+    protected AbstractTacticalSymbol()
+    {
+        this.setGlyphAtlas(DEFAULT_GLYPH_ATLAS);
+    }
+
     /**
      * Constructs a new symbol with the specified position. The position specifies the latitude, longitude, and altitude
      * where this symbol is drawn on the globe. The position's altitude component is interpreted according to the
