@@ -70,11 +70,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      */
     protected String maskedSymbolCode;
 
-    /** Indicates whether or not to render the location modifier. */
-    protected boolean showLocation = true;
-    /** Indicates whether or not to render the hostile/enemy modifier. */
-    protected boolean showHostileIndicator = true;
-
     /**
      * Constructs a new symbol with no position.
      *
@@ -123,63 +118,20 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
 
         Offset offset = defaultOffsets.get(this.symbolCode.toMaskedString());
         this.setOffset(offset);
+
+        // By default, show the hostile indicator (the letters "ENY"). Note that this default is different from
+        // MilStd2525TacticalSymbol, which does not display the hostile indicator by default. Section 5.5.1.1 (pg. 37)
+        // of MIL-STD-2525C states that the indicator is not required if color is used in the display. We choose to
+        // display the indicator by default following the principle that by default hostile entities should look as
+        // hostile as possible (to avoid being mistaken for friendly entities). In the case of tactical symbols, however
+        // the indicator is redundant to both the symbol frame and fill, so it is not displayed by default.
+        this.setShowHostileIndicator(true);
     }
 
     /** {@inheritDoc} */
     public String getIdentifier()
     {
         return this.symbolCode.toString();
-    }
-
-    /**
-     * Indicates whether or not this graphic will display a text indicator when the graphic represents a hostile entity.
-     * See comments on {@link #setShowHostileIndicator(boolean) setShowHostileIndicator} for more information.
-     *
-     * @return true if an indicator may be drawn when this graphic represents a hostile entity, if supported by the
-     *         graphic implementation. Note that some graphics may not display an indicator, even when representing a
-     *         hostile entity.
-     */
-    public boolean isShowHostileIndicator()
-    {
-        return this.showHostileIndicator;
-    }
-
-    /**
-     * Specifies whether or not to display a text indicator when the symbol or graphic represents a hostile entity. In
-     * the case of MIL-STD-2525C, the indicator is the letters "ENY". The indicator is determined by the symbology set,
-     * and may not apply to all graphics in the symbol set.
-     *
-     * @param show true if this graphic should display an indicator when this graphic represents a hostile entity and
-     *             the graphic implementation supports such an indicator. Note that some graphics may not display an
-     *             indicator, even when representing a hostile entity.
-     */
-    public void setShowHostileIndicator(boolean show)
-    {
-        this.showHostileIndicator = show;
-    }
-
-    /**
-     * Indicates whether or not the graphic should display its location as a text modifier. Not all graphics support the
-     * location modifier.
-     *
-     * @return true if the graphic will display the location modifier. Note that not all graphics support this
-     *         modifier.
-     */
-    public boolean isShowLocation()
-    {
-        return this.showLocation;
-    }
-
-    /**
-     * Specifies whether or not the graphic should display its location as a text modifier. Not all graphics support the
-     * location modifier. Setting showLocation on a graphic that does not support the modifier will have no effect.
-     *
-     * @param show true if the graphic will display the location modifier. Note that not all graphics support this
-     *             modifier.
-     */
-    public void setShowLocation(boolean show)
-    {
-        this.showLocation = show;
     }
 
     @Override
@@ -332,9 +284,10 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     protected Object getLabelValue(String key)
     {
         Object value = null;
-        if (SymbologyConstants.HOSTILE_ENEMY.equals(key) && this.isShowHostileIndicator())
+        if (SymbologyConstants.HOSTILE_ENEMY.equals(key))
         {
-            if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity()))
+            if (this.isShowHostileIndicator()
+                && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity()))
             {
                 value = SymbologyConstants.HOSTILE_ENEMY;
             }
@@ -343,9 +296,10 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         {
             value = this.getType();
         }
-        else if (SymbologyConstants.LOCATION.equals(key) && this.isShowLocation())
+        else if (SymbologyConstants.LOCATION.equals(key))
         {
-            value = this.getModifier(key); // TODO compute from actual location
+            if (this.isShowLocation())
+                value = this.getModifier(key); // TODO compute from actual location
         }
         else
         {

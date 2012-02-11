@@ -119,6 +119,11 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.setIconRetriever(new MilStd2525IconRetriever(iconRetrieverPath));
         this.setModifierRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
 
+        // By default, do not show the hostile indicator (the letters "ENY"). Note that this default is different from
+        // MilStd2525TacticalGraphic, which does display the hostile indicator by default. We choose not to display the
+        // indicator by default because it is redundant to both the frame shape and fill color.
+        this.setShowHostileIndicator(false);
+
         // Initialize this tactical symbol's icon offset, icon size, and altitude mode from its symbol code.
         this.initIconLayout();
     }
@@ -368,7 +373,9 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, SymbologyConstants.EVALUATION_RATING, 2); // TODO: validate value
         this.appendTextModifier(sb, SymbologyConstants.COMBAT_EFFECTIVENESS, 3);
         this.appendTextModifier(sb, SymbologyConstants.SIGNATURE_EQUIPMENT, 1); // TODO: validate value
-        this.appendTextModifier(sb, SymbologyConstants.HOSTILE_ENEMY, 3); // TODO: compute value from standard identity
+        if (this.isShowHostileIndicator())
+            this.appendTextModifier(sb, SymbologyConstants.HOSTILE_ENEMY,
+                3); // TODO: compute value from standard identity
         this.appendTextModifier(sb, SymbologyConstants.IFF_SIF, 5);
         if (sb.length() > 0)
         {
@@ -386,7 +393,9 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 
         // Altitude/Depth and Location modifier layout.
         this.appendTextModifier(sb, SymbologyConstants.ALTITUDE_DEPTH, 14); // TODO: compute value from position
-        this.appendTextModifier(sb, SymbologyConstants.LOCATION, 19); // TODO: compute value from position
+        if (this.isShowLocation())
+            this.appendTextModifier(sb, SymbologyConstants.LOCATION, 19); // TODO: compute value from position
+
         if (sb.length() > 0)
         {
             this.addLabel(dc, Offset.fromFraction(-0.1, 0.8), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);

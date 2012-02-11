@@ -104,8 +104,16 @@ public abstract class MilStd2525TacticalGraphic extends AVListImpl implements Ta
     protected boolean visible = true;
     /** Indicates whether or not to render text modifiers. */
     protected boolean showModifiers = true;
-    /** Indicates whether or not to render the hostile/enemy modifier. */
+
+    // Implementation note: by default, show the hostile indicator (the letters "ENY"). Note that this default is
+    // different from MilStd2525TacticalSymbol, which does not display the hostile indicator by default. Section 5.5.1.1
+    // (pg. 37) of MIL-STD-2525C states that the indicator is not required if color is used in the display. We choose to
+    // display the indicator by default following the principle that by default hostile entities should look as
+    // hostile as possible (to avoid being mistaken for friendly entities). In the case of tactical symbols, however,
+    // the indicator is redundant to both the symbol frame and fill, so it is not displayed by default.
+    /** Indicates whether or not to render the hostile/enemy modifier. This modifier is displayed by default. */
     protected boolean showHostileIndicator = true;
+
     /** Object returned during picking to represent this graphic. */
     protected Object delegateOwner;
 

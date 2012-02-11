@@ -207,6 +207,43 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
     void setShowTextModifiers(boolean showTextModifiers);
 
     /**
+     * Indicates whether or not to display this symbol's location as a text modifier. Not all symbols support the
+     * location modifier.
+     *
+     * @return true if the symbol will display the location modifier. Note that not some symbols may not support this
+     *         modifier.
+     */
+    boolean isShowLocation();
+
+    /**
+     * Specifies whether or not to display this symbol's location as a text modifier. Not all symbols support the
+     * location modifier. Setting showLocation on a symbol that does not support the modifier will have no effect.
+     *
+     * @param show true if the symbol will display the location modifier. Note that not some symbols may not support
+     *             this modifier.
+     */
+    void setShowLocation(boolean show);
+
+    /**
+     * Indicates whether or not to display an indicator when the symbol represents a hostile entity. See comments on
+     * {@link #setShowHostileIndicator(boolean) setShowHostileIndicator} for more information.
+     *
+     * @return true if an indicator will be drawn when this symbol represents a hostile entity, if supported by the
+     *         symbol specification.
+     */
+    boolean isShowHostileIndicator();
+
+    /**
+     * Specifies whether or not to display an indicator when the symbol represents a hostile entity. The indicator is
+     * determined by the symbology set, and may not apply to all symbols in the symbol set.  In the case of
+     * MIL-STD-2525C, the indicator is the letters "ENY" displayed at the lower right corner of the symbol.
+     *
+     * @param show true if this symbol will display an indicator when this symbol represents a hostile entity and the
+     *             symbol specification supports such an indicator.
+     */
+    void setShowHostileIndicator(boolean show);
+
+    /**
      * Indicates the current value of a text or graphic modifier. See {@link #setModifier(String, Object)} for a
      * description of how modifiers values are interpreted.
      *

@@ -436,6 +436,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected Object delegateOwner;
     protected boolean enableBatchRendering = true;
     protected boolean enableBatchPicking = true;
+    /** Indicates whether or not to display the implicit location modifier. */
+    protected boolean showLocation = true;
+    /** Indicates whether or not to display the implicit hostile indicator modifier. */
+    protected boolean showHostileIndicator;
     /**
      * Indicates the current text and graphic modifiers assigned to this symbol. This list of key-value pairs contains
      * both the modifiers specified by the string identifier during construction, and those specified by calling {@link
@@ -651,6 +655,30 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             return;
 
         this.showTextModifiers = showTextModifiers;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowLocation()
+    {
+        return this.showLocation;
+    }
+
+    /** {@inheritDoc} */
+    public void setShowLocation(boolean show)
+    {
+        this.showLocation = show;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowHostileIndicator()
+    {
+        return this.showHostileIndicator;
+    }
+
+    /** {@inheritDoc} */
+    public void setShowHostileIndicator(boolean show)
+    {
+        this.showHostileIndicator = show;
     }
 
     public boolean isEnableBatchRendering()

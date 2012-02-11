@@ -151,7 +151,7 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
             box.add(slider);
 
             // Create a check box that toggles the visibility of text and graphic modifiers for all symbols.
-            JCheckBox cb = new JCheckBox("Modifiers", true);
+            JCheckBox cb = new JCheckBox("Show modifiers", true);
             cb.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent actionEvent)
@@ -162,8 +162,48 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowModifiers(tf);
-                        getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                     }
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the visibility of the hostile/enemy indicator.
+            cb = new JCheckBox("Show hostile indicator", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : graphicLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowHostileIndicator(tf);
+                    }
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the visibility of the location modifier.
+            cb = new JCheckBox("Show location", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : graphicLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowLocation(tf);
+                    }
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                 }
             });
             cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
