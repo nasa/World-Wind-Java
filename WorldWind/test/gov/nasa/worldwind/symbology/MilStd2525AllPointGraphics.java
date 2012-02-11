@@ -107,6 +107,8 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                     graphic.setAttributes(this.sharedAttrs);
                     graphic.setHighlightAttributes(this.sharedHighlightAttrs);
 
+                    graphic.setValue(AVKey.DISPLAY_NAME, sidc.toString());
+
                     layer.addRenderable(graphic);
 
                     if ((i * ALL_STATUS.length + j + 1) % cols == 0)

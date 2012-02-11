@@ -24,7 +24,6 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-// TODO: apply delegate owner to symbol.
 public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
 {
     // Implementation note: This class wraps an instance of TacticalGraphicSymbol. TacticalGraphicSymbol implements the
@@ -72,9 +71,9 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
      */
     protected TacticalGraphicSymbol createSymbol(String sidc)
     {
-        // TODO apply delegate owner to symbol
         TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc);
         symbol.setAttributes(this.activeSymbolAttributes);
+        symbol.setDelegateOwner(this);
         return symbol;
     }
 
@@ -244,13 +243,22 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     /** {@inheritDoc} */
     public Object getDelegateOwner()
     {
-        return null; // TODO
+        // If the application has supplied a delegate owner, return that object. If the owner is this object (the
+        // default), return null to keep the contract of getDelegateOwner, which specifies that a value of null
+        // indicates that the graphic itself is used during picking.
+        Object owner = this.symbol.getDelegateOwner();
+        return owner != this ? owner : null;
     }
 
     /** {@inheritDoc} */
     public void setDelegateOwner(Object owner)
     {
-        // TODO
+        // Apply new delegate owner if non-null. If the new owner is null, set this object as symbol's delegate owner
+        // (the default).
+        if (owner != null)
+            this.symbol.setDelegateOwner(owner);
+        else
+            this.symbol.setDelegateOwner(this);
     }
 
     /** {@inheritDoc} */
@@ -375,6 +383,8 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     protected void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
         TacticalSymbolAttributes symbolAttributes)
     {
+        // TODO apply custom color
+
         // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
         // opacity, so use the interior opacity.
         Double value = graphicAttributes.getInteriorOpacity();

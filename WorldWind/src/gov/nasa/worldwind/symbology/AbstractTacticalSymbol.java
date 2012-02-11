@@ -431,6 +431,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * text modifiers, otherwise <code>false</code>. Initially <code>true</code>.
      */
     protected boolean showTextModifiers = true;
+
+    /** Indicates an object to attach to the picked object list instead of this symbol. */
+    protected Object delegateOwner;
     protected boolean enableBatchRendering = true;
     protected boolean enableBatchPicking = true;
     /**
@@ -718,6 +721,18 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     public void setHighlightAttributes(TacticalSymbolAttributes highlightAttrs)
     {
         this.highlightAttrs = highlightAttrs; // Null is accepted, and indicates the default highlight attributes.
+    }
+
+    /** {@inheritDoc} */
+    public Object getDelegateOwner()
+    {
+        return this.delegateOwner;
+    }
+
+    /** {@inheritDoc} */
+    public void setDelegateOwner(Object owner)
+    {
+        this.delegateOwner = owner;
     }
 
     protected Offset getOffset()
@@ -1633,6 +1648,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected PickedObject createPickedObject(int colorCode)
     {
-        return new PickedObject(colorCode, this);
+        Object owner = this.getDelegateOwner();
+        return new PickedObject(colorCode, owner != null ? owner : this);
     }
 }

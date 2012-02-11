@@ -266,7 +266,8 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
     /** {@inheritDoc} */
     protected void applyDelegateOwner(Object owner)
     {
-        // TODO
+        this.symbol1.setDelegateOwner(owner);
+        this.symbol2.setDelegateOwner(owner);
     }
 
     /** Determine active attributes for this frame. */

@@ -266,5 +266,22 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      *                       attributes are used.
      */
     void setHighlightAttributes(TacticalSymbolAttributes highlightAttrs);
+
+    /**
+     * Indicates the delegate owner of this symbol. If non-null, the returned object replaces the symbol as the pickable
+     * object returned during picking. If null, the symbol itself is the pickable object returned during picking.
+     *
+     * @return the object used as the pickable object returned during picking, or null to indicate the the symbol is
+     *         returned during picking.
+     */
+    Object getDelegateOwner();
+
+    /**
+     * Specifies the delegate owner of this symbol. If non-null, the delegate owner replaces the symbol as the pickable
+     * object returned during picking. If null, the symbol itself is the pickable object returned during picking.
+     *
+     * @param owner the object to use as the pickable object returned during picking, or null to return the symbol.
+     */
+    void setDelegateOwner(Object owner);
 }
 
