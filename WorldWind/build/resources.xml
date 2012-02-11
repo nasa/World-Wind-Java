@@ -12,9 +12,43 @@
     <property name="batik.jar" value="${env.BATIK_HOME}/batik-rasterizer.jar"/>
 
     <property name="rasterize.height" value="128"/>
+    <property name="rasterize.maxwidth" value="128"/>
+    <!-- Rasterization height for the Forward Edge of Battle (FEBA, 2.X.2.4.2.1) image. -->
+    <property name="rasterize.height.feba" value="16"/>
 
     <property name="milstd2525.src.dir" location="resources/milstd2525"/>
     <property name="milstd2525.dest.dir" location="resources/milstd2525-png"/>
+
+    <!-- Utility to rasterize a directory of SVG files to PNG. -->
+    <macrodef name="rasterize"
+              description="Rasterize a directory of SVG files to PNG">
+        <attribute name="height"/>
+        <attribute name="maxwidth"/>
+        <attribute name="dest"/>
+        <element name="files"/>
+
+        <!-- Invoke the Batik rasterizer to convert SVG to PNG -->
+        <sequential>
+            <apply executable="java" parallel="true">
+                <arg value="-jar"/>
+                <arg path="${batik.jar}"/>
+
+                <arg value="-d"/>
+                <arg value="@{dest}"/>
+
+                <!-- Only specify image height. Batik will compute the appropriate width. Specifying the width as well
+                     would just cause Batik to add unnecessary whitespace. -->
+                <arg value="-h"/>
+                <arg value="@{maxwidth}"/>
+
+                <!-- Specify a max width to prevent narrow wide graphics getting too big. -->
+                <arg value="-maxw"/>
+                <arg value="@{height}"/>
+
+                <files/>
+            </apply>
+        </sequential>
+    </macrodef>
 
     <!-- Build all targets. -->
     <target name="resources" depends="resources.milstd2525" description="Builds all resource targets."/>
@@ -28,99 +62,69 @@
 
     <!-- Generate MIL-STD-2525C Appendix B. -->
     <target name="resources.milstd2525.tacgrp"
-            description="Generate images for MIL-STD-2525C Appendix B."
-            depends="imagemagick-check, imagemagick-missing"
-            if="imagemagick.available">
+            description="Generate images for MIL-STD-2525C Appendix B.">
 
-        <!-- Rasterize graphics from 2525C Appendix B -->
-        <antcall target="rasterize">
-            <param name="rasterize.src.dir" value="${milstd2525.src.dir}/tacgrp"/>
-            <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/tacgrp"/>
-        </antcall>
+        <rasterize
+            dest="${milstd2525.dest.dir}/tacgrp"
+            height="${rasterize.height}"
+            maxwidth="${rasterize.maxwidth}">
 
-        <!-- Trim transparent pixels from the generated graphics -->
-        <!-- Invoke ImageMagick mogrify to trim the images. -->
-        <apply executable="mogrify" parallel="true">
-            <arg value="-trim"/>
-            <arg value="+repage"/>
+            <files>
+                <fileset dir="${milstd2525.src.dir}/tacgrp">
+                    <include name="**/*.svg"/>
 
-            <fileset dir="${milstd2525.dest.dir}/tacgrp">
-                <include name="**/*.png"/>
+                    <!-- Forward Edge of Battle image needs to rasterize to a different size. See below. -->
+                    <exclude name="**/g-g?dlf-------x.svg"/>
+                </fileset>
+            </files>
+        </rasterize>
 
-                <!-- Do not trim the CBRN graphics. These graphics are composed of a fill part and an outline part. The
-                     two parts must be exactly the same size, and trimming would make the outline layer a different size
-                     than the fill. -->
-                <!-- TODO: would be cleaner not to have to special case these graphics. -->
-                <exclude name="**/g-m?neb-------x.png"/>
-                <exclude name="**/g-m?nec-------x.png"/>
-                <exclude name="**/g-m?nz--------x.png"/>
-            </fileset>
-        </apply>
+        <!-- Rasterize the Forward Edge of Battle (FEBA, 2.X.2.4.2.1) image. This image is not used in the same way as
+             the point graphics, so it needs be rasterized to a smaller size. -->
+        <rasterize
+            dest="${milstd2525.dest.dir}/tacgrp"
+            height="${rasterize.height.feba}"
+            maxwidth="${rasterize.maxwidth}">
+
+            <files>
+                <fileset dir="${milstd2525.src.dir}/tacgrp">
+                    <include name="**/g-g?dlf-------x.svg"/>
+                </fileset>
+            </files>
+        </rasterize>
     </target>
 
     <!-- Generate MIL-STD-2525C Appendix C. -->
     <target name="resources.milstd2525.metoc"
-            description="Generate images for MIL-STD-2525C Appendix C graphics."
-            depends="imagemagick-check, imagemagick-missing"
-            if="imagemagick.available">
+            description="Generate images for MIL-STD-2525C Appendix C graphics.">
 
-        <!-- Rasterize graphics from 2525C Appendix B -->
-        <antcall target="rasterize">
-            <param name="rasterize.src.dir" value="${milstd2525.src.dir}/metoc"/>
-            <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/metoc"/>
-        </antcall>
+        <rasterize
+            dest="${milstd2525.dest.dir}/metoc"
+            height="${rasterize.height}"
+            maxwidth="${rasterize.maxwidth}">
 
-        <!-- Trim transparent pixels from the generated graphics -->
-        <!-- Invoke ImageMagick mogrify to trim the images. -->
-        <apply executable="mogrify" parallel="true">
-            <arg value="-trim"/>
-            <arg value="+repage"/>
-
-            <fileset dir="${milstd2525.dest.dir}/metoc">
-                <include name="**/*.png"/>
-            </fileset>
-        </apply>
+            <files>
+                <fileset dir="${milstd2525.src.dir}/metoc">
+                    <include name="**/*.svg"/>
+                </fileset>
+            </files>
+        </rasterize>
     </target>
 
     <!-- Generate MIL-STD-2525C fill images. -->
     <target name="resources.milstd2525.fills"
             description="Generate images for MIL-STD-2525C graphic fills.">
+        <rasterize
+            dest="${milstd2525.dest.dir}/fills"
+            height="${rasterize.height}"
+            maxwidth="${rasterize.maxwidth}">
 
-        <!-- Rasterize graphics from 2525C Appendix B -->
-        <antcall target="rasterize">
-            <param name="rasterize.src.dir" value="${milstd2525.src.dir}/fills"/>
-            <param name="rasterize.dest.dir" value="${milstd2525.dest.dir}/fills"/>
-        </antcall>
-    </target>
-
-    <!-- Utility target to rasterize a directory of SVG files to PNG. -->
-    <target name="rasterize" if="batik.available"
-            description="Rasterize a directory of SVG files to PNG"
-            depends="batik-check, batik-missing">
-
-        <!-- Invoke the Batik rasterizer to convert SVG to PNG -->
-        <apply executable="java" parallel="true">
-            <arg value="-jar"/>
-            <arg path="${batik.jar}"/>
-
-            <arg value="-d"/>
-            <arg value="${rasterize.dest.dir}"/>
-
-            <!-- Only specify image height. Batik will compute the appropriate width. Specifying the width as well
-                 would just cause Batik to add unnecessary whitespace. -->
-            <arg value="-h"/>
-            <arg value="${rasterize.height}"/>
-
-            <fileset dir="${rasterize.src.dir}">
-                <include name="**/*.svg"/>
-            </fileset>
-        </apply>
-    </target>
-
-    <target name="imagemagick-missing" unless="imagemagick.available"
-            description="Echo a warning if ImageMagick is not available.">
-        <echo level="warning">ImageMagick cannot be found. ImageMagick is available from http://www.imagemagick.org.
-        </echo>
+            <files>
+                <fileset dir="${milstd2525.src.dir}/fills">
+                    <include name="**/*.svg"/>
+                </fileset>
+            </files>
+        </rasterize>
     </target>
 
     <target name="batik-missing" unless="batik.available"
@@ -132,13 +136,6 @@
 
     <target name="batik-check" description="Determine if Batik image library is available.">
         <available file="${batik.jar}" property="batik.available"/>
-    </target>
-
-    <target name="imagemagick-check" description="Determine if ImageMagick is available.">
-        <exec executable="mogrify" resultproperty="imagemagick.available" failonerror="false"
-              failifexecutionfails="false" logerror="false">
-            <arg value="-version"/>
-        </exec>
     </target>
 
     <!-- Individual clean targets corresponding to each build target above. -->
