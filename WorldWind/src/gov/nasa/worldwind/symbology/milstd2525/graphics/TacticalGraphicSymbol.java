@@ -107,7 +107,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         this.symbolCode = new SymbolCode(sidc);
         this.maskedSymbolCode = this.symbolCode.toMaskedString();
 
-        // Initialize the symbol code from the symbol identifier specified at construction.
         this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
 
         // Configure this tactical point graphic's icon retriever and modifier retriever with either the
@@ -340,5 +339,21 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
             || TacGrpSidc.MOBSU_CBRN_FAOTP.equals(code) // TODO: does this graphic support direction of movement?
             || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(code)
             || TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(code);
+    }
+
+    @Override
+    protected void computeTransform(DrawContext dc)
+    {
+        super.computeTransform(dc);
+
+        // Compute an appropriate offset if the application has not specified an offset and this symbol supports the
+        // direction of movement indicator. Only the CBRN graphics in MIL-STD-2525C support this indicator. (Using the
+        // graphic's default offset would cause the direction of movement line and location label to be cut off by the
+        // surface when the globe is tilted.)
+        if (this.iconRect != null && this.layoutRect != null && this.isShowDirectionOfMovement())
+        {
+            this.dx = -this.iconRect.getCenterX();
+            this.dy = -this.layoutRect.getMinY();
+        }
     }
 }
