@@ -70,6 +70,11 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      */
     protected String maskedSymbolCode;
 
+    /** Color to apply to the icon this frame. When the color changes a new version of the icon must be retrieved. */
+    protected Color activeColor;
+    /** Icon with active color applied. */
+    protected IconTexture activeColorTexture;
+
     /**
      * Constructs a new symbol with no position.
      *
@@ -131,6 +136,58 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     public String getIdentifier()
     {
         return this.symbolCode.toString();
+    }
+
+    /**
+     * Indicates a color to be blended with this graphic.
+     *
+     * @return Color blended with the graphic. May be null, in which case the color is determined by the graphic's
+     *         standard identity.
+     */
+    public Color getColor()
+    {
+        return (Color) this.modifiers.getValue(AVKey.COLOR);
+    }
+
+    /**
+     * Specifies a color to blend with this graphic. If the graphic is a single color, then this color is applied to the
+     * entire graphic. If the graphic is composed of an outline and a fill color, then this color is applied to the
+     * outline. If no color is specified then the color is determined by this graphic's standard identity.
+     *
+     * @param color Color to blend with this graphic. May be null, in which case the color is determined by the
+     *              graphic's standard identity.
+     */
+    public void setColor(Color color)
+    {
+        this.modifiers.setValue(AVKey.COLOR, color);
+    }
+
+    @Override
+    protected void layoutIcon(DrawContext dc)
+    {
+        if (this.getIconRetriever() == null)
+            return;
+
+        // If the icon color has changed we need to load a new version of the icon.
+        if (this.activeColor != this.getColor())
+        {
+            IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), this.modifiers);
+            this.activeColorTexture = new IconTexture(source);
+            this.activeColor = this.getColor();
+        }
+
+        // If iconTexture is not the active color texture, then attempt to bind the new texture. If this fails
+        // then continue drawing the old texture until the new one becomes available.
+        if (this.activeColorTexture != this.iconTexture && this.activeColorTexture != null
+            && this.activeColorTexture.bind(dc))
+        {
+            // New texture is ready, replace the previous texture.
+            this.iconTexture = this.activeColorTexture;
+            this.iconRect = null; // New texture loaded, recompute rectangle
+        }
+
+        // Call super class to layout the active icon.
+        super.layoutIcon(dc);
     }
 
     @Override
@@ -336,7 +393,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         String code = this.maskedSymbolCode;
 
         return TacGrpSidc.MOBSU_CBRN_NDGZ.equals(code)
-            || TacGrpSidc.MOBSU_CBRN_FAOTP.equals(code) // TODO: does this graphic support direction of movement?
+            || TacGrpSidc.MOBSU_CBRN_FAOTP.equals(code)
             || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(code)
             || TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(code);
     }

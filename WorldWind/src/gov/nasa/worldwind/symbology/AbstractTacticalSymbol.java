@@ -80,12 +80,15 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 return false;
             if (this.symbolId != null ? !this.symbolId.equals(that.symbolId) : that.symbolId != null)
                 return false;
-            // TODO: need a mechanism to equate the retriever parameters.
-            //noinspection RedundantIfStatement
-            //if (this.params != null ? !this.params.equals(that.params) : that.params != null)
-            //    return false;
 
-            return true;
+            if (this.retrieverParams != null && that.retrieverParams != null)
+            {
+                Set<Map.Entry<String, Object>> theseEntries = this.retrieverParams.getEntries();
+                Set<Map.Entry<String, Object>> thoseEntries = that.retrieverParams.getEntries();
+
+                return theseEntries.equals(thoseEntries);
+            }
+            return (this.retrieverParams == null && that.retrieverParams == null);
         }
 
         @Override
@@ -93,8 +96,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         {
             int result = this.retriever != null ? this.retriever.hashCode() : 0;
             result = 31 * result + (this.symbolId != null ? this.symbolId.hashCode() : 0);
-            // TODO: need a mechanism to equate the retriever parameters.
-            //result = 31 * result + (this.params != null ? this.params.hashCode() : 0);
+            result = 31 * result + (this.retrieverParams != null ? this.retrieverParams.getEntries().hashCode() : 0);
             return result;
         }
 
@@ -139,6 +141,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
                 if (image == null)
                 {
+                    System.out.println("Failed!");
                     // IconRetriever returns null if the symbol identifier is not recognized, or if the parameter list
                     // specified an empty icon. In either case, we mark the texture initialization as having failed to
                     // suppress  any further requests.

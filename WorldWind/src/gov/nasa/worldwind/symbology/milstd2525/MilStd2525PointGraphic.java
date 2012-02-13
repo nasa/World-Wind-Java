@@ -31,7 +31,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     // interface to the TacticalSymbol interface.
 
     /** Symbol used to render this graphic. */
-    protected TacticalGraphicSymbol symbol; // TODO can this be any TacticalSymbol?
+    protected TacticalGraphicSymbol symbol;
 
     /** Indicates whether or not the graphic is highlighted. */
     protected boolean highlighted;
@@ -51,6 +51,8 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     protected long frameTimestamp = -1L;
     /** Attributes to use for the current frame. */
     protected TacticalSymbolAttributes activeSymbolAttributes = new BasicTacticalSymbolAttributes();
+
+    protected static TacticalSymbolAttributes defaultSymbolAttributes = new BasicTacticalSymbolAttributes();
 
     /**
      * Create a new point graphic.
@@ -352,6 +354,9 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     /** Determine active attributes for this frame. */
     protected void determineActiveAttributes()
     {
+        // Reset symbol attributes to default before applying overrides.
+        this.activeSymbolAttributes.copy(defaultSymbolAttributes);
+
         if (this.isHighlighted())
         {
             TacticalGraphicAttributes highlightAttributes = this.getHighlightAttributes();
@@ -383,8 +388,6 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     protected void applyAttributesToSymbol(TacticalGraphicAttributes graphicAttributes,
         TacticalSymbolAttributes symbolAttributes)
     {
-        // TODO apply custom color
-
         // Line and area graphics distinguish between interior and outline opacity. Tactical symbols only support one
         // opacity, so use the interior opacity.
         Double value = graphicAttributes.getInteriorOpacity();
@@ -393,13 +396,23 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
             symbolAttributes.setOpacity(value);
         }
 
+        Material material = graphicAttributes.getInteriorMaterial();
+        if (material != null)
+        {
+            this.symbol.setColor(material.getDiffuse());
+        }
+        else
+        {
+            this.symbol.setColor(null);
+        }
+
         Font font = graphicAttributes.getTextModifierFont();
         if (font != null)
         {
             symbolAttributes.setTextModifierFont(font);
         }
 
-        Material material = graphicAttributes.getTextModifierMaterial();
+        material = graphicAttributes.getTextModifierMaterial();
         if (material != null)
         {
             symbolAttributes.setTextModifierMaterial(material);

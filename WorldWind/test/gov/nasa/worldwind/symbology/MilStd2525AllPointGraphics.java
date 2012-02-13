@@ -10,7 +10,7 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525PointGraphic;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
@@ -46,6 +46,7 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
 
             this.sharedAttrs = new BasicTacticalGraphicAttributes();
             this.sharedHighlightAttrs = new BasicTacticalGraphicAttributes();
+            this.sharedHighlightAttrs.setInteriorMaterial(Material.WHITE);
 
             this.displayPoints(this.graphicLayer);
 
