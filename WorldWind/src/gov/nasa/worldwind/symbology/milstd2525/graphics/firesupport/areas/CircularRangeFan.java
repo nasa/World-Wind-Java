@@ -6,10 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
@@ -22,15 +21,17 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-// TODO: add support for a symbol at the center of the range fan.
 public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRenderable
 {
-    protected final static Offset LABEL_OFFSET = new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION);
+    protected final static Offset LABEL_OFFSET = Offset.fromFraction(0d, 0d);
 
     /** Position of the center of the range fan. */
     protected Position position;
     /** Rings that make up the range fan. */
     protected List<SurfaceCircle> rings;
+
+    /** Symbol drawn at the center of the range fan. */
+    protected TacticalSymbol symbol;
 
     /**
      * Indicates the graphics supported by this class.
@@ -102,6 +103,11 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         {
             ring.setCenter(this.position);
         }
+
+        if (this.symbol != null)
+        {
+            this.symbol.setPosition(this.position);
+        }
     }
 
     /** {@inheritDoc} */
@@ -121,6 +127,10 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
                 this.setRadii(Arrays.asList((Double) value));
             }
         }
+        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier))
+        {
+            this.setSymbol((TacticalSymbol) value);
+        }
         else
         {
             super.setModifier(modifier, value);
@@ -134,6 +144,10 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         if (SymbologyConstants.DISTANCE.equals(modifier))
         {
             return this.getRadii();
+        }
+        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier))
+        {
+            return this.getSymbol();
         }
         else
         {
@@ -183,6 +197,33 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         this.onModifierChanged();
     }
 
+    /**
+     * Indicates a symbol drawn at the center of the range fan.
+     *
+     * @return The symbol drawn at the center of the range fan. May be null.
+     */
+    public TacticalSymbol getSymbol()
+    {
+        return this.symbol;
+    }
+
+    /**
+     * Specifies a symbol to draw at the center of the range fan. Equivalent to setting the {@link
+     * SymbologyConstants#SYMBOL_INDICATOR} modifier. The symbol's position will be changed to match the range fan
+     * center position.
+     *
+     * @param symbol The symbol to draw at the center of the range fan. May be null to indicate that no symbol is
+     *               drawn.
+     */
+    public void setSymbol(TacticalSymbol symbol)
+    {
+        this.symbol = symbol;
+        if (this.symbol != null)
+            this.symbol.setPosition(this.getPosition());
+
+        this.onModifierChanged();
+    }
+
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
@@ -221,6 +262,11 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         for (SurfaceCircle ring : this.rings)
         {
             ring.render(dc);
+        }
+
+        if (this.symbol != null)
+        {
+            this.symbol.render(dc);
         }
     }
 

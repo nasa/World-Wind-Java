@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
@@ -442,6 +442,11 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setModifier(SymbologyConstants.DISTANCE, Arrays.asList(1000.0, 6000.0, 11000.0));
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL"));
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
+
+            // Add a symbol at the center of the range fan
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR,
+                new MilStd2525TacticalSymbol("SFGPUCFH-------", position));
+
             layer.addRenderable(graphic);
 
             //////////////////////////////////////////////////
@@ -460,6 +465,10 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setModifier(SymbologyConstants.AZIMUTH, azimuths);
             graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("GL", "GL", "GL", "GL"));
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.2)");
+
+            // Add a symbol at the center of the range fan.
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR,
+                new MilStd2525TacticalSymbol("SFGPUCFTR------", position));
             layer.addRenderable(graphic);
 
             ////////////////////////////////////////////////////////////
