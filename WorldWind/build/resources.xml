@@ -58,6 +58,7 @@
             description="Generate images for MIL-STD-2525C tactical graphics. PNG images are generated from SVG source files."
             depends="resources.milstd2525.tacgrp,
                      resources.milstd2525.metoc,
+                     resources.milstd2525.ems,
                      resources.milstd2525.fills"/>
 
     <!-- Generate MIL-STD-2525C Appendix B. -->
@@ -105,6 +106,23 @@
 
             <files>
                 <fileset dir="${milstd2525.src.dir}/metoc">
+                    <include name="**/*.svg"/>
+                </fileset>
+            </files>
+        </rasterize>
+    </target>
+
+    <!-- Generate MIL-STD-2525C Appendix G. -->
+    <target name="resources.milstd2525.ems"
+            description="Generate images for MIL-STD-2525C Appendix G graphics.">
+
+        <rasterize
+            dest="${milstd2525.dest.dir}/ems"
+            height="${rasterize.height}"
+            maxwidth="${rasterize.maxwidth}">
+
+            <files>
+                <fileset dir="${milstd2525.src.dir}/ems">
                     <include name="**/*.svg"/>
                 </fileset>
             </files>
