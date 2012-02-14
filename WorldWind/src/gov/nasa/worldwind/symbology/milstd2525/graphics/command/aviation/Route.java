@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
@@ -399,7 +399,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             return;
         }
 
-        Label label = this.addLabel(labelText);
+        TacticalGraphicLabel label = this.addLabel(labelText);
         label.setTextAlign(AVKey.LEFT);
         label.setOffset(new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION));
 
@@ -469,7 +469,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
                 i += 1;
             }
 
-            Label label = this.labels.get(i);
+            TacticalGraphicLabel label = this.labels.get(i);
 
             // Position segment label at the midpoint of the segment
             label.setPosition(midpoint);

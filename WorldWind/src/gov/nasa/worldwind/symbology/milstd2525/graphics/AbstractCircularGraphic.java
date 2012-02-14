@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -167,7 +167,7 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
         this.circle.setDelegateOwner(owner);
         if (this.labels != null)
         {
-            for (Label label : this.labels)
+            for (TacticalGraphicLabel label : this.labels)
             {
                 label.setDelegateOwner(owner);
             }

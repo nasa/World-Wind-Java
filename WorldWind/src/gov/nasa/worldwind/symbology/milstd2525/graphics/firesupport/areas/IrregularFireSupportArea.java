@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.Label;
+import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -103,13 +103,13 @@ public class IrregularFireSupportArea extends BasicArea
         String text = allText[0];
         if (!WWUtil.isEmpty(text))
         {
-            Label mainLabel = this.addLabel(text);
+            TacticalGraphicLabel mainLabel = this.addLabel(text);
             mainLabel.setTextAlign(this.getLabelAlignment());
         }
 
         if (allText.length > 1 && !WWUtil.isEmpty(allText[1]))
         {
-            Label timeLabel = this.addLabel(allText[1]);
+            TacticalGraphicLabel timeLabel = this.addLabel(allText[1]);
             timeLabel.setTextAlign(AVKey.RIGHT);
 
             // Align the upper right corner of the time label with the upper right corner of the polygon.

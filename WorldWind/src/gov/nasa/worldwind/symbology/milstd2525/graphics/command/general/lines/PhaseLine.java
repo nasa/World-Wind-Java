@@ -10,7 +10,8 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.util.*;
@@ -168,8 +169,8 @@ public class PhaseLine extends MilStd2525TacticalGraphic
             last = iterator.next();
         }
 
-        Label startLabel = this.labels.get(0);
-        Label endLabel = this.labels.get(1);
+        TacticalGraphicLabel startLabel = this.labels.get(0);
+        TacticalGraphicLabel endLabel = this.labels.get(1);
 
         // Position the labels at the ends of the path
         startLabel.setPosition(first);

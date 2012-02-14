@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2011 United States Government as represented by the Administrator of the
+ * Copyright (C) 2012 United States Government as represented by the Administrator of the
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology.milstd2525;
+package gov.nasa.worldwind.symbology;
 
 import com.sun.opengl.util.j2d.TextRenderer;
 import gov.nasa.worldwind.View;
@@ -28,7 +28,7 @@ import java.awt.geom.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class Label implements OrderedRenderable
+public class TacticalGraphicLabel implements OrderedRenderable
 {
     /** Default font. */
     public static final Font DEFAULT_FONT = Font.decode("Arial-BOLD-16");
@@ -902,9 +902,9 @@ public class Label implements OrderedRenderable
 
         if (!dc.isPickingMode())
         {
-            while (nextItem != null && nextItem instanceof Label)
+            while (nextItem != null && nextItem instanceof TacticalGraphicLabel)
             {
-                Label nextLabel = (Label) nextItem;
+                TacticalGraphicLabel nextLabel = (TacticalGraphicLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering())
                     break;
 
@@ -916,9 +916,9 @@ public class Label implements OrderedRenderable
         }
         else if (this.isEnableBatchPicking())
         {
-            while (nextItem != null && nextItem instanceof Label)
+            while (nextItem != null && nextItem instanceof TacticalGraphicLabel)
             {
-                Label nextLabel = (Label) nextItem;
+                TacticalGraphicLabel nextLabel = (TacticalGraphicLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering() || !nextLabel.isEnableBatchPicking())
                     break;
 
@@ -950,9 +950,9 @@ public class Label implements OrderedRenderable
 
         if (!dc.isPickingMode())
         {
-            while (nextItem != null && nextItem instanceof Label)
+            while (nextItem != null && nextItem instanceof TacticalGraphicLabel)
             {
-                Label nextLabel = (Label) nextItem;
+                TacticalGraphicLabel nextLabel = (TacticalGraphicLabel) nextItem;
                 if (!nextLabel.isEnableBatchRendering())
                     break;
 

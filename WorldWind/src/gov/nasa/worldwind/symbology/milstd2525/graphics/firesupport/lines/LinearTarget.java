@@ -11,8 +11,8 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -320,7 +320,7 @@ public class LinearTarget extends MilStd2525TacticalGraphic
         text = this.getBottomLabelText();
         if (!WWUtil.isEmpty(text))
         {
-            Label label = this.addLabel(text);
+            TacticalGraphicLabel label = this.addLabel(text);
             label.setOffset(this.getBottomLabelOffset());
         }
     }
@@ -378,7 +378,7 @@ public class LinearTarget extends MilStd2525TacticalGraphic
         List<Position> orientationPositions = this.computeVerticalSegmentPositions(globe, pB, vAB, offset);
 
         // Set position of the main (top) label
-        Label topLabel = this.labels.get(0);
+        TacticalGraphicLabel topLabel = this.labels.get(0);
         if (topLabel != null)
         {
             topLabel.setPosition(positions.get(0));
@@ -388,7 +388,7 @@ public class LinearTarget extends MilStd2525TacticalGraphic
         // Set position of the bottom label.
         if (this.labels.size() > 1)
         {
-            Label bottomLabel = this.labels.get(1);
+            TacticalGraphicLabel bottomLabel = this.labels.get(1);
             if (bottomLabel != null)
             {
                 bottomLabel.setPosition(positions.get(1));

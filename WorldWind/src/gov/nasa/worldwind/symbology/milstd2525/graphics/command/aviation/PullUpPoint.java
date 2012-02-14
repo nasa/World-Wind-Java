@@ -10,8 +10,7 @@ import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalPoint;
-import gov.nasa.worldwind.symbology.milstd2525.Label;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 
 import java.util.*;
@@ -125,7 +124,7 @@ public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoin
     @Override
     protected void createLabels()
     {
-        Label label = this.addLabel("PUP");
+        TacticalGraphicLabel label = this.addLabel("PUP");
         label.setTextAlign(AVKey.LEFT);
     }
 

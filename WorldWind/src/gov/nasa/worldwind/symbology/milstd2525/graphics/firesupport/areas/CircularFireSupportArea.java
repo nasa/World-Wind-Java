@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.Label;
+import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -91,7 +91,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic
         String text = allText[0];
         if (!WWUtil.isEmpty(text))
         {
-            Label mainLabel = this.addLabel(text);
+            TacticalGraphicLabel mainLabel = this.addLabel(text);
             mainLabel.setTextAlign(this.getMainLabelTextAlign());
         }
 
@@ -101,7 +101,7 @@ public class CircularFireSupportArea extends AbstractCircularGraphic
 
             if (!WWUtil.isEmpty(timeText))
             {
-                Label timeLabel = this.addLabel(timeText);
+                TacticalGraphicLabel timeLabel = this.addLabel(timeText);
                 timeLabel.setTextAlign(AVKey.RIGHT);
             }
         }

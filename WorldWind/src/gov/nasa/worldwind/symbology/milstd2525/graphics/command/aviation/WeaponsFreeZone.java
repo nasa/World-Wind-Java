@@ -9,6 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.awt.*;
@@ -90,7 +91,7 @@ public class WeaponsFreeZone extends AviationZone
 
         Font font = this.activeOverrides.getTextModifierFont();
         if (font == null)
-            font = gov.nasa.worldwind.symbology.milstd2525.Label.DEFAULT_FONT;
+            font = TacticalGraphicLabel.DEFAULT_FONT;
 
         AnnotationAttributes attributes = this.annotation.getAttributes();
 
@@ -138,7 +139,7 @@ public class WeaponsFreeZone extends AviationZone
     @Override
     protected Offset getDefaultLabelOffset()
     {
-        return gov.nasa.worldwind.symbology.milstd2525.Label.DEFAULT_OFFSET;
+        return TacticalGraphicLabel.DEFAULT_OFFSET;
     }
 
     /**

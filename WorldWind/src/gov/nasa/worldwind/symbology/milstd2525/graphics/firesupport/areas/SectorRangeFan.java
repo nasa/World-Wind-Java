@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -875,7 +875,7 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
 
         Position center = this.getPosition();
 
-        Iterator<Label> labelIterator = this.labels.iterator();
+        Iterator<TacticalGraphicLabel> labelIterator = this.labels.iterator();
         Iterator<Double> radii = this.getRadii().iterator();
         Iterator<? extends Angle> azimuths = this.getAzimuths().iterator();
 
@@ -896,10 +896,10 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
             rightAzimuth = this.normalizeAzimuth(rightAzimuth);
 
             // The labels come in sets of three: radius, left azimuth, right azimuth
-            Label rangeLabel = labelIterator.next();
+            TacticalGraphicLabel rangeLabel = labelIterator.next();
 
-            Label leftLabel = null; // Left azimuth label
-            Label rightLabel = null; // Right azimuth label
+            TacticalGraphicLabel leftLabel = null; // Left azimuth label
+            TacticalGraphicLabel rightLabel = null; // Right azimuth label
 
             if (leftAzimuth != null && labelIterator.hasNext())
                 leftLabel = labelIterator.next();

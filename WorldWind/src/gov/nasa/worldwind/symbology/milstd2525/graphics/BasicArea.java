@@ -9,8 +9,8 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.SymbologyConstants;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
@@ -30,9 +30,9 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     protected SurfacePolygon polygon;
 
     /** First "ENY" label, for hostile entities. */
-    protected Label identityLabel1;
+    protected TacticalGraphicLabel identityLabel1;
     /** Second "ENY" label, for hostile entities. */
-    protected Label identityLabel2;
+    protected TacticalGraphicLabel identityLabel2;
 
     /**
      * Indicates the graphics supported by this class.
@@ -190,7 +190,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         String labelText = this.createLabelText();
         if (!WWUtil.isEmpty(labelText))
         {
-            Label mainLabel = this.addLabel(labelText);
+            TacticalGraphicLabel mainLabel = this.addLabel(labelText);
             mainLabel.setTextAlign(this.getLabelAlignment());
 
             mainLabel.setOffset(this.getDefaultLabelOffset());
@@ -276,7 +276,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     protected boolean mustCreateIdentityLabels()
     {
         return this.isShowHostileIndicator()
-            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.getStandardIdentity());
+            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity());
     }
 
     protected int getPositionCount()
