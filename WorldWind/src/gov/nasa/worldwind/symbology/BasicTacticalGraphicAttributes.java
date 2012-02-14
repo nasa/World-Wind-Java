@@ -24,13 +24,16 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
      * default scale. Initially <code>null</code>.
      */
     protected Double scale;
-    /** Indicates the material properties of the shape's interior. Initially <code>null</code>. */
+    /** Indicates the material properties of the graphic's interior. Initially <code>null</code>. */
     protected Material interiorMaterial;
-    /** Indicates the material properties of the shape's outline. Initially <code>null</code>. */
+    /** Indicates the material properties of the graphic's outline. Initially <code>null</code>. */
     protected Material outlineMaterial;
-    /** Indicates the opacity of the shape's interior as a floating-point value in the range 0.0 to 1.0. Initially 0.0. */
+    /**
+     * Indicates the opacity of the graphic's interior as a floating-point value in the range 0.0 to 1.0. Initially
+     * 0.0.
+     */
     protected Double interiorOpacity;
-    /** Indicates the opacity of the shape's outline as a floating-point value in the range 0.0 to 1.0. Initially 0.0. */
+    /** Indicates the opacity of the graphic's outline as a floating-point value in the range 0.0 to 1.0. Initially 0.0. */
     protected Double outlineOpacity;
     /** Indicates the line width (in pixels) used when rendering the shape's outline. Initially 0.0. */
     protected double outlineWidth;
@@ -39,15 +42,15 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     /** Indicates the material used to render text modifiers. */
     protected Material textMaterial;
 
-    /** Creates a new <code>BasicShapeAttributes</code>. */
+    /** Creates a new <code>BasicTacticalGraphicAttributes</code>. */
     public BasicTacticalGraphicAttributes()
     {
     }
 
     /**
-     * Creates a new <code>BasicShapeAttributes</code> configured with the specified <code>attributes</code>.
+     * Creates a new <code>BasicTacticalGraphicAttributes</code> configured with the specified <code>attributes</code>.
      *
-     * @param attributes the attributes to configure the new <code>BasicShapeAttributes</code> with.
+     * @param attributes the attributes to configure the new <code>BasicTacticalGraphicAttributes</code> with.
      *
      * @throws IllegalArgumentException if <code>attributes</code> is <code>null</code>.
      */
@@ -163,13 +166,6 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     /** {@inheritDoc} */
     public void setOutlineMaterial(Material material)
     {
-        if (material == null)
-        {
-            String message = Logging.getMessage("nullValue.MaterialIsNull");
-            Logging.logger().severe(message);
-            throw new IllegalArgumentException(message);
-        }
-
         this.outlineMaterial = material;
     }
 

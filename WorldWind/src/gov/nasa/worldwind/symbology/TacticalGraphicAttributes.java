@@ -124,7 +124,6 @@ public interface TacticalGraphicAttributes
      *
      * @param material the material to apply to the graphic's interior.
      *
-     * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getInteriorMaterial()
      */
     void setInteriorMaterial(Material material);
@@ -146,7 +145,6 @@ public interface TacticalGraphicAttributes
      *
      * @param material the material to apply to the graphic's outline.
      *
-     * @throws IllegalArgumentException if <code>material</code> is <code>null</code>.
      * @see #getOutlineMaterial()
      */
     void setOutlineMaterial(Material material);
