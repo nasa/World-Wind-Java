@@ -646,6 +646,24 @@ public class TacticalGraphics extends ApplicationTemplate
 
             // Apply shared attributes to all graphics on this layer
             this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
+
+            //////////////////////////////////////////////////////////////
+            // Battle Position, Prepared but not occupied (2.X.2.4.3.1.1)
+            //////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.9684, -116.4864),
+                Position.fromDegrees(34.9776, -116.6114),
+                Position.fromDegrees(35.0271, -116.5614),
+                Position.fromDegrees(35.0309, -116.4132));
+
+            graphic = factory.createGraphic("GHGPDAB----J--X", positions, null);
+            graphic.setText("Blue");
+            graphic.setValue(AVKey.DISPLAY_NAME, "Battle Position, Prepared but not Occupied (2.X.2.4.3.1.1)");
+            layer.addRenderable(graphic);
+
+            // Apply shared attributes to all graphics on this layer
+            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
 
         /**
