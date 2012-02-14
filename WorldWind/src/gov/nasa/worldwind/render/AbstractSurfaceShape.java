@@ -218,7 +218,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             null);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings( {"unchecked"})
     public List<Sector> getSectors(DrawContext dc)
     {
         if (dc == null)
@@ -781,7 +781,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         return this.texture;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings( {"unchecked"})
     protected List<List<LatLon>> getCachedGeometry(DrawContext dc, SurfaceTileDrawContext sdc)
     {
         if (dc == null)
@@ -1006,7 +1006,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
     }
 
-    @SuppressWarnings({"StringEquality"})
+    @SuppressWarnings( {"StringEquality"})
     protected void addIntermediateLocations(LatLon a, LatLon b, double edgeIntervalsPerDegree, List<LatLon> locations)
     {
         if (this.pathType != null && this.pathType == AVKey.GREAT_CIRCLE)
@@ -1424,7 +1424,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
 
         @Override
-        @SuppressWarnings({"SimplifiableIfStatement"})
+        @SuppressWarnings( {"SimplifiableIfStatement"})
         public boolean equals(Object o)
         {
             if (this == o)
@@ -1498,7 +1498,16 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Does this object support a certain export format?
+     *
+     * @param format Mime type for the export format.
+     *
+     * @return One of {@link Exportable#FORMAT_SUPPORTED}, {@link Exportable#FORMAT_NOT_SUPPORTED}, or {@link
+     *         Exportable#FORMAT_PARTIALLY_SUPPORTED}.
+     *
+     * @see #export(String, Object)
+     */
     public String isExportFormatSupported(String format)
     {
         if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(format))
@@ -1523,7 +1532,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
      * @param output   An object that will receive the exported data. The type of this object depends on the export
      *                 format (see above).
      *
-     * @throws java.io.IOException If an exception occurs writing to the output object.
+     * @throws java.io.IOException           If an exception occurs writing to the output object.
      * @throws UnsupportedOperationException if the format is not supported by this object, or if the {@code output}
      *                                       argument is not of a supported type.
      */
@@ -1562,6 +1571,7 @@ public abstract class AbstractSurfaceShape extends AbstractSurfaceObject impleme
             throw new UnsupportedOperationException(message);
         }
     }
+
     protected void exportAsKML(Object output) throws IOException, XMLStreamException
     {
         // This is a dummy method, here to enable a call to it above. It's expected to be overridden by subclasses.
