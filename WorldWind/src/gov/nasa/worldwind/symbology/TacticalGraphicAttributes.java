@@ -55,7 +55,9 @@ public interface TacticalGraphicAttributes
      * Indicates the graphic scale as a ratio of the graphics's original size. See {@link #setScale(Double)} for a
      * description of how scale is used.
      * <p/>
-     * Scale only applies to point graphics. It does not apply to line and area graphics.
+     * Scale directly affects the size of point graphics. Line and area graphics do not change size based on the scale,
+     * but if a line or area graphic includes a tactical symbol as part of a composite shape, the scale may be applied
+     * to the symbol.
      *
      * @return the graphics's scale. May be <code>null</code>, indicating that the default scale is used.
      */
@@ -67,7 +69,9 @@ public interface TacticalGraphicAttributes
      * symbol larger. The scale applies to both the graphic and the graphic modifiers. The specified scale must be
      * either <code>null</code> or greater than or equal to 0.0.
      * <p/>
-     * Scale only applies to point graphics. It does not apply to line and area graphics.
+     * Scale directly affects the size of point graphics. Line and area graphics do not change size based on the scale,
+     * but if a line or area graphic includes a tactical symbol as part of a composite shape, the scale may be applied
+     * to the symbol.
      *
      * @param scale the graphic's scale. May be <code>null</code>, indicating that the default scale should be used.
      *

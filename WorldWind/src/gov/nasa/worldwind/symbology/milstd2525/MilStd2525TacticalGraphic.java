@@ -18,18 +18,16 @@ import java.util.Iterator;
  * <p/>
  * The following table lists the modifiers supported by 2525 graphics. Note that not all graphics support all modifiers.
  * <table width="100%"> <tr><th>Field</th><th>Modifier key</th><th>Data type</th><th>Description</th></tr>
- * <tr><td>A</td><td>SymbologyConstants.SYMBOL</td><td>{@link TacticalSymbol}</td><td>Symbol icon</td></tr>
+ * <tr><td>A</td><td>SymbologyConstants.SYMBOL</td><td>String</td><td>SIDC for a MIL-STD-2525 Tactical Symbol</td></tr>
  * <tr><td>B</td><td>SymbologyConstants.ECHELON</td><td>String</td><td>Echelon</td></tr>
  * <tr><td>C</td><td>SymbologyConstants.QUANTITY</td><td>String</td><td>Quantity</td></tr>
  * <tr><td>H</td><td>SymbologyConstants.ADDITIONAL_INFO</td><td>String</td><td>Additional information</td></tr>
- * <tr><td>N</td><td>SymbologyConstants.SHOW_HOSTILE</td><td>Boolean</td><td>Show/hide hostile entity
- * indicator</td></tr> <tr><td>Q</td><td>SymbologyConstants.DIRECTION_OF_MOVEMENT</td><td>{@link
- * gov.nasa.worldwind.geom.Angle}</td><td>Direction indicator</td></tr> <tr><td>S</td><td>SymbologyConstants.OFFSET</td><td>{@link
- * gov.nasa.worldwind.render.Offset}</td><td>Offset location indicator</td></tr> <tr><td>T</td><td>SymbologyConstants.UNIQUE_DESIGNATION</td><td>String</td><td>Unique
+ * <tr><td>Q</td><td>SymbologyConstants.DIRECTION_OF_MOVEMENT</td><td>{@link gov.nasa.worldwind.geom.Angle}</td><td>Direction
+ * indicator</td></tr> <tr><td>S</td><td>SymbologyConstants.OFFSET</td><td>{@link gov.nasa.worldwind.render.Offset}</td><td>Offset
+ * location indicator</td></tr> <tr><td>T</td><td>SymbologyConstants.UNIQUE_DESIGNATION</td><td>String</td><td>Unique
  * designation</td></tr> <tr><td>V</td><td>SymbologyConstants.TYPE</td><td>String</td><td>Type</td></tr>
  * <tr><td>W</td><td>SymbologyConstants.DATE_TIME_GROUP</td><td>String</td><td>Date/time</td></tr>
  * <tr><td>X</td><td>SymbologyConstants.ALTITUDE_DEPTH</td><td>Double</td><td>Altitude/depth</td></tr>
- * <tr><td>Y</td><td>SymbologyConstants.SHOW_LOCATION</td><td>Boolean</td><td>Show/hide position field</td></tr>
  * <tr><td>AM</td><td>SymbologyConstants.DISTANCE</td><td>Double</td><td>Radius, length or width of rectangle.</td></tr>
  * <tr><td>AN</td><td>SymbologyConstants.AZIMUTH</td><td>Angle</td><td>Azimuth</td></tr> </table>
  * <p/>

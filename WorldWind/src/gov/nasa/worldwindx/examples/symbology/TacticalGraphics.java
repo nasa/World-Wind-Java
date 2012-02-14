@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525GraphicFactory;
 import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
@@ -41,7 +41,10 @@ public class TacticalGraphics extends ApplicationTemplate
         protected RenderableLayer lineLayer;
         protected RenderableLayer areaLayer;
 
+        /** Shared attributes for line and area graphics. */
         protected TacticalGraphicAttributes sharedAttrs;
+        /** Shared attributes for point graphics. */
+        protected TacticalGraphicAttributes sharedPointAttrs;
 
         public AppFrame()
         {
@@ -56,7 +59,16 @@ public class TacticalGraphics extends ApplicationTemplate
             this.areaLayer = new RenderableLayer();
             this.areaLayer.setName("Tactical Graphics (Areas)");
 
+            // Create attributes for line and area graphics. Line and area graphics use the scale attribute to determine
+            // the size of tactical symbols included in the graphic. Setting the scale to 1/4 prevents the symbol
+            // overwhelming the rest of the graphic.
             this.sharedAttrs = new BasicTacticalGraphicAttributes();
+            this.sharedAttrs.setScale(0.25);
+
+            // Create attributes for point graphics. Point graphics use the scale attribute to determine the size of the
+            // point graphic icon. Do not share attributes with line and area graphics because point graphics look
+            // better with a larger scale value.
+            this.sharedPointAttrs = new BasicTacticalGraphicAttributes();
 
             // Create tactical symbols and graphics and add them to the layer
             this.createPointGraphics(this.pointLayer);
@@ -109,7 +121,7 @@ public class TacticalGraphics extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer
-            this.setAttributes(layer, this.sharedAttrs);
+            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
 
         protected void createLineGraphics(RenderableLayer layer)
@@ -225,6 +237,20 @@ public class TacticalGraphics extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
+            // Airborne (2.X.2.5.2.1.2)
+            /////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.7099, -117.9047),
+                Position.fromDegrees(34.6725, -117.9590),
+                Position.fromDegrees(34.6814, -118.0522),
+                Position.fromDegrees(34.7124, -117.9284));
+            graphic = factory.createGraphic("GFGPOLAA------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Airborne (2.X.2.5.2.1.2)");
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCI--------");
+            layer.addRenderable(graphic);
+
+            /////////////////////////////////////////////
             // Minimum risk route (2.X.2.2.2.2)
             /////////////////////////////////////////////
 
@@ -307,7 +333,7 @@ public class TacticalGraphics extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer
-            this.setAttributes(layer, this.sharedAttrs);
+            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
 
         protected void createAreaGraphics(RenderableLayer layer)
@@ -444,8 +470,7 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.1)");
 
             // Add a symbol at the center of the range fan
-            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR,
-                new MilStd2525TacticalSymbol("SFGPUCFH-------", position));
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCFH-------");
 
             layer.addRenderable(graphic);
 
@@ -467,8 +492,7 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Weapon/Sensor Range Fan (2.X.4.3.4.2)");
 
             // Add a symbol at the center of the range fan.
-            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR,
-                new MilStd2525TacticalSymbol("SFGPUCFTR------", position));
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCFTR------");
             layer.addRenderable(graphic);
 
             ////////////////////////////////////////////////////////////
@@ -621,20 +645,31 @@ public class TacticalGraphics extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer
-            this.setAttributes(layer, this.sharedAttrs);
+            this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
 
         /**
          * Apply attributes to all TacticalGraphics on a layer.
          *
-         * @param layer Layer of graphics to modify.
-         * @param attrs Attributes to apply to graphics.
+         * @param layer      Layer of graphics to modify.
+         * @param attrs      Attributes to apply to non-point graphics.
+         * @param pointAttrs Attributes to apply to TacticalPoint graphics graphics.
          */
-        protected void setAttributes(RenderableLayer layer, TacticalGraphicAttributes attrs)
+        protected void setAttributes(RenderableLayer layer, TacticalGraphicAttributes attrs,
+            TacticalGraphicAttributes pointAttrs)
         {
             for (Renderable renderable : layer.getRenderables())
             {
-                if (renderable instanceof TacticalGraphic)
+                if (renderable instanceof TacticalPoint)
+                {
+                    // Apply attributes if the graphic does not already have attributes.
+                    TacticalGraphic graphic = (TacticalGraphic) renderable;
+                    if (graphic.getAttributes() == null)
+                    {
+                        graphic.setAttributes(pointAttrs);
+                    }
+                }
+                else if (renderable instanceof TacticalGraphic)
                 {
                     // Apply attributes if the graphic does not already have attributes.
                     TacticalGraphic graphic = (TacticalGraphic) renderable;
@@ -662,8 +697,13 @@ public class TacticalGraphics extends ApplicationTemplate
                     // when highlighted. Changes in these attributes are reflected in all symbols that use them.
                     JSlider slider = (JSlider) changeEvent.getSource();
                     double opacity = (double) slider.getValue() / 100d;
+
                     sharedAttrs.setInteriorOpacity(opacity);
                     sharedAttrs.setOutlineOpacity(opacity);
+
+                    sharedPointAttrs.setInteriorOpacity(opacity);
+                    sharedPointAttrs.setOutlineOpacity(opacity);
+
                     getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                 }
             });

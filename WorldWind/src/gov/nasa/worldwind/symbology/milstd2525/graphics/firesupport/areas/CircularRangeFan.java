@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
@@ -32,6 +32,8 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
 
     /** Symbol drawn at the center of the range fan. */
     protected TacticalSymbol symbol;
+    /** Attributes applied to the symbol. */
+    protected TacticalSymbolAttributes symbolAttributes;
 
     /**
      * Indicates the graphics supported by this class.
@@ -127,9 +129,9 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
                 this.setRadii(Arrays.asList((Double) value));
             }
         }
-        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier))
+        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String)
         {
-            this.setSymbol((TacticalSymbol) value);
+            this.setSymbol((String) value);
         }
         else
         {
@@ -202,9 +204,9 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
      *
      * @return The symbol drawn at the center of the range fan. May be null.
      */
-    public TacticalSymbol getSymbol()
+    public String getSymbol()
     {
-        return this.symbol;
+        return this.symbol != null ? this.symbol.getIdentifier() : null;
     }
 
     /**
@@ -212,15 +214,24 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
      * SymbologyConstants#SYMBOL_INDICATOR} modifier. The symbol's position will be changed to match the range fan
      * center position.
      *
-     * @param symbol The symbol to draw at the center of the range fan. May be null to indicate that no symbol is
-     *               drawn.
+     * @param sidc Identifier for a MIL-STD-2525C symbol to draw at the center of the range fan. May be null to indicate
+     *             that no symbol is drawn.
      */
-    public void setSymbol(TacticalSymbol symbol)
+    public void setSymbol(String sidc)
     {
-        this.symbol = symbol;
-        if (this.symbol != null)
-            this.symbol.setPosition(this.getPosition());
+        if (sidc != null)
+        {
+            if (this.symbolAttributes == null)
+                this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
+            this.symbol = this.createSymbol(sidc);
+        }
+        else
+        {
+            // Null value indicates no symbol.
+            this.symbol = null;
+            this.symbolAttributes = null;
+        }
         this.onModifierChanged();
     }
 
@@ -257,12 +268,19 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
      *
      * @param dc Current draw context.
      */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         for (SurfaceCircle ring : this.rings)
         {
             ring.render(dc);
         }
+    }
+
+    /** {@inheritDoc} Overridden to render symbol at the center of the range fan. */
+    @Override
+    protected void doRenderModifiers(DrawContext dc)
+    {
+        super.doRenderModifiers(dc);
 
         if (this.symbol != null)
         {
@@ -340,6 +358,22 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         }
     }
 
+    /** {@inheritDoc} Overridden to update symbol attributes. */
+    @Override
+    protected void determineActiveAttributes()
+    {
+        super.determineActiveAttributes();
+
+        // Apply active attributes to the symbol.
+        if (this.symbolAttributes != null)
+        {
+            ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
+            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+            this.symbolAttributes.setScale(this.activeOverrides.getScale());
+        }
+    }
+
     /** {@inheritDoc} */
     protected void applyDelegateOwner(Object owner)
     {
@@ -363,5 +397,15 @@ public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRe
         circle.setDelegateOwner(this.getActiveDelegateOwner());
         circle.setAttributes(this.activeShapeAttributes);
         return circle;
+    }
+
+    protected TacticalSymbol createSymbol(String sidc)
+    {
+        Position symbolPosition = this.getPosition();
+        TacticalSymbol symbol = new MilStd2525TacticalSymbol(sidc,
+            symbolPosition != null ? symbolPosition : Position.ZERO);
+        symbol.setDelegateOwner(this);
+        symbol.setAttributes(this.symbolAttributes);
+        return symbol;
     }
 }

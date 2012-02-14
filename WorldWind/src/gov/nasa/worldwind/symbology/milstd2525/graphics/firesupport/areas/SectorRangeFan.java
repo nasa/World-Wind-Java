@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -69,6 +69,8 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     protected SurfacePolygon arrowHead;
     /** Symbol drawn at the center of the range fan. */
     protected TacticalSymbol symbol;
+    /** Attributes applied to the symbol. */
+    protected TacticalSymbolAttributes symbolAttributes;
 
     /** Radii of the range fans, in meters. */
     protected Iterable<Double> radii;
@@ -362,9 +364,9 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
                 this.setAltitudes(Arrays.asList(value.toString()));
             }
         }
-        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier))
+        else if (SymbologyConstants.SYMBOL_INDICATOR.equals(modifier) && value instanceof String)
         {
-            this.setSymbol((TacticalSymbol) value);
+            this.setSymbol((String) value);
         }
         else
         {
@@ -482,11 +484,11 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
     /**
      * Indicates a symbol drawn at the center of the range fan.
      *
-     * @return The symbol drawn at the center of the range fan. May be null.
+     * @return The identifier of a symbol drawn at the center of the range fan. May be null.
      */
-    public TacticalSymbol getSymbol()
+    public String getSymbol()
     {
-        return this.symbol;
+        return this.symbol != null ? this.symbol.getIdentifier() : null;
     }
 
     /**
@@ -494,15 +496,24 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
      * SymbologyConstants#SYMBOL_INDICATOR} modifier. The symbol's position will be changed to match the range fan
      * center position.
      *
-     * @param symbol The symbol to draw at the center of the range fan. May be null to indicate that no symbol is
-     *               drawn.
+     * @param sidc The identifier of a MIL-STD-2525C tactical symbol to draw at the center of the range fan. May be null
+     *             to indicate that no symbol is drawn.
      */
-    public void setSymbol(TacticalSymbol symbol)
+    public void setSymbol(String sidc)
     {
-        this.symbol = symbol;
-        if (this.symbol != null)
-            this.symbol.setPosition(this.getPosition());
+        if (sidc != null)
+        {
+            if (this.symbolAttributes == null)
+                this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
+            this.symbol = this.createSymbol(sidc);
+        }
+        else
+        {
+            // Null value indicates no symbol.
+            this.symbol = null;
+            this.symbolAttributes = null;
+        }
         this.onModifierChanged();
     }
 
@@ -544,7 +555,7 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
      *
      * @param dc Current draw context.
      */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         for (Path path : this.paths)
         {
@@ -555,6 +566,13 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         {
             this.arrowHead.render(dc);
         }
+    }
+
+    /** {@inheritDoc} Overridden to render symbol at the center of the range fan. */
+    @Override
+    protected void doRenderModifiers(DrawContext dc)
+    {
+        super.doRenderModifiers(dc);
 
         if (this.symbol != null)
         {
@@ -1012,6 +1030,22 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         attributes.setDrawInterior(true);
     }
 
+    /** {@inheritDoc} Overridden to update symbol attributes. */
+    @Override
+    protected void determineActiveAttributes()
+    {
+        super.determineActiveAttributes();
+
+        // Apply active attributes to the symbol.
+        if (this.symbolAttributes != null)
+        {
+            ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
+            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+            this.symbolAttributes.setScale(this.activeOverrides.getScale());
+        }
+    }
+
     /**
      * Create and configure the Path used to render this graphic.
      *
@@ -1041,5 +1075,15 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         polygon.setDelegateOwner(this.getActiveDelegateOwner());
         polygon.setAttributes(this.getActiveShapeAttributes());
         return polygon;
+    }
+
+    protected TacticalSymbol createSymbol(String sidc)
+    {
+        Position symbolPosition = this.getPosition();
+        TacticalSymbol symbol = new MilStd2525TacticalSymbol(sidc,
+            symbolPosition != null ? symbolPosition : Position.ZERO);
+        symbol.setDelegateOwner(this);
+        symbol.setAttributes(this.symbolAttributes);
+        return symbol;
     }
 }
