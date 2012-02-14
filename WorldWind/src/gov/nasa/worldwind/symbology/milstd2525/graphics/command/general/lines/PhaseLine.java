@@ -29,6 +29,9 @@ import java.util.*;
  */
 public class PhaseLine extends MilStd2525TacticalGraphic
 {
+    /** Factor applied to the stipple pattern used to draw the dashed line for a Probable Line of Deployment. */
+    protected static final int PLD_OUTLINE_STIPPLE_FACTOR = 12;
+
     /**
      * Indicates the graphics supported by this class.
      *
@@ -157,6 +160,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic
      *
      * @param dc Current draw context.
      */
+    @Override
     protected void determineLabelPositions(DrawContext dc)
     {
         Iterator<? extends Position> iterator = this.path.getPositions().iterator();
@@ -186,6 +190,19 @@ public class PhaseLine extends MilStd2525TacticalGraphic
         {
             startLabel.setTextAlign(AVKey.LEFT);
             endLabel.setTextAlign(AVKey.RIGHT);
+        }
+    }
+
+    @Override
+    protected void applyDefaultAttributes(ShapeAttributes attributes)
+    {
+        super.applyDefaultAttributes(attributes);
+
+        // Probable Line of Deployment graphic always renders with dashed lines.
+        if (TacGrpSidc.C2GM_OFF_LNE_PLD.equals(this.maskedSymbolCode))
+        {
+            attributes.setOutlineStippleFactor(PLD_OUTLINE_STIPPLE_FACTOR);
+            attributes.setOutlineStipplePattern(this.getOutlineStipplePattern());
         }
     }
 }
