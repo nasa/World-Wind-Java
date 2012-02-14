@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.Material;
 import gov.nasa.worldwind.util.Logging;
 
 import java.awt.*;
@@ -19,6 +19,11 @@ import java.awt.*;
  */
 public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
 {
+    /**
+     * Indicates the symbol scale as a ratio of the symbol's original size, or <code>null</code> to use the symbol's
+     * default scale. Initially <code>null</code>.
+     */
+    protected Double scale;
     /** Indicates the material properties of the shape's interior. Initially <code>null</code>. */
     protected Material interiorMaterial;
     /** Indicates the material properties of the shape's outline. Initially <code>null</code>. */
@@ -34,9 +39,7 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     /** Indicates the material used to render text modifiers. */
     protected Material textMaterial;
 
-    /**
-     * Creates a new <code>BasicShapeAttributes</code>.
-     */
+    /** Creates a new <code>BasicShapeAttributes</code>. */
     public BasicTacticalGraphicAttributes()
     {
     }
@@ -57,6 +60,7 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
             throw new IllegalArgumentException(message);
         }
 
+        this.scale = attributes.getScale();
         this.font = attributes.getTextModifierFont();
         this.textMaterial = attributes.getTextModifierMaterial();
         this.interiorMaterial = attributes.getInteriorMaterial();
@@ -77,6 +81,7 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
     {
         if (attributes != null)
         {
+            this.scale = attributes.getScale();
             this.font = attributes.getTextModifierFont();
             this.textMaterial = attributes.getTextModifierMaterial();
             this.interiorMaterial = attributes.getInteriorMaterial();
@@ -85,6 +90,25 @@ public class BasicTacticalGraphicAttributes implements TacticalGraphicAttributes
             this.outlineOpacity = attributes.getOutlineOpacity();
             this.outlineWidth = attributes.getOutlineWidth();
         }
+    }
+
+    /** {@inheritDoc} */
+    public Double getScale()
+    {
+        return this.scale;
+    }
+
+    /** {@inheritDoc} */
+    public void setScale(Double scale)
+    {
+        if (scale != null && scale < 0d)
+        {
+            String msg = Logging.getMessage("generic.ScaleOutOfRange", scale);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.scale = scale;
     }
 
     /** {@inheritDoc} */

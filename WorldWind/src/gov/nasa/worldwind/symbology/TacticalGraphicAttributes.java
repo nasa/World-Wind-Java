@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.Material;
 
 import java.awt.*;
 
@@ -20,14 +20,14 @@ import java.awt.*;
  * material of a graphic without affecting other styling specified by the symbol set:
  * <p/>
  * <pre>
- *     TacticalGraphic graphic = ...
- *     TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
+ * TacticalGraphic graphic = ...
+ * TacticalGraphicAttributes attrs = new BasicTacticalGraphicAttributes();
  *
- *     // Set the outline to red. Leave all other fields null to retain the default values.
- *     attrs.setOutlineMaterial(Material.RED);
+ * // Set the outline to red. Leave all other fields null to retain the default values.
+ * attrs.setOutlineMaterial(Material.RED);
  *
- *     // Apply the overrides to the graphic
- *     graphic.setAttributes(attrs);
+ * // Apply the overrides to the graphic
+ * graphic.setAttributes(attrs);
  * </pre>
  *
  * @author pabercrombie
@@ -50,6 +50,30 @@ public interface TacticalGraphicAttributes
      * @param attributes the attributes to copy.
      */
     void copy(TacticalGraphicAttributes attributes);
+
+    /**
+     * Indicates the graphic scale as a ratio of the graphics's original size. See {@link #setScale(Double)} for a
+     * description of how scale is used.
+     * <p/>
+     * Scale only applies to point graphics. It does not apply to line and area graphics.
+     *
+     * @return the graphics's scale. May be <code>null</code>, indicating that the default scale is used.
+     */
+    Double getScale();
+
+    /**
+     * Specifies the graphic scale as a ratio of the graphics's original size. The specified scale is a floating point
+     * number greater than 0.0: values less than 1.0 make the graphic smaller, while values greater than 1.0 make the
+     * symbol larger. The scale applies to both the graphic and the graphic modifiers. The specified scale must be
+     * either <code>null</code> or greater than or equal to 0.0.
+     * <p/>
+     * Scale only applies to point graphics. It does not apply to line and area graphics.
+     *
+     * @param scale the graphic's scale. May be <code>null</code>, indicating that the default scale should be used.
+     *
+     * @throws IllegalArgumentException if the scale is less than 0.0.
+     */
+    void setScale(Double scale);
 
     /**
      * Indicates the font used to render text modifiers.

@@ -396,6 +396,12 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
             symbolAttributes.setOpacity(value);
         }
 
+        value = graphicAttributes.getScale();
+        if (value != null)
+        {
+            symbolAttributes.setScale(value);
+        }
+
         Material material = graphicAttributes.getInteriorMaterial();
         if (material != null)
         {

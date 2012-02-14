@@ -151,6 +151,28 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
             box.add(label);
             box.add(slider);
 
+            // Create a slider that controls the scale factor of all symbols.
+            label = new JLabel("Scale");
+            slider = new JSlider(0, 100, 100);
+            slider.addChangeListener(new ChangeListener()
+            {
+                public void stateChanged(ChangeEvent changeEvent)
+                {
+                    // Scale both the normal and the highlight attributes for each symbol. This prevents the symbol
+                    // from suddenly appearing larger when highlighted. Changes in these attributes are reflected in all
+                    // symbols that use them.
+                    JSlider slider = (JSlider) changeEvent.getSource();
+                    double scale = (double) slider.getValue() / 100d;
+                    sharedAttrs.setScale(scale);
+                    sharedHighlightAttrs.setScale(scale);
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            slider.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(label);
+            box.add(slider);
+
             // Create a check box that toggles the visibility of text and graphic modifiers for all symbols.
             JCheckBox cb = new JCheckBox("Show modifiers", true);
             cb.addActionListener(new ActionListener()
