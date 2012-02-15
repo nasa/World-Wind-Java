@@ -501,7 +501,8 @@ public class SymbolCode extends AVListImpl
     /**
      * Indicates a string representation of the symbol code with positions that do not uniquely identify a particular
      * symbol or graphic replaced with hyphens. This method masks out the Standard Identity, Status, Echelon, Symbol
-     * Modifier, and Country Code fields. For example, the masked version of "GFGPGPAD---AUSX" is "G-F-GPAD------X".
+     * Modifier, Country Code, and Order Of Battle fields. For example, the masked version of "GFGPGPAD---AUSX" is
+     * "G-F-GPAD-------".
      *
      * @return String representation of the symbol code with some fields replaced with hyphens.
      */
@@ -510,11 +511,12 @@ public class SymbolCode extends AVListImpl
         SymbolCode masked = new SymbolCode();
         masked.setValues(this);
 
-        masked.setStandardIdentity("-");
-        masked.setStatus("-");
-        masked.setEchelon("--");
-        masked.setSymbolModifier("--");
-        masked.setCountryCode("--");
+        masked.setStandardIdentity(null);
+        masked.setStatus(null);
+        masked.setEchelon(null);
+        masked.setSymbolModifier(null);
+        masked.setCountryCode(null);
+        masked.setOrderOfBattle(null);
 
         return masked.toString();
     }
