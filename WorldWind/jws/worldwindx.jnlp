@@ -20,6 +20,8 @@
               max-heap-size="512m"/>
         <property name="sun.java2d.noddraw" value="true"/>
         <jar href="worldwindx.jar"/>
+        <!-- Add the World Wind core webstart JNLP file as an extension of this JNLP file. All World Wind extensions
+             depend on the core World Wind library. -->
         <extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/>
     </resources>
     <component-desc/>
