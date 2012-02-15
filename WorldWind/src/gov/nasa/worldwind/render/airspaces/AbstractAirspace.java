@@ -610,7 +610,7 @@ public abstract class AbstractAirspace extends AVListImpl implements Airspace, M
         }
 
         AirspaceRenderer renderer = this.getRenderer();
-        renderer.renderNow(dc, Arrays.asList(this));
+        renderer.renderOrdered(dc, Arrays.asList(this));
     }
 
     protected void doRenderExtent(DrawContext dc)
