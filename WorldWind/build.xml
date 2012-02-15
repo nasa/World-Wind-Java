@@ -17,12 +17,12 @@
     <import file="build/demosite.xml"/>
     <!-- Import the World Wind native native library targets. -->
     <import file="build/native.xml"/>
+    <!-- Import the World Wind resource targets. -->
+    <import file="build/resources.xml"/>
     <!-- Import the World Wind general utility targets. -->
     <import file="build/util.xml"/>
     <!-- Import the World Wind Server Applications targets. -->
     <import file="servers/build.xml"/>
-    <!-- Import the World Wind resource targets. -->
-    <import file="build/resources.xml"/>
 
     <!-- Main build target for the World Wind Java SDK. Compiles the World Wind source, creates the World Wind API
          documentation, and builds the World Wind JAR files. -->
@@ -214,8 +214,8 @@
                                       clean.worldwind.release,
                                       clean.demosite.all,
                                       clean.native.all,
-                                      clean.servers.all,
-                                      clean.resources.all"
+                                      clean.resources.all,
+                                      clean.servers.all"
             description="Main clean target for the World Wind Java SDK. Removes all files and directories created by all World Wind build targets."/>
 
 </project>

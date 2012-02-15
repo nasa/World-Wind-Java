@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
   ~ Copyright (C) 2012 United States Government as represented by the Administrator of the
   ~ National Aeronautics and Space Administration.
@@ -7,160 +8,97 @@
 <!--$Id$-->
 <project name="resources">
 
-    <!-- BATIK_HOME environment variable must point to base of Batik installation. -->
-    <property environment="env"/>
-    <property name="batik.jar" value="${env.BATIK_HOME}/batik-rasterizer.jar"/>
-
-    <property name="rasterize.height" value="128"/>
-    <property name="rasterize.maxwidth" value="128"/>
     <!-- Rasterization height for the Forward Edge of Battle (FEBA, 2.X.2.4.2.1) image. -->
-    <property name="rasterize.height.feba" value="16"/>
+    <property name="resources.rasterize.height.feba" value="16"/>
 
-    <property name="milstd2525.src.dir" location="resources/milstd2525"/>
-    <property name="milstd2525.dest.dir" location="resources/milstd2525-png"/>
+    <!-- Creates the World Wind Symbol Icons package in the folder 'milstd2525-symbols'. -->
+    <target name="resources.milstd2525.symbols"
+            description="Creates the World Wind Symbol Icons package in the folder 'milstd2525-symbols'.">
+        <!-- Create a directory to store the rasterized output from the MIL-STD-2525 SVG sources. -->
+        <mkdir dir="${resources.milstd2525.symbols.dir}"/>
+        <!-- Rasterize all MIL-STD-2525 SVG source directories. Special cases are handled below. -->
+        <rasterize-svgdirs maxwidth="${resources.rasterize.width}" height="${resources.rasterize.height}"
+                           destdir="${resources.milstd2525.symbols.dir}">
+            <svgdirs>
+                <dirset dir="${resources.milstd2525.dir}"/>
+            </svgdirs>
+        </rasterize-svgdirs>
+        <!-- Rasterize the Forward Edge of Battle (FEBA, 2.X.2.4.2.1) image. This image is not used in the same way as
+             other MIL-STD-2525 tactical point graphics, and therefore mustbe rasterized with a different height. -->
+        <rasterize-svgfiles maxwidth="${resources.rasterize.width}" height="${resources.rasterize.height.feba}"
+                            destdir="${resources.milstd2525.symbols.dir}" force="true">
+            <svgfiles>
+                <fileset dir="${resources.milstd2525.dir}">
+                    <include name="**/g-g?dlf-------x.svg"/>
+                    <type type="file"/>
+                </fileset>
+            </svgfiles>
+        </rasterize-svgfiles>
+    </target>
 
-    <!-- Utility to rasterize a directory of SVG files to PNG. -->
-    <macrodef name="rasterize"
-              description="Rasterize a directory of SVG files to PNG">
-        <attribute name="height"/>
+    <!-- Packages the World Wind MIL-STD-2525 Symbol Icons ZIP archive into the file 'milstd2525-symbols.zip'. -->
+    <target name="resources.milstd2525.symbols.zipfile" depends="resources.milstd2525.symbols"
+            description="Packages the World Wind MIL-STD-2525 Symbol Icons ZIP archive into the file 'milstd2525-symbols.zip'.">
+        <zip destfile="${resources.milstd2525.symbols.zipfile}">
+            <fileset dir="${resources.milstd2525.symbols.dir}"/>
+        </zip>
+    </target>
+
+    <!-- Individual clean targets corresponding to each build target above. -->
+    <target name="clean.resources.milstd2525.symbols">
+        <delete dir="${resources.milstd2525.symbols.dir}"/>
+        <delete file="${resources.milstd2525.symbols.zipfile}"/>
+    </target>
+    <!-- Main clean target for resource build targets. Removes all files and directories created by all resource build
+         targets. -->
+    <target name="clean.resources.all" depends="clean.resources.milstd2525.symbols"/>
+
+    <macrodef name="rasterize-svgdirs">
         <attribute name="maxwidth"/>
-        <attribute name="dest"/>
-        <element name="files"/>
-
-        <!-- Invoke the Batik rasterizer to convert SVG to PNG -->
+        <attribute name="height"/>
+        <attribute name="destdir"/>
+        <attribute name="force" default="false"/>
+        <element name="svgdirs"/>
         <sequential>
-            <apply executable="java" parallel="true">
+            <apply executable="java" dest="@{destdir}" force="@{force}" failonerror="true">
                 <arg value="-jar"/>
-                <arg path="${batik.jar}"/>
-
-                <arg value="-d"/>
-                <arg value="@{dest}"/>
-
-                <!-- Only specify image height. Batik will compute the appropriate width. Specifying the width as well
-                     would just cause Batik to add unnecessary whitespace. -->
-                <arg value="-h"/>
-                <arg value="@{maxwidth}"/>
-
-                <!-- Specify a max width to prevent narrow wide graphics getting too big. -->
+                <arg value="${basedir}/build/lib/batik/batik-rasterizer.jar"/>
+                <arg value="-m"/>
+                <arg value="image/png"/>
                 <arg value="-maxw"/>
+                <arg value="@{maxwidth}"/>
+                <arg value="-h"/>
                 <arg value="@{height}"/>
-
-                <files/>
+                <arg value="-d"/>
+                <targetfile/>
+                <svgdirs/>
+                <mapper type="identity"/>
             </apply>
         </sequential>
     </macrodef>
 
-    <!-- Build all targets. -->
-    <target name="resources" depends="resources.milstd2525" description="Builds all resource targets."/>
-
-    <!-- Generate MIL-STD-2525C PNG images from SVG source files. -->
-    <target name="resources.milstd2525"
-            description="Generate images for MIL-STD-2525C tactical graphics. PNG images are generated from SVG source files."
-            depends="resources.milstd2525.tacgrp,
-                     resources.milstd2525.metoc,
-                     resources.milstd2525.ems,
-                     resources.milstd2525.fills"/>
-
-    <!-- Generate MIL-STD-2525C Appendix B. -->
-    <target name="resources.milstd2525.tacgrp"
-            description="Generate images for MIL-STD-2525C Appendix B.">
-
-        <rasterize
-            dest="${milstd2525.dest.dir}/tacgrp"
-            height="${rasterize.height}"
-            maxwidth="${rasterize.maxwidth}">
-
-            <files>
-                <fileset dir="${milstd2525.src.dir}/tacgrp">
-                    <include name="**/*.svg"/>
-
-                    <!-- Forward Edge of Battle image needs to rasterize to a different size. See below. -->
-                    <exclude name="**/g-g?dlf-------x.svg"/>
-                </fileset>
-            </files>
-        </rasterize>
-
-        <!-- Rasterize the Forward Edge of Battle (FEBA, 2.X.2.4.2.1) image. This image is not used in the same way as
-             the point graphics, so it needs be rasterized to a smaller size. -->
-        <rasterize
-            dest="${milstd2525.dest.dir}/tacgrp"
-            height="${rasterize.height.feba}"
-            maxwidth="${rasterize.maxwidth}">
-
-            <files>
-                <fileset dir="${milstd2525.src.dir}/tacgrp">
-                    <include name="**/g-g?dlf-------x.svg"/>
-                </fileset>
-            </files>
-        </rasterize>
-    </target>
-
-    <!-- Generate MIL-STD-2525C Appendix C. -->
-    <target name="resources.milstd2525.metoc"
-            description="Generate images for MIL-STD-2525C Appendix C graphics.">
-
-        <rasterize
-            dest="${milstd2525.dest.dir}/metoc"
-            height="${rasterize.height}"
-            maxwidth="${rasterize.maxwidth}">
-
-            <files>
-                <fileset dir="${milstd2525.src.dir}/metoc">
-                    <include name="**/*.svg"/>
-                </fileset>
-            </files>
-        </rasterize>
-    </target>
-
-    <!-- Generate MIL-STD-2525C Appendix G. -->
-    <target name="resources.milstd2525.ems"
-            description="Generate images for MIL-STD-2525C Appendix G graphics.">
-
-        <rasterize
-            dest="${milstd2525.dest.dir}/ems"
-            height="${rasterize.height}"
-            maxwidth="${rasterize.maxwidth}">
-
-            <files>
-                <fileset dir="${milstd2525.src.dir}/ems">
-                    <include name="**/*.svg"/>
-                </fileset>
-            </files>
-        </rasterize>
-    </target>
-
-    <!-- Generate MIL-STD-2525C fill images. -->
-    <target name="resources.milstd2525.fills"
-            description="Generate images for MIL-STD-2525C graphic fills.">
-        <rasterize
-            dest="${milstd2525.dest.dir}/fills"
-            height="${rasterize.height}"
-            maxwidth="${rasterize.maxwidth}">
-
-            <files>
-                <fileset dir="${milstd2525.src.dir}/fills">
-                    <include name="**/*.svg"/>
-                </fileset>
-            </files>
-        </rasterize>
-    </target>
-
-    <target name="batik-missing" unless="batik.available"
-            description="Echo a warning if Batik library is not available.">
-        <echo level="warning">Batik SVG rasterization library cannot be found. Set the BATIK_HOME</echo>
-        <echo>environment variable to the location of the Batik installation.</echo>
-        <echo>Batik is available from http://xmlgraphics.apache.org/batik/.</echo>
-    </target>
-
-    <target name="batik-check" description="Determine if Batik image library is available.">
-        <available file="${batik.jar}" property="batik.available"/>
-    </target>
-
-    <!-- Individual clean targets corresponding to each build target above. -->
-    <target name="clean.resources.milstd2525">
-        <delete dir="${milstd2525.dest.dir}"/>
-    </target>
-    <!-- Main clean target for resource build targets. Removes all files and directories created by all resource build targets. -->
-    <target name="clean.resources.all" depends="clean.resources.milstd2525"/>
+    <macrodef name="rasterize-svgfiles">
+        <attribute name="maxwidth"/>
+        <attribute name="height"/>
+        <attribute name="destdir"/>
+        <attribute name="force" default="false"/>
+        <element name="svgfiles"/>
+        <sequential>
+            <apply executable="java" dest="@{destdir}" force="@{force}" failonerror="true">
+                <arg value="-jar"/>
+                <arg value="${basedir}/build/lib/batik/batik-rasterizer.jar"/>
+                <arg value="-m"/>
+                <arg value="image/png"/>
+                <arg value="-maxw"/>
+                <arg value="@{maxwidth}"/>
+                <arg value="-h"/>
+                <arg value="@{height}"/>
+                <arg value="-d"/>
+                <targetfile/>
+                <svgfiles/>
+                <mapper type="glob" from="*.svg" to="*.png"/>
+            </apply>
+        </sequential>
+    </macrodef>
 
 </project>

@@ -77,11 +77,10 @@
         </chmod>
     </target>
 
-    <!-- Packages the World Wind SDK release into the ZIP archive 'worldwind-version.xx.yyyy.zip', where 'version' is
-         the current version, 'xx' is the build number (typically defined by a build server), and 'yyyy' is the SVN
-         revision number corresponding to this project. -->
+    <!-- Packages the World Wind SDK release into the ZIP archive 'worldwind-version.zip', where 'version' is the
+         current version. -->
     <target name="worldwind.release.zipfile" depends="worldwind.release"
-            description="Packages the World Wind SDK release into the ZIP archive 'worldwind-version.xx.yyyy.zip'.">
+            description="Packages the World Wind SDK release into the ZIP archive 'worldwind-version.zip'.">
         <zip destfile="${worldwind.release.zipfile}">
             <fileset dir="${worldwind.release.dir}"/>
         </zip>
@@ -101,11 +100,10 @@
         </copy>
     </target>
 
-    <!-- Packages the World Wind API documentation release into the ZIP archive 'worldwind-docs-version.xx.yyyy.zip',
-         where 'version' is the current version, 'xx' is the build number (typically defined by a build server), and
-         'yyyy' is the SVN revision number corresponding to this project. -->
+    <!-- Packages the World Wind API documentation release into the ZIP archive 'worldwind-docs-version.zip', where
+         'version' is the current version. -->
     <target name="worldwind.doc.release.zipfile" depends="worldwind.doc.release"
-            description="Packages the World Wind API documentation release into the ZIP archive 'worldwind-docs-version.xx.yyyy.zip'.">
+            description="Packages the World Wind API documentation release into the ZIP archive 'worldwind-docs-version.zip'.">
         <zip destfile="${worldwind.doc.release.zipfile}">
             <fileset dir="${worldwind.doc.release.dir}"/>
         </zip>
