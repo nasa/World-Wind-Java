@@ -24,7 +24,7 @@
             </svgdirs>
         </rasterize-svgdirs>
         <!-- Rasterize the Forward Edge of Battle (FEBA, 2.X.2.4.2.1) image. This image is not used in the same way as
-             other MIL-STD-2525 tactical point graphics, and therefore mustbe rasterized with a different height. -->
+             other MIL-STD-2525 tactical point graphics, and therefore must be rasterized with a different height. -->
         <rasterize-svgfiles maxwidth="${resources.rasterize.width}" height="${resources.rasterize.height.feba}"
                             destdir="${resources.milstd2525.symbols.dir}" force="true">
             <svgfiles>
