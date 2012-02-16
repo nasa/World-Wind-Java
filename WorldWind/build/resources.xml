@@ -34,6 +34,15 @@
                 </fileset>
             </svgfiles>
         </rasterize-svgfiles>
+        <!-- Trim all MIL-STD-2525 modifier images under 'milstd2525-symbols/modifiers'. -->
+        <trimimages force="true">
+            <imagefiles>
+                <fileset dir="${resources.milstd2525.symbols.dir}">
+                    <include name="modifiers/**/*"/>
+                    <type type="file"/>
+                </fileset>
+            </imagefiles>
+        </trimimages>
     </target>
 
     <!-- Packages the World Wind MIL-STD-2525 Symbol Icons ZIP archive into the file 'milstd2525-symbols.zip'. -->
@@ -52,53 +61,5 @@
     <!-- Main clean target for resource build targets. Removes all files and directories created by all resource build
          targets. -->
     <target name="clean.resources.all" depends="clean.resources.milstd2525.symbols"/>
-
-    <macrodef name="rasterize-svgdirs">
-        <attribute name="maxwidth"/>
-        <attribute name="height"/>
-        <attribute name="destdir"/>
-        <attribute name="force" default="false"/>
-        <element name="svgdirs"/>
-        <sequential>
-            <apply executable="java" dest="@{destdir}" force="@{force}" failonerror="true">
-                <arg value="-jar"/>
-                <arg value="${basedir}/build/lib/batik/batik-rasterizer.jar"/>
-                <arg value="-m"/>
-                <arg value="image/png"/>
-                <arg value="-maxw"/>
-                <arg value="@{maxwidth}"/>
-                <arg value="-h"/>
-                <arg value="@{height}"/>
-                <arg value="-d"/>
-                <targetfile/>
-                <svgdirs/>
-                <mapper type="identity"/>
-            </apply>
-        </sequential>
-    </macrodef>
-
-    <macrodef name="rasterize-svgfiles">
-        <attribute name="maxwidth"/>
-        <attribute name="height"/>
-        <attribute name="destdir"/>
-        <attribute name="force" default="false"/>
-        <element name="svgfiles"/>
-        <sequential>
-            <apply executable="java" dest="@{destdir}" force="@{force}" failonerror="true">
-                <arg value="-jar"/>
-                <arg value="${basedir}/build/lib/batik/batik-rasterizer.jar"/>
-                <arg value="-m"/>
-                <arg value="image/png"/>
-                <arg value="-maxw"/>
-                <arg value="@{maxwidth}"/>
-                <arg value="-h"/>
-                <arg value="@{height}"/>
-                <arg value="-d"/>
-                <targetfile/>
-                <svgfiles/>
-                <mapper type="glob" from="*.svg" to="*.png"/>
-            </apply>
-        </sequential>
-    </macrodef>
 
 </project>

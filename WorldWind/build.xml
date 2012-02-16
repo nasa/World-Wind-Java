@@ -215,6 +215,7 @@
                                       clean.demosite.all,
                                       clean.native.all,
                                       clean.resources.all,
+                                      clean.build.util.all,
                                       clean.servers.all"
             description="Main clean target for the World Wind Java SDK. Removes all files and directories created by all World Wind build targets."/>
 

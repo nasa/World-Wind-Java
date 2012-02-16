@@ -63,4 +63,163 @@
         </condition>
     </target>
 
+    <!-- Rasterizes a directory heirarchy of SVG image files into PNG image files of a specified width and height. The
+         maxwidth and height parameters define the output images maximum width and fixed height. The width is not
+         explicitly specified in order to maintain the source SVG image's aspect ratio. The destdir parameter specifies
+         an output directory in which to place the rasterized PNG files. Files maintain their relative path in the
+         source and destination directories. The optional force parameter causes this task to overwrite any existing
+         files.
+
+         The following example demonstrates basic usage:
+         <rasterize-svgdirs maxwidth="128" height="128" destdir="my/dest/path">
+            <svgdirs>
+                <dirset dir="my/src/path"/>
+            </svgdirs>
+         </rasterize-svgdirs>
+
+         Note: This task depends on the Apache Batik Rasterizer JAR file at build/lib/batik/batik-rasterizer.jar.
+         -->
+    <macrodef name="rasterize-svgdirs">
+        <attribute name="maxwidth"/>
+        <attribute name="height"/>
+        <attribute name="destdir"/>
+        <attribute name="force" default="false"/>
+        <element name="svgdirs"/>
+        <sequential>
+            <apply executable="java" dest="@{destdir}" force="@{force}" failonerror="true">
+                <arg value="-jar"/>
+                <arg value="${basedir}/build/lib/batik/batik-rasterizer.jar"/>
+                <arg value="-m"/>
+                <arg value="image/png"/>
+                <arg value="-maxw"/>
+                <arg value="@{maxwidth}"/>
+                <arg value="-h"/>
+                <arg value="@{height}"/>
+                <arg value="-d"/>
+                <targetfile/>
+                <svgdirs/>
+                <mapper type="identity"/>
+            </apply>
+        </sequential>
+    </macrodef>
+
+    <!-- Rasterizes SVG image files into PNG images of a specified width and height. The maxwidth and height parameters
+         define the output images maximum width and fixed height. The width is not explicitly specified in order to
+         maintain the source SVG image's aspect ratio. The destdir parameter specifies an output directory in which to
+         place the rasterized PNG files. Files maintain their relative path in the source and  destination directories.
+         The optional force parameter causes this task to overwrite any existing files.
+
+         The following example demonstrates basic usage:
+         <rasterize-svgdirs maxwidth="128" height="128" destdir="my/dest/path">
+            <svgfiles>
+                <fileset dir="my/src/path">
+                    <include name="**/*.svg"/>
+                    <type type="file"/>
+                </fileset>
+            </svgfiles>
+         </rasterize-svgdirs>
+
+         Note: This task depends on the Apache Batik Rasterizer JAR file at build/lib/batik/batik-rasterizer.jar.
+         -->
+    <macrodef name="rasterize-svgfiles">
+        <attribute name="maxwidth"/>
+        <attribute name="height"/>
+        <attribute name="destdir"/>
+        <attribute name="force" default="false"/>
+        <element name="svgfiles"/>
+        <sequential>
+            <apply executable="java" dest="@{destdir}" force="@{force}" failonerror="true">
+                <arg value="-jar"/>
+                <arg value="${basedir}/build/lib/batik/batik-rasterizer.jar"/>
+                <arg value="-m"/>
+                <arg value="image/png"/>
+                <arg value="-maxw"/>
+                <arg value="@{maxwidth}"/>
+                <arg value="-h"/>
+                <arg value="@{height}"/>
+                <arg value="-d"/>
+                <targetfile/>
+                <svgfiles/>
+                <mapper type="glob" from="*.svg" to="*.png"/>
+            </apply>
+        </sequential>
+    </macrodef>
+
+    <!-- Trims transparent borders around image files, and saves the result to the source file. Files are specified by
+         including an <imagefiles> element with an embedded <fileset> element. Supports the following file formats:
+         JPEG, PNG, GIF, BMP and WBMP.
+
+         The following example demonstrates basic usage:
+         <trimimages>
+            <imagefiles>
+                <fileset dir="my/src/path">
+                    <include name="**/*.png"/>
+                    <type type="file"/>
+                </fileset>
+            </imagefiles>
+         </trimimages>
+
+         This task depends on the World World build utility JAR file at build/lib/worldwind-buildutil.jar.
+         -->
+    <macrodef name="trimimages">
+        <attribute name="force" default="false"/>
+        <element name="imagefiles"/>
+        <sequential>
+            <apply executable="java" force="@{force}" failonerror="true" parallel="true" maxparallel="100">
+                <arg value="-cp"/>
+                <arg value="${basedir}/build/lib/worldwind-buildutil.jar"/>
+                <arg value="gov.nasa.worldwindx.buildutil.TrimImage"/>
+                <imagefiles/>
+            </apply>
+        </sequential>
+
+    </macrodef>
+
+    <!-- Compiles all World Wind build utility sources under the 'build/util/src' folder into Java class files under the
+         'build/util/classes' folder. We configure the javac task parameters 'source' and 'target' in order to
+         explicitly control the Java compiler version used to build World Wind classes. Without these parameters, the
+         javac task would use the most recent compiler available on the current machine, and the Java compiler version
+         used to build WorldWind classes would be unpredictable. For this reason, the Apache ANT manual strongly
+         recommends specifying the 'source' and 'target' parameters. See the following link for more detail:
+         http://ant.apache.org/manual/CoreTasks/javac.html
+
+         The Java compiler version used by the javac task is defined by the build parameter 'worldwind.jdk.version'.
+         By default, this parameter is defined in the file 'build/build.properties'. -->
+    <target name="build.util.compile"
+            description="Compiles all World Wind build utility sources under the 'build/util/src' folder into Java class files under the 'build/util/classes' folder.">
+        <mkdir dir="${build.util.classes.dir}"/>
+        <javac srcdir="${build.util.src.dir}"
+               destdir="${build.util.classes.dir}"
+               source="${worldwind.jdk.version}"
+               target="${worldwind.jdk.version}"
+               fork="true"
+               includeantruntime="false"
+               memoryMaximumSize="512m"/>
+    </target>
+
+    <!-- Builds the World Wind build utility Jar file 'worldwind-buildutil.jar'. Includes all World Wind build utility
+         class files. Excludes files added by Subversion, and files added by the operating system. The resultant Jar
+         file is dependent only on the Java Runtime. -->
+    <target name="build.util.jarfile" depends="build.util.compile"
+            description="Builds the World Wind core build utility JAR file 'worldwind-buildutil.jar'.">
+        <jar jarfile="${basedir}/build/util/${build.util.jarfile}">
+            <!-- Include the World Wind build package gov.nasa.worldwindx.buildutil. -->
+            <fileset dir="${build.util.classes.dir}">
+                <include name="gov/nasa/worldwindx/buildutil/**/*.class"/>
+                <type type="file"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!-- Individual clean targets corresponding to each build target above. -->
+    <target name="clean.build.util.classes">
+        <delete dir="${build.util.classes.dir}"/>
+    </target>
+    <target name="clean.build.util.jarfile">
+        <delete file="${basedir}/build/util/${build.util.jarfile}"/>
+    </target>
+    <!-- Main clean target for resource build targets. Removes all files and directories created by all resource build
+         targets. -->
+    <target name="clean.build.util.all" depends="clean.build.util.classes,clean.build.util.jarfile"/>
+
 </project>
