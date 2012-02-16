@@ -21,7 +21,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.OffenseA
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.special.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.lines.LinearTarget;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.lines.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.mobility.MinimumSafeDistanceZones;
 import gov.nasa.worldwind.util.Logging;
 
@@ -98,6 +98,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(RectangularPositionArea.class, RectangularPositionArea.getSupportedGraphics());
         this.mapClass(GroupOfTargets.class, GroupOfTargets.getSupportedGraphics());
         this.mapClass(AttackByFirePosition.class, AttackByFirePosition.getSupportedGraphics());
+        this.mapClass(FireSupportLine.class, FireSupportLine.getSupportedGraphics());
+        this.mapClass(MunitionFlightPath.class, MunitionFlightPath.getSupportedGraphics());
     }
 
     /**
