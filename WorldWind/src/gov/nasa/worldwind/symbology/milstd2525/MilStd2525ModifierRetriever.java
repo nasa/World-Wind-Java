@@ -19,13 +19,13 @@ import java.awt.image.*;
  */
 public class MilStd2525ModifierRetriever extends AbstractIconRetriever
 {
-    protected static final String PATH_PREFIX = "modifiers/";
+    protected static final String PATH_PREFIX = "modifiers";
     protected static final String PATH_SUFFIX = ".png";
     protected static final int[] variableWidths = {88, 93, 114, 119};
 
-    public MilStd2525ModifierRetriever(String baseUrl)
+    public MilStd2525ModifierRetriever(String retrieverPath)
     {
-        super(baseUrl);
+        super(retrieverPath);
     }
 
     public BufferedImage createIcon(String symbolIdentifier, AVList params)
@@ -47,7 +47,6 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
         }
 
         BufferedImage image = this.retrieveImageFromURL(path, null);
-
         if (image == null)
         {
             String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolIdentifier);
@@ -68,7 +67,7 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
             modifierParams.setValues(params);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(PATH_PREFIX);
+        sb.append(PATH_PREFIX).append("/");
         sb.append(symbolModifierCode.toLowerCase());
 
         if (this.isVariableWidth(modifierParams))

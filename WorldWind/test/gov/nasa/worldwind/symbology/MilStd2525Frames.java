@@ -43,8 +43,25 @@ public class MilStd2525Frames extends ApplicationTemplate
         {
             RenderableLayer layer = new RenderableLayer();
             layer.setName("Standard Frame Types");
+            this.addFrameTypeSymbols(SymbologyConstants.STATUS_PRESENT, layer);
+            // Add the symbol layer to the World Wind model.
+            this.getWwd().getModel().getLayers().add(layer);
+            // Update the layer panel to display the symbol layer.
+            this.getLayerPanel().update(this.getWwd());
 
-            Iterator<String> symbolIds = this.getFrameTypeIterator().iterator();
+            layer = new RenderableLayer();
+            layer.setName("Standard Frame Types (Anticipated)");
+            layer.setEnabled(false);
+            this.addFrameTypeSymbols(SymbologyConstants.STATUS_ANTICIPATED, layer);
+            // Add the symbol layer to the World Wind model.
+            this.getWwd().getModel().getLayers().add(layer);
+            // Update the layer panel to display the symbol layer.
+            this.getLayerPanel().update(this.getWwd());
+        }
+
+        protected void addFrameTypeSymbols(String status, RenderableLayer layer)
+        {
+            Iterator<String> symbolIds = this.getFrameTypeIterator(status).iterator();
             Iterator<Position> positions = this.getGridIterator(
                 Sector.fromDegrees(39.5, 40.5, -120.5, -119.5), 14, 9, 3000).iterator();
 
@@ -55,12 +72,6 @@ public class MilStd2525Frames extends ApplicationTemplate
                 symbol.setValue(AVKey.DISPLAY_NAME, symbolId);
                 layer.addRenderable(symbol);
             }
-
-            // Add the symbol layer to the World Wind model.
-            this.getWwd().getModel().getLayers().add(layer);
-
-            // Update the layer panel to display the symbol layer.
-            this.getLayerPanel().update(this.getWwd());
         }
 
         protected Iterable<Position> getGridIterator(Sector sector, int numLatPoints, int numLonPoints, double altitude)
@@ -85,149 +96,149 @@ public class MilStd2525Frames extends ApplicationTemplate
             return positions;
         }
 
-        protected Iterable<String> getFrameTypeIterator()
+        protected Iterable<String> getFrameTypeIterator(String status)
         {
             return Arrays.asList(
                 // Standard Identity Pending
-                "SPZP-----------",
-                "SPPP-----------",
-                "SPAP-----------",
-                "SPGPU----------",
-                "SPGPE----------",
-                "SPGPI-----H----",
-                "SPSP-----------",
-                "SPUP-----------",
-                "SPFP-----------",
+                "SPZ" + status + "-----------",
+                "SPP" + status + "-----------",
+                "SPA" + status + "-----------",
+                "SPG" + status + "U----------",
+                "SPG" + status + "E----------",
+                "SPG" + status + "I-----H----",
+                "SPS" + status + "-----------",
+                "SPU" + status + "-----------",
+                "SPF" + status + "-----------",
                 // Standard Identity Unknown
-                "SUZP-----------",
-                "SUPP-----------",
-                "SUAP-----------",
-                "SUGPU----------",
-                "SUGPE----------",
-                "SUGPI-----H----",
-                "SUSP-----------",
-                "SUUP-----------",
-                "SUFP-----------",
+                "SUZ" + status + "-----------",
+                "SUP" + status + "-----------",
+                "SUA" + status + "-----------",
+                "SUG" + status + "U----------",
+                "SUG" + status + "E----------",
+                "SUG" + status + "I-----H----",
+                "SUS" + status + "-----------",
+                "SUU" + status + "-----------",
+                "SUF" + status + "-----------",
                 // Standard Identity Friend
-                "SFZP-----------",
-                "SFPP-----------",
-                "SFAP-----------",
-                "SFGPU----------",
-                "SFGPE----------",
-                "SFGPI-----H----",
-                "SFSP-----------",
-                "SFUP-----------",
-                "SFFP-----------",
+                "SFZ" + status + "-----------",
+                "SFP" + status + "-----------",
+                "SFA" + status + "-----------",
+                "SFG" + status + "U----------",
+                "SFG" + status + "E----------",
+                "SFG" + status + "I-----H----",
+                "SFS" + status + "-----------",
+                "SFU" + status + "-----------",
+                "SFF" + status + "-----------",
                 // Standard Identity Neutral
-                "SNZP-----------",
-                "SNPP-----------",
-                "SNAP-----------",
-                "SNGPU----------",
-                "SNGPE----------",
-                "SNGPI-----H----",
-                "SNSP-----------",
-                "SNUP-----------",
-                "SNFP-----------",
+                "SNZ" + status + "-----------",
+                "SNP" + status + "-----------",
+                "SNA" + status + "-----------",
+                "SNG" + status + "U----------",
+                "SNG" + status + "E----------",
+                "SNG" + status + "I-----H----",
+                "SNS" + status + "-----------",
+                "SNU" + status + "-----------",
+                "SNF" + status + "-----------",
                 // Standard Identity Hostile
-                "SHZP-----------",
-                "SHPP-----------",
-                "SHAP-----------",
-                "SHGPU----------",
-                "SHGPE----------",
-                "SHGPI-----H----",
-                "SHSP-----------",
-                "SHUP-----------",
-                "SHFP-----------",
+                "SHZ" + status + "-----------",
+                "SHP" + status + "-----------",
+                "SHA" + status + "-----------",
+                "SHG" + status + "U----------",
+                "SHG" + status + "E----------",
+                "SHG" + status + "I-----H----",
+                "SHS" + status + "-----------",
+                "SHU" + status + "-----------",
+                "SHF" + status + "-----------",
                 // Standard Identity Assumed Friend
-                "SAZP-----------",
-                "SAPP-----------",
-                "SAAP-----------",
-                "SAGPU----------",
-                "SAGPE----------",
-                "SAGPI-----H----",
-                "SASP-----------",
-                "SAUP-----------",
-                "SAFP-----------",
+                "SAZ" + status + "-----------",
+                "SAP" + status + "-----------",
+                "SAA" + status + "-----------",
+                "SAG" + status + "U----------",
+                "SAG" + status + "E----------",
+                "SAG" + status + "I-----H----",
+                "SAS" + status + "-----------",
+                "SAU" + status + "-----------",
+                "SAF" + status + "-----------",
                 // Standard Identity Suspect
-                "SSZP-----------",
-                "SSPP-----------",
-                "SSAP-----------",
-                "SSGPU----------",
-                "SSGPE----------",
-                "SSGPI-----H----",
-                "SSSP-----------",
-                "SSUP-----------",
-                "SSFP-----------",
+                "SSZ" + status + "-----------",
+                "SSP" + status + "-----------",
+                "SSA" + status + "-----------",
+                "SSG" + status + "U----------",
+                "SSG" + status + "E----------",
+                "SSG" + status + "I-----H----",
+                "SSS" + status + "-----------",
+                "SSU" + status + "-----------",
+                "SSF" + status + "-----------",
                 // Standard Identity Exercise Pending
-                "SGZP-----------",
-                "SGPP-----------",
-                "SGAP-----------",
-                "SGGPU----------",
-                "SGGPE----------",
-                "SGGPI-----H----",
-                "SGSP-----------",
-                "SGUP-----------",
-                "SGFP-----------",
+                "SGZ" + status + "-----------",
+                "SGP" + status + "-----------",
+                "SGA" + status + "-----------",
+                "SGG" + status + "U----------",
+                "SGG" + status + "E----------",
+                "SGG" + status + "I-----H----",
+                "SGS" + status + "-----------",
+                "SGU" + status + "-----------",
+                "SGF" + status + "-----------",
                 // Standard Identity Exercise Unknown
-                "SWZP-----------",
-                "SWPP-----------",
-                "SWAP-----------",
-                "SWGPU----------",
-                "SWGPE----------",
-                "SWGPI-----H----",
-                "SWSP-----------",
-                "SWUP-----------",
-                "SWFP-----------",
+                "SWZ" + status + "-----------",
+                "SWP" + status + "-----------",
+                "SWA" + status + "-----------",
+                "SWG" + status + "U----------",
+                "SWG" + status + "E----------",
+                "SWG" + status + "I-----H----",
+                "SWS" + status + "-----------",
+                "SWU" + status + "-----------",
+                "SWF" + status + "-----------",
                 // Standard Identity Exercise Friend
-                "SDZP-----------",
-                "SDPP-----------",
-                "SDAP-----------",
-                "SDGPU----------",
-                "SDGPE----------",
-                "SDGPI-----H----",
-                "SDSP-----------",
-                "SDUP-----------",
-                "SDFP-----------",
+                "SDZ" + status + "-----------",
+                "SDP" + status + "-----------",
+                "SDA" + status + "-----------",
+                "SDG" + status + "U----------",
+                "SDG" + status + "E----------",
+                "SDG" + status + "I-----H----",
+                "SDS" + status + "-----------",
+                "SDU" + status + "-----------",
+                "SDF" + status + "-----------",
                 // Standard Identity Exercise Neutral
-                "SLZP-----------",
-                "SLPP-----------",
-                "SLAP-----------",
-                "SLGPU----------",
-                "SLGPE----------",
-                "SLGPI-----H----",
-                "SLSP-----------",
-                "SLUP-----------",
-                "SLFP-----------",
+                "SLZ" + status + "-----------",
+                "SLP" + status + "-----------",
+                "SLA" + status + "-----------",
+                "SLG" + status + "U----------",
+                "SLG" + status + "E----------",
+                "SLG" + status + "I-----H----",
+                "SLS" + status + "-----------",
+                "SLU" + status + "-----------",
+                "SLF" + status + "-----------",
                 // Standard Identity Exercise Assumed Friend
-                "SMZP-----------",
-                "SMPP-----------",
-                "SMAP-----------",
-                "SMGPU----------",
-                "SMGPE----------",
-                "SMGPI-----H----",
-                "SMSP-----------",
-                "SMUP-----------",
-                "SMFP-----------",
+                "SMZ" + status + "-----------",
+                "SMP" + status + "-----------",
+                "SMA" + status + "-----------",
+                "SMG" + status + "U----------",
+                "SMG" + status + "E----------",
+                "SMG" + status + "I-----H----",
+                "SMS" + status + "-----------",
+                "SMU" + status + "-----------",
+                "SMF" + status + "-----------",
                 // Standard Identity Joker
-                "SJZP-----------",
-                "SJPP-----------",
-                "SJAP-----------",
-                "SJGPU----------",
-                "SJGPE----------",
-                "SJGPI-----H----",
-                "SJSP-----------",
-                "SJUP-----------",
-                "SJFP-----------",
+                "SJZ" + status + "-----------",
+                "SJP" + status + "-----------",
+                "SJA" + status + "-----------",
+                "SJG" + status + "U----------",
+                "SJG" + status + "E----------",
+                "SJG" + status + "I-----H----",
+                "SJS" + status + "-----------",
+                "SJU" + status + "-----------",
+                "SJF" + status + "-----------",
                 // Standard Identity Faker
-                "SKZP-----------",
-                "SKPP-----------",
-                "SKAP-----------",
-                "SKGPU----------",
-                "SKGPE----------",
-                "SKGPI-----H----",
-                "SKSP-----------",
-                "SKUP-----------",
-                "SKFP-----------"
+                "SKZ" + status + "-----------",
+                "SKP" + status + "-----------",
+                "SKA" + status + "-----------",
+                "SKG" + status + "U----------",
+                "SKG" + status + "E----------",
+                "SKG" + status + "I-----H----",
+                "SKS" + status + "-----------",
+                "SKU" + status + "-----------",
+                "SKF" + status + "-----------"
             );
         }
     }

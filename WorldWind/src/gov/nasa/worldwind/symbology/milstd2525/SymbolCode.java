@@ -11,8 +11,6 @@ import gov.nasa.worldwind.exception.WWUnrecognizedException;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.Logging;
 
-import java.awt.*;
-
 /**
  * SymbolCode provides a utility for parsing and representing the individual fields of a MIL-STD-2525 symbol
  * identification code (SIDC). A SymbolCode can either be created by parsing a 15-character symbol code string or by
@@ -92,26 +90,6 @@ public class SymbolCode extends AVListImpl
             Logging.logger().severe(s);
             throw new WWUnrecognizedException(s);
         }
-
-        // initialize default standard identity fill colors
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_UNKNOWN, Color.YELLOW);  //yellow
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN, Color.YELLOW);  //yellow
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_PENDING, Color.YELLOW);  //yellow
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING, Color.YELLOW);  //yellow
-
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_FRIEND, Color.CYAN);  // cyan
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND, Color.CYAN);  // cyan
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND, Color.CYAN);  // cyan
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND,
-            Color.CYAN);  // cyan
-
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_NEUTRAL, Color.GREEN);  // green
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL, Color.GREEN);  // green
-
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_HOSTILE, Color.RED);  // red
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_SUSPECT, Color.RED);  // red
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_JOKER, Color.RED);  // red
-        this.setStandardIdentityColor(SymbologyConstants.STANDARD_IDENTITY_FAKER, Color.RED);  // red
     }
 
     /**
@@ -465,20 +443,6 @@ public class SymbolCode extends AVListImpl
     public void setGraphicType(String value)
     {
         this.setValue(SymbologyConstants.GRAPHIC_TYPE, value);
-    }
-
-    /** Returns the MIL-STD-2525 color currently assigned to the given standard identity. */
-    public Color getStandardIdentityColor(String standardIdentity)
-    {
-        return (Color) this.getValue(standardIdentity);
-    }
-
-    /** Sets the MIL-STD-2525 color for the given standard identity. */
-    public void setStandardIdentityColor(String standardIdentity, Color value)
-    {
-        SymbologyConstants.STANDARD_IDENTITY_ALL.contains(standardIdentity);
-
-        this.setValue(standardIdentity, value);
     }
 
     /**
@@ -1265,14 +1229,14 @@ public class SymbolCode extends AVListImpl
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
-        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
-        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
-        this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
-        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
+        appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
+        appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
+        appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
@@ -1291,15 +1255,15 @@ public class SymbolCode extends AVListImpl
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
-        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
-        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
+        appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        appendFieldValue(sb, this.getCategory(), 1); // Position 3.
+        appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
         sb.append(UNUSED_POSITION_CODE); // Position 11. Unused because the echelon code uses only position 12.
-        this.appendFieldValue(sb, this.getEchelon(), 1); // Position 12.
-        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
+        appendFieldValue(sb, this.getEchelon(), 1); // Position 12.
+        appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
@@ -1318,11 +1282,11 @@ public class SymbolCode extends AVListImpl
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
-        this.appendFieldValue(sb, this.getCategory(), 1); // Position 2.
-        this.appendFieldValue(sb, this.getStaticDynamic(), 1); // Position 3, 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
-        this.appendFieldValue(sb, this.getGraphicType(), 1); // Position 11-13
+        appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        appendFieldValue(sb, this.getCategory(), 1); // Position 2.
+        appendFieldValue(sb, this.getStaticDynamic(), 1); // Position 3, 4.
+        appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
+        appendFieldValue(sb, this.getGraphicType(), 1); // Position 11-13
         sb.append(UNUSED_POSITION_CODE); // Position 14 unused
         sb.append(UNUSED_POSITION_CODE); // Position 15 unused
 
@@ -1343,14 +1307,14 @@ public class SymbolCode extends AVListImpl
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
-        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
-        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
+        appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        appendFieldValue(sb, this.getBattleDimension(), 1); // Position 3.
+        appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
         sb.append(UNUSED_POSITION_CODE).append(UNUSED_POSITION_CODE); // Positions 11-12 are not used.
-        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
+        appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
@@ -1369,14 +1333,14 @@ public class SymbolCode extends AVListImpl
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
-        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
-        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
-        this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
-        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
+        appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        appendFieldValue(sb, this.getCategory(), 1); // Position 3.
+        appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
+        appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
@@ -1395,14 +1359,14 @@ public class SymbolCode extends AVListImpl
     {
         StringBuilder sb = new StringBuilder();
 
-        this.appendFieldValue(sb, this.getScheme(), 1); // Position 1.
-        this.appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
-        this.appendFieldValue(sb, this.getCategory(), 1); // Position 3.
-        this.appendFieldValue(sb, this.getStatus(), 1); // Position 4.
-        this.appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
-        this.appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
-        this.appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
-        this.appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
+        appendFieldValue(sb, this.getScheme(), 1); // Position 1.
+        appendFieldValue(sb, this.getStandardIdentity(), 1); // Position 2.
+        appendFieldValue(sb, this.getCategory(), 1); // Position 3.
+        appendFieldValue(sb, this.getStatus(), 1); // Position 4.
+        appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
+        appendFieldValue(sb, this.getSymbolModifier(), 2); // Positions 11-12.
+        appendFieldValue(sb, this.getCountryCode(), 2);  // Positions 13-14.
+        appendFieldValue(sb, this.getOrderOfBattle(), 1);// Position 15.
 
         return sb.toString();
     }
@@ -1418,8 +1382,22 @@ public class SymbolCode extends AVListImpl
      * @param value  the field value to append.
      * @param length the number of positions used by the field in the SIDC.
      */
-    protected void appendFieldValue(StringBuilder sb, String value, int length)
+    public static void appendFieldValue(StringBuilder sb, String value, int length)
     {
+        if (sb == null)
+        {
+            String msg = Logging.getMessage("nullValue.StringBuilderIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (length < 0)
+        {
+            String msg = Logging.getMessage("generic.LengthIsInvalid", length);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
         // Append the code's characters, starting at character 0 and stopping after the number of character positions
         // assigned to the code have been reached or the code's characters are exhausted, whichever comes first. This
         // does nothing if the code is null or empty. If the code contains fewer characters then its assigned length,
@@ -1433,5 +1411,18 @@ public class SymbolCode extends AVListImpl
         {
             sb.append(UNUSED_POSITION_CODE);
         }
+    }
+
+    /**
+     * Indicates whether the specified field value is empty. This returns <code>true</code> if the specified value is
+     * <code>null</code>, is the empty string, or is filled entirely with the unused character "-".
+     *
+     * @param value the value to test. May be <code>null</code>.
+     *
+     * @return <code>true</code> if the value is empty, and <code>false</code> otherwise.
+     */
+    public static boolean isFieldEmpty(String value)
+    {
+        return value == null || value.isEmpty() || value.replaceAll(UNUSED_POSITION_CODE, "").trim().isEmpty();
     }
 }
