@@ -40,7 +40,7 @@ public class TacGrpSidcTest extends TestCase
 
         for (Field f : fields)
         {
-            StringBuffer sidc = new StringBuffer((String) f.get(null));
+            StringBuilder sidc = new StringBuilder((String) f.get(null));
 
             for (char stdId : ALL_STANDARD_IDENTITY)
             {

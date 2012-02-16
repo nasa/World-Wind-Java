@@ -21,9 +21,9 @@ import java.util.MissingResourceException;
  * <p/>
  * The retriever base URL must identify a location on a local or remote file system (including zip and jar files) that
  * holds the icon files in an expected directory structure. Each icon URL is constructed from three parts:
- * [base]/[scheme]/[sidc].png. Parts of the SIDC that do not identify a type of graphic (such as echelon, status,
+ * [base]/icons/[scheme]/[sidc].png. Parts of the SIDC that do not identify a type of graphic (such as echelon, status,
  * standard identity, etc.) are replaced with hyphens. For example, the Underwater Datum graphic (2.X.2.1.1.1.1.1) will
- * be retrieved from this URL: [base]/tacgrp/g-g-gpuud-----x.png
+ * be retrieved from this URL: [base]/icons/tacgrp/g-g-gpuud-----x.png
  * <p/>
  * Most applications should not use this class directly. See <a href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/#offline-use">Offline
  * Use</a> for information on how to set the icon retrieval location.
@@ -37,11 +37,11 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     protected static final String PATH_SUFFIX = ".png";
 
     /** Subdirectory for graphics in the Tactical Graphics scheme. */
-    protected static final String DIR_TACTICAL_GRAPHICS = "tacgrp";
+    protected static final String DIR_ICON_TACGRP = "icons/tacgrp";
     /** Subdirectory for graphics in the Meteorological and Oceanographic scheme. */
-    protected static final String DIR_METOC = "metoc";
+    protected static final String DIR_ICON_METOC = "icons/metoc";
     /** Subdirectory for fill graphics. */
-    protected static final String DIR_FILL = "fills";
+    protected static final String DIR_FILL_TACGRP = "fills/tacgrp";
 
     /**
      * Create a new icon retriever.
@@ -189,7 +189,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     protected String composeFillPath(SymbolCode code)
     {
         // Note: Metoc symbols currently do not use fill, so only handle tactical graphics here.
-        return this.composeFilenameTacticalGraphic(code, DIR_FILL);
+        return this.composeFilenameTacticalGraphic(code, DIR_FILL_TACGRP);
     }
 
     /**
@@ -205,7 +205,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         String scheme = code.getScheme();
 
         if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equals(scheme))
-            return this.composeFilenameTacticalGraphic(code, DIR_TACTICAL_GRAPHICS);
+            return this.composeFilenameTacticalGraphic(code, DIR_ICON_TACGRP);
         else if (SymbologyConstants.SCHEME_METOC.equals(scheme))
             return this.composeFilenameMetoc(code);
 
@@ -271,7 +271,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             functionId = "------";
 
         StringBuilder sb = new StringBuilder();
-        sb.append(DIR_METOC).append("/")
+        sb.append(DIR_ICON_METOC).append("/")
             .append(scheme)
             .append(category)
             .append(staticDynamic)

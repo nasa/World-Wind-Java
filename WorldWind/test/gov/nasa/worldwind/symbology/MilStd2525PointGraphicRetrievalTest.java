@@ -156,7 +156,7 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
 
         for (String s : MilStd2525PointGraphic.getSupportedGraphics())
         {
-            StringBuffer sidc = new StringBuffer(s);
+            StringBuilder sidc = new StringBuilder(s);
 
             for (char status : ALL_STATUS)
             {
