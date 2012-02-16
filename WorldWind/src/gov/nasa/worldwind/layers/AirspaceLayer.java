@@ -32,7 +32,7 @@ public class AirspaceLayer extends AbstractLayer
 
     /**
      * Adds the specified <code>airspace</code> to this layer's internal collection. If this layer's internal collection
-     * has been overriden with a call to {@link #setAirspaces}, this will throw an exception.
+     * has been overridden with a call to {@link #setAirspaces(Iterable)}, this will throw an exception.
      *
      * @param airspace Airspace to add.
      *
@@ -59,7 +59,8 @@ public class AirspaceLayer extends AbstractLayer
 
     /**
      * Adds the contents of the specified <code>airspaces</code> to this layer's internal collection. If this layer's
-     * internal collection has been overriden with a call to {@link #setAirspaces}, this will throw an exception.
+     * internal collection has been overridden with a call to {@link #setAirspaces(Iterable)}, this will throw an
+     * exception.
      *
      * @param airspaces Airspaces to add.
      *
@@ -91,7 +92,8 @@ public class AirspaceLayer extends AbstractLayer
 
     /**
      * Removes the specified <code>airspace</code> from this layer's internal collection, if it exists. If this layer's
-     * internal collection has been overriden with a call to {@link #setAirspaces}, this will throw an exception.
+     * internal collection has been overridden with a call to {@link #setAirspaces(Iterable)}, this will throw an
+     * exception.
      *
      * @param airspace Airspace to remove.
      *
@@ -118,7 +120,7 @@ public class AirspaceLayer extends AbstractLayer
 
     /**
      * Clears the contents of this layer's internal Airspace collection. If this layer's internal collection has been
-     * overriden with a call to {@link #setAirspaces}, this will throw an exception.
+     * overridden with a call to {@link #setAirspaces(Iterable)}, this will throw an exception.
      *
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setAirspaces</code>.
      */
@@ -142,7 +144,7 @@ public class AirspaceLayer extends AbstractLayer
 
     /**
      * Returns the Iterable of Airspaces currently in use by this layer. If the caller has specified a custom Iterable
-     * via {@link #setAirspaces}, this will returns a reference to that Iterable. If the caller passed
+     * via {@link #setAirspaces(Iterable)}, this will returns a reference to that Iterable. If the caller passed
      * <code>setAirspaces</code> a null parameter, or if <code>setAirspaces</code> has not been called, this returns a
      * view of this layer's internal collection of Airspaces.
      *
@@ -164,9 +166,9 @@ public class AirspaceLayer extends AbstractLayer
 
     /**
      * Returns the Iterable of currently active Airspaces. If the caller has specified a custom Iterable via {@link
-     * #setAirspaces}, this will returns a reference to that Iterable. If the caller passed <code>setAirspaces</code> a
-     * null parameter, or if <code>setAirspaces</code> has not been called, this returns a view of this layer's internal
-     * collection of Airspaces.
+     * #setAirspaces(Iterable)}, this will returns a reference to that Iterable. If the caller passed
+     * <code>setAirspaces</code> a null parameter, or if <code>setAirspaces</code> has not been called, this returns a
+     * view of this layer's internal collection of Airspaces.
      *
      * @return Iterable of currently active Airspaces.
      */
