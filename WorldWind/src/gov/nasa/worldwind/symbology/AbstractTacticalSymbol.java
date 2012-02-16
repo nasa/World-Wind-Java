@@ -141,7 +141,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
                 if (image == null)
                 {
-                    System.out.println("Failed!");
                     // IconRetriever returns null if the symbol identifier is not recognized, or if the parameter list
                     // specified an empty icon. In either case, we mark the texture initialization as having failed to
                     // suppress  any further requests.
