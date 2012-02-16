@@ -16,11 +16,16 @@
             description="Creates the World Wind Symbol Icons package in the folder 'milstd2525-symbols'.">
         <!-- Create a directory to store the rasterized output from the MIL-STD-2525 SVG sources. -->
         <mkdir dir="${resources.milstd2525.symbols.dir}"/>
-        <!-- Rasterize all MIL-STD-2525 SVG source directories. Special cases are handled below. -->
+        <!-- Rasterize all MIL-STD-2525 SVG source directories. Excludes empty directories in order to suppress
+             erroneous error messages from the Apache Batik Rasterizer. Special cases are handled below. -->
         <rasterize-svgdirs maxwidth="${resources.rasterize.width}" height="${resources.rasterize.height}"
                            destdir="${resources.milstd2525.symbols.dir}">
             <svgdirs>
-                <dirset dir="${resources.milstd2525.dir}"/>
+                <dirset dir="${resources.milstd2525.dir}">
+                    <exclude name="fills"/>
+                    <exclude name="frames"/>
+                    <exclude name="icons"/>
+                </dirset>
             </svgdirs>
         </rasterize-svgdirs>
         <!-- Rasterize the Forward Edge of Battle (FEBA, 2.X.2.4.2.1) image. This image is not used in the same way as
