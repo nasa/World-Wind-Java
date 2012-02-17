@@ -1167,10 +1167,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
 
         TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
-        Dimension size = tr.getBounds(modifierText).getBounds().getSize();
+        Rectangle bounds = tr.getBounds(modifierText).getBounds();
+        Rectangle rect = this.layoutRect(offset, hotspot, bounds.getSize(), layoutMode);
+        Point point = new Point(rect.getLocation().x, rect.getLocation().y + bounds.y + bounds.height);
 
-        Rectangle rect = this.layoutRect(offset, hotspot, size, layoutMode);
-        this.currentLabels.add(new Label(tr, modifierText, rect.getLocation(), color));
+        this.currentLabels.add(new Label(tr, modifierText, point, color));
     }
 
     protected void addLine(DrawContext dc, Offset offset, List<? extends Point2D> points)
