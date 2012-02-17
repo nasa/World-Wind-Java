@@ -77,5 +77,4 @@
     <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyPort" value="8080"/>-->
     <!--<Property name="gov.nasa.worldwind.avkey.UrlProxyType" value="Proxy.Type.Http"/>-->
 
-    <Property name="gov.nasa.worldwind.avkey.MilStd2525IconRetrieverPath" value="file:///Users/parkera/projects/WorldWind/milstd2525-symbols/"/>
 </WorldWindConfiguration>
