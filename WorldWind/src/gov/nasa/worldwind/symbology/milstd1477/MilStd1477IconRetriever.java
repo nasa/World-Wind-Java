@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd1477;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.symbology.AbstractIconRetriever;
 import gov.nasa.worldwind.util.Logging;
 
@@ -21,32 +21,30 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever
 {
     // TODO: add more error checking
 
-    public MilStd1477IconRetriever(String URL)
+    public MilStd1477IconRetriever(String retrieverPath)
     {
-        super(URL);
+        super(retrieverPath);
     }
 
-    public BufferedImage createIcon(String symbolIdentifier)
+    public BufferedImage createIcon(String symbolId, AVList params)
     {
-        AVListImpl params = new AVListImpl();
+        if (symbolId == null)
+        {
+            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
 
-        return createIcon(symbolIdentifier, params);
-    }
-
-    public BufferedImage createIcon(String symbolIdentifier, AVList params)
-    {
         // retrieve desired symbol and convert to bufferedImage
 
         // SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
 
-        BufferedImage img = null;
-        String filename = getFilename(symbolIdentifier);
-
-        img = retrieveImageFromURL(filename, img);
+        String filename = this.getFilename(symbolId);
+        BufferedImage img = this.readImage(filename);
 
         if (img == null)
         {
-            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolIdentifier);
+            String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolId);
             Logging.logger().severe(msg);
             throw new MissingResourceException(msg, BufferedImage.class.getName(), filename);
         }
@@ -54,7 +52,7 @@ public class MilStd1477IconRetriever extends AbstractIconRetriever
         return img;
     }
 
-    protected static String getFilename(String code)
+    protected String getFilename(String code)
     {
         return code.toLowerCase() + ".png";
     }

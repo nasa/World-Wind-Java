@@ -46,28 +46,26 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     /**
      * Create a new icon retriever.
      *
-     * @param url Base URL for symbol graphics.
+     * @param retrieverPath Base URL for symbol graphics.
      */
-    public MilStd2525PointGraphicRetriever(String url)
+    public MilStd2525PointGraphicRetriever(String retrieverPath)
     {
-        super(url);
+        super(retrieverPath);
     }
 
-    public BufferedImage createIcon(String symbolIdentifier, AVList params)
+    public BufferedImage createIcon(String symbolId, AVList params)
     {
-        if (symbolIdentifier == null)
+        if (symbolId == null)
         {
-            String msg = Logging.getMessage("nullValue.StringIsNull");
+            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
         // Retrieve desired symbol and convert to BufferedImage
-        SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
-
-        String filename = composeFilename(symbolCode);
-
-        BufferedImage srcImg = retrieveImageFromURL(filename, null);
+        SymbolCode symbolCode = new SymbolCode(symbolId);
+        String filename = this.composeFilename(symbolCode);
+        BufferedImage srcImg = this.readImage(filename);
 
         if (srcImg == null)
         {
@@ -108,7 +106,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     protected BufferedImage composeFilledImage(BufferedImage srcImg, SymbolCode symbolCode)
     {
         String fillPath = this.composeFillPath(symbolCode);
-        BufferedImage fill = retrieveImageFromURL(fillPath, null);
+        BufferedImage fill = this.readImage(fillPath);
 
         if (fill == null)
         {

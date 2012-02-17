@@ -59,7 +59,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
         return this.retrieverPath != null ? this.retrieverPath.hashCode() : 0;
     }
 
-    protected BufferedImage retrieveImageFromURL(String path, BufferedImage img)
+    protected BufferedImage readImage(String path)
     {
         if (path == null)
         {

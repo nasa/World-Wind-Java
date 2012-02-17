@@ -58,16 +58,16 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         super(retrieverPath);
     }
 
-    public BufferedImage createIcon(String symbolIdentifier, AVList params)
+    public BufferedImage createIcon(String symbolId, AVList params)
     {
-        if (symbolIdentifier == null)
+        if (symbolId == null)
         {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        SymbolCode symbolCode = new SymbolCode(symbolIdentifier);
+        SymbolCode symbolCode = new SymbolCode(symbolId);
         BufferedImage image = null;
 
         if (this.mustDrawFill(symbolCode, params) && this.mustDrawFrame(symbolCode, params))
@@ -129,7 +129,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     protected BufferedImage drawIconComponent(String path, Color color, BufferedImage dest)
     {
-        BufferedImage image = this.retrieveImageFromURL(path, null);
+        BufferedImage image = this.readImage(path);
         if (image == null)
         {
             String msg = Logging.getMessage("Symbology.MissingIconComponent", path);

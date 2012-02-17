@@ -40,9 +40,9 @@ public class EchelonSymbol extends AbstractTacticalSymbol
             super(url);
         }
 
-        public BufferedImage createIcon(String symbolIdentifier, AVList params)
+        public BufferedImage createIcon(String symbolId, AVList params)
         {
-            if (symbolIdentifier == null)
+            if (symbolId == null)
             {
                 String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
                 Logging.logger().severe(msg);
@@ -50,19 +50,18 @@ public class EchelonSymbol extends AbstractTacticalSymbol
             }
 
             // Compose a path from the modifier code and value.
-            String path = this.composePath(symbolIdentifier);
+            String path = this.composePath(symbolId);
             if (path == null)
             {
-                String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolIdentifier);
+                String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolId);
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
             }
 
-            BufferedImage image = this.retrieveImageFromURL(path, null);
-
+            BufferedImage image = this.readImage(path);
             if (image == null)
             {
-                String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolIdentifier);
+                String msg = Logging.getMessage("Symbology.SymbolIconNotFound", symbolId);
                 Logging.logger().severe(msg);
                 throw new WWRuntimeException(msg);
             }

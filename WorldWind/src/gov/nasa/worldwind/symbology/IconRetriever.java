@@ -16,5 +16,5 @@ import java.awt.image.*;
  */
 public interface IconRetriever
 {
-    BufferedImage createIcon(String symbolIdentifier, AVList params);
+    BufferedImage createIcon(String symbolId, AVList params);
 }
