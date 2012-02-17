@@ -210,6 +210,66 @@ public class TacticalSymbols extends ApplicationTemplate
             box.add(Box.createVerticalStrut(10));
             box.add(cb);
 
+            // Create a check box that toggles the frame visibility for all symbols.
+            cb = new JCheckBox("Show Frame", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : symbolLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalSymbol)
+                            ((MilStd2525TacticalSymbol) r).setShowFrame(tf);
+                        getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the fill visibility for all symbols.
+            cb = new JCheckBox("Show Fill", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : symbolLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalSymbol)
+                            ((MilStd2525TacticalSymbol) r).setShowFill(tf);
+                        getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the icon visibility for all symbols.
+            cb = new JCheckBox("Show Icon", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : symbolLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalSymbol)
+                            ((MilStd2525TacticalSymbol) r).setShowIcon(tf);
+                        getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(Box.createVerticalStrut(10));
+            box.add(cb);
+
             this.getLayerPanel().add(box, BorderLayout.SOUTH);
         }
     }
