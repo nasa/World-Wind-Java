@@ -52,6 +52,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final Map<String, Color> fillColorMap = new HashMap<String, Color>();
     protected static final Map<String, Color> frameColorMap = new HashMap<String, Color>();
     protected static final Map<String, Color> iconColorMap = new HashMap<String, Color>();
+    protected static final Set<String> unfilledIconMap = new HashSet<String>();
+    protected static final Set<String> unframedIconMap = new HashSet<String>();
 
     public MilStd2525IconRetriever(String retrieverPath)
     {
@@ -86,13 +88,20 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     protected boolean mustDrawFill(SymbolCode symbolCode, AVList params)
     {
-        // TODO: handle icons that implicitly do not display a fill.
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        if (unfilledIconMap.contains(maskedCode))
+            return false;
+
         Object o = params.getValue(SymbologyConstants.SHOW_FILL);
         return o == null || o.equals(Boolean.TRUE);
     }
 
     protected boolean mustDrawFrame(SymbolCode symbolCode, AVList params)
     {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        if (unframedIconMap.contains(maskedCode))
+            return false;
+
         Object o = params.getValue(SymbologyConstants.SHOW_FRAME);
         return o == null || o.equals(Boolean.TRUE);
     }
@@ -685,6 +694,53 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         iconColorMap.put("s-u-wmsx-------", ICON_COLOR_DARK_GREEN);
         iconColorMap.put("s-u-wmx--------", ICON_COLOR_DARK_GREEN);
         iconColorMap.put("s-u-x----------", ICON_COLOR_RED);
+
+        // The MIL-STD-2525 symbol icons that are implicitly unfilled.
+        unfilledIconMap.add("s-u-wm---------");
+        unfilledIconMap.add("s-u-wmd--------");
+        unfilledIconMap.add("s-u-wmg--------");
+        unfilledIconMap.add("s-u-wmgd-------");
+        unfilledIconMap.add("s-u-wmgx-------");
+        unfilledIconMap.add("s-u-wmge-------");
+        unfilledIconMap.add("s-u-wmgc-------");
+        unfilledIconMap.add("s-u-wmgr-------");
+        unfilledIconMap.add("s-u-wmgo-------");
+        unfilledIconMap.add("s-u-wmm--------");
+        unfilledIconMap.add("s-u-wmmd-------");
+        unfilledIconMap.add("s-u-wmmx-------");
+        unfilledIconMap.add("s-u-wmme-------");
+        unfilledIconMap.add("s-u-wmmc-------");
+        unfilledIconMap.add("s-u-wmmr-------");
+        unfilledIconMap.add("s-u-wmmo-------");
+        unfilledIconMap.add("s-u-wmf--------");
+        unfilledIconMap.add("s-u-wmfd-------");
+        unfilledIconMap.add("s-u-wmfx-------");
+        unfilledIconMap.add("s-u-wmfe-------");
+        unfilledIconMap.add("s-u-wmfc-------");
+        unfilledIconMap.add("s-u-wmfr-------");
+        unfilledIconMap.add("s-u-wmfo-------");
+        unfilledIconMap.add("s-u-wmo--------");
+        unfilledIconMap.add("s-u-wmod-------");
+        unfilledIconMap.add("s-u-wmx--------");
+        unfilledIconMap.add("s-u-wme--------");
+        unfilledIconMap.add("s-u-wma--------");
+        unfilledIconMap.add("s-u-wmc--------");
+        unfilledIconMap.add("s-u-wmr--------");
+        unfilledIconMap.add("s-u-wmb--------");
+        unfilledIconMap.add("s-u-wmbd-------");
+        unfilledIconMap.add("s-u-wmn--------");
+        unfilledIconMap.add("s-u-wms--------");
+        unfilledIconMap.add("s-u-wmsx-------");
+        unfilledIconMap.add("s-u-wmsd-------");
+        unfilledIconMap.add("s-u-wdm--------");
+        unfilledIconMap.add("s-u-wdmg-------");
+        unfilledIconMap.add("s-u-wdmm-------");
+        unfilledIconMap.add("s-u-e----------");
+        unfilledIconMap.add("s-u-v----------");
+        unfilledIconMap.add("s-u-x----------");
+
+        // The MIL-STD-2525 symbol icons that are implicitly unframed.
+        unframedIconMap.add("s-u-nd---------");
     }
 }
 
