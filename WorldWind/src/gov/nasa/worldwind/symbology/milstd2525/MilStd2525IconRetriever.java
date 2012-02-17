@@ -793,6 +793,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         unfilledIconMap.add("s-u-x----------");
 
         // The MIL-STD-2525 symbol icons that are implicitly unframed.
+        unframedIconMap.add("s-s-o----------");
         unframedIconMap.add("s-u-nd---------");
 
         // The MIL-STD-2525 Emergency Managment symbols representing units.
@@ -821,15 +822,6 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         emsEquipment.add("e-f-ba---------");
         emsEquipment.add("e-f-ma---------");
         emsEquipment.add("e-f-mc---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
-        emsEquipment.add("e-?-??---------");
     }
 }
 
