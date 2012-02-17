@@ -628,7 +628,6 @@ public class AntennaModel extends AbstractShape
     {
     }
 
-    @Override
     public void moveTo(Position position)
     {
     }
