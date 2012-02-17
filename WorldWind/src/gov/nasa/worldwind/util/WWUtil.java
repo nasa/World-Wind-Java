@@ -254,6 +254,31 @@ public class WWUtil
     }
 
     /**
+     * Parses a string to a double value using the current locale if the string can be parsed as a double. Does not log
+     * a message if the string can not be parsed as a double.
+     *
+     * @param s the string to parse.
+     *
+     * @return the double value parsed from the string, or null if the string cannot be parsed as a double.
+     */
+    public static Double makeDoubleForLocale(String s)
+    {
+        if (WWUtil.isEmpty(s))
+        {
+            return null;
+        }
+
+        try
+        {
+            return NumberFormat.getInstance().parse(s.trim()).doubleValue();
+        }
+        catch (ParseException e)
+        {
+            return null;
+        }
+    }
+
+    /**
      * Parses a string to a double value if the string can be parsed as a double. Does not log a message if the string
      * can not be parsed as a double.
      *

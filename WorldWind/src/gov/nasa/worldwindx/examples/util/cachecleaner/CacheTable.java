@@ -7,6 +7,7 @@ All Rights Reserved.
 
 package gov.nasa.worldwindx.examples.util.cachecleaner;
 
+import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.util.FileStoreDataSet;
 
 import javax.swing.*;
@@ -130,8 +131,8 @@ public class CacheTable extends JTable
             for (int row = 0; row < this.datasets.size(); row++)
             {
                 String s = this.getValueAt(row, columnIndex).toString();
-                long cs = (long) (Double.parseDouble(s) * 1e6);
-                size += cs;
+                Double cs = WWUtil.makeDoubleForLocale(s);
+                size += cs != null ? cs * 1e6 : 0;
             }
 
             return size;
