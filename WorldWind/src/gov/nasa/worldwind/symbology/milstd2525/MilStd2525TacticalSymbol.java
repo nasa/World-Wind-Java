@@ -211,33 +211,87 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     }
 
     /**
-     * Indicates whether this symbol draws its frame and icon. See {@link #setShowFrameAndIcon(boolean)} for a
-     * description of how this property is used.
+     * Indicates whether this symbol draws its frame.  See {@link #setShowFrame(boolean)} for a description of how this
+     * property is used.
      *
-     * @return true if this symbol draws its frame and icon, otherwise false.
+     * @return <code>true</code> if this symbol draws its frame, otherwise <code>false</code>.
      */
-    public boolean isShowFrameAndIcon()
+    public boolean isShowFrame()
     {
-        return false; // TODO: replace with separate controls: isShowFrame, isShowFill, isShowIcon
+        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_FRAME);
+        return o == null || o.equals(Boolean.TRUE); // No value indicates the default of true.
     }
 
     /**
-     * Specifies whether to draw this symbol's frame and icon. The showFrameAndIcon property provides control over this
-     * tactical symbol's display option hierarchy as defined by MIL-STD-2525C, section 5.4.5 and table III.
+     * Specifies whether to draw this symbol's frame. The showFrame property provides control over this tactical
+     * symbol's display option hierarchy as defined by MIL-STD-2525C, section 5.4.5 and table III.
      * <p/>
-     * When true, this symbol's frame, icon, and fill are drawn, and any enabled modifiers are drawn on and around the
-     * frame. This state corresponds to MIL-STD-2525C, table III, row 1.
+     * When <code>true</code>, this symbol's frame is drawn. This state corresponds to MIL-STD-2525C, table III, row 1.
      * <p/>
-     * When false, this symbol's frame, icon, and modifiers are not drawn. Instead, a filled dot is drawn at this
-     * symbol's position, and is colored according to this symbol's normal fill color. The TacticalSymbolAttributes'
-     * scale property specifies the dot's diameter in screen pixels. This state corresponds to MIL-STD-2525C, table III,
-     * row 7.
+     * When <code>false</code>, this symbol's frame is not drawn. Instead, only the symbol's internal icon is drawn.
+     * This state corresponds to MIL-STD-2525C, table III, row 4.
      *
-     * @param showFrameAndIcon true to draw this symbol's frame and icon, otherwise false.
+     * @param showFrame <code>true</code> to draw this symbol's frame, otherwise <code>false</code>.
      */
-    public void setShowFrameAndIcon(boolean showFrameAndIcon)
+    public void setShowFrame(boolean showFrame)
     {
-        // TODO: replace with separate controls: setShowFrame, setShowFill, setShowIcon
+        this.modifiers.setValue(SymbologyConstants.SHOW_FRAME, showFrame);
+    }
+
+    /**
+     * Indicates whether this symbol draws its fill.  See {@link #setShowFill(boolean)} for a description of how this
+     * property is used.
+     *
+     * @return <code>true</code> if this symbol draws its fill, otherwise <code>false</code>.
+     */
+    public boolean isShowFill()
+    {
+        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_FILL);
+        return o == null || o.equals(Boolean.TRUE); // No value indicates the default of true.
+    }
+
+    /**
+     * Specifies whether to draw this symbol's fill. The showFill property provides control over this tactical symbol's
+     * display option hierarchy as defined by MIL-STD-2525C, section 5.4.5 and table III.
+     * <p/>
+     * When <code>true</code>, this symbol's fill is drawn. This state corresponds to MIL-STD-2525C, table III, row 1.
+     * <p/>
+     * When <code>false</code>, this symbol's fill is not drawn. Instead, only the symbol's frame and internal icon are
+     * drawn. This state corresponds to MIL-STD-2525C, table III, row 2.
+     *
+     * @param showFill <code>true</code> to draw this symbol's fill, otherwise <code>false</code>.
+     */
+    public void setShowFill(boolean showFill)
+    {
+        this.modifiers.setValue(SymbologyConstants.SHOW_FILL, showFill);
+    }
+
+    /**
+     * Indicates whether this symbol draws its internal icon.  See {@link #setShowIcon(boolean)} for a description of
+     * how this property is used.
+     *
+     * @return <code>true</code> if this symbol draws its icon, otherwise <code>false</code>.
+     */
+    public boolean isShowIcon()
+    {
+        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_ICON);
+        return o == null || o.equals(Boolean.TRUE); // No value indicates the default of true.
+    }
+
+    /**
+     * Specifies whether to draw this symbol's internal icon. The showIcon property provides control over this tactical
+     * symbol's display option hierarchy as defined by MIL-STD-2525C, section 5.4.5 and table III.
+     * <p/>
+     * When <code>true</code>, this symbol's icon is drawn. This state corresponds to MIL-STD-2525C, table III, row 1.
+     * <p/>
+     * When <code>false</code>, this symbol's icon is not drawn. Instead, only the symbol's frame and fill are drawn.
+     * This state corresponds to MIL-STD-2525C, table III, row 5.
+     *
+     * @param showIcon <code>true</code> to draw this symbol's icon, otherwise <code>false</code>.
+     */
+    public void setShowIcon(boolean showIcon)
+    {
+        this.modifiers.setValue(SymbologyConstants.SHOW_ICON, showIcon);
     }
 
     protected void initIconLayout()
