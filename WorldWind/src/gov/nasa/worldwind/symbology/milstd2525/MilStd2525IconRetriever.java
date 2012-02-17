@@ -48,6 +48,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final Color DEFAULT_ICON_COLOR = Color.BLACK;
     protected static final String DEFAULT_IMAGE_FORMAT = "image/png";
 
+    // Static maps and sets providing fast access to attributes about a symbol ID. These data structures are populated
+    // in a static block at the bottom of this class.
     protected static final Map<String, String> schemePathMap = new HashMap<String, String>();
     protected static final Map<String, Color> fillColorMap = new HashMap<String, Color>();
     protected static final Map<String, Color> frameColorMap = new HashMap<String, Color>();
@@ -796,7 +798,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         unframedIconMap.add("s-s-o----------");
         unframedIconMap.add("s-u-nd---------");
 
-        // The MIL-STD-2525 Emergency Managment symbols representing units.
+        // The MIL-STD-2525 Emergency Management symbols representing units.
         emsEquipment.add("e-o-ab---------");
         emsEquipment.add("e-o-ae---------");
         emsEquipment.add("e-o-af---------");

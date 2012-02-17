@@ -115,9 +115,6 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
             // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
             // height must be 0.3x the symbol's frame height.
             Font font = this.getActiveAttributes().getTextModifierFont();
-            if (font == null)
-                font = MilStd2525Util.computeTextModifierFont(iconRect.getHeight());
-
             Offset imgOffset = this.leftAlign ? RIGHT_CENTER : LEFT_CENTER;
             Offset txtOffset = this.leftAlign ? LEFT_CENTER : RIGHT_CENTER;
 

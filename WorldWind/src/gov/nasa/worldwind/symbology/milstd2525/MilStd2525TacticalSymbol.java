@@ -15,6 +15,7 @@ import gov.nasa.worldwind.util.WWUtil;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -33,6 +34,26 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     protected static final Offset TOP_CENTER_OFFSET = Offset.fromFraction(0.5, 1.0);
     protected static final Offset LEFT_CENTER_OFFSET = Offset.fromFraction(0.0, 0.5);
     protected static final Offset RIGHT_CENTER_OFFSET = Offset.fromFraction(1.0, 0.5);
+
+    protected static final Font DEFAULT_FRAME_SHAPE_FONT = Font.decode("Arial-BOLD-24");
+
+    // Static maps and sets providing fast access to attributes about a symbol ID. These data structures are populated
+    // in the static block below.
+    protected static final Map<String, String> symbolEchelonMap = new HashMap<String, String>();
+    protected static final Set<String> exerciseSymbols = new HashSet<String>();
+
+    static
+    {
+        // The MIL-STD-2525 symbols representing an echelon.
+        symbolEchelonMap.put("e-o-bj---------", SymbologyConstants.ECHELON_TEAM_CREW);
+
+        // The MIL-STD-2525 symbols representing a exercise object.
+        exerciseSymbols.add("s-u-wmgx-------");
+        exerciseSymbols.add("s-u-wmmx-------");
+        exerciseSymbols.add("s-u-wmfx-------");
+        exerciseSymbols.add("s-u-wmx--------");
+        exerciseSymbols.add("s-u-wmsx-------");
+    }
 
     /**
      * Indicates a string identifier for this symbol. The format of the identifier depends on the symbol set to which
@@ -193,60 +214,105 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         // Layout all of the graphic and text modifiers around the symbol's frame bounds. The location of each modifier
         // is the same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4, page 34.
 
+        AVList modifierParams = new AVListImpl();
+        modifierParams.setValues(this.modifiers);
+        this.applyImplicitModifiers(modifierParams);
+
         if (this.mustDrawGraphicModifiers(dc))
         {
             this.currentGlyphs.clear();
             this.currentLines.clear();
-            this.layoutGraphicModifiers(dc);
+            this.layoutGraphicModifiers(dc, modifierParams);
         }
 
         if (this.mustDrawTextModifiers(dc))
         {
             this.currentLabels.clear();
-            this.layoutTextModifiers(dc);
+            this.layoutTextModifiers(dc, modifierParams);
         }
     }
 
-    protected void layoutGraphicModifiers(DrawContext dc)
+    protected void applyImplicitModifiers(AVList modifiers)
+    {
+        String maskedCode = this.symbolCode.toMaskedString().toLowerCase();
+        String si = this.symbolCode.getStandardIdentity();
+
+        // Set the Echelon modifier value according to the value implied by this symbol ID, if any. Give precedence to
+        // the modifier value specified by the application, including null.
+        if (!modifiers.hasKey(SymbologyConstants.ECHELON))
+        {
+            Object o = symbolEchelonMap.get(maskedCode);
+            if (o != null)
+                modifiers.setValue(SymbologyConstants.ECHELON, o);
+        }
+
+        // Set the Frame Shape modifier value according to the value implied by this symbol ID, if any. Give precedence to
+        // the modifier value specified by the application, including null.
+        if (!modifiers.hasKey(SymbologyConstants.FRAME_SHAPE))
+        {
+            if (exerciseSymbols.contains(maskedCode))
+            {
+                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_EXERCISE);
+            }
+            else if (si != null && (si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_PENDING)
+                || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_UNKNOWN)
+                || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_FRIEND)
+                || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL)
+                || si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND)))
+            {
+                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_EXERCISE);
+            }
+            else if (si != null && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_JOKER))
+            {
+                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_JOKER);
+            }
+            else if (si != null && si.equalsIgnoreCase(SymbologyConstants.STANDARD_IDENTITY_FAKER))
+            {
+                modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_FAKER);
+            }
+        }
+    }
+
+    protected void layoutGraphicModifiers(DrawContext dc, AVList modifiers)
     {
         AVList retrieverParams = new AVListImpl();
         retrieverParams.setValue(AVKey.WIDTH, this.iconRect.width);
 
         // Feint/Dummy Indicator modifier. Placed above the icon.
-        String modifierCode = this.getModifierCode(SymbologyConstants.FEINT_DUMMY);
+        String modifierCode = this.getModifierCode(modifiers, SymbologyConstants.FEINT_DUMMY);
         if (modifierCode != null)
         {
             this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, retrieverParams, null);
         }
 
         // Installation modifier. Placed at the top of the symbol layout.
-        modifierCode = this.getModifierCode(SymbologyConstants.INSTALLATION);
+        modifierCode = this.getModifierCode(modifiers, SymbologyConstants.INSTALLATION);
         if (modifierCode != null)
         {
             this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
 
         // Echelon / Task Force Indicator modifier. Placed at the top of the symbol layout.
-        modifierCode = this.getModifierCode(SymbologyConstants.TASK_FORCE);
+        modifierCode = this.getModifierCode(modifiers, SymbologyConstants.TASK_FORCE);
         if (modifierCode != null)
         {
             this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
         // Echelon modifier. Placed at the top of the symbol layout.
-        else if ((modifierCode = this.getModifierCode(SymbologyConstants.ECHELON)) != null)
+        else if ((modifierCode = this.getModifierCode(modifiers, SymbologyConstants.ECHELON)) != null)
         {
             this.addGlyph(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
 
         // Mobility Indicator modifier. Placed at the bottom of the symbol layout.
-        modifierCode = this.getModifierCode(SymbologyConstants.MOBILITY);
+        modifierCode = this.getModifierCode(modifiers, SymbologyConstants.MOBILITY);
         if (modifierCode != null)
         {
             this.addGlyph(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
         }
 
         // Auxiliary Equipment Indicator modifier. Placed at the bottom of the symbol layout.
-        modifierCode = this.getModifierCode(SymbologyConstants.AUXILIARY_EQUIPMENT);
+        modifierCode = this.getModifierCode(modifiers, SymbologyConstants.AUXILIARY_EQUIPMENT);
         if (modifierCode != null)
         {
             this.addGlyph(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, null, LAYOUT_RELATIVE);
@@ -256,7 +322,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         {
             // Alternate Status/Operational Condition. Used by the Emergency Management scheme. Placed at the bottom of
             // the symbol layout.
-            modifierCode = this.getModifierCode(SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
+            modifierCode = this.getModifierCode(modifiers, SymbologyConstants.OPERATIONAL_CONDITION_ALTERNATE);
             if (modifierCode != null)
             {
                 this.addGlyph(dc, BOTTOM_CENTER_OFFSET, TOP_CENTER_OFFSET, modifierCode, retrieverParams,
@@ -267,7 +333,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         {
             // Status/Operational Condition. Used by all schemes except the Emergency Management scheme. Centered on
             // the icon.
-            modifierCode = this.getModifierCode(SymbologyConstants.OPERATIONAL_CONDITION);
+            modifierCode = this.getModifierCode(modifiers, SymbologyConstants.OPERATIONAL_CONDITION);
             if (modifierCode != null)
             {
                 this.addGlyph(dc, CENTER_OFFSET, CENTER_OFFSET, modifierCode, null, null);
@@ -301,7 +367,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         }
     }
 
-    protected void layoutTextModifiers(DrawContext dc)
+    protected void layoutTextModifiers(DrawContext dc, AVList modifiers)
     {
         StringBuilder sb = new StringBuilder();
 
@@ -309,11 +375,12 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
         // height must be 0.3x the symbol's frame height.
         Font font = this.getActiveAttributes().getTextModifierFont();
-        if (font == null)
-            font = MilStd2525Util.computeTextModifierFont(this.iconRect.getHeight());
+        Font frameShapeFont = this.getActiveAttributes().getTextModifierFont();
+        if (frameShapeFont == null)
+            frameShapeFont = DEFAULT_FRAME_SHAPE_FONT;
 
         // Quantity modifier layout. Placed at the top of the symbol layout.
-        this.appendTextModifier(sb, SymbologyConstants.QUANTITY, 9);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.QUANTITY, 9);
         if (sb.length() > 0)
         {
             this.addLabel(dc, TOP_CENTER_OFFSET, BOTTOM_CENTER_OFFSET, sb.toString(), font, null, LAYOUT_RELATIVE);
@@ -321,120 +388,132 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         }
 
         // Special C2 Headquarters modifier layout. Centered on the icon.
-        this.appendTextModifier(sb, SymbologyConstants.SPECIAL_C2_HEADQUARTERS, 9);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.SPECIAL_C2_HEADQUARTERS, 9);
         if (sb.length() > 0)
         {
             this.addLabel(dc, CENTER_OFFSET, CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
-        // Reinforced/Reduced modifier layout (Frame Shape modifier is handled by IconRetriever).
-        Object o = this.getModifier(SymbologyConstants.REINFORCED_REDUCED);
-        if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REINFORCED))
-            sb.append("+");
-        else if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REDUCED))
-            sb.append("-");
-        else if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REINFORCED_AND_REDUCED))
-            sb.append("+-"); // TODO: get the string for + over -
+        // Frame Shape and Reinforced/Reduced modifier layout.
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.FRAME_SHAPE, null);
+        String s = this.getReinforcedReducedModifier(modifiers, SymbologyConstants.REINFORCED_REDUCED);
+        if (s != null)
+            sb.append(sb.length() > 0 ? " " : "").append(s);
         if (sb.length() > 0)
         {
-            // TODO: adjust location to edge of frame shape when present.
-            Offset offset = Offset.fromFraction(1.1, 1.1);
-            this.addLabel(dc, offset, LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
+            Offset offset = Offset.fromFraction(1.0, 1.1);
+            this.addLabel(dc, offset, LEFT_CENTER_OFFSET, sb.toString(), frameShapeFont, null, null);
             sb.delete(0, sb.length());
         }
 
         // Staff Comments modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.STAFF_COMMENTS, 20);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.STAFF_COMMENTS, 20);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(1.1, 0.8), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(1.0, 0.8), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Additional Information modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.ADDITIONAL_INFORMATION, 20);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.ADDITIONAL_INFORMATION, 20);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(1.1, 0.5), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(1.0, 0.5), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Higher Formation modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.HIGHER_FORMATION, 21);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.HIGHER_FORMATION, 21);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(1.1, 0.2), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(1.0, 0.2), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Evaluation Rating, Combat Effectiveness, Signature Equipment, Hostile (Enemy), and IFF/SIF modifier
         // layout.
-        this.appendTextModifier(sb, SymbologyConstants.EVALUATION_RATING, 2); // TODO: validate value
-        this.appendTextModifier(sb, SymbologyConstants.COMBAT_EFFECTIVENESS, 3);
-        this.appendTextModifier(sb, SymbologyConstants.SIGNATURE_EQUIPMENT, 1); // TODO: validate value
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.EVALUATION_RATING, 2); // TODO: validate value
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.COMBAT_EFFECTIVENESS, 3);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.SIGNATURE_EQUIPMENT, 1); // TODO: validate value
+        // TODO: compute value from standard identity
         if (this.isShowHostileIndicator())
-            this.appendTextModifier(sb, SymbologyConstants.HOSTILE_ENEMY,
-                3); // TODO: compute value from standard identity
-        this.appendTextModifier(sb, SymbologyConstants.IFF_SIF, 5);
+            this.appendTextModifier(sb, modifiers, SymbologyConstants.HOSTILE_ENEMY, 3);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.IFF_SIF, 5);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(1.1, -0.1), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(1.0, -0.1), LEFT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Date-Time-Group (DTG) modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.DATE_TIME_GROUP, 16); // TODO: compute value from modifier
+        // TODO: compute value from modifier
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.DATE_TIME_GROUP, 16);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(-0.1, 1.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(0.0, 1.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Altitude/Depth and Location modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.ALTITUDE_DEPTH, 14); // TODO: compute value from position
+        // TODO: compute value from position
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.ALTITUDE_DEPTH, 14);
+        // TODO: compute value from position
         if (this.isShowLocation())
-            this.appendTextModifier(sb, SymbologyConstants.LOCATION, 19); // TODO: compute value from position
+            this.appendTextModifier(sb, modifiers, SymbologyConstants.LOCATION, 19);
 
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(-0.1, 0.8), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(0.0, 0.8), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Type modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.TYPE, 24);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.TYPE, 24);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(-0.1, 0.5), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(0.0, 0.5), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Unique Designation modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.UNIQUE_DESIGNATION, 21);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.UNIQUE_DESIGNATION, 21);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(-0.1, 0.2), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(0.0, 0.2), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
 
         // Speed modifier layout.
-        this.appendTextModifier(sb, SymbologyConstants.SPEED, 8);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.SPEED, 8);
         if (sb.length() > 0)
         {
-            this.addLabel(dc, Offset.fromFraction(-0.1, -0.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
+            this.addLabel(dc, Offset.fromFraction(0.0, -0.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
     }
 
-    protected String getModifierCode(String modifier)
+    protected String getModifierCode(AVList modifiers, String modifierKey)
     {
-        return SymbolCode.composeSymbolModifierCode(this.symbolCode, this.modifiers, modifier);
+        return SymbolCode.composeSymbolModifierCode(this.symbolCode, modifiers, modifierKey);
     }
 
-    protected void appendTextModifier(StringBuilder sb, String modifierKey, Integer maxLength)
+    protected String getReinforcedReducedModifier(AVList modifiers, String modifierKey)
     {
-        Object modifierValue = this.getModifier(modifierKey);
+        Object o = modifiers.getValue(modifierKey);
+        if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REINFORCED))
+            return "+";
+        else if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REDUCED))
+            return "-";
+        else if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REINFORCED_AND_REDUCED))
+            return "+-"; // TODO: get the string for "+ over -"
+        else
+            return null;
+    }
+
+    protected void appendTextModifier(StringBuilder sb, AVList modifiers, String modifierKey, Integer maxLength)
+    {
+        Object modifierValue = modifiers.getValue(modifierKey);
         if (WWUtil.isEmpty(modifierValue))
             return;
 

@@ -469,6 +469,19 @@ public interface SymbologyConstants
     final String FEINT_DUMMY = "AB";
 
     /**
+     * The MIL-STD-2525 Frame Shape modifier field ID. Indicates standard identity, battle dimension, or exercise
+     * amplifying descriptors of an object. See MIL-STD-2525 table XI (pages 38-39) and table XIV (pages 46-47).When
+     * used as a key, the corresponding value must be a string of any length.
+     */
+    final String FRAME_SHAPE = "E";
+
+    final String FRAME_SHAPE_EXERCISE = "X";
+
+    final String FRAME_SHAPE_JOKER = "J";
+
+    final String FRAME_SHAPE_FAKER = "K";
+
+    /**
      * Indicates the function ID associated with a MIL-STD-2525 symbol (SIDC positions 5-10). The function IDs are
      * unique to each symbology schemes that uses them, and are defined in each appendix of the MIL-STD-2525C
      * specification:

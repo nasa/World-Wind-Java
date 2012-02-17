@@ -222,9 +222,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
         // height must be 0.3x the symbol's frame height.
         Font font = this.getActiveAttributes().getTextModifierFont();
-        if (font == null)
-            font = MilStd2525Util.computeTextModifierFont(iconRect.getHeight());
-
         Map<String, java.util.List<LabelLayout>> allLayouts = defaultLayouts.get(this.symbolCode.toMaskedString());
 
         for (Map.Entry<String, java.util.List<LabelLayout>> entry : allLayouts.entrySet())

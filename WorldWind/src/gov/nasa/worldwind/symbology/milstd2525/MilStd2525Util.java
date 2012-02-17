@@ -8,13 +8,11 @@ package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.geom.Angle;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.util.Logging;
 
-import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * @author dcollins
@@ -64,8 +62,6 @@ public class MilStd2525Util
     protected static final Offset DIAMOND_OFFSET = Offset.fromFraction(0.046875, 0.046875);
     protected static final Size DIAMOND_SIZE = Size.fromFraction(0.90625, 0.90625);
     protected static final Offset DIAMOND_C2_HQ_OFFSET = Offset.fromFraction(0.0, -0.05172);
-
-    protected static final double TEXT_MODIFIER_FONT_SIZE_FACTOR = 0.15;
 
     public static class SymbolInfo
     {
@@ -356,14 +352,5 @@ public class MilStd2525Util
             new Point2D.Double(0, 0),
             new Point2D.Double(0, -frameHeight / 2d),
             new Point2D.Double(dx, -frameHeight / 2d + dy));
-    }
-
-    public static Font computeTextModifierFont(double frameHeight)
-    {
-        Font defaultFont = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT;
-        double textHeight = TEXT_MODIFIER_FONT_SIZE_FACTOR * frameHeight;
-
-        Integer scaledSize = WWUtil.convertPixelsToFontSize((int) textHeight);
-        return scaledSize != null ? new Font(defaultFont.getName(), defaultFont.getStyle(), scaledSize) : null;
     }
 }

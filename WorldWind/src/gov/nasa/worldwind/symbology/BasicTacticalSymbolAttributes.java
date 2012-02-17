@@ -20,7 +20,7 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
 {
     public static final double DEFAULT_SCALE = 1d;
     public static final double DEFAULT_OPACITY = 1d;
-    public static final Font DEFAULT_TEXT_MODIFIER_FONT = Font.decode("Arial-PLAIN-12");
+    public static final Font DEFAULT_TEXT_MODIFIER_FONT = Font.decode("Arial-PLAIN-18");
     public static final Material DEFAULT_TEXT_MODIFIER_MATERIAL = Material.BLACK;
 
     /**

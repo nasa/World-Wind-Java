@@ -11,11 +11,9 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.geom.coords.UTMCoord;
 
 import java.awt.*;
-import java.awt.List;
 import java.lang.reflect.*;
 import java.nio.DoubleBuffer;
 import java.text.*;
-import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -712,57 +710,6 @@ public class WWUtil
             (i >> 8) & 0xFF,
             (i >> 16) & 0xFF,
             (i >> 24) & 0xFF);
-    }
-
-    /**
-     * Returns an estimated font size in points corresponding to the specified font height in pixels. This handles font
-     * sizes between 8 points and 48 points (inclusive). This returns <code>null</code> if the specified height in
-     * pixels is less than 6 or greater than 36.
-     *
-     * @param pixels the desired font height in pixels.
-     *
-     * @return the font size in pixels to use, or <code>null</code> if the font height cannot be determined.
-     */
-    public static Integer convertPixelsToFontSize(int pixels)
-    {
-        return pixelToPointMap.get(pixels);
-    }
-
-    protected static Map<Integer, Integer> pixelToPointMap = new HashMap<Integer, Integer>();
-
-    static
-    {
-        pixelToPointMap.put(6, 8);
-        pixelToPointMap.put(7, 10);
-        pixelToPointMap.put(8, 11);
-        pixelToPointMap.put(9, 12);
-        pixelToPointMap.put(10, 12);
-        pixelToPointMap.put(11, 14);
-        pixelToPointMap.put(12, 16);
-        pixelToPointMap.put(13, 18);
-        pixelToPointMap.put(14, 20);
-        pixelToPointMap.put(15, 20);
-        pixelToPointMap.put(16, 22);
-        pixelToPointMap.put(17, 22);
-        pixelToPointMap.put(18, 24);
-        pixelToPointMap.put(19, 24);
-        pixelToPointMap.put(20, 26);
-        pixelToPointMap.put(21, 26);
-        pixelToPointMap.put(22, 28);
-        pixelToPointMap.put(23, 28);
-        pixelToPointMap.put(24, 32);
-        pixelToPointMap.put(25, 32);
-        pixelToPointMap.put(26, 34);
-        pixelToPointMap.put(27, 36);
-        pixelToPointMap.put(28, 36);
-        pixelToPointMap.put(29, 38);
-        pixelToPointMap.put(30, 40);
-        pixelToPointMap.put(31, 40);
-        pixelToPointMap.put(32, 42);
-        pixelToPointMap.put(33, 42);
-        pixelToPointMap.put(34, 45);
-        pixelToPointMap.put(35, 45);
-        pixelToPointMap.put(36, 48);
     }
 
     /**
