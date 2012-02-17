@@ -49,6 +49,27 @@ public interface TacticalSymbolAttributes
     void setScale(Double scale);
 
     /**
+     * Indicates the material properties of the symbols's interior. See {@link #setInteriorMaterial(gov.nasa.worldwind.render.Material)
+     * setInteriorMaterial} for more information on how this material is interpreted.
+     *
+     * @return the material applied to the symbols's interior.
+     *
+     * @see #setInteriorMaterial(Material)
+     */
+    Material getInteriorMaterial();
+
+    /**
+     * Specifies the material properties of the symbols's interior. If lighting is applied to the graphic, this
+     * indicates the interior's ambient, diffuse, and specular colors, its shininess, and the color of any emitted
+     * light. Otherwise, the material's diffuse color indicates the symbols's constant interior color.
+     *
+     * @param material the material to apply to the symbol's interior.
+     *
+     * @see #getInteriorMaterial()
+     */
+    void setInteriorMaterial(Material material);
+
+    /**
      * Indicates the symbol opacity as a floating point number between 0.0 and 1.0 (inclusive). See {@link
      * #setOpacity(Double)} for a description of how opacity is used.
      *

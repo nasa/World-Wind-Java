@@ -27,7 +27,7 @@ import java.util.List;
  * @author dcollins
  * @version $Id$
  */
-public abstract class AbstractTacticalSymbol extends WWObjectImpl implements TacticalSymbol, OrderedRenderable
+public abstract class AbstractTacticalSymbol extends WWObjectImpl implements TacticalSymbol, OrderedRenderable, Movable
 {
     protected static class IconSource
     {
@@ -377,7 +377,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected static final double DEFAULT_DEPTH_OFFSET = -8200;
     protected static final long DEFAULT_MAX_TIME_SINCE_LAST_USED = 10000;
-    // TODO: make this configurable
     /**
      * The default glyph texture atlas. This texture atlas holds all glyph images loaded by calls to
      * <code>layoutGlyphModifier</code>. Initialized with initial dimensions of 1024x128 and maximum dimensions of
@@ -394,7 +393,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         defaultAttrs = new BasicTacticalSymbolAttributes();
         defaultAttrs.setOpacity(BasicTacticalSymbolAttributes.DEFAULT_OPACITY);
         defaultAttrs.setScale(BasicTacticalSymbolAttributes.DEFAULT_SCALE);
-        //defaultAttrs.setTextModifierFont(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT);
         defaultAttrs.setTextModifierMaterial(BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_MATERIAL);
 
         // Configure the atlas to remove old texture elements that are likely no longer used to make room for new
@@ -524,6 +522,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected List<Line> currentLines = new ArrayList<Line>();
 
     protected IconTexture iconTexture;
+    protected IconTexture activeIconTexture;
     protected TextureAtlas glyphAtlas;
     protected Map<String, IconAtlasElement> glyphMap = new HashMap<String, IconAtlasElement>();
     protected long maxTimeSinceLastUsed = DEFAULT_MAX_TIME_SINCE_LAST_USED;
@@ -765,6 +764,47 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.delegateOwner = owner;
     }
 
+    /** {@inheritDoc} */
+    public Position getReferencePosition()
+    {
+        return this.getPosition();
+    }
+
+    /** {@inheritDoc} */
+    public void move(Position delta)
+    {
+        if (delta == null)
+        {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Position refPos = this.getReferencePosition();
+
+        // The reference position is null if this shape has positions. With PointPlacemark, this should never happen
+        // because its position must always be non-null. We check and this case anyway to handle a subclass overriding
+        // getReferencePosition and returning null. In this case moving the shape by a relative delta is meaningless
+        // because the shape has no geographic location. Therefore we fail softly by exiting and doing nothing.
+        if (refPos == null)
+            return;
+
+        this.moveTo(refPos.add(delta));
+    }
+
+    /** {@inheritDoc} */
+    public void moveTo(Position position)
+    {
+        if (position == null)
+        {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.setPosition(position);
+    }
+
     protected Offset getOffset()
     {
         return this.offset;
@@ -885,7 +925,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             // Compute the icon and modifier layout.
             // TODO: layout only when necessary
-            // TODO: layout must not issue new requests for resources, but must load resources that have already been requested.
             this.layout(dc);
 
             // Compute the scale and offset parameters that are applied during rendering. This must be done after
@@ -989,26 +1028,40 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (this.getIconRetriever() == null)
             return;
 
-        // Lazily create the symbol icon texture only when necessary.
-        IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), this.modifiers);
+        // Assemble the icon retriever parameters.
+        AVList retrieverParams = this.assembleIconRetrieverParameters(null);
+
+        // Lazily create the symbol icon texture when either the IconRetriever, the symbol ID, or the retriever
+        // parameters change.
+        IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), retrieverParams);
         if (this.iconTexture == null || !this.iconTexture.getImageSource().equals(source))
-        {
             this.iconTexture = new IconTexture(source);
-            this.iconRect = null;
+
+        // Use the currently active icon texture until the new icon texture (if any) has successfully loaded. This
+        // ensures that the old icon texture continues to display until the new icon texture is ready, and avoids
+        // temporarily displaying nothing.
+        if (this.activeIconTexture != this.iconTexture && this.iconTexture != null
+            && this.iconTexture.bind(dc))
+        {
+            this.activeIconTexture = this.iconTexture;
+            this.iconRect = null; // Recompute the icon rectangle when the active icon texture changes.
         }
 
-        if (this.iconRect == null && this.iconTexture.bind(dc)) // Lazily assign the symbol icon rectangle.
+        // Lazily compute the symbol icon rectangle only when necessary, and only after the symbol icon texture has
+        // successfully loaded.
+        if (this.iconRect == null && this.activeIconTexture != null)
         {
             // Compute the symbol icon's frame rectangle in local coordinates. This is used by the modifier layout to
             // determine where to place modifier graphics and modifier text. Note that we bind the texture in order to
             // load the texture image, and make the width and height available.
-            int w = this.iconTexture.getWidth(dc);
-            int h = this.iconTexture.getHeight(dc);
+            int w = this.activeIconTexture.getWidth(dc);
+            int h = this.activeIconTexture.getHeight(dc);
             Point2D point = this.iconOffset != null ? this.iconOffset.computeOffset(w, h, null, null) : new Point(0, 0);
             Dimension size = this.iconSize != null ? this.iconSize.compute(w, h, w, h) : new Dimension(w, h);
             this.iconRect = new Rectangle((int) point.getX(), (int) point.getY(), size.width, size.height);
         }
 
+        // Add the symbol icon rectangle to the screen rectangle and layout rectangle every frame.
         if (this.iconRect != null)
         {
             if (this.screenRect != null)
@@ -1021,6 +1074,18 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             else
                 this.layoutRect = new Rectangle(this.iconRect);
         }
+    }
+
+    protected AVList assembleIconRetrieverParameters(AVList params)
+    {
+        if (params == null)
+            params = new AVListImpl();
+
+        Material interiorMaterial = this.getActiveAttributes().getInteriorMaterial();
+        if (interiorMaterial != null)
+            params.setValue(AVKey.COLOR, interiorMaterial.getDiffuse());
+
+        return params;
     }
 
     protected void layoutModifiers(DrawContext dc)
@@ -1364,7 +1429,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         this.BEogsh.clear(); // Reset the stack handler's internal state.
         this.BEogsh.pushAttrib(gl, attrMask);
-        // TODO: comment on why this works
         this.BEogsh.pushProjectionIdentity(gl);
         gl.glOrtho(0d, viewport.getWidth(), 0d, viewport.getHeight(), 0d, -1d);
         this.BEogsh.pushModelviewIdentity(gl);
@@ -1402,7 +1466,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_COMBINE_RGB, GL.GL_REPLACE);
 
             // Give symbol modifier lines a thicker width during picking in order to make them easier to select.
-            gl.glLineWidth(9f); // TODO: make this configurable
+            gl.glLineWidth(9f);
         }
         else
         {
@@ -1415,7 +1479,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             // Give symbol modifier lines a 3 pixel wide anti-aliased appearance. This GL state does not affect the
             // symbol icon and symbol modifiers drawn with textures.
             gl.glEnable(GL.GL_LINE_SMOOTH);
-            gl.glLineWidth(3f); // TODO: make this configurable
+            gl.glLineWidth(3f);
         }
     }
 
@@ -1533,18 +1597,18 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected void drawIcon(DrawContext dc)
     {
-        if (this.iconTexture == null || this.iconRect == null)
+        if (this.activeIconTexture == null || this.iconRect == null)
             return;
 
-        if (!this.iconTexture.bind(dc))
+        if (!this.activeIconTexture.bind(dc))
             return;
 
         GL gl = dc.getGL();
         try
         {
             gl.glPushMatrix();
-            gl.glScaled(this.iconTexture.getWidth(dc), this.iconTexture.getHeight(dc), 1d);
-            dc.drawUnitQuad(this.iconTexture.getTexCoords());
+            gl.glScaled(this.activeIconTexture.getWidth(dc), this.activeIconTexture.getHeight(dc), 1d);
+            dc.drawUnitQuad(this.activeIconTexture.getTexCoords());
         }
         finally
         {

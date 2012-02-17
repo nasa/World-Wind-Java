@@ -70,11 +70,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      */
     protected String maskedSymbolCode;
 
-    /** Color to apply to the icon this frame. When the color changes a new version of the icon must be retrieved. */
-    protected Color activeColor;
-    /** Icon with active color applied. */
-    protected IconTexture activeColorTexture;
-
     /**
      * Constructs a new symbol with no position.
      *
@@ -160,34 +155,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     public void setColor(Color color)
     {
         this.modifiers.setValue(AVKey.COLOR, color);
-    }
-
-    @Override
-    protected void layoutIcon(DrawContext dc)
-    {
-        if (this.getIconRetriever() == null)
-            return;
-
-        // If the icon color has changed we need to load a new version of the icon.
-        if (this.activeColor != this.getColor())
-        {
-            IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), this.modifiers);
-            this.activeColorTexture = new IconTexture(source);
-            this.activeColor = this.getColor();
-        }
-
-        // If iconTexture is not the active color texture, then attempt to bind the new texture. If this fails
-        // then continue drawing the old texture until the new one becomes available.
-        if (this.activeColorTexture != this.iconTexture && this.activeColorTexture != null
-            && this.activeColorTexture.bind(dc))
-        {
-            // New texture is ready, replace the previous texture.
-            this.iconTexture = this.activeColorTexture;
-            this.iconRect = null; // New texture loaded, recompute rectangle
-        }
-
-        // Call super class to layout the active icon.
-        super.layoutIcon(dc);
     }
 
     @Override

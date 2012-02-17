@@ -10,10 +10,10 @@ import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
 import javax.swing.*;
@@ -39,6 +39,7 @@ public class TacticalSymbols extends ApplicationTemplate
         protected RenderableLayer symbolLayer;
         protected TacticalSymbolAttributes sharedAttrs;
         protected TacticalSymbolAttributes sharedHighlightAttrs;
+        protected BasicDragger dragger;
 
         public AppFrame()
         {
@@ -53,6 +54,8 @@ public class TacticalSymbols extends ApplicationTemplate
             // order to keep a symbol's scale constant when it's highlighted, and change only its opacity.
             this.sharedAttrs = new BasicTacticalSymbolAttributes();
             this.sharedHighlightAttrs = new BasicTacticalSymbolAttributes();
+            this.sharedHighlightAttrs.setInteriorMaterial(Material.WHITE);
+            this.sharedHighlightAttrs.setOpacity(1.0);
 
             // Create an air tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies a
             // MIL-STD-2525 friendly Special Operations Forces Drone Aircraft. MilStd2525TacticalSymbol automatically
@@ -110,6 +113,10 @@ public class TacticalSymbols extends ApplicationTemplate
 
             // Update the layer panel to display the symbol layer.
             this.getLayerPanel().update(this.getWwd());
+
+            // Add a dragging controller to enable user click-and-drag control over tactical symbols.
+            this.dragger = new BasicDragger(this.getWwd());
+            this.getWwd().addSelectListener(this.dragger);
 
             // Create a Swing control panel that provides user control over the symbol's appearance.
             this.addSymbolControls();

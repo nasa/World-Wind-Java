@@ -29,6 +29,11 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
      */
     protected Double scale;
     /**
+     * Indicates the material used to draw the symbol's interior, or <code>null</code> to use the symbol's default
+     * interior material. Initially <code>null</code>.
+     */
+    protected Material interiorMaterial;
+    /**
      * Indicates the symbol opacity as a floating point number between 0.0 and 1.0 (inclusive), or <code>null</code> to
      * use the symbol's default scale. Initially <code>null</code>.
      */
@@ -50,14 +55,16 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
     }
 
     /**
-     * Constructs a BasicTacticalSymbolAttributes with the specified scale, opacity, text modifier font, and text
-     * modifier material. The scale specifies the symbol scale as a ratio of the symbol's original size, the opacity
-     * specifies the symbol opacity as a floating point number between 0.0 and 1.0 (inclusive). The specified scale must
-     * be either <code>null</code> or greater than or equal to 0.0, and the opacity must either <code>null</code> or a
-     * value between 0.0 and 1.0 (inclusive). The textModifierFont and textModifierMaterial specify the font and
-     * material to use when drawing a symbol's text modifiers.
+     * Constructs a BasicTacticalSymbolAttributes with the specified scale, interior material, opacity, text modifier
+     * font, and text modifier material. The scale specifies the symbol scale as a ratio of the symbol's original size,
+     * the opacity specifies the symbol opacity as a floating point number between 0.0 and 1.0 (inclusive). The
+     * specified scale must be either <code>null</code> or greater than or equal to 0.0, and the opacity must either
+     * <code>null</code> or a value between 0.0 and 1.0 (inclusive). The textModifierFont and textModifierMaterial
+     * specify the font and material to use when drawing a symbol's text modifiers.
      *
      * @param scale                the symbol's scale. May be <code>null</code>, indicating that the default scale
+     *                             should be used.
+     * @param interiorMaterial     the interior material. May be <code>null</code>, indicating that the default material
      *                             should be used.
      * @param opacity              the symbol opacity. May be <code>null</code>, indicating that the default opacity
      *                             should be used.
@@ -69,7 +76,7 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
      * @throws IllegalArgumentException if the scale is less than 0.0, or if the opacity is less than 0.0 or greater
      *                                  than 1.0.
      */
-    public BasicTacticalSymbolAttributes(Double scale, Double opacity, Font textModifierFont,
+    public BasicTacticalSymbolAttributes(Double scale, Material interiorMaterial, Double opacity, Font textModifierFont,
         Material textModifierMaterial)
     {
         if (scale != null && scale < 0d)
@@ -87,6 +94,7 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
         }
 
         this.scale = scale;
+        this.interiorMaterial = interiorMaterial;
         this.opacity = opacity;
         this.textModifierFont = textModifierFont;
         this.textModifierMaterial = textModifierMaterial;
@@ -98,6 +106,7 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
         if (attributes != null)
         {
             this.scale = attributes.getScale();
+            this.interiorMaterial = attributes.getInteriorMaterial();
             this.opacity = attributes.getOpacity();
             this.textModifierFont = attributes.getTextModifierFont();
             this.textModifierMaterial = attributes.getTextModifierMaterial();
@@ -121,6 +130,16 @@ public class BasicTacticalSymbolAttributes implements TacticalSymbolAttributes
         }
 
         this.scale = scale;
+    }
+
+    public Material getInteriorMaterial()
+    {
+        return this.interiorMaterial;
+    }
+
+    public void setInteriorMaterial(Material material)
+    {
+        this.interiorMaterial = material;
     }
 
     /** {@inheritDoc} */

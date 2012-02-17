@@ -315,6 +315,29 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     }
 
     @Override
+    protected AVList assembleIconRetrieverParameters(AVList params)
+    {
+        if (params == null)
+            params = new AVListImpl();
+
+        super.assembleIconRetrieverParameters(params);
+
+        Object o = this.modifiers.getValue(SymbologyConstants.SHOW_FILL);
+        if (o != null)
+            params.setValue(SymbologyConstants.SHOW_FILL, o);
+
+        o = this.modifiers.getValue(SymbologyConstants.SHOW_FRAME);
+        if (o != null)
+            params.setValue(SymbologyConstants.SHOW_FRAME, o);
+
+        o = this.modifiers.getValue(SymbologyConstants.SHOW_ICON);
+        if (o != null)
+            params.setValue(SymbologyConstants.SHOW_ICON, o);
+
+        return params;
+    }
+
+    @Override
     protected void layoutModifiers(DrawContext dc)
     {
         if (this.iconRect == null)
@@ -542,9 +565,9 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 
         // Evaluation Rating, Combat Effectiveness, Signature Equipment, Hostile (Enemy), and IFF/SIF modifier
         // layout.
-        this.appendTextModifier(sb, modifiers, SymbologyConstants.EVALUATION_RATING, 2); // TODO: validate value
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.EVALUATION_RATING, 2);
         this.appendTextModifier(sb, modifiers, SymbologyConstants.COMBAT_EFFECTIVENESS, 3);
-        this.appendTextModifier(sb, modifiers, SymbologyConstants.SIGNATURE_EQUIPMENT, 1); // TODO: validate value
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.SIGNATURE_EQUIPMENT, 1);
         // TODO: compute value from standard identity
         if (this.isShowHostileIndicator())
             this.appendTextModifier(sb, modifiers, SymbologyConstants.HOSTILE_ENEMY, 3);
@@ -556,7 +579,6 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         }
 
         // Date-Time-Group (DTG) modifier layout.
-        // TODO: compute value from modifier
         this.appendTextModifier(sb, modifiers, SymbologyConstants.DATE_TIME_GROUP, 16);
         if (sb.length() > 0)
         {
@@ -615,7 +637,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         else if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REDUCED))
             return "-";
         else if (o != null && o.toString().equalsIgnoreCase(SymbologyConstants.REINFORCED_AND_REDUCED))
-            return "+-"; // TODO: get the string for "+ over -"
+            return "+-";
         else
             return null;
     }
