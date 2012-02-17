@@ -6,6 +6,9 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.event.Message;
+import gov.nasa.worldwind.util.Logging;
+
 /**
  * Represents the KML <i>LatLonBox</i> element and provides access to its contents.
  *
@@ -42,5 +45,20 @@ public abstract class KMLAbstractLatLonBoxType extends KMLAbstractObject
     public Double getWest()
     {
         return (Double) this.getField("west");
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLAbstractLatLonBoxType))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        super.applyChange(sourceValues);
+
+        this.onChange(new Message(KMLAbstractObject.MSG_BOX_CHANGED, this));
     }
 }

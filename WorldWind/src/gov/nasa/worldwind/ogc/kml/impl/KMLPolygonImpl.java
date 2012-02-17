@@ -8,6 +8,7 @@ package gov.nasa.worldwind.ogc.kml.impl;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.pick.PickedObject;
@@ -209,5 +210,22 @@ public class KMLPolygonImpl extends Polygon implements KMLRenderable
         }
 
         return attrs;
+    }
+
+    @Override
+    public void onMessage(Message message)
+    {
+        super.onMessage(message);
+
+        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.getName()))
+        {
+            this.normalAttributesResolved = false;
+            this.highlightAttributesResolved = false;
+
+            if (this.getAttributes() != null)
+                this.getAttributes().setUnresolved(true);
+            if (this.getHighlightAttributes() != null)
+                this.getHighlightAttributes().setUnresolved(true);
+        }
     }
 }

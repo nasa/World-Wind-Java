@@ -14,8 +14,6 @@ package gov.nasa.worldwind.ogc.kml;
  */
 public class KMLTimeStamp extends KMLAbstractTimePrimitive
 {
-    protected String when;
-
     /**
      * Construct an instance.
      *

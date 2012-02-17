@@ -6,8 +6,10 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.util.Logging;
 
 /**
  * Represents the KML <i>ScreenOverlay</i> element and provides access to its contents.
@@ -115,5 +117,29 @@ public class KMLScreenOverlay extends KMLAbstractOverlay
     public KMLRenderable getRenderable()
     {
         return renderable;
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLScreenOverlay))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.renderable = null;
+
+        super.applyChange(sourceValues);
+    }
+
+    @Override
+    public void onChange(Message msg)
+    {
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
+            this.renderable = null;
+
+        super.onChange(msg);
     }
 }

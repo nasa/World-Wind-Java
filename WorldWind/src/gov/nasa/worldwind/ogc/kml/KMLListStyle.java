@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -65,5 +66,54 @@ public class KMLListStyle extends KMLAbstractSubStyle
     public Integer getMaxSnippetLines()
     {
         return (Integer) this.getField("maxSnippetLines");
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLListStyle))
+        {
+            String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        KMLListStyle sourceStyle = (KMLListStyle) sourceValues;
+
+        if (sourceStyle.getItemIcons() != null && sourceStyle.getItemIcons().size() > 0)
+            this.mergeItemIcons(sourceStyle);
+
+        super.applyChange(sourceValues);
+    }
+
+    /**
+     * Merge a list of incoming item icons with the current list. If an incoming item icon has the same ID as an
+     * existing one, replace the existing one, otherwise just add the incoming one.
+     *
+     * @param sourceStyle the incoming item icons.
+     */
+    protected void mergeItemIcons(KMLListStyle sourceStyle)
+    {
+        // Make a copy of the existing list so we can modify it as we traverse the copy.
+        List<KMLItemIcon> itemIconsCopy = new ArrayList<KMLItemIcon>(this.getItemIcons().size());
+        Collections.copy(itemIconsCopy, this.getItemIcons());
+
+        for (KMLItemIcon sourceItemIcon : sourceStyle.getItemIcons())
+        {
+            String id = sourceItemIcon.getId();
+            if (!WWUtil.isEmpty(id))
+            {
+                for (KMLItemIcon existingItemIcon : itemIconsCopy)
+                {
+                    String currentId = existingItemIcon.getId();
+                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id))
+                    {
+                        this.getItemIcons().remove(existingItemIcon);
+                    }
+                }
+            }
+
+            this.getItemIcons().add(sourceItemIcon);
+        }
     }
 }

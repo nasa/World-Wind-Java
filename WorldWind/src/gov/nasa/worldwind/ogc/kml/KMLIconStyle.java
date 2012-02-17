@@ -6,6 +6,8 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.event.Message;
+
 /**
  * Represents the KML <i>IconStyle</i> element and provides access to its contents.
  *
@@ -42,5 +44,14 @@ public class KMLIconStyle extends KMLAbstractColorStyle
     public KMLIcon getIcon()
     {
         return (KMLIcon) this.getField("Icon");
+    }
+
+    @Override
+    public void onChange(Message msg)
+    {
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
+            this.onChange(new Message(KMLAbstractObject.MSG_STYLE_CHANGED, this));
+
+        super.onChange(msg);
     }
 }

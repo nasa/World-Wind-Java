@@ -9,7 +9,7 @@ package gov.nasa.worldwind.ogc.kml;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.Logging;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Represents the KML <i>StyleSelector</i> element.

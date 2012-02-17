@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml.impl;
 
+import gov.nasa.worldwind.event.MessageListener;
 import gov.nasa.worldwind.render.DrawContext;
 
 /**
@@ -14,7 +15,7 @@ import gov.nasa.worldwind.render.DrawContext;
  * @author tag
  * @version $Id$
  */
-public interface KMLRenderable
+public interface KMLRenderable extends MessageListener
 {
     /**
      * Pre-render this element.

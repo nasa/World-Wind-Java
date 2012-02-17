@@ -15,18 +15,6 @@ package gov.nasa.worldwind.ogc.kml;
 public class KMLLod extends KMLAbstractObject
 {
     /**
-     * Flag to indicate that the minLod has been fetched from the hashmap.
-     */
-    protected boolean minLodFetched = false;
-    protected Double minLodPixels = null;
-
-    /**
-     * Flag to indicate that the maxLod has been fetched from the hashmap.
-     */
-    protected boolean maxLodFetched = false;
-    protected Double maxLodPixels = null;
-
-    /**
      * Construct an instance.
      *
      * @param namespaceURI the qualifying namespace URI. May be null to indicate no namespace qualification.
@@ -38,25 +26,12 @@ public class KMLLod extends KMLAbstractObject
 
     public Double getMinLodPixels()
     {
-        if (!this.minLodFetched)
-        {
-            this.minLodFetched = true;
-            this.minLodPixels = (Double) this.getField("minLodPixels");
-        }
-
-        return this.minLodPixels;
+        return (Double) this.getField("minLodPixels");
     }
-
 
     public Double getMaxLodPixels()
     {
-        if (!this.maxLodFetched)
-        {
-            this.maxLodFetched = true;
-            this.maxLodPixels = (Double) this.getField("maxLodPixels");
-        }
-
-        return this.maxLodPixels;
+        return (Double) this.getField("maxLodPixels");
     }
 
     public Double getMinFadeExtent()

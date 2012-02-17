@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.stream.XMLStreamException;
@@ -18,7 +19,7 @@ import java.util.*;
  * @author tag
  * @version $Id$
  */
-public class KMLDelete extends AbstractXMLEventParser
+public class KMLDelete extends AbstractXMLEventParser implements KMLUpdateOperation
 {
     protected List<KMLAbstractFeature> features = new ArrayList<KMLAbstractFeature>();
 
@@ -50,5 +51,27 @@ public class KMLDelete extends AbstractXMLEventParser
     public List<KMLAbstractFeature> getFeatures()
     {
         return this.features;
+    }
+
+    public void applyOperation(KMLRoot targetRoot)
+    {
+        for (KMLAbstractFeature feature : this.features)
+        {
+            String targetId = feature.getTargetId();
+            if (WWUtil.isEmpty(targetId))
+                continue;
+
+            Object o = targetRoot.getItemByID(targetId);
+            if (o == null || !(o instanceof KMLAbstractFeature))
+                continue;
+
+            KMLAbstractFeature featureToDelete = (KMLAbstractFeature) o;
+
+            Object p = featureToDelete.getParent();
+            if (!(p instanceof KMLAbstractContainer))
+                continue;
+
+            ((KMLAbstractContainer) p).removeFeature(featureToDelete);
+        }
     }
 }

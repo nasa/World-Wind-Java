@@ -28,7 +28,7 @@ import java.net.URL;
  * @author tag
  * @version $Id$
  */
-public class ScreenImage extends AVListImpl implements Renderable, Exportable
+public class ScreenImage extends WWObjectImpl implements Renderable, Exportable
 {
     protected Object imageSource;
     protected BasicWWTexture texture;

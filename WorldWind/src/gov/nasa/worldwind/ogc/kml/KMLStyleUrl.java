@@ -6,7 +6,8 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.event.Message;
+import gov.nasa.worldwind.util.*;
 
 /**
  * @author tag
@@ -39,5 +40,20 @@ public class KMLStyleUrl extends KMLAbstractObject
 
         Object o = this.getRoot().resolveReference(this.getCharacters());
         return o instanceof KMLAbstractStyleSelector ? (KMLAbstractStyleSelector) o : null;
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLStyleUrl))
+        {
+            String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        super.applyChange(sourceValues);
+
+        this.onChange(new Message(KMLAbstractObject.MSG_STYLE_CHANGED, this));
     }
 }

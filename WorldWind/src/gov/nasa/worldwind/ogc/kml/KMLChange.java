@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.stream.XMLStreamException;
@@ -18,7 +19,7 @@ import java.util.*;
  * @author tag
  * @version $Id$
  */
-public class KMLChange extends AbstractXMLEventParser
+public class KMLChange extends AbstractXMLEventParser implements KMLUpdateOperation
 {
     protected List<KMLAbstractObject> objects = new ArrayList<KMLAbstractObject>();
 
@@ -50,5 +51,23 @@ public class KMLChange extends AbstractXMLEventParser
     public List<KMLAbstractObject> getObjects()
     {
         return this.objects;
+    }
+
+    public void applyOperation(KMLRoot targetRoot)
+    {
+        for (KMLAbstractObject sourceValues : this.objects)
+        {
+            String targetId = sourceValues.getTargetId();
+            if (WWUtil.isEmpty(targetId))
+                continue;
+
+            Object o = targetRoot.getItemByID(targetId);
+            if (o == null || !(o instanceof KMLAbstractObject))
+                continue;
+
+            KMLAbstractObject objectToChange = (KMLAbstractObject) o;
+
+            objectToChange.applyChange(sourceValues);
+        }
     }
 }

@@ -9,6 +9,7 @@ package gov.nasa.worldwind.ogc.kml;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.ogc.kml.impl.KMLTraversalContext;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -50,9 +51,16 @@ public class KMLAbstractContainer extends KMLAbstractFeature
         return this.features;
     }
 
-    protected void addFeature(KMLAbstractFeature feature)
+    public void addFeature(KMLAbstractFeature feature)
     {
-        this.features.add(feature);
+        if (feature != null)
+            this.features.add(feature);
+    }
+
+    public void removeFeature(KMLAbstractFeature feature)
+    {
+        if (feature != null)
+            this.getFeatures().remove(feature);
     }
 
     /**
@@ -217,11 +225,60 @@ public class KMLAbstractContainer extends KMLAbstractFeature
     }
 
     @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLAbstractContainer))
+        {
+            String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        super.applyChange(sourceValues);
+
+        KMLAbstractContainer sourceContainer = (KMLAbstractContainer) sourceValues;
+
+        if (sourceContainer.getFeatures() != null && sourceContainer.getFeatures().size() > 0)
+            this.mergeFeatures(sourceContainer);
+    }
+
+    /**
+     * Merge a list of incoming features with the current list. If an incoming feature has the same ID as an existing
+     * one, replace the existing one, otherwise add the incoming one.
+     *
+     * @param sourceContainer the incoming container of features.
+     */
+    protected void mergeFeatures(KMLAbstractContainer sourceContainer)
+    {
+        // Make a copy of the existing list so we can modify it as we traverse.
+        List<KMLAbstractFeature> featuresListCopy = new ArrayList<KMLAbstractFeature>(this.getFeatures().size());
+        Collections.copy(featuresListCopy, this.getFeatures());
+
+        for (KMLAbstractFeature sourceFeature : sourceContainer.getFeatures())
+        {
+            String id = sourceFeature.getId();
+            if (!WWUtil.isEmpty(id))
+            {
+                for (KMLAbstractFeature existingFeature : featuresListCopy)
+                {
+                    String currentId = existingFeature.getId();
+                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id))
+                        this.getFeatures().remove(existingFeature);
+                }
+            }
+
+            this.getFeatures().add(sourceFeature);
+        }
+    }
+
+    @Override
     public void onMessage(Message msg)
     {
         for (KMLAbstractFeature feature : this.getFeatures())
         {
             feature.onMessage(msg);
         }
+
+        super.onMessage(msg);
     }
 }

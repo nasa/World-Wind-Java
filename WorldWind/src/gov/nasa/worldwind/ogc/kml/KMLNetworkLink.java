@@ -13,6 +13,7 @@ import gov.nasa.worldwind.ogc.kml.impl.KMLTraversalContext;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
 
+import javax.swing.*;
 import java.beans.*;
 import java.util.concurrent.atomic.*;
 
@@ -42,7 +43,9 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
      */
     protected AtomicLong networkResourceRetrievalTime = new AtomicLong(-1);
 
-    /** Flag to indicate that the Link has been fetched from the hashmap. */
+    protected AtomicLong firstRetrievalTime;
+
+    /** Flag to indicate that the Link has been fetched from the hash map. */
     protected boolean linkFetched = false;
     protected KMLLink link;
 
@@ -146,6 +149,39 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
         return networkResource.get();
     }
 
+    protected boolean hasNetworkLinkControl()
+    {
+        return this.getRoot().getNetworkLinkControl() != null;
+    }
+
+    @Override
+    public String getName()
+    {
+        if (this.hasNetworkLinkControl() && !WWUtil.isEmpty(this.getRoot().getNetworkLinkControl().getLinkName()))
+            return this.getRoot().getNetworkLinkControl().getLinkName();
+
+        return super.getName();
+    }
+
+    @Override
+    public String getDescription()
+    {
+        if (this.hasNetworkLinkControl()
+            && !WWUtil.isEmpty(this.getRoot().getNetworkLinkControl().getLinkDescription()))
+            return this.getRoot().getNetworkLinkControl().getLinkDescription();
+
+        return super.getDescription();
+    }
+
+    @Override
+    public Object getSnippet()
+    {
+        if (this.hasNetworkLinkControl() && !WWUtil.isEmpty(this.getRoot().getNetworkLinkControl().getLinkSnippet()))
+            return this.getRoot().getNetworkLinkControl().getLinkSnippet();
+
+        return super.getSnippet();
+    }
+
     /**
      * Specifies the network resource referenced by this <code>KMLNetworkLink</code>, or <code>null</code> if this link
      * has no resource. If the specified <code>kmlRoot</code> is not <code>null</code, this link draws the
@@ -156,7 +192,7 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
      *
      * @see #getNetworkResource()
      */
-    public void setNetworkResource(KMLRoot kmlRoot)
+    public void setNetworkResource(final KMLRoot kmlRoot)
     {
         // Remove any property change listeners previously set on the KMLRoot. This eliminates dangling references from
         // the KMLNetworkLink to its previous KMLRoot.
@@ -166,12 +202,27 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
 
         this.networkResource.set(kmlRoot);
         this.networkResourceRetrievalTime.set(System.currentTimeMillis());
+        if (this.firstRetrievalTime == null)
+            this.firstRetrievalTime = new AtomicLong(this.networkResourceRetrievalTime.get());
 
         // Set up to listen for property change events on the KMLRoot. KMLNetworkLink must forward REPAINT and REFRESH
         // property change events from its internal KMLRoot to its parent KMLRoot to support BrowserBalloon repaint
         // events and recursive KMLNetworkLink elements.
         if (kmlRoot != null)
+        {
             kmlRoot.addPropertyChangeListener(this);
+
+            // Apply any updates contained in the new root's optional network link control.
+            SwingUtilities.invokeLater(new Runnable()
+            {
+                public void run()
+                {
+                    if (hasNetworkLinkControl() && kmlRoot.getNetworkLinkControl().getUpdate() != null
+                        && !kmlRoot.getNetworkLinkControl().getUpdate().isUpdatesApplied())
+                        kmlRoot.getNetworkLinkControl().getUpdate().applyOperations();
+                }
+            });
+        }
     }
 
     /**
@@ -229,6 +280,23 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
         if (this.invalidTarget)
             return false;
 
+        // Make sure a refresh doesn't occur within the minimum refresh period, if one is specified.
+        KMLNetworkLinkControl linkControl = this.getRoot().getNetworkLinkControl();
+        if (linkControl != null && linkControl.getMinRefreshPeriod() != null)
+        {
+            long now = System.currentTimeMillis();
+            if (this.networkResourceRetrievalTime.get() + linkControl.getMinRefreshPeriod() * 1000 < now)
+                return false;
+        }
+
+        // Make sure a refresh doesn't occur after the max session length is reached, if one is specified.
+        if (linkControl != null && linkControl.getMaxSessionLength() != null && this.firstRetrievalTime != null)
+        {
+            long now = System.currentTimeMillis();
+            if (this.firstRetrievalTime.get() + linkControl.getMaxSessionLength() * 1000 < now)
+                return false;
+        }
+
         // The resource must be retrieved if the link has been updated since the resource was
         // last retrieved, or if the resource has never been retrieved.
         return this.getNetworkResource() == null || link.getUpdateTime() > this.networkResourceRetrievalTime.get();
@@ -255,6 +323,9 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
 
         if (WWUtil.isEmpty(address))
             return;
+
+        if (this.hasNetworkLinkControl() && this.getRoot().getNetworkLinkControl().getCookie() != null)
+            address = address + this.getRoot().getNetworkLinkControl().getCookie();
 
         WorldWind.getTaskService().addTask(new RequestTask(this, address));
     }
@@ -309,8 +380,8 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
      * are met, and <code>false</code> otherwise:
      * <p/>
      * <ul> <li>This network link has either a <code>Link</code> or a <code>Url</code> element.</li> <li>The Link or Url
-     * element's <code>refreshMode</code> is not <code>onInterval</code>.</li> <li>The Link or Url element's
-     * <code>viewRefreshMode</code> is not <code>onStop</code>.</li> </ul>
+     * element's <code>refreshMode</code> is not <code>onInterval</code> or <code>onExpire</code>.</li> <li>The Link or
+     * Url element's <code>viewRefreshMode</code> is not <code>onStop</code>.</li> </ul>
      *
      * @return <code>true</code> if this link's network resource can should be stored in a cache, or <code>false</code>
      *         if it should be stored in a temporary location.
@@ -320,7 +391,48 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
         KMLLink link = this.getLinkOrUrl();
         return link != null
             && !KMLConstants.ON_INTERVAL.equalsIgnoreCase(link.getRefreshMode())
+            && !KMLConstants.ON_EXPIRE.equalsIgnoreCase(link.getRefreshMode())
             && !KMLConstants.ON_STOP.equalsIgnoreCase(link.getViewRefreshMode());
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLNetworkLink))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        KMLNetworkLink sourceLink = (KMLNetworkLink) sourceValues;
+
+        // Reset this network link only if the change contains a new link
+        if (sourceLink.getLinkOrUrl() != null)
+            this.reset();
+
+        super.applyChange(sourceValues);
+    }
+
+    @Override
+    public void onChange(Message msg)
+    {
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
+            this.reset();
+
+        super.onChange(msg);
+    }
+
+    protected void reset()
+    {
+        this.networkResource.set(null);
+        this.networkResourceRetrievalTime.set(-1);
+        this.firstRetrievalTime = null;
+        this.linkFetched = false;
+        this.link = null;
+        this.invalidTarget = false;
+
+        this.getRoot().requestRedraw(); // cause doPreRender to be called to initiate new link retrieval
     }
 
     /** Attempts to find this network link resource file locally, and if that fails attempts to find it remotely. */

@@ -6,6 +6,8 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.event.Message;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -124,5 +126,56 @@ public class KMLStyleMap extends KMLAbstractStyleSelector
             subStyle.setField(KMLConstants.STYLE_STATE, styleState); // identify which style state it is
 
         return KMLAbstractStyleSelector.mergeSubStyles(styleUrl, selector, styleState, subStyle);
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLStyleMap))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        super.applyChange(sourceValues);
+
+        KMLStyleMap sourceMap = (KMLStyleMap) sourceValues;
+
+        if (sourceMap.getPairs() != null && sourceMap.getPairs().size() > 0)
+            this.pairs = sourceMap.getPairs();
+
+        this.onChange(new Message(KMLAbstractObject.MSG_STYLE_CHANGED, this));
+    }
+
+    /**
+     * Merge a list of incoming pairs with the current list. If an incoming pair has the same ID as an
+     * existing one, replace the existing one, otherwise just add the incoming one.
+     *
+     * @param sourceMap the incoming pairs.
+     */
+    protected void mergePairs(KMLStyleMap sourceMap)
+    {
+        // Make a copy of the existing list so we can modify it as we traverse the copy.
+        List<KMLPair> pairsCopy = new ArrayList<KMLPair>(this.getPairs().size());
+        Collections.copy(pairsCopy, this.getPairs());
+
+        for (KMLPair sourcePair : sourceMap.getPairs())
+        {
+            String id = sourcePair.getId();
+            if (!WWUtil.isEmpty(id))
+            {
+                for (KMLPair existingPair : pairsCopy)
+                {
+                    String currentId = existingPair.getId();
+                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id))
+                    {
+                        this.getPairs().remove(existingPair);
+                    }
+                }
+            }
+
+            this.getPairs().add(sourcePair);
+        }
     }
 }

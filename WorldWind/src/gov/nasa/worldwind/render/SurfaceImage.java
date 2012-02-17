@@ -26,7 +26,8 @@ import java.util.*;
  *
  * @version $Id$
  */
-public class SurfaceImage implements SurfaceTile, Renderable, PreRenderable, Movable, Disposable, Exportable
+public class SurfaceImage extends WWObjectImpl
+    implements SurfaceTile, Renderable, PreRenderable, Movable, Disposable, Exportable
 {
     // TODO: Handle date-line spanning sectors
 
@@ -297,7 +298,7 @@ public class SurfaceImage implements SurfaceTile, Renderable, PreRenderable, Mov
         }
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected void initializeSourceTexture(DrawContext dc)
     {
         this.sourceTexture = new LazilyLoadedTexture(this.getImageSource(), true);
@@ -357,7 +358,7 @@ public class SurfaceImage implements SurfaceTile, Renderable, PreRenderable, Mov
         return this.referencePosition;
     }
 
-    @SuppressWarnings( {"UnusedDeclaration"})
+    @SuppressWarnings({"UnusedDeclaration"})
     protected void setReferencePosition(Position referencePosition)
     {
         this.referencePosition = referencePosition;

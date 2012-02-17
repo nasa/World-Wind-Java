@@ -8,6 +8,7 @@ package gov.nasa.worldwind.ogc.kml;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.cache.ShapeDataCache;
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
@@ -328,9 +329,6 @@ public class KMLRegion extends KMLAbstractObject
      * <code>DEFAULT_DETAIL_HINT_ORIGIN</code>.
      */
     protected double detailHintOrigin = DEFAULT_DETAIL_HINT_ORIGIN;
-    /** Flag to indicate that the lod has been fetched from the hash map. */
-    protected boolean lodFetched = false;
-    protected KMLLod lod;
 
     /**
      * Creates a new <code>KMLRegion</code> with the specified namespace URI, but otherwise does nothing. The new Region
@@ -365,13 +363,7 @@ public class KMLRegion extends KMLAbstractObject
      */
     public KMLLod getLod()
     {
-        if (!this.lodFetched)
-        {
-            this.lod = (KMLLod) this.getField("Lod");
-            this.lodFetched = true;
-        }
-
-        return this.lod;
+        return (KMLLod) this.getField("Lod");
     }
 
     /**
@@ -879,7 +871,7 @@ public class KMLRegion extends KMLAbstractObject
      * @return <code>true</code> if the <code>DrawContext's</code> meets this Region's level of detail criteria,
      *         otherwise <code>false</code>.
      */
-    @SuppressWarnings( {"UnusedDeclaration"})
+    @SuppressWarnings({"UnusedDeclaration"})
     protected boolean meetsRelativeToGroundLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod)
     {
         return this.meetsScreenAreaCriteria(dc, lod);
@@ -897,7 +889,7 @@ public class KMLRegion extends KMLAbstractObject
      * @return <code>true</code> if the <code>DrawContext's</code> meets this Region's level of detail criteria,
      *         otherwise <code>false</code>.
      */
-    @SuppressWarnings( {"UnusedDeclaration"})
+    @SuppressWarnings({"UnusedDeclaration"})
     protected boolean meetsAbsoluteLodCriteria(KMLTraversalContext tc, DrawContext dc, KMLLod lod)
     {
         return this.meetsScreenAreaCriteria(dc, lod);
@@ -960,5 +952,35 @@ public class KMLRegion extends KMLAbstractObject
     protected double getDetailFactor(KMLTraversalContext tc)
     {
         return this.detailHintOrigin + tc.getDetailHint();
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLRegion))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.reset();
+
+        super.applyChange(sourceValues);
+    }
+
+    @Override
+    public void onChange(Message msg)
+    {
+        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.getName()))
+            this.reset();
+        
+        super.onChange(msg);
+    }
+
+    protected void reset()
+    {
+        this.regionDataCache.removeAllEntries();
+        this.currentData = null;
     }
 }

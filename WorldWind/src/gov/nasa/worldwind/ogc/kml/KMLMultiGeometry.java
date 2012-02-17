@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -50,5 +51,54 @@ public class KMLMultiGeometry extends KMLAbstractGeometry
     public List<KMLAbstractGeometry> getGeometries()
     {
         return this.geometries;
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLMultiGeometry))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        KMLMultiGeometry multiGeometry = (KMLMultiGeometry) sourceValues;
+
+        if (multiGeometry.getGeometries() != null && multiGeometry.getGeometries().size() > 0)
+            this.mergeGeometries(multiGeometry);
+
+        super.applyChange(sourceValues);
+    }
+
+    /**
+     * Merge a list of incoming geometries with the current list. If an incoming geometry has the same ID as
+     * an existing one, replace the existing one, otherwise just add the incoming one.
+     *
+     * @param sourceMultiGeometry the incoming geometries.
+     */
+    protected void mergeGeometries(KMLMultiGeometry sourceMultiGeometry)
+    {
+        // Make a copy of the existing list so we can modify it as we traverse the copy.
+        List<KMLAbstractGeometry> geometriesCopy = new ArrayList<KMLAbstractGeometry>(this.getGeometries().size());
+        Collections.copy(geometriesCopy, this.getGeometries());
+
+        for (KMLAbstractGeometry sourceGeometry : sourceMultiGeometry.getGeometries())
+        {
+            String id = sourceGeometry.getId();
+            if (!WWUtil.isEmpty(id))
+            {
+                for (KMLAbstractGeometry existingGeometry : geometriesCopy)
+                {
+                    String currentId = existingGeometry.getId();
+                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id))
+                    {
+                        this.getGeometries().remove(existingGeometry);
+                    }
+                }
+            }
+
+            this.getGeometries().add(sourceGeometry);
+        }
     }
 }

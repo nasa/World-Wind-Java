@@ -47,23 +47,12 @@ public class KMLFeatureTreeNode extends BasicTreeNode
 
         this.feature = feature;
 
-        String name = feature.getName();
-        if (name != null)
-        {
-            this.text = this.stripHtmlTags(name);
-        }
-        else
-        {
-            this.text = feature.getClass().getSimpleName();
-        }
-
         this.initialize();
     }
 
-    /** Initializes this node's description and places the KML feature in the node's <code>AVKey.CONTEXT</code> field. */
+    /** Places the KML feature in the node's <code>AVKey.CONTEXT</code> field. */
     protected void initialize()
     {
-        this.makeFeatureDescription();
         // The CONTEXT key identifies the KML feature this tree node is associated with.
         this.setValue(AVKey.CONTEXT, this.getFeature());
     }
@@ -174,11 +163,27 @@ public class KMLFeatureTreeNode extends BasicTreeNode
         return Boolean.TRUE.equals(this.getFeature().getOpen());
     }
 
+    @Override
+    public String getText()
+    {
+        String name = feature.getName();
+
+        return name != null ? this.stripHtmlTags(name) : feature.getClass().getSimpleName();
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return this.makeFeatureDescription();
+    }
+
     /**
      * Makes this node's description text from its KML feature. This uses the feature's <code>KMLSnippet</code> if
      * present, or the feature's <code>description</code> if there is no snippet.
+     *
+     * @return The feature description.
      */
-    protected void makeFeatureDescription()
+    protected String makeFeatureDescription()
     {
         String text;
 
@@ -199,8 +204,7 @@ public class KMLFeatureTreeNode extends BasicTreeNode
             text = this.getFeature().getDescription();
         }
 
-        text = this.stripHtmlTags(text);
-        this.setDescription(text);
+        return this.stripHtmlTags(text);
     }
 
     /**

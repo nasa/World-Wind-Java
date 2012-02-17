@@ -6,9 +6,10 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 import gov.nasa.worldwind.util.xml.atom.*;
 import gov.nasa.worldwind.util.xml.xal.XALAddressDetails;
@@ -32,7 +33,7 @@ import java.util.*;
 public abstract class KMLAbstractFeature extends KMLAbstractObject implements KMLRenderable
 {
     /** The style selectors specified in the KML Feature element. Is empty if no selectors were specified. */
-    protected ArrayList<KMLAbstractStyleSelector> styleSelectors = new ArrayList<KMLAbstractStyleSelector>();
+    protected List<KMLAbstractStyleSelector> styleSelectors = new ArrayList<KMLAbstractStyleSelector>();
     /**
      * The visibility flag for the feature. This field is determined from the visibility element of the KML feature
      * initially, but the client may set it directly, in which case it may then differ from the visibility field in the
@@ -149,7 +150,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
         if (o != null)
             return ((String) o).trim();
 
-        KMLSnippet snippet = (KMLSnippet) this.getField("Snippet");
+        KMLSnippet snippet = (KMLSnippet) this.getSnippet();
         if (snippet != null && snippet.getCharacters() != null)
             return snippet.getCharacters().trim(); // trim because string parser might not have parsed it
 
@@ -194,6 +195,16 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
     public List<KMLAbstractStyleSelector> getStyleSelectors()
     {
         return this.styleSelectors;
+    }
+
+    public boolean hasStyleSelectors()
+    {
+        return this.getStyleSelectors() != null && this.getStyleSelectors().size() > 0;
+    }
+
+    public boolean hasStyle()
+    {
+        return this.hasStyleSelectors() || this.getStyleUrl() != null;
     }
 
     public KMLRegion getRegion()
@@ -372,5 +383,64 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
     {
         return KMLAbstractStyleSelector.mergeSubStyles(this.getStyleUrl(), this.getStyleSelectors(), styleState,
             subStyle);
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLAbstractFeature))
+        {
+            String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        super.applyChange(sourceValues);
+
+        KMLAbstractFeature sourceFeature = (KMLAbstractFeature) sourceValues;
+
+        if (sourceValues.hasField("visibility"))
+            this.setVisibility((Boolean) sourceFeature.getField("visibility"));
+
+        if (sourceFeature.getRegion() != null)
+            this.setRegion(sourceFeature.getRegion());
+
+        if (sourceFeature.getStyleSelectors() != null && sourceFeature.getStyleSelectors().size() > 0)
+        {
+            this.mergeStyleSelectors(sourceFeature);
+            this.onChange(new Message(KMLAbstractObject.MSG_STYLE_CHANGED, this));
+        }
+    }
+
+    /**
+     * Merge a list of incoming style selectors with the current list. If an incoming selector has the same ID as an
+     * existing one, replace the existing one, otherwise just add the incoming one.
+     *
+     * @param sourceFeature the incoming style selectors.
+     */
+    protected void mergeStyleSelectors(KMLAbstractFeature sourceFeature)
+    {
+        // Make a copy of the existing list so we can modify it as we traverse the copy.
+        List<KMLAbstractStyleSelector> styleSelectorsCopy =
+            new ArrayList<KMLAbstractStyleSelector>(this.getStyleSelectors().size());
+        Collections.copy(styleSelectorsCopy, this.getStyleSelectors());
+
+        for (KMLAbstractStyleSelector sourceSelector : sourceFeature.getStyleSelectors())
+        {
+            String id = sourceSelector.getId();
+            if (!WWUtil.isEmpty(id))
+            {
+                for (KMLAbstractStyleSelector existingSelector : styleSelectorsCopy)
+                {
+                    String currentId = existingSelector.getId();
+                    if (!WWUtil.isEmpty(currentId) && currentId.equals(id))
+                    {
+                        this.getStyleSelectors().remove(existingSelector);
+                    }
+                }
+            }
+
+            this.getStyleSelectors().add(sourceSelector);
+        }
     }
 }

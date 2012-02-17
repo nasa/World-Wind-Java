@@ -8,9 +8,10 @@ package gov.nasa.worldwind.ogc.kml;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -215,5 +216,54 @@ public class KMLPlacemark extends KMLAbstractFeature
             return new KMLExtrudedPolygonImpl(tc, this, geom);
         else
             return new KMLPolygonImpl(tc, this, geom);
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLPlacemark))
+        {
+            String message = Logging.getMessage("KML.InvalidElementType", sourceValues.getClass().getName());
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        super.applyChange(sourceValues);
+
+        KMLPlacemark placemark = (KMLPlacemark) sourceValues;
+
+        if (placemark.getGeometry() != null) // the geometry changed so nullify the cached renderables
+        {
+            this.setGeometry(placemark.getGeometry());
+            this.renderables = null;
+        }
+
+        if (placemark.hasStyle())
+        {
+            Message msg = new Message(KMLAbstractObject.MSG_STYLE_CHANGED, placemark);
+
+            for (KMLRenderable renderable : this.renderables)
+            {
+                renderable.onMessage(msg);
+            }
+        }
+    }
+
+    @Override
+    public void onChange(Message msg)
+    {
+        if (KMLAbstractObject.MSG_GEOMETRY_CHANGED.equals(msg.getName()))
+        {
+            this.renderables = null;
+        }
+        else if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(msg.getName()))
+        {
+            for (KMLRenderable renderable : this.renderables)
+            {
+                renderable.onMessage(msg);
+            }
+        }
+
+        super.onChange(msg);
     }
 }

@@ -6,10 +6,12 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.ogc.kml.gx.GXLatLongQuad;
 import gov.nasa.worldwind.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
@@ -165,6 +167,33 @@ public class KMLGroundOverlay extends KMLAbstractOverlay implements KMLRenderabl
         }
 
         return new Position.PositionList(corners);
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLGroundOverlay))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.renderable = null;
+
+        super.applyChange(sourceValues);
+    }
+
+    @Override
+    public void onChange(Message msg)
+    {
+        if (KMLAbstractObject.MSG_LINK_CHANGED.equals(msg.getName()))
+            this.renderable = null;
+
+        if (KMLAbstractObject.MSG_BOX_CHANGED.equals(msg.getName()))
+            this.renderable = null;
+
+        super.onChange(msg);
     }
 }
 

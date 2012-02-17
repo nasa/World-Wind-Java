@@ -5,7 +5,8 @@
  */
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.WWObjectImpl;
+import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.cache.Cacheable;
 import gov.nasa.worldwind.geom.Box;
 import gov.nasa.worldwind.geom.*;
@@ -41,7 +42,7 @@ import java.util.List;
  * @author dcollins
  * @version $Id$
  */
-public abstract class AbstractSurfaceObject extends AVListImpl implements SurfaceObject
+public abstract class AbstractSurfaceObject extends WWObjectImpl implements SurfaceObject
 {
     // Public interface properties.
     protected boolean visible;

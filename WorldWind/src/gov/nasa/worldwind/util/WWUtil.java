@@ -14,7 +14,9 @@ import java.awt.*;
 import java.awt.List;
 import java.lang.reflect.*;
 import java.nio.DoubleBuffer;
+import java.text.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * @author tag
@@ -1088,4 +1090,108 @@ public class WWUtil
             return s.substring(Math.min(1, s.length()), s.length());
         return s;
     }
+
+    protected static boolean isKMLTimeShift(String timeString)
+    {
+        return Pattern.matches(".*[+-]+\\d\\d:\\d\\d$", timeString.trim());
+    }
+
+    /**
+     * Parse a date/time string and return its equivalent in milliseconds (using same time coordinate system as
+     * System.currentTimeMillis()). The following formats are recognized and conform to those defined in KML version
+     * 2.2: "1997", "1997-07", "1997-07-16", "1997-07-16T07:30:15Z", "1997-07-16T07:30:15+03:00" and
+     * "1997-07-16T07:30:15+0300".
+     *
+     * @param timeString the date/time string to parse.
+     *
+     * @return the number of milliseconds since 00:00:00 1970 indicated by the date/time string, or null if the input
+     *         string is null or the string is not a recognizable format.
+     */
+    public static Long parseTimeString(String timeString)
+    {
+        if (timeString == null)
+            return null;
+
+        // KML allows a hybrid time zone offset that does not contain the leading "GMT", e.g. 1997-05-10T09:30:00+03:00.
+        // If the time string has this pattern, we convert it to an RFC 822 time zone so that SimpleDateFormat can
+        // parse it.
+        if (isKMLTimeShift(timeString))
+        {
+            // Remove the colon from the GMT offset portion of the time string.
+            timeString = timeString.trim();
+            int colonPosition = timeString.length() - 3;
+            String newTimeString = timeString.substring(0, colonPosition);
+            timeString = newTimeString + timeString.substring(colonPosition + 1, timeString.length());
+        }
+
+        try
+        {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sszzzzz");
+            Long t = df.parse(timeString).getTime();
+            return t;
+        }
+        catch (ParseException e)
+        {
+        }
+
+        try
+        {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            Long t = df.parse(timeString).getTime();
+            return t;
+        }
+        catch (ParseException e)
+        {
+        }
+
+        try
+        {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            Long t = df.parse(timeString).getTime();
+            return t;
+        }
+        catch (ParseException e)
+        {
+        }
+
+        try
+        {
+            DateFormat df = new SimpleDateFormat("yyyy-MM");
+            Long t = df.parse(timeString).getTime();
+            return t;
+        }
+        catch (ParseException e)
+        {
+        }
+
+        try
+        {
+            DateFormat df = new SimpleDateFormat("yyyy");
+            Long t = df.parse(timeString).getTime();
+            return t;
+        }
+        catch (ParseException e)
+        {
+        }
+
+        return null;
+    }
+//
+//    public static void main(String[] args)
+//    {
+//        Long time = parseTimeString("1997");
+//        System.out.println(time);
+//
+//        time = parseTimeString("1997-07");
+//        System.out.println(time);
+//
+//        time = parseTimeString("1997-07-01");
+//        System.out.println(time);
+//
+//        time = parseTimeString("1997-07-01T07:30:15Z");
+//        System.out.println(time);
+//
+//        time = parseTimeString("1997-07-01T07:30:15+03:00");
+//        System.out.println(time);
+//    }
 }

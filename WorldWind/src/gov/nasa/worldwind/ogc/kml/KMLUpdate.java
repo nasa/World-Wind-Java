@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -20,9 +21,8 @@ import java.util.*;
  */
 public class KMLUpdate extends KMLAbstractObject
 {
-    protected List<KMLChange> changes;
-    protected List<KMLCreate> creates;
-    protected List<KMLDelete> deletes;
+    protected List<KMLUpdateOperation> operations; // operations are performed in the order specified in the KML file
+    protected boolean updatesApplied;
 
     /**
      * Construct an instance.
@@ -55,25 +55,53 @@ public class KMLUpdate extends KMLAbstractObject
 
     protected void addChange(KMLChange o)
     {
-        if (this.changes == null)
-            this.changes = new ArrayList<KMLChange>();
+        if (this.operations == null)
+            this.operations = new ArrayList<KMLUpdateOperation>();
 
-        this.changes.add(o);
+        this.operations.add(o);
     }
 
     protected void addCreate(KMLCreate o)
     {
-        if (this.creates == null)
-            this.creates = new ArrayList<KMLCreate>();
+        if (this.operations == null)
+            this.operations = new ArrayList<KMLUpdateOperation>();
 
-        this.creates.add(o);
+        this.operations.add(o);
     }
 
     protected void addDelete(KMLDelete o)
     {
-        if (this.deletes == null)
-            this.deletes = new ArrayList<KMLDelete>();
+        if (this.operations == null)
+            this.operations = new ArrayList<KMLUpdateOperation>();
 
-        this.deletes.add(o);
+        this.operations.add(o);
+    }
+
+    public boolean isUpdatesApplied()
+    {
+        return updatesApplied;
+    }
+
+    public void applyOperations()
+    {
+        this.updatesApplied = true;
+
+        if (WWUtil.isEmpty(this.getTargetHref()))
+            return;
+
+        if (this.operations == null || this.operations.size() == 0)
+            return;
+
+        Object o = this.getRoot().resolveReference(this.getTargetHref());
+
+        if (o == null || !(o instanceof KMLRoot))
+            return;
+
+        KMLRoot targetRoot = (KMLRoot) o;
+
+        for (KMLUpdateOperation operation : this.operations)
+        {
+            operation.applyOperation(targetRoot);
+        }
     }
 }

@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml.impl;
 
+import gov.nasa.worldwind.WWObjectImpl;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
@@ -13,7 +14,7 @@ import gov.nasa.worldwind.util.*;
 import java.io.IOException;
 import java.util.*;
 
-public class KMLModelPlacemarkImpl implements KMLRenderable
+public class KMLModelPlacemarkImpl extends WWObjectImpl implements KMLRenderable
 {
     protected final KMLModel model;
     protected final KMLPlacemark parent;

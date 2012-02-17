@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.ogc.kml;
 
+import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwind.util.xml.*;
 
 import javax.xml.stream.XMLStreamException;
@@ -18,7 +19,7 @@ import java.util.*;
  * @author tag
  * @version $Id$
  */
-public class KMLCreate extends AbstractXMLEventParser
+public class KMLCreate extends AbstractXMLEventParser implements KMLUpdateOperation
 {
     protected List<KMLAbstractContainer> containers = new ArrayList<KMLAbstractContainer>();
 
@@ -50,5 +51,26 @@ public class KMLCreate extends AbstractXMLEventParser
     public List<KMLAbstractContainer> getContainers()
     {
         return this.containers;
+    }
+
+    public void applyOperation(KMLRoot targetRoot)
+    {
+        for (KMLAbstractContainer container : this.containers)
+        {
+            String targetId = container.getTargetId();
+            if (WWUtil.isEmpty(targetId))
+                continue;
+
+            Object o = targetRoot.getItemByID(targetId);
+            if (o == null || !(o instanceof KMLAbstractContainer))
+                continue;
+
+            KMLAbstractContainer receivingContainer = (KMLAbstractContainer) o;
+
+            for (KMLAbstractFeature feature : container.getFeatures())
+            {
+                receivingContainer.addFeature(feature);
+            }
+        }
     }
 }

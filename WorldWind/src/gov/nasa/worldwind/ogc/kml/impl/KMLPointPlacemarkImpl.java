@@ -8,6 +8,7 @@ package gov.nasa.worldwind.ogc.kml.impl;
 
 import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.pick.PickedObject;
 import gov.nasa.worldwind.render.*;
@@ -339,7 +340,7 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
      *
      * @return New placemark attributes.
      */
-    @SuppressWarnings( {"UnusedDeclaration"})
+    @SuppressWarnings({"UnusedDeclaration"})
     protected PointPlacemarkAttributes getInitialAttributes(String attrType)
     {
         return new PointPlacemarkAttributes();
@@ -369,5 +370,22 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
     public void setLabelScaleThreshold(double labelScaleThreshold)
     {
         this.labelScaleThreshold = labelScaleThreshold;
+    }
+
+    @Override
+    public void onMessage(Message message)
+    {
+        super.onMessage(message);
+
+        if (KMLAbstractObject.MSG_STYLE_CHANGED.equals(message.getName()))
+        {
+            this.normalAttributesResolved = false;
+            this.highlightAttributesResolved = false;
+
+            if (this.getAttributes() != null)
+                this.getAttributes().setUnresolved(true);
+            if (this.getHighlightAttributes() != null)
+                this.getHighlightAttributes().setUnresolved(true);
+        }
     }
 }

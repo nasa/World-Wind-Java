@@ -8,7 +8,7 @@ package gov.nasa.worldwind.ogc.kml;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.event.*;
+import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.DrawContext;
 import gov.nasa.worldwind.util.*;
@@ -20,7 +20,7 @@ import java.awt.*;
 import java.net.*;
 import java.util.Locale;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Represents the KML <i>Link</i> element and provides access to its contents. The Link maintains a timestamp that
@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.*;
  * @author tag
  * @version $Id$
  */
-// TODO onExpire refresh mode
 public class KMLLink extends KMLAbstractObject
 {
     protected static final String DEFAULT_VIEW_FORMAT = "BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth]";
@@ -139,42 +138,70 @@ public class KMLLink extends KMLAbstractObject
     }
 
     /**
-     * Schedule a task to refresh the link if the refresh mode requires it. In the case of an {@code onInterval} refresh
-     * mode, this method schedules a task to update the link after the refresh interval elapses, but only if such a task
-     * has not already been scheduled (only one refresh task is active at a time).
+     * Schedule a task to refresh the link if the refresh mode requires it. In the case of an {@code onInterval} and
+     * {@code onExpire} refresh modes, this method schedules a task to update the link after the refresh interval
+     * elapses, but only if such a task has not already been scheduled (only one refresh task is active at a time).
      */
     protected void scheduleRefreshIfNeeded()
     {
-        boolean mustScheduleRefresh = false;
-        long refreshDelay = 0L;
+        Long refreshTime = this.computeRefreshTime();
+        if (refreshTime == null)
+            return;
 
-        String refreshMode = this.getRefreshMode();
-        if (KMLConstants.ON_INTERVAL.equals(refreshMode))
+        // Determine if the refresh interval has elapsed since the last refresh task was scheduled.
+        boolean intervalElapsed = System.currentTimeMillis() > refreshTime;
+
+        // If the refresh interval has already elapsed then the link needs to refresh immediately.
+        if (intervalElapsed)
+            this.updateTime.set(System.currentTimeMillis());
+
+        // Schedule a refresh if the refresh interval has elapsed, or if no refresh task is already active.
+        // Checking the refresh interval ensures that even if the task fails to run for some reason, a new
+        // task will be scheduled after the interval expires.
+        if (intervalElapsed || this.refreshTask == null || this.refreshTask.isDone())
         {
-            Double refreshTime = this.getRefreshInterval();
-            if (refreshTime != null)
-            {
-                // Determine if the refresh interval has elapsed since the last refresh task was scheduled.
-                boolean intervalElapsed = System.currentTimeMillis() > this.updateTime.get() + refreshTime * 1000;
+            long refreshDelay = refreshTime - System.currentTimeMillis();
+            this.refreshTask = this.scheduleDelayedTask(new RefreshTask(), refreshDelay, TimeUnit.MILLISECONDS);
+        }
+    }
 
-                // If the refresh interval has already elapsed then the link needs to refresh immediately.
-                if (intervalElapsed)
-                {
-                    this.updateTime.set(System.currentTimeMillis());
-                }
+    protected Long computeRefreshTime()
+    {
+        Long refreshTime = null;
 
-                // Schedule a refresh if the refresh interval has elapsed, or if no refresh task is already active.
-                // Checking the refresh interval ensures that even if the task fails to run for some reason, a new
-                // task will be scheduled after the interval expires.
-                mustScheduleRefresh = intervalElapsed || this.refreshTask == null || this.refreshTask.isDone();
-                refreshDelay = refreshTime.longValue();
-            }
+        if (KMLConstants.ON_INTERVAL.equals(this.getRefreshMode()))
+        {
+            Double ri = this.getRefreshInterval();
+            refreshTime = ri != null ? this.updateTime.get() + (long) (ri * 1000d) : null;
+        }
+        else if (KMLConstants.ON_EXPIRE.equals(this.getRefreshMode()))
+        {
+            refreshTime = this.computeExpiryRefreshTime();
         }
 
-        if (mustScheduleRefresh)
+        if (refreshTime == null)
+            return null;
+
+        KMLNetworkLinkControl linkControl = this.getRoot().getNetworkLinkControl();
+        if (linkControl != null)
         {
-            this.refreshTask = this.scheduleDelayedTask(new RefreshTask(), refreshDelay, TimeUnit.SECONDS);
+            Long minRefresh = (long) (linkControl.getMinRefreshPeriod() * 1000d);
+            if (minRefresh != null && minRefresh > refreshTime)
+                refreshTime = minRefresh;
         }
+
+        return refreshTime;
+    }
+
+    protected Long computeExpiryRefreshTime()
+    {
+        KMLNetworkLinkControl linkControl = this.getRoot().getNetworkLinkControl();
+        if (linkControl != null && linkControl.getExpires() != null)
+            return WWUtil.parseTimeString(linkControl.getExpires());
+
+        // TODO: Compute expiry time from HTTP headers
+
+        return null;
     }
 
     /**
@@ -496,6 +523,28 @@ public class KMLLink extends KMLAbstractObject
             // this case we substitute them with 0.
             return Sector.EMPTY_SECTOR;
         }
+    }
+
+    @Override
+    public void applyChange(KMLAbstractObject sourceValues)
+    {
+        if (!(sourceValues instanceof KMLLink))
+        {
+            String message = Logging.getMessage("nullValue.SourceIsNull");
+            Logging.logger().warning(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        KMLLink link = (KMLLink) sourceValues;
+
+        link.finalHref = null;
+        link.hrefURL = null;
+        link.refreshTask = null;
+        link.updateTime.set(System.currentTimeMillis());
+
+        super.applyChange(sourceValues);
+
+        this.onChange(new Message(KMLAbstractObject.MSG_LINK_CHANGED, this));
     }
 
     /** A Runnable task that marks a KMLLink as updated when the task executes. */
