@@ -34,7 +34,7 @@
                             destdir="${resources.milstd2525.symbols.dir}" force="true">
             <svgfiles>
                 <fileset dir="${resources.milstd2525.dir}">
-                    <include name="**/g-g?dlf-------x.svg"/>
+                    <include name="**/g-g?dlf--------.svg"/>
                     <type type="file"/>
                 </fileset>
             </svgfiles>

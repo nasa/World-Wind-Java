@@ -22,8 +22,8 @@ import java.util.MissingResourceException;
  * The retriever base URL must identify a location on a local or remote file system (including zip and jar files) that
  * holds the icon files in an expected directory structure. Each icon URL is constructed from three parts:
  * [base]/icons/[scheme]/[sidc].png. Parts of the SIDC that do not identify a type of graphic (such as echelon, status,
- * standard identity, etc.) are replaced with hyphens. For example, the Underwater Datum graphic (2.X.2.1.1.1.1.1) will
- * be retrieved from this URL: [base]/icons/tacgrp/g-g-gpuud-----x.png
+ * standard identity, order of battle, etc.) are replaced with hyphens. For example, the Underwater Datum graphic
+ * (2.X.2.1.1.1.1.1) will be retrieved from this URL: [base]/icons/tacgrp/g-g-gpuud------.png
  * <p/>
  * Most applications should not use this class directly. See <a href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/#offline-use">Offline
  * Use</a> for information on how to set the icon retrieval location.
@@ -229,10 +229,6 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         // dashed lines in other states.
         char status = SymbologyConstants.STATUS_PRESENT.equals(code.getStatus()) ? 'p' : 'a';
 
-        // MIL-STD-2525C Tactical Graphics includes the order of battle in the symbol identifier, but X is the only valid
-        // value. Just pass X so retrieval will still work even if the symbol code is specified incorrectly.
-        char orderOfBattle = 'x';
-
         if (functionId == null)
             functionId = "------";
 
@@ -243,8 +239,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             .append(category.toLowerCase())
             .append(status)
             .append(functionId.toLowerCase())
-            .append("----") // Echelon, Country Code
-            .append(orderOfBattle) // Order of Battle
+            .append("-----") // Echelon, Country Code, Order of Battle
             .append(PATH_SUFFIX);
 
         return sb.toString();
