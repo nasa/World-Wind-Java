@@ -54,6 +54,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final Map<String, Color> iconColorMap = new HashMap<String, Color>();
     protected static final Set<String> unfilledIconMap = new HashSet<String>();
     protected static final Set<String> unframedIconMap = new HashSet<String>();
+    protected static final Set<String> emsEquipment = new HashSet<String>();
 
     public MilStd2525IconRetriever(String retrieverPath)
     {
@@ -106,6 +107,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         return o == null || o.equals(Boolean.TRUE);
     }
 
+    @SuppressWarnings( {"UnusedParameters"})
     protected boolean mustDrawIcon(SymbolCode symbolCode, AVList params)
     {
         Object o = params.getValue(SymbologyConstants.SHOW_ICON);
@@ -274,6 +276,10 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     protected String getMaskedFillCode(SymbolCode symbolCode)
     {
+        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
+        // the generic fill shape lookup logic used by Warfighting symbols.
+        symbolCode = this.transformToWarfightingScheme(symbolCode);
+
         String si = this.getSimpleStandardIdentity(symbolCode); // Either Unknown, Friend, Neutral, or Hostile
         String bd = symbolCode.getBattleDimension();
         String fid = this.getGroundFunctionId(symbolCode);
@@ -293,6 +299,10 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
     protected String getMaskedFrameCode(SymbolCode symbolCode)
     {
+        // Transform the symbol code to its equivalent code in the Warfighting scheme. This ensures that we can use
+        // the generic fill shape lookup logic used by Warfighting symbols.
+        symbolCode = this.transformToWarfightingScheme(symbolCode);
+
         String si = symbolCode.getStandardIdentity();
         String bd = symbolCode.getBattleDimension();
         String status = this.getSimpleStatus(symbolCode); // Either Present or Anticipated
@@ -309,6 +319,49 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         SymbolCode.appendFieldValue(sb, null, 1); // Order of Battle
 
         return sb.toString();
+    }
+
+    protected SymbolCode transformToWarfightingScheme(SymbolCode symbolCode)
+    {
+        String maskedCode = symbolCode.toMaskedString().toLowerCase();
+        String scheme = symbolCode.getScheme();
+        String bd = symbolCode.getBattleDimension();
+
+        SymbolCode newCode = new SymbolCode();
+        newCode.setScheme(SymbologyConstants.SCHEME_WARFIGHTING);
+        newCode.setStandardIdentity(symbolCode.getStandardIdentity());
+        newCode.setStatus(symbolCode.getStatus());
+
+        if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_INTELLIGENCE))
+        {
+            newCode.setBattleDimension(bd);
+
+            // Signals Intelligence ground symbols are equivalent to Warfighting ground equipment.
+            if (bd != null && bd.equalsIgnoreCase(SymbologyConstants.BATTLE_DIMENSION_GROUND))
+                newCode.setFunctionId("E-----");
+
+            return newCode;
+        }
+        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_STABILITY_OPERATIONS))
+        {
+            // Stability Operations symbols frames are equivalent to Warfighting ground units.
+            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
+            newCode.setFunctionId("U-----");
+
+            return newCode;
+        }
+        else if (scheme != null && scheme.equalsIgnoreCase(SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT))
+        {
+            // Emergency Management symbol frames are equivalent to either Warfighting ground units or ground equipment.
+            newCode.setBattleDimension(SymbologyConstants.BATTLE_DIMENSION_GROUND);
+            newCode.setFunctionId(emsEquipment.contains(maskedCode) ? "E-----" : "U-----");
+
+            return newCode;
+        }
+        else
+        {
+            return symbolCode;
+        }
     }
 
     protected String getMaskedIconCode(SymbolCode symbolCode, AVList params)
@@ -741,6 +794,42 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
         // The MIL-STD-2525 symbol icons that are implicitly unframed.
         unframedIconMap.add("s-u-nd---------");
+
+        // The MIL-STD-2525 Emergency Managment symbols representing units.
+        emsEquipment.add("e-o-ab---------");
+        emsEquipment.add("e-o-ae---------");
+        emsEquipment.add("e-o-af---------");
+        emsEquipment.add("e-o-bb---------");
+        emsEquipment.add("e-o-cb---------");
+        emsEquipment.add("e-o-cc---------");
+        emsEquipment.add("e-o-db---------");
+        emsEquipment.add("e-o-ddb--------");
+        emsEquipment.add("e-o-deb--------");
+        emsEquipment.add("e-o-dfb--------");
+        emsEquipment.add("e-o-dgb--------");
+        emsEquipment.add("e-o-dhb--------");
+        emsEquipment.add("e-o-dib--------");
+        emsEquipment.add("e-o-djb--------");
+        emsEquipment.add("e-o-dlb--------");
+        emsEquipment.add("e-o-dmb--------");
+        emsEquipment.add("e-o-dob--------");
+        emsEquipment.add("e-o-pea--------");
+        emsEquipment.add("e-o-peb--------");
+        emsEquipment.add("e-o-pec--------");
+        emsEquipment.add("e-o-ped--------");
+        emsEquipment.add("e-o-pee--------");
+        emsEquipment.add("e-f-ba---------");
+        emsEquipment.add("e-f-ma---------");
+        emsEquipment.add("e-f-mc---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
+        emsEquipment.add("e-?-??---------");
     }
 }
 
