@@ -1020,12 +1020,11 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
 
         // Category (position 3).
-        // TODO: incorrect error message
         s = symCode.substring(2, 3);
         if (SymbologyConstants.CATEGORY_ALL_STABILITY_OPERATIONS.contains(s.toUpperCase()))
             this.setCategory(s);
         else
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.battleDimension"));
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.category"));
 
         // Status/Operational Condition (position 4).
         s = symCode.substring(3, 4);
@@ -1095,12 +1094,11 @@ public class SymbolCode extends AVListImpl
             sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.standardIdentity"));
 
         // Category (position 3).
-        // TODO: incorrect error message
         s = symCode.substring(2, 3);
         if (SymbologyConstants.CATEGORY_ALL_EMERGENCY_MANAGEMENT.contains(s.toUpperCase()))
             this.setCategory(s);
         else
-            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.battleDimension"));
+            sb.append(sb.length() > 0 ? ", " : "").append(Logging.getMessage("term.category"));
 
         // Status/Operational Condition (position 4).
         s = symCode.substring(3, 4);
