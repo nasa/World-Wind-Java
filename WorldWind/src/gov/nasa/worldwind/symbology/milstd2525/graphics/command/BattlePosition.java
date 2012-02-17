@@ -9,6 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalSymbol;
+import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -56,8 +57,8 @@ public class BattlePosition extends BasicArea
         super(sidc);
 
         String echelon = this.symbolCode.getEchelon();
-        if (echelon != null && !"-".equals(echelon))
-            this.echelonSymbol = this.createEchelonSymbol(echelon);
+        if (!SymbolCode.isFieldEmpty(echelon))
+            this.echelonSymbol = this.createEchelonSymbol(sidc);
     }
 
     /** {@inheritDoc} Overridden to render the echelon modifier. */
@@ -203,12 +204,12 @@ public class BattlePosition extends BasicArea
     /**
      * Create a tactical symbol to render the echelon modifier.
      *
-     * @param echelon Identifier for the echelon. See MIL-STD-2525C Table B-II, pg. 305.
+     * @param sidc Identifier for the symbol.
      *
      * @return A symbol to render the echelon modifier.
      */
-    protected TacticalSymbol createEchelonSymbol(String echelon)
+    protected TacticalSymbol createEchelonSymbol(String sidc)
     {
-        return new EchelonSymbol(echelon);
+        return new EchelonSymbol(sidc);
     }
 }
