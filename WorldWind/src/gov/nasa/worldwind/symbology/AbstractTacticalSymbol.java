@@ -380,10 +380,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     // TODO: make this configurable
     /**
      * The default glyph texture atlas. This texture atlas holds all glyph images loaded by calls to
-     * <code>layoutGlyphModifier</code>. Initialized with initial dimensions of 128x128 and maximum dimensions of
+     * <code>layoutGlyphModifier</code>. Initialized with initial dimensions of 1024x128 and maximum dimensions of
      * 2048x2048. Configured to remove the least recently used texture elements when more space is needed.
      */
-    protected static final TextureAtlas DEFAULT_GLYPH_ATLAS = new TextureAtlas(128, 128, 2048, 2048);
+    protected static final TextureAtlas DEFAULT_GLYPH_ATLAS = new TextureAtlas(1024, 128, 2048, 2048);
 
     /** The attributes used if attributes are not specified. */
     protected static TacticalSymbolAttributes defaultAttrs;
