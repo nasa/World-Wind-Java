@@ -989,10 +989,12 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (this.getIconRetriever() == null)
             return;
 
-        if (this.iconTexture == null) // Lazily create the symbol icon texture.
+        // Lazily create the symbol icon texture only when necessary.
+        IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), this.modifiers);
+        if (this.iconTexture == null || !this.iconTexture.getImageSource().equals(source))
         {
-            IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), this.modifiers);
             this.iconTexture = new IconTexture(source);
+            this.iconRect = null;
         }
 
         if (this.iconRect == null && this.iconTexture.bind(dc)) // Lazily assign the symbol icon rectangle.

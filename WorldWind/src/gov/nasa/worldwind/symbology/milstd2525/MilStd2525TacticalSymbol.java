@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -153,6 +153,61 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     public String getIdentifier()
     {
         return this.symbolCode.toString();
+    }
+
+    /**
+     * Indicates the current value of symbol's Status/Operational Condition field.
+     *
+     * @return this symbol's Status/Operational Condition field.
+     *
+     * @see #setStatus(String)
+     */
+    public String getStatus()
+    {
+        return this.symbolCode.getStatus();
+    }
+
+    /**
+     * Specifies this symbol's Status/Operational Condition field. A symbol's Status defines whether the represented
+     * object exists at the time the symbol was generated, or is anticipated to exist in the future. Additionally, a
+     * symbol's Status can define its operational condition. The recognized values depend on the specific MIL-STD-2525
+     * symbology scheme the symbol belongs to:
+     * <p/>
+     * <strong>Warfighting, Signals Intelligence, Stability Operations</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> <li>STATUS_PRESENT_FULLY_CAPABLE</li>
+     * <li>STATUS_PRESENT_DAMAGED</li> <li>STATUS_PRESENT_DESTROYED</li> <li>STATUS_PRESENT_FULL_TO_CAPACITY</li> </ul>
+     * <p/>
+     * <strong>Tactical Graphics</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_SUSPECTED</li> <li>STATUS_PRESENT</li> <li>STATUS_KNOWN</li> </ul>
+     * <p/>
+     * <strong>Emergency Management</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> </ul>
+     *
+     * @param value the new value for the Status/Operational Condition field.
+     *
+     * @throws IllegalArgumentException if the specified value is <code>null</code> or is not one of the accepted status
+     *                                  values.
+     */
+    public void setStatus(String value)
+    {
+        if (value == null)
+        {
+            String msg = Logging.getMessage("nullValue.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (!SymbologyConstants.STATUS_ALL.contains(value.toUpperCase()))
+        {
+            String msg = Logging.getMessage("Symbology.InvalidStatus", value);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.symbolCode.setStatus(value);
     }
 
     /**
