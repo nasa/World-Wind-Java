@@ -894,9 +894,13 @@ public class Triangle
         // Taken from http://jgt.akpeters.com/papers/Moller97/tritri.html#ISECTLINE
 
         // Compute plane equation of first triangle: n1 * x + d1 = 0.
-        Vec4 e1 = v[1].subtract3(v[0]);
-        Vec4 e2 = v[2].subtract3(v[0]);
-        Vec4 n1 = e1.cross3(e2);
+        double e1x = v[1].x - v[0].x;
+        double e1y = v[1].y - v[0].y;
+        double e1z = v[1].z - v[0].z;
+        double e2x = v[2].x - v[0].x;
+        double e2y = v[2].y - v[0].y;
+        double e2z = v[2].z - v[0].z;
+        Vec4 n1 = new Vec4(e1y * e2z - e1z * e2y, e1z * e2x - e1x * e2z, e1x * e2y - e1y * e2x);
         double d1 = -n1.dot3(v[0]);
 
         // Evaluate second triangle with plane equation 1 to determine signed distances to the plane.
@@ -919,9 +923,13 @@ public class Triangle
             return -1;
 
         // Compute plane equation of second triangle: n2 * x + d2 = 0
-        e1 = u[1].subtract3(u[0]);
-        e2 = u[2].subtract3(u[0]);
-        Vec4 n2 = e1.cross3(e2);
+        e1x = u[1].x - u[0].x;
+        e1y = u[1].y - u[0].y;
+        e1z = u[1].z - u[0].z;
+        e2x = u[2].x - u[0].x;
+        e2y = u[2].y - u[0].y;
+        e2z = u[2].z - u[0].z;
+        Vec4 n2 = new Vec4(e1y * e2z - e1z * e2y, e1z * e2x - e1x * e2z, e1x * e2y - e1y * e2x);
         double d2 = -n2.dot3(u[0]);
 
         // Evaluate first triangle with plane equation 2 to determine signed distances to the plane.
