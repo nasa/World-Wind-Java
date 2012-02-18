@@ -31,7 +31,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     // interface to the TacticalSymbol interface.
 
     /** Symbol used to render this graphic. */
-    protected TacticalGraphicSymbol symbol;
+    protected TacticalSymbol symbol;
 
     /** Indicates whether or not the graphic is highlighted. */
     protected boolean highlighted;
@@ -71,7 +71,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
      *
      * @return A new tactical symbol.
      */
-    protected TacticalGraphicSymbol createSymbol(String sidc)
+    protected TacticalSymbol createSymbol(String sidc)
     {
         TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc);
         symbol.setAttributes(this.activeSymbolAttributes);
@@ -403,14 +403,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
         }
 
         Material material = graphicAttributes.getInteriorMaterial();
-        if (material != null)
-        {
-            this.symbol.setColor(material.getDiffuse());
-        }
-        else
-        {
-            this.symbol.setColor(null);
-        }
+        symbolAttributes.setInteriorMaterial(material);
 
         Font font = graphicAttributes.getTextModifierFont();
         if (font != null)

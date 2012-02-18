@@ -133,30 +133,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         return this.symbolCode.toString();
     }
 
-    /**
-     * Indicates a color to be blended with this graphic.
-     *
-     * @return Color blended with the graphic. May be null, in which case the color is determined by the graphic's
-     *         standard identity.
-     */
-    public Color getColor()
-    {
-        return (Color) this.modifiers.getValue(AVKey.COLOR);
-    }
-
-    /**
-     * Specifies a color to blend with this graphic. If the graphic is a single color, then this color is applied to the
-     * entire graphic. If the graphic is composed of an outline and a fill color, then this color is applied to the
-     * outline. If no color is specified then the color is determined by this graphic's standard identity.
-     *
-     * @param color Color to blend with this graphic. May be null, in which case the color is determined by the
-     *              graphic's standard identity.
-     */
-    public void setColor(Color color)
-    {
-        this.modifiers.setValue(AVKey.COLOR, color);
-    }
-
     @Override
     protected void layoutModifiers(DrawContext dc)
     {
