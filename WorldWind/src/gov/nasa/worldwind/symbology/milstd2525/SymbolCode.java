@@ -1282,9 +1282,9 @@ public class SymbolCode extends AVListImpl
 
         appendFieldValue(sb, this.getScheme(), 1); // Position 1.
         appendFieldValue(sb, this.getCategory(), 1); // Position 2.
-        appendFieldValue(sb, this.getStaticDynamic(), 1); // Position 3, 4.
+        appendFieldValue(sb, this.getStaticDynamic(), 2); // Position 3, 4.
         appendFieldValue(sb, this.getFunctionId(), 6); // Positions 5-10.
-        appendFieldValue(sb, this.getGraphicType(), 1); // Position 11-13
+        appendFieldValue(sb, this.getGraphicType(), 3); // Position 11-13
         sb.append(UNUSED_POSITION_CODE); // Position 14 unused
         sb.append(UNUSED_POSITION_CODE); // Position 15 unused
 

@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.symbology;
 
-import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
@@ -33,7 +33,8 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
-        protected RenderableLayer graphicLayer;
+        protected RenderableLayer tacgrpLayer;
+        protected RenderableLayer metocLayer;
 
         protected TacticalGraphicAttributes sharedAttrs;
         protected TacticalGraphicAttributes sharedHighlightAttrs;
@@ -42,15 +43,24 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
         {
             super(true, true, false);
 
-            this.graphicLayer = new RenderableLayer();
+            this.tacgrpLayer = new RenderableLayer();
+            this.tacgrpLayer.setName("Tactical Graphics (Appendix B)");
+
+            this.metocLayer = new RenderableLayer();
+            this.metocLayer.setName("METOC (Appendix C)");
+            this.metocLayer.setEnabled(false);
 
             this.sharedAttrs = new BasicTacticalGraphicAttributes();
             this.sharedHighlightAttrs = new BasicTacticalGraphicAttributes();
             this.sharedHighlightAttrs.setInteriorMaterial(Material.WHITE);
 
-            this.displayPoints(this.graphicLayer);
+            this.createTacGrpPoints(this.tacgrpLayer);
+            this.createMetocPoints(this.metocLayer);
 
-            this.getWwd().getModel().getLayers().add(this.graphicLayer);
+            WorldWindow wwd = this.getWwd();
+            insertBeforePlacenames(wwd, this.tacgrpLayer);
+            insertBeforePlacenames(wwd, this.metocLayer);
+            this.getLayerPanel().update(this.getWwd());
 
             this.addGraphicControls();
 
@@ -64,10 +74,9 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
 
         protected static final char[] ALL_STATUS = new char[] {'P', 'A'};
 
-        protected void displayPoints(RenderableLayer layer)
+        protected void createTacGrpPoints(RenderableLayer layer)
         {
-            List<String> allGraphics = MilStd2525PointGraphic.getSupportedGraphics();
-
+            List<String> allGraphics = MilStd2525PointGraphic.getTacGrpGraphics();
             int numGraphics = allGraphics.size();
             int cols = (int) Math.sqrt(numGraphics * 2);
 
@@ -83,7 +92,7 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                 {
                     Position pos = Position.fromDegrees(latitude, longitude, 0);
 
-                    StringBuffer sidc = new StringBuffer(allGraphics.get(i));
+                    StringBuilder sidc = new StringBuilder(allGraphics.get(i));
 
                     sidc.setCharAt(1, 'F'); // Standard identify: Friend
                     sidc.setCharAt(3, ALL_STATUS[j]);
@@ -121,6 +130,46 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                     {
                         longitude += delta;
                     }
+                }
+            }
+        }
+
+        protected void createMetocPoints(RenderableLayer layer)
+        {
+            List<String> allGraphics = MilStd2525PointGraphic.getMetocGraphics();
+            int numGraphics = allGraphics.size();
+            int cols = (int) Math.sqrt(numGraphics);
+
+            double startLon = -118.5439;
+
+            double latitude = 43.3464;
+            double longitude = startLon;
+            double delta = 0.02;
+
+            for (int i = 0; i < numGraphics; i++)
+            {
+                String sidc = allGraphics.get(i);
+                Position pos = Position.fromDegrees(latitude, longitude, 0);
+
+                TacticalPoint graphic = new MilStd2525PointGraphic(sidc);
+                graphic.setPosition(pos);
+
+                graphic.setAttributes(this.sharedAttrs);
+                // TODO handle highlight for METOC graphics
+//                graphic.setHighlightAttributes(this.sharedHighlightAttrs);
+
+                graphic.setValue(AVKey.DISPLAY_NAME, sidc);
+
+                layer.addRenderable(graphic);
+
+                if ((i + 1) % cols == 0)
+                {
+                    latitude -= delta;
+                    longitude = startLon;
+                }
+                else
+                {
+                    longitude += delta;
                 }
             }
         }
@@ -181,7 +230,12 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : graphicLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowModifiers(tf);
+                    }
+                    for (Renderable r : metocLayer.getRenderables())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowModifiers(tf);
@@ -201,7 +255,12 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : graphicLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowHostileIndicator(tf);
+                    }
+                    for (Renderable r : metocLayer.getRenderables())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowHostileIndicator(tf);
@@ -221,7 +280,7 @@ public class MilStd2525AllPointGraphics extends ApplicationTemplate
                 {
                     boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
 
-                    for (Renderable r : graphicLayer.getRenderables())
+                    for (Renderable r : tacgrpLayer.getRenderables())
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowLocation(tf);

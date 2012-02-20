@@ -40,6 +40,8 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     protected static final String DIR_ICON_TACGRP = "icons/tacgrp";
     /** Subdirectory for graphics in the Meteorological and Oceanographic scheme. */
     protected static final String DIR_ICON_METOC = "icons/metoc";
+    /** Subdirectory for graphics in the Meteorological and Oceanographic scheme. */
+    protected static final String DIR_ICON_EMS = "icons/ems";
     /** Subdirectory for fill graphics. */
     protected static final String DIR_FILL_TACGRP = "fills/tacgrp";
 
@@ -81,17 +83,20 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
 
         this.drawImage(srcImg, destImg);
 
-        Color color = this.getColorFromParams(params);
-        if (color == null)
-            color = this.getColorForStandardIdentity(symbolCode);
-
-        this.multiply(destImg, color);
-
-        if (this.mustDrawFill(symbolCode))
+        // TODO: handle color for METOC symbols
+        if (!SymbologyConstants.SCHEME_METOC.equals(symbolCode.getScheme()))
         {
-            destImg = this.composeFilledImage(destImg, symbolCode);
-        }
+            Color color = this.getColorFromParams(params);
+            if (color == null)
+                color = this.getColorForStandardIdentity(symbolCode);
 
+            this.multiply(destImg, color);
+
+            if (this.mustDrawFill(symbolCode))
+            {
+                destImg = this.composeFilledImage(destImg, symbolCode);
+            }
+        }
         return destImg;
     }
 
@@ -206,6 +211,8 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             return this.composeFilenameTacticalGraphic(code, DIR_ICON_TACGRP);
         else if (SymbologyConstants.SCHEME_METOC.equals(scheme))
             return this.composeFilenameMetoc(code);
+        else if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
+             return this.composeFilenameEms(code);
 
         return null;
     }
@@ -274,5 +281,39 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             .append(PATH_SUFFIX);
 
         return sb.toString().toLowerCase();
+    }
+
+    /**
+     * Indicates the filename of a graphic in the Emergency Management scheme (MIL-STD-2525C Appendix G).
+     *
+     * @param code Code that identifies a graphic in the EMS scheme.
+     *
+     * @return The filename of the icon for the specified graphic.
+     */
+    protected String composeFilenameEms(SymbolCode code)
+    {
+        String scheme = code.getScheme();
+        String category = code.getCategory();
+        String functionId = code.getFunctionId();
+
+        // Two images are provided for each graphic: one for Present status and one for all other statuses.
+        // MIL-STD-2525C section 5.5.1.2 (pg. 37) states that graphics must draw using solid lines when Present, and
+        // dashed lines in other states.
+        char status = SymbologyConstants.STATUS_PRESENT.equals(code.getStatus()) ? 'p' : 'a';
+
+        if (functionId == null)
+            functionId = "------";
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(DIR_ICON_EMS).append("/")
+            .append(scheme.toLowerCase())
+            .append('-') // Standard identity
+            .append(category.toLowerCase())
+            .append(status)
+            .append(functionId.toLowerCase())
+            .append("-----") // Echelon, Country Code, Order of Battle
+            .append(PATH_SUFFIX);
+
+        return sb.toString();
     }
 }
