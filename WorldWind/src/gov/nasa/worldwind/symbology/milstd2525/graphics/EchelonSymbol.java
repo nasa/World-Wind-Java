@@ -8,10 +8,15 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics;
 
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.render.Offset;
+import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.AbstractTacticalSymbol;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.Logging;
+
+import javax.media.opengl.GL;
+import java.awt.*;
+import java.awt.geom.*;
 
 /**
  * Tactical symbol implementation to render the echelon modifier as part of a tactical graphic.
@@ -23,6 +28,11 @@ public class EchelonSymbol extends AbstractTacticalSymbol
 {
     /** Identifier for this graphic. */
     protected String echelonId;
+    /** The label is drawn along a line from the label position to the orientation position. */
+    protected Position orientationPosition;
+
+    /** Rotation to apply to symbol, computed each frame. */
+    protected Angle rotation;
 
     /**
      * Constructs a new symbol with the specified position. The position specifies the latitude, longitude, and altitude
@@ -56,7 +66,7 @@ public class EchelonSymbol extends AbstractTacticalSymbol
         this.echelonId = "-" + echelon;
 
         this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-        this.setOffset(Offset.fromFraction(0.5, 0));
+        this.setOffset(Offset.fromFraction(0.5, -0.5));
 
         // Configure this tactical point graphic's icon retriever and modifier retriever with either the
         // configuration value or the default value (in that order of precedence).
@@ -65,9 +75,127 @@ public class EchelonSymbol extends AbstractTacticalSymbol
         this.setIconRetriever(new MilStd2525ModifierRetriever(iconRetrieverPath));
     }
 
+    /**
+     * Indicates the orientation position. The label oriented on a line drawn from the label's position to the
+     * orientation position.
+     *
+     * @return Position used to orient the label. May be null.
+     */
+    public Position getOrientationPosition()
+    {
+        return this.orientationPosition;
+    }
+
+    /**
+     * Specifies the orientation position. The label is oriented on a line drawn from the label's position to the
+     * orientation position. If the orientation position is null then the label is drawn with no rotation.
+     *
+     * @param orientationPosition Draw label oriented toward this position.
+     */
+    public void setOrientationPosition(Position orientationPosition)
+    {
+        this.orientationPosition = orientationPosition;
+    }
+
     /** {@inheritDoc} */
     public String getIdentifier()
     {
         return this.echelonId;
+    }
+
+    @Override
+    protected void computeTransform(DrawContext dc)
+    {
+        super.computeTransform(dc);
+
+        boolean orientationReversed = false;
+        if (this.orientationPosition != null)
+        {
+            // TODO apply altitude mode to orientation position
+            // Project the orientation point onto the screen
+            Vec4 orientationPlacePoint = dc.computeTerrainPoint(this.orientationPosition.getLatitude(),
+                this.orientationPosition.getLongitude(), 0);
+            Vec4 orientationScreenPoint = dc.getView().project(orientationPlacePoint);
+
+            this.rotation = this.computeRotation(this.screenPoint, orientationScreenPoint);
+
+            orientationReversed = (this.screenPoint.x <= orientationScreenPoint.x);
+        }
+
+        if (this.getOffset() != null && this.iconRect != null)
+        {
+            Point2D offsetPoint = this.getOffset().computeOffset(this.iconRect.getWidth(), this.iconRect.getHeight(),
+                null, null);
+
+            // If a rotation is applied to the image, then rotate the offset as well. An offset in the x direction
+            // will move the image along the orientation line, and a offset in the y direction will move the image
+            // perpendicular to the orientation line.
+            if (this.rotation != null)
+            {
+                double dy = offsetPoint.getY();
+
+                // If the orientation is reversed we need to adjust the vertical offset to compensate for the flipped
+                // image. For example, if the offset normally aligns the top of the image with the place point then without
+                // this adjustment the bottom of the image would align with the place point when the orientation is
+                // reversed.
+                if (orientationReversed)
+                {
+                    dy = -(dy + this.iconRect.getHeight());
+                }
+
+                Vec4 pOffset = new Vec4(offsetPoint.getX(), dy);
+                Matrix rot = Matrix.fromRotationZ(this.rotation.multiply(-1));
+
+                pOffset = pOffset.transformBy3(rot);
+
+                offsetPoint = new Point((int) pOffset.getX(), (int) pOffset.getY());
+            }
+
+            this.dx = -this.iconRect.getX() - offsetPoint.getX();
+            this.dy = -(this.iconRect.getY() - offsetPoint.getY());
+        }
+        else
+        {
+            this.dx = 0;
+            this.dy = 0;
+        }
+    }
+
+    /** Overridden to apply rotation. */
+    @Override
+    protected void prepareToDraw(DrawContext dc)
+    {
+        super.prepareToDraw(dc);
+
+        if (this.rotation != null)
+        {
+            GL gl = dc.getGL();
+            gl.glRotated(this.rotation.degrees, 0, 0, 1);
+        }
+    }
+
+    /**
+     * Compute the amount of rotation to apply to a label in order to keep it oriented toward its orientation position.
+     *
+     * @param screenPoint            Geographic position of the text, projected onto the screen.
+     * @param orientationScreenPoint Orientation position, projected onto the screen.
+     *
+     * @return The rotation angle to apply when drawing the label.
+     */
+    protected Angle computeRotation(Vec4 screenPoint, Vec4 orientationScreenPoint)
+    {
+        // Determine delta between the orientation position and the label position
+        double deltaX = screenPoint.x - orientationScreenPoint.x;
+        double deltaY = screenPoint.y - orientationScreenPoint.y;
+
+        if (deltaX != 0)
+        {
+            double angle = Math.atan(deltaY / deltaX);
+            return Angle.fromRadians(angle);
+        }
+        else
+        {
+            return Angle.POS90; // Vertical label
+        }
     }
 }

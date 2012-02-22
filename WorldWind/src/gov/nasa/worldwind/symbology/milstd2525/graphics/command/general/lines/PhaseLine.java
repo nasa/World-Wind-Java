@@ -13,6 +13,7 @@ import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
@@ -68,6 +69,27 @@ public class PhaseLine extends MilStd2525TacticalGraphic
     /** {@inheritDoc} */
     public void setPositions(Iterable<? extends Position> positions)
     {
+        if (positions == null)
+        {
+            String message = Logging.getMessage("nullValue.PositionsListIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        try
+        {
+            // Ensure that at least two positions are provided.
+            Iterator<? extends Position> iterator = positions.iterator();
+            iterator.next();
+            iterator.next();
+        }
+        catch (NoSuchElementException e)
+        {
+            String message = Logging.getMessage("generic.InsufficientPositions");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
         this.path.setPositions(positions);
     }
 

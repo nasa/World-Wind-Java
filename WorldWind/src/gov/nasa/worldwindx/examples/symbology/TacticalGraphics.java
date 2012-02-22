@@ -182,6 +182,20 @@ public class TacticalGraphics extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
+            // Boundary (2.X.2.1.2.1)
+            /////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.5479, -117.8777),
+                Position.fromDegrees(34.5137, -118.0092),
+                Position.fromDegrees(34.5898, -118.0775),
+                Position.fromDegrees(34.5360, -118.1833));
+            graphic = factory.createGraphic("GHGPGLB----JUSX", positions, null);
+            graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("40ID", "18ID"));
+            graphic.setValue(AVKey.DISPLAY_NAME, "Boundary (2.X.2.1.2.1)");
+            layer.addRenderable(graphic);
+
+            /////////////////////////////////////////////
             // Main Attack (2.X.2.5.2.1.4.1)
             /////////////////////////////////////////////
 

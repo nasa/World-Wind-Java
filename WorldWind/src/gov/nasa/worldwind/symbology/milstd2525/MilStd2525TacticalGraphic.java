@@ -9,8 +9,6 @@ package gov.nasa.worldwind.symbology.milstd2525;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 
-import java.util.Iterator;
-
 /**
  * Base class for tactical graphics defined by <a href="http://www.assistdocs.com/search/document_details.cfm?ident_number=114934">MIL-STD-2525</a>.
  * See the TacticalGraphic <a title="Tactical Graphic Usage Guide" href="http://goworldwind.org/developers-guide/symbology/tactical-graphics/"
@@ -123,19 +121,7 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
     @Override
     public String getText()
     {
-        if (this.text != null)
-            return this.text;
-
-        // If a simple string has not been set check for an iterable. Return the first value, if present.
-        Object value = this.getModifier(SymbologyConstants.UNIQUE_DESIGNATION);
-        if (value instanceof Iterable)
-        {
-            Iterator iterator = ((Iterable) value).iterator();
-            Object o = iterator.hasNext() ? iterator.next() : null;
-            if (o != null)
-                return o.toString();
-        }
-        return null;
+        return this.text;
     }
 
     /**

@@ -385,7 +385,7 @@ public class FireSupportLine extends MilStd2525TacticalGraphic
         if (pos1 != null && pos2 != null && thisDistance > 0)
         {
             double delta = length - targetDistance;
-            LatLon ll = LatLon.interpolate(delta / thisDistance, pos1, pos2);
+            LatLon ll = LatLon.interpolateGreatCircle(delta / thisDistance, pos1, pos2);
             pos1 = new Position(ll, 0);
 
             topLabel.setPosition(pos1);
