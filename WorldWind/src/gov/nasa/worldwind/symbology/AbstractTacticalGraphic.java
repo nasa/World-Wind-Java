@@ -32,6 +32,12 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     /** The default highlight color. */
     protected static final Material DEFAULT_HIGHLIGHT_MATERIAL = Material.WHITE;
     /**
+     * Opacity of label interiors. This value is multiplied by the label text opacity to determine the final interior
+     * opacity.
+     */
+    protected static final double DEFAULT_LABEL_INTERIOR_OPACITY = 0.7;
+
+    /**
      * The graphic's text string. This field corresponds to the {@link SymbologyConstants#UNIQUE_DESIGNATION} modifier.
      * Note that this field is not used if an Iterable is specified as the unique designation.
      */
@@ -500,11 +506,16 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
 
         double opacity = this.getActiveShapeAttributes().getInteriorOpacity();
 
+        // Compute an interior opacity for the label. Note that not all tactical graphic labels are drawn with an
+        // interior.
+        double labelInteriorOpacity = this.computeLabelInteriorOpacity(opacity);
+
         for (TacticalGraphicLabel label : this.labels)
         {
             label.setMaterial(labelMaterial);
             label.setFont(font);
             label.setOpacity(opacity);
+            label.setInteriorOpacity(labelInteriorOpacity);
         }
 
         // Apply the offset to the main label.
@@ -512,6 +523,19 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
         if (offset == null)
             offset = this.getDefaultLabelOffset();
         this.labels.get(0).setOffset(offset);
+    }
+
+    /**
+     * Compute the opacity for the label interior. By default, the label interior is opacity is computed as 70% of the
+     * text opacity.
+     *
+     * @param textOpacity Opacity of the label text.
+     *
+     * @return Opacity of the label interior as a floating point number between 0.0 and 1.0.
+     */
+    protected double computeLabelInteriorOpacity(double textOpacity)
+    {
+        return textOpacity * DEFAULT_LABEL_INTERIOR_OPACITY;
     }
 
     /**

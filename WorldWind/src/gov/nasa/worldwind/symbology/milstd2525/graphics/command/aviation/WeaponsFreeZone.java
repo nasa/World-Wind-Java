@@ -7,13 +7,10 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.aviation;
 
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.render.ShapeAttributes;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
-import java.awt.*;
-import java.awt.geom.*;
 import java.util.Arrays;
 
 /**
@@ -26,9 +23,6 @@ public class WeaponsFreeZone extends AviationZone
 {
     /** Path to the image used for the polygon fill pattern. */
     protected static final String DIAGONAL_FILL_PATH = "images/diagonal-fill-16x16.png";
-
-    /** Annotation used to draw the label. */
-    protected GlobeAnnotation annotation;
 
     /**
      * Indicates the graphics supported by this class.
@@ -45,12 +39,6 @@ public class WeaponsFreeZone extends AviationZone
         super(sidc);
     }
 
-    @Override
-    protected void doRenderModifiers(DrawContext dc)
-    {
-        this.annotation.render(dc);
-    }
-
     /** {@inheritDoc} */
     @Override
     protected String getGraphicLabel()
@@ -61,47 +49,10 @@ public class WeaponsFreeZone extends AviationZone
     @Override
     protected void createLabels()
     {
-        // Use an annotation to draw the label on a solid background. Unframed text is difficult to read against
-        // the fill pattern.
-        this.annotation = new GlobeAnnotation(this.createLabelText(), this.getReferencePosition());
-
-        this.annotation.setAttributes(this.createAnnotationAttributes());
-        this.annotation.setDelegateOwner(this);
-    }
-
-    protected AnnotationAttributes createAnnotationAttributes()
-    {
-        AnnotationAttributes attrs = new AnnotationAttributes();
-
-        attrs.setAdjustWidthToText(AVKey.SIZE_FIT_TEXT);
-        attrs.setFrameShape(AVKey.SHAPE_RECTANGLE);
-        attrs.setLeader(AVKey.SHAPE_NONE);
-        attrs.setCornerRadius(0);
-        attrs.setTextAlign(AVKey.LEFT);
-        attrs.setInsets(new Insets(5, 5, 5, 5));
-        attrs.setDrawOffset(new Point(0, 0));
-
-        return attrs;
-    }
-
-    @Override
-    protected void applyLabelAttributes()
-    {
-        Material labelMaterial = this.getLabelMaterial();
-
-        Font font = this.activeOverrides.getTextModifierFont();
-        if (font == null)
-            font = TacticalGraphicLabel.DEFAULT_FONT;
-
-        AnnotationAttributes attributes = this.annotation.getAttributes();
-
-        Color color = labelMaterial.getDiffuse();
-        attributes.setTextColor(color);
-        attributes.setFont(font);
-
-        Color backgroundColor = this.computeBackgroundColor(color);
-        attributes.setBackgroundColor(backgroundColor);
-        attributes.setOpacity(this.getActiveShapeAttributes().getInteriorOpacity());
+        TacticalGraphicLabel label = this.addLabel(this.createLabelText());
+        label.setTextAlign(AVKey.LEFT);
+        label.setEffect(AVKey.TEXT_EFFECT_NONE);
+        label.setDrawInterior(true);
     }
 
     /** {@inheritDoc} */
@@ -113,33 +64,6 @@ public class WeaponsFreeZone extends AviationZone
         // Enable the polygon interior and set the image source to draw a fill pattern of diagonal lines.
         attributes.setDrawInterior(true);
         attributes.setImageSource(this.getImageSource());
-    }
-
-    /**
-     * Determine the appropriate position for the graphic's labels.
-     *
-     * @param dc Current draw context.
-     */
-    @Override
-    protected void determineLabelPositions(DrawContext dc)
-    {
-        Position mainLabelPosition = this.determineMainLabelPosition(dc);
-        this.annotation.setPosition(mainLabelPosition);
-
-        Rectangle bounds = this.annotation.getBounds(dc);
-
-        Offset offset = this.getLabelOffset();
-        if (offset == null)
-            offset = this.getDefaultLabelOffset();
-
-        Point2D offsetPoint = offset.computeOffset(bounds.width, bounds.height, null, null);
-        this.annotation.getAttributes().setDrawOffset(new Point((int) offsetPoint.getX(), (int) offsetPoint.getY()));
-    }
-
-    @Override
-    protected Offset getDefaultLabelOffset()
-    {
-        return TacticalGraphicLabel.DEFAULT_OFFSET;
     }
 
     /**
@@ -160,23 +84,5 @@ public class WeaponsFreeZone extends AviationZone
     protected Object getImageSource()
     {
         return DIAGONAL_FILL_PATH;
-    }
-
-    /**
-     * Compute a contrasting background color to draw the label's outline.
-     *
-     * @param color Label color.
-     *
-     * @return A color that contrasts with {@code color}.
-     */
-    protected Color computeBackgroundColor(Color color)
-    {
-        float[] colorArray = new float[4];
-        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), colorArray);
-
-        if (colorArray[2] > 0.5)
-            return new Color(0, 0, 0, 0.7f);
-        else
-            return new Color(1, 1, 1, 0.7f);
     }
 }

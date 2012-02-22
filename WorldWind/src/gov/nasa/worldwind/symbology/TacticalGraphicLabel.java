@@ -38,6 +38,12 @@ public class TacticalGraphicLabel implements OrderedRenderable
      * will be aligned with the geographic position, and the label will be centered vertically.
      */
     public static final Offset DEFAULT_OFFSET = new Offset(0d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
+    /** Default insets around the label. */
+    public static final Insets DEFAULT_INSETS = new Insets(5, 5, 5, 5);
+    /** Default interior opacity. */
+    public static final double DEFAULT_INTERIOR_OPACITY = 0.7;
+    /** Default text effect (shadow). */
+    public static final String DEFAULT_TEXT_EFFECT = AVKey.TEXT_EFFECT_SHADOW;
 
     /** Label text. */
     protected String text;
@@ -54,10 +60,18 @@ public class TacticalGraphicLabel implements OrderedRenderable
     protected Material material = Material.BLACK;
     /** Opacity of the text, as a value between 0 and 1. */
     protected double opacity = 1.0;
+    protected double interiorOpacity = DEFAULT_INTERIOR_OPACITY;
     /** Font used to draw the label. */
     protected Font font = DEFAULT_FONT;
     /** Space (in pixels) between lines in a multi-line label. */
     protected int lineSpacing = 5; // TODO compute default based on font size
+
+    /** Effect applied to the text. May be {@link AVKey#TEXT_EFFECT_SHADOW} or {@link AVKey#TEXT_EFFECT_NONE}. */
+    protected String effect = DEFAULT_TEXT_EFFECT;
+    /** Insets that separate the text from its frame. Only applies when the text interior is rendered. */
+    protected Insets insets = DEFAULT_INSETS;
+    /** Indicates whether or not to draw the label interior. */
+    protected boolean drawInterior;
 
     /** Indicates whether or not batch rendering is enabled. */
     protected boolean enableBatchRendering = false;
@@ -288,6 +302,30 @@ public class TacticalGraphicLabel implements OrderedRenderable
     }
 
     /**
+     * Indicates whether or not to draw a colored frame behind the label.
+     *
+     * @return <code>true</code> if the label's interior is drawn, otherwise <code>false</code>.
+     *
+     * @see #setDrawInterior(boolean)
+     */
+    public boolean isDrawInterior()
+    {
+        return this.drawInterior;
+    }
+
+    /**
+     * Specifies whether or not to draw a colored frame behind the label.
+     *
+     * @param drawInterior <code>true</code> if the label's interior is drawn, otherwise <code>false</code>.
+     *
+     * @see #isDrawInterior()
+     */
+    public void setDrawInterior(boolean drawInterior)
+    {
+        this.drawInterior = drawInterior;
+    }
+
+    /**
      * Indicates the opacity of the text as a floating-point value in the range 0.0 to 1.0. A value of 1.0 specifies a
      * completely opaque text, and 0.0 specifies a completely transparent text. Values in between specify a partially
      * transparent text.
@@ -321,6 +359,39 @@ public class TacticalGraphicLabel implements OrderedRenderable
     }
 
     /**
+     * Indicates the opacity of label's interior as a floating-point value in the range 0.0 to 1.0. A value of 1.0
+     * specifies a completely opaque interior, and 0.0 specifies a completely transparent interior. Values in between
+     * specify a partially transparent interior.
+     *
+     * @return the opacity of the interior as a floating-point value from 0.0 to 1.0.
+     */
+    public double getInteriorOpacity()
+    {
+        return this.interiorOpacity;
+    }
+
+    /**
+     * Specifies the opacity of the label's interior as a floating-point value in the range 0.0 to 1.0. A value of 1.0
+     * specifies a completely opaque interior, and 0.0 specifies a completely transparent interior. Values in between
+     * specify a partially transparent interior.
+     *
+     * @param interiorOpacity the opacity of label's interior as a floating-point value from 0.0 to 1.0.
+     *
+     * @throws IllegalArgumentException if <code>opacity</code> is less than 0.0 or greater than 1.0.
+     */
+    public void setInteriorOpacity(double interiorOpacity)
+    {
+        if (opacity < 0 || opacity > 1)
+        {
+            String message = Logging.getMessage("generic.OpacityOutOfRange", opacity);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.interiorOpacity = interiorOpacity;
+    }
+
+    /**
      * Indicates the orientation position. The label oriented on a line drawn from the label's position to the
      * orientation position.
      *
@@ -340,6 +411,67 @@ public class TacticalGraphicLabel implements OrderedRenderable
     public void setOrientationPosition(Position orientationPosition)
     {
         this.orientationPosition = orientationPosition;
+    }
+
+    /**
+     * Indicates the amount of space between the label's content and its frame, in pixels.
+     *
+     * @return the padding between the label's content and its frame, in pixels.
+     *
+     * @see #setInsets(java.awt.Insets)
+     */
+    public Insets getInsets()
+    {
+        return this.insets;
+    }
+
+    /**
+     * Specifies the amount of space (in pixels) between the label's content and the edges of the label's frame.
+     *
+     * @param insets the desired padding between the label's content and its frame, in pixels.
+     *
+     * @throws IllegalArgumentException if <code>insets</code> is <code>null</code>.
+     * @see #getInsets()
+     */
+    public void setInsets(Insets insets)
+    {
+        if (insets == null)
+        {
+            String message = Logging.getMessage("nullValue.InsetsIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.insets = insets;
+    }
+
+    /**
+     * Indicates an effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW} (default), or
+     * {@link AVKey#TEXT_EFFECT_NONE}.
+     *
+     * @return the effect used for text rendering
+     */
+    public String getEffect()
+    {
+        return this.effect;
+    }
+
+    /**
+     * Specifies an effect used to decorate the text. Can be one of {@link AVKey#TEXT_EFFECT_SHADOW} (default), or
+     * {@link AVKey#TEXT_EFFECT_NONE}.
+     *
+     * @param effect the effect to use for text rendering
+     */
+    public void setEffect(String effect)
+    {
+        if (effect == null)
+        {
+            String message = Logging.getMessage("nullValue.StringIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.effect = effect;
     }
 
     /**
@@ -800,6 +932,9 @@ public class TacticalGraphicLabel implements OrderedRenderable
                 gl.glTranslated(-x, -y, 0);
             }
 
+            if (this.isDrawInterior())
+                this.drawInterior(dc);
+
             textRenderer.begin3DRendering();
             try
             {
@@ -824,6 +959,60 @@ public class TacticalGraphicLabel implements OrderedRenderable
     }
 
     /**
+     * Render the label interior as a filled rectangle.
+     *
+     * @param dc Current draw context.
+     */
+    protected void drawInterior(DrawContext dc)
+    {
+        GL gl = dc.getGL();
+
+        double width = this.bounds.getWidth();
+        double height = this.bounds.getHeight();
+
+        int x = this.screenPoint.x;
+        int y = this.screenPoint.y;
+
+        // Adjust x to account for text alignment
+        int xAligned = x;
+        if (AVKey.CENTER.equals(textAlign))
+            xAligned = x - (int) (width / 2);
+        else if (AVKey.RIGHT.equals(textAlign))
+            xAligned = x - (int) width;
+
+        // MultilineTextRenderer draws text top-down, so adjust y to compensate.
+        int yAligned = (int) (y - height);
+
+        // Apply insets
+        Insets insets = this.getInsets();
+        xAligned -= insets.left;
+        width = width + insets.left + insets.right;
+        yAligned -= insets.bottom;
+        height = height + insets.bottom + insets.top;
+
+        if (!dc.isPickingMode())
+        {
+            // Apply the frame background color and opacity if we're in normal rendering mode.
+            Color color = this.computeBackgroundColor(this.getMaterial().getDiffuse());
+            gl.glColor4ub((byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue(),
+                (byte) (this.interiorOpacity < 1 ? (int) (this.interiorOpacity * 255 + 0.5) : 255));
+        }
+
+        try
+        {
+            // Draw a quad
+            gl.glPushMatrix();
+            gl.glTranslated(xAligned, yAligned, 0);
+            gl.glScaled(width, height, 1.0);
+            dc.drawUnitQuad();
+        }
+        finally
+        {
+            gl.glPopMatrix();
+        }
+    }
+
+    /**
      * Draw the label's text. This method assumes that the text renderer context has already been set up.
      *
      * @param mltr Text renderer to use.
@@ -841,7 +1030,7 @@ public class TacticalGraphicLabel implements OrderedRenderable
         int y = this.screenPoint.y;
 
         float[] compArray = new float[3];
-        if (backgroundColor != null)
+        if (AVKey.TEXT_EFFECT_SHADOW.equals(this.effect) && backgroundColor != null)
         {
             backgroundColor.getRGBColorComponents(compArray);
 
@@ -959,9 +1148,12 @@ public class TacticalGraphicLabel implements OrderedRenderable
                 boolean sameFont = this.font.equals(nextLabel.getFont());
                 boolean sameRotation = (this.rotation == null && nextLabel.rotation == null)
                     || (this.rotation != null && this.rotation.equals(nextLabel.rotation));
+                boolean drawInterior = nextLabel.isDrawInterior();
 
                 // We've already set up the text renderer state, so we can can't change the font or text rotation.
-                if (!sameFont || !sameRotation)
+                // Also can't batch render if the next label needs an interior since that will require tearing down the
+                // text renderer context.
+                if (!sameFont || !sameRotation || drawInterior)
                     break;
 
                 dc.pollOrderedRenderables(); // take it off the queue
