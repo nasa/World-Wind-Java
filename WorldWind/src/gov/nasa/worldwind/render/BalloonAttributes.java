@@ -146,7 +146,7 @@ public interface BalloonAttributes extends ShapeAttributes
      * <li>{@link gov.nasa.worldwind.avlist.AVKey#SHAPE_ELLIPSE}</li> </ul>
      * <p/>
      * If the <code>shape</code> is <code>AVKey.SHAPE_NONE</code>, the balloon's content is displayed in a rectangle in
-     * the viewport without any decoration. he rectangle's dimension in the viewport are specified by calling {@link
+     * the viewport without any decoration. The rectangle's dimension in the viewport are specified by calling {@link
      * #setSize(Size)}.
      * <p/>
      * If the <code>shape</code> is <code>AVKey.SHAPE_RECTANGLE</code>, the balloon is displayed as a rectangle in the
