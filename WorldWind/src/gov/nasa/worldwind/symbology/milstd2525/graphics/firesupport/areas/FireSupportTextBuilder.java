@@ -75,7 +75,9 @@ public class FireSupportTextBuilder
             }
             else
             {
-                mainText = this.createMainText(graphic, maskedSidc, !useSeparateTimeLabel);
+                boolean includeTime = !useSeparateTimeLabel;
+                boolean includeAltitude = this.isShowAltitude(maskedSidc);
+                mainText = this.createMainText(graphic, maskedSidc, includeTime, includeAltitude);
             }
 
             if (useSeparateTimeLabel)
@@ -91,11 +93,18 @@ public class FireSupportTextBuilder
         return result;
     }
 
-    protected boolean isShowSeparateTimeLabel(String functionId)
+    protected boolean isShowSeparateTimeLabel(String maskedSidc)
     {
-        return CircularFireSupportArea.getGraphicsWithTimeLabel().contains(functionId)
-            || RectangularFireSupportArea.getGraphicsWithTimeLabel().contains(functionId)
-            || IrregularFireSupportArea.getGraphicsWithTimeLabel().contains(functionId);
+        return CircularFireSupportArea.getGraphicsWithTimeLabel().contains(maskedSidc)
+            || RectangularFireSupportArea.getGraphicsWithTimeLabel().contains(maskedSidc)
+            || IrregularFireSupportArea.getGraphicsWithTimeLabel().contains(maskedSidc);
+    }
+
+    protected boolean isShowAltitude(String maskedSidc)
+    {
+        return TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equals(maskedSidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equals(maskedSidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equals(maskedSidc);
     }
 
     protected boolean isAirspaceCoordinationArea(String functionId)
@@ -105,7 +114,8 @@ public class FireSupportTextBuilder
             || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equals(functionId);
     }
 
-    protected String createMainText(MilStd2525TacticalGraphic graphic, String functionId, boolean includeTime)
+    protected String createMainText(MilStd2525TacticalGraphic graphic, String functionId, boolean includeTime,
+        boolean includeAltitude)
     {
         StringBuilder sb = new StringBuilder();
         sb.append(this.getGraphicLabel(functionId)).append("\n");
@@ -128,6 +138,18 @@ public class FireSupportTextBuilder
             if (dates[1] != null)
             {
                 sb.append(dates[1]);
+            }
+        }
+
+        if (includeAltitude)
+        {
+            Object[] alt = TacticalGraphicUtil.getAltitudeRange(graphic);
+            if (alt[0] != null)
+            {
+                if (sb.length() > 0)
+                    sb.append('\n');
+
+                sb.append(alt[0]);
             }
         }
 
@@ -222,6 +244,24 @@ public class FireSupportTextBuilder
             || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR.equals(sidc))
         {
             return "CF ZONE";
+        }
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equals(sidc))
+        {
+            return "NFA";
+        }
+        else if (TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equals(sidc))
+        {
+            return "BKB";
+        }
+        else if (TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equals(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equals(sidc))
+        {
+            return "PKB";
         }
 
         return "";

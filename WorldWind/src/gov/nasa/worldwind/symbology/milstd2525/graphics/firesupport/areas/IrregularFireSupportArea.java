@@ -31,6 +31,8 @@ import java.util.*;
  */
 public class IrregularFireSupportArea extends BasicArea
 {
+    /** Path to the image used for the polygon fill pattern. */
+    protected static final String DIAGONAL_FILL_PATH = "images/diagonal-fill-16x16.png";
     /** Center text block on label position when the text is left aligned. */
     protected final static Offset LEFT_ALIGN_OFFSET = new Offset(-0.5d, -0.5d, AVKey.FRACTION, AVKey.FRACTION);
 
@@ -54,10 +56,13 @@ public class IrregularFireSupportArea extends BasicArea
             TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_IRR,
             TacGrpSidc.FSUPP_ARS_C2ARS_TBA_IRR,
             TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_IRR,
+            TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR,
             TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR,
             TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_IRR,
             TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_IRR,
-            TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR);
+            TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR,
+            TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR,
+            TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR);
     }
 
     /**
@@ -105,6 +110,12 @@ public class IrregularFireSupportArea extends BasicArea
         {
             TacticalGraphicLabel mainLabel = this.addLabel(text);
             mainLabel.setTextAlign(this.getLabelAlignment());
+
+            if (this.isFilled())
+            {
+                mainLabel.setEffect(AVKey.TEXT_EFFECT_NONE);
+                mainLabel.setDrawInterior(true);
+            }
         }
 
         if (allText.length > 1 && !WWUtil.isEmpty(allText[1]))
@@ -206,5 +217,41 @@ public class IrregularFireSupportArea extends BasicArea
             return LEFT_ALIGN_OFFSET;
         else
             return super.getDefaultLabelOffset();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void applyDefaultAttributes(ShapeAttributes attributes)
+    {
+        super.applyDefaultAttributes(attributes);
+
+        if (this.isFilled())
+        {
+            // Enable the polygon interior and set the image source to draw a fill pattern of diagonal lines.
+            attributes.setDrawInterior(true);
+            attributes.setImageSource(this.getImageSource());
+        }
+    }
+
+    /**
+     * Indicates whether or not the polygon must be filled with a diagonal line pattern.
+     *
+     * @return true if the polygon must be filled, otherwise false.
+     */
+    protected boolean isFilled()
+    {
+        return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equals(this.maskedSymbolCode)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equals(this.maskedSymbolCode)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equals(this.maskedSymbolCode);
+    }
+
+    /**
+     * Indicates the source of the image that provides the polygon fill pattern.
+     *
+     * @return The source of the polygon fill pattern.
+     */
+    protected Object getImageSource()
+    {
+        return DIAGONAL_FILL_PATH;
     }
 }
