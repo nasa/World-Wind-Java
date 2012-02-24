@@ -1024,7 +1024,7 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
 
         // Turn on the shape interior for the arrow head. All other parts of the graphic are Paths, which do not draw
         // an interior, so this setting only affects the arrow head.
-        Material material = this.getDefaultOutlineMaterial();
+        Material material = this.getDefaultMaterial();
         attributes.setInteriorMaterial(material);
 
         attributes.setDrawInterior(true);

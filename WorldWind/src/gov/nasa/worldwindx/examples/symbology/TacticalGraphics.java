@@ -248,7 +248,7 @@ public class TacticalGraphics extends ApplicationTemplate
                 Position.fromDegrees(34.6780, -117.53));
             graphic = factory.createGraphic("GFGPOLAGS-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Supporting Attack (2.X.2.5.2.1.4.2)");
-//            layer.addRenderable(graphic);
+            layer.addRenderable(graphic);
 
             /////////////////////////////////////////////
             // Airborne (2.X.2.5.2.1.2)
@@ -349,7 +349,7 @@ public class TacticalGraphics extends ApplicationTemplate
             ///////////////////////////////////////////////////
             // Fire Support Coordination Line (2.X.4.2.2.1)
             ///////////////////////////////////////////////////
-//
+
             positions = Arrays.asList(
                 Position.fromDegrees(34.4179, -117.4399),
                 Position.fromDegrees(34.4486, -117.6857));
@@ -357,6 +357,19 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("X CORPS", "ALPHA"));
             graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("202100Z", "270800Z SEP"));
             graphic.setValue(AVKey.DISPLAY_NAME, "Fire Support Coordination Line (2.X.4.2.2.1)");
+            layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Principle Direction of Fire (2.X.2.4.2.2)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.7502, -118.1980),
+                Position.fromDegrees(34.8542, -118.2565),
+                Position.fromDegrees(34.8515, -118.1129));
+            graphic = factory.createGraphic("GFGPDLP-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Principle Direction of Fire (2.X.2.4.2.2)");
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPEWRH--MTUSG");
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer

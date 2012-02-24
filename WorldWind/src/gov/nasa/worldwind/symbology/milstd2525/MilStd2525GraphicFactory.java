@@ -79,6 +79,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(Ambush.class, Ambush.getSupportedGraphics());
         this.mapClass(ForwardEdgeOfBattleArea.class, ForwardEdgeOfBattleArea.getSupportedGraphics());
         this.mapClass(BattlePosition.class, BattlePosition.getSupportedGraphics());
+        this.mapClass(PrincipleDirectionOfFire.class, PrincipleDirectionOfFire.getSupportedGraphics());
 
         // Mobility/survivability
 
@@ -122,7 +123,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      *
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
-    @SuppressWarnings( {"unchecked"})
+    @SuppressWarnings({"unchecked"})
     public TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions,
         AVList modifiers)
     {

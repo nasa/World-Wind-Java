@@ -134,8 +134,9 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
     @Override
     protected void applyDefaultAttributes(ShapeAttributes attributes)
     {
-        Material material = this.getDefaultOutlineMaterial();
+        Material material = this.getDefaultMaterial();
         attributes.setOutlineMaterial(material);
+        attributes.setInteriorMaterial(material);
 
         // MIL-STD-2525C section 5.5.1.2 (pg. 37) states that graphics (in general) must be drawn with solid lines
         // when in the Present status, and dashed lines when the status is not Present. Note that the default is
@@ -177,11 +178,11 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
     }
 
     /**
-     * Indicates the default outline Material for this graphic.
+     * Indicates the default Material for this graphic.
      *
-     * @return The default outline material, determined by the graphic's standard identity.
+     * @return The default material, determined by the graphic's standard identity.
      */
-    protected Material getDefaultOutlineMaterial()
+    protected Material getDefaultMaterial()
     {
         String identity = this.symbolCode.getStandardIdentity();
         if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(identity))
