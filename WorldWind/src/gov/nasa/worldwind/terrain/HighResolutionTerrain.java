@@ -11,6 +11,7 @@ import gov.nasa.worldwind.cache.*;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.SurfaceQuad;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
@@ -35,23 +36,16 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
         protected final int density;
         protected final Vec4 referenceCenter; // all vertices are relative to this point
         protected final float[] vertices;
-        protected double minElevation;
-        protected double maxElevation;
+        protected Position minElevation;
+        protected Position maxElevation;
 
-        protected RenderInfo(int density, float[] vertices, Vec4 refCenter)
+        protected RenderInfo(int density, float[] vertices, Vec4 refCenter, Position minElev, Position maxElev)
         {
             this.density = density;
             this.referenceCenter = refCenter;
             this.vertices = vertices;
-        }
-
-        protected RenderInfo(int density, float[] vertices, Vec4 refCenter, double minElevation, double maxElevation)
-        {
-            this.density = density;
-            this.referenceCenter = refCenter;
-            this.vertices = vertices;
-            this.minElevation = minElevation;
-            this.maxElevation = maxElevation;
+            this.minElevation = minElev;
+            this.maxElevation = maxElev;
         }
 
         protected long getSizeInBytes()
@@ -835,6 +829,8 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 
         double minElevation = Double.MAX_VALUE;
         double maxElevation = -Double.MAX_VALUE;
+        LatLon minElevationLocation = centroid;
+        LatLon maxElevationLocation = centroid;
 
         int ie = 0;
         int iv = 0;
@@ -847,9 +843,15 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
                 double elevation = this.verticalExaggeration * elevations[ie++];
 
                 if (elevation < minElevation)
+                {
                     minElevation = elevation;
+                    minElevationLocation = latlon;
+                }
                 if (elevation > maxElevation)
+                {
                     maxElevation = elevation;
+                    maxElevationLocation = latlon;
+                }
 
                 Vec4 p = this.globe.computePointFromPosition(latlon.getLatitude(), latlon.getLongitude(), elevation);
                 verts[iv++] = (float) (p.x - refCenter.x);
@@ -858,7 +860,8 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             }
         }
 
-        return new RenderInfo(density, verts, refCenter, minElevation, maxElevation);
+        return new RenderInfo(density, verts, refCenter, new Position(minElevationLocation, minElevation),
+            new Position(maxElevationLocation, maxElevation));
     }
 
     protected double getElevations(Sector sector, List<LatLon> latlons, double targetResolution, double[] elevations)
@@ -1199,12 +1202,15 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 
     /**
      * Computes the intersection of a triangle with a terrain tile.
-     * @param tile the terrain tile
+     *
+     * @param tile     the terrain tile
      * @param triangle the Cartesian coordinates of the triangle.
+     *
      * @return a list of the intersection points at which the triangle intersects the tile, or null if there are no
-     * intersections. If there are intersections, each entry in the returned list contains a two-element array holding
-     * the Cartesian coordinates of the intersection point with one terrain triangle. In the cases of co-planar
-     * triangles, all three vertices of the terrain triangle are returned, in a three-element array.
+     *         intersections. If there are intersections, each entry in the returned list contains a two-element array
+     *         holding the Cartesian coordinates of the intersection point with one terrain triangle. In the cases of
+     *         co-planar triangles, all three vertices of the terrain triangle are returned, in a three-element array.
+     *
      * @throws InterruptedException if the operation is interrupted before it completes.
      */
     protected List<Vec4[]> intersect(RectTile tile, Vec4[] triangle) throws InterruptedException
@@ -1334,7 +1340,7 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
             if (tile.ri == null)
                 return null;
 
-            if (tile.ri.maxElevation >= minAltitude)
+            if (tile.ri.maxElevation.getElevation() >= minAltitude)
                 filteredTiles.add(tile);
         }
 
@@ -1354,5 +1360,66 @@ public class HighResolutionTerrain extends WWObjectImpl implements Terrain
 
             positions.add(pos);
         }
+    }
+
+    /**
+     * Determines the minimum and maximum elevations and their locations within a specified {@link Sector}.
+     *
+     * @param sector The sector in question.
+     *
+     * @return a two-element array containing the minimum and maximum elevations and their locations in the sector. The
+     *         minimum as at index 0 in the array, the maximum is at index 1. If either cannot be determined, null is
+     *         given in the respective array position.
+     *
+     * @throws InterruptedException if the operation is interrupted before it completes.
+     */
+    public Position[] getExtremeElevations(Sector sector) throws InterruptedException
+    {
+        // Get the tiles intersecting the specified sector.
+        List<RectTile> tiles = this.getIntersectingTiles(sector);
+
+        // Find the min and max elevation among the tiles.
+
+        Position[] extremes = new Position[2];
+
+        for (RectTile tile : tiles)
+        {
+            if (tile.ri == null)
+                this.makeVerts(tile);
+
+            if (tile.ri == null)
+                continue;
+
+            if (extremes[0] == null || tile.ri.minElevation.getElevation() < extremes[0].getElevation())
+                extremes[0] = tile.ri.minElevation;
+
+            if (extremes[1] == null || tile.ri.maxElevation.getElevation() > extremes[1].getElevation())
+                extremes[1] = tile.ri.maxElevation;
+        }
+
+        return extremes;
+    }
+
+    /**
+     * Determines the minimum and maximum elevations and their locations within a specified geographic quadrilateral.
+     *
+     * @param center The quadrilateral's center.
+     * @param width  The quadrilateral's longitudinal width, in meters.
+     * @param height The quadrilateral's latitudinal height, in meters.
+     *
+     * @return a two-element array containing the minimum and maximum elevations and their locations in the
+     *         quadrilateral. The minimum as at index 0 in the array, the maximum is at index 1. If either cannot be
+     *         determined, null is given in the respective array position.
+     *
+     * @throws InterruptedException if the operation is interrupted before it completes.
+     */
+    public Position[] getExtremeElevations(LatLon center, double width, double height) throws InterruptedException
+    {
+        // Compute the quad's geographic corners.
+        SurfaceQuad quad = new SurfaceQuad(center, width, height);
+        Sector sector = Sector.boundingSector(quad.getLocations(this.getGlobe()));
+
+        // Return the tiles intersecting the specified sector.
+        return this.getExtremeElevations(sector);
     }
 }
