@@ -217,7 +217,8 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
             {
                 public void run()
                 {
-                    if (hasNetworkLinkControl() && kmlRoot.getNetworkLinkControl().getUpdate() != null
+                    if (kmlRoot.getNetworkLinkControl() != null
+                        && kmlRoot.getNetworkLinkControl().getUpdate() != null
                         && !kmlRoot.getNetworkLinkControl().getUpdate().isUpdatesApplied())
                         kmlRoot.getNetworkLinkControl().getUpdate().applyOperations();
                 }
@@ -285,7 +286,8 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
         if (linkControl != null && linkControl.getMinRefreshPeriod() != null)
         {
             long now = System.currentTimeMillis();
-            if (this.networkResourceRetrievalTime.get() + linkControl.getMinRefreshPeriod() * 1000 < now)
+            if (this.firstRetrievalTime != null // be sure it gets retrieved a first time
+                && this.networkResourceRetrievalTime.get() + linkControl.getMinRefreshPeriod() * 1000 > now)
                 return false;
         }
 
@@ -293,7 +295,7 @@ public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChange
         if (linkControl != null && linkControl.getMaxSessionLength() != null && this.firstRetrievalTime != null)
         {
             long now = System.currentTimeMillis();
-            if (this.firstRetrievalTime.get() + linkControl.getMaxSessionLength() * 1000 < now)
+            if (this.firstRetrievalTime.get() + linkControl.getMaxSessionLength() * 1000 > now)
                 return false;
         }
 
