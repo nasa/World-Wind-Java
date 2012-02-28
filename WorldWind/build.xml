@@ -73,7 +73,8 @@
                  overview="${worldwind.src.dir}/overview.html"
                  windowtitle="NASA World Wind" doctitle="NASA World Wind API" header="NASA World Wind"
                  splitindex="true" protected="true" nodeprecated="true" version="false" author="false" use="true"
-                 maxmemory="512m">
+                 maxmemory="512m"
+		 encoding="ISO-8859-1">
             <packageset dir="${worldwind.src.dir}" defaultexcludes="yes">
                 <include name="gov/nasa/worldwind/**"/>
                 <include name="gov/nasa/worldwindx/**"/>
