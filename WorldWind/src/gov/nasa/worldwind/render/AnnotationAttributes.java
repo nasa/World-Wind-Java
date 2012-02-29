@@ -195,14 +195,14 @@ public class AnnotationAttributes implements Restorable
     }
 
     /**
-     * Set the annotation callout preferred total dimension in pixels. <p> If necessary, the text will be wraped into
+     * Set the annotation callout preferred total dimension in pixels. <p> If necessary, the text will be wrapped into
      * several lines so as not to exceed the callout preferred <code><b>width</b></code> (minus the <code>Insets</code>
-     * <code>left</code> and <code>right</code> dimensions - see setInsets()). However, if setAdjustWidthToText() is set
-     * to true, the final callout width will follow that of the final text bounding rectangle. </p> <p> If necessary,
-     * the text will also be truncated so as not to exceed the given <code><b>height</b></code>. A <code>zero</code>
-     * value (default) will have the callout follow the final text bounding rectangle height (including the
-     * <code>Insets</code> <code>top</code> and <code>bottom</code>). </p> Set to <code>null</code> to use the default
-     * size.
+     * <code>left</code> and <code>right</code> dimensions - see {@link #setInsets(java.awt.Insets) setInsets}).
+     * However, if {@link #setAdjustWidthToText(String) setAdjustWidthToText} is set to AVKey.SIZE_FIT_TEXT, the final
+     * callout width will follow that of the final text bounding rectangle. </p> <p> If necessary, the text will also be
+     * truncated so as not to exceed the given <code><b>height</b></code>. A <code>zero</code> value (default) will have
+     * the callout follow the final text bounding rectangle height (including the <code>Insets</code> <code>top</code>
+     * and <code>bottom</code>). </p> Set to <code>null</code> to use the default size.
      *
      * @param size the callout preferred total dimension in pixels.
      */
@@ -319,8 +319,8 @@ public class AnnotationAttributes implements Restorable
 
     /**
      * Get whether the callout width should adjust to follow the wrapped text bounding rectangle width, which may be
-     * smaller or larger then the preferred size depending on the text. Can be one of {@link Annotation}.SIZE_FIXED or
-     * SIZE_FIT_TEXT.
+     * smaller or larger then the preferred size depending on the text. Can be one of {@link AVKey#SIZE_FIXED} or {@link
+     * AVKey#SIZE_FIT_TEXT}.
      *
      * @return whether the callout width is adjusted to follow the text bounding rectangle width.
      */
@@ -833,7 +833,7 @@ public class AnnotationAttributes implements Restorable
     }
 
     /**
-     * Indicates whether one or more members of <i>this</> remain unresolved because they must be retrieved from an
+     * Indicates whether one or more members of <i>this</i> remain unresolved because they must be retrieved from an
      * external source.
      *
      * @return true if there are unresolved fields, false if no fields remain unresolved.
