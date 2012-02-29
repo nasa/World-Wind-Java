@@ -169,17 +169,18 @@ public abstract class AbstractAnnotationBalloon extends AbstractBalloon
      */
     protected void computeOffsets(DrawContext dc)
     {
+        Annotation annotation = this.getAnnotation();
         BalloonAttributes balloonAttrs = this.getActiveAttributes();
-        AnnotationAttributes annotationAttrs = this.getAnnotation().getAttributes();
+        AnnotationAttributes annotationAttrs = annotation.getAttributes();
 
         if (balloonAttrs != null)
         {
             // Compute the balloon's preferred size and the current screen viewport size.
-            Rectangle bounds = this.getBounds(dc);
+            Dimension prefSize = annotation.getPreferredSize(dc);
             Rectangle viewport = dc.getView().getViewport();
 
             // Compute the balloon's current size on screen, and its offset in screen coordinates.
-            Dimension screenSize = balloonAttrs.getSize().compute(bounds.width, bounds.height, viewport.width,
+            Dimension screenSize = balloonAttrs.getSize().compute(prefSize.width, prefSize.height, viewport.width,
                 viewport.height);
             Point2D.Double screenOffset = balloonAttrs.getOffset().computeOffset(screenSize.width, screenSize.height,
                 1.0, 1.0);
