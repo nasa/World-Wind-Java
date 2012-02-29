@@ -30,4 +30,25 @@ public interface RetrievalService extends WWObject
     int getNumRetrieversPending();
 
     void shutdown(boolean immediately);
+
+    public interface SSLExceptionListener
+    {
+        void onException(Throwable e);
+    }
+
+    /**
+     * Specifies the listener called when a {@link javax.net.ssl.SSLHandshakeException} is thrown during resource
+     * retrieval.
+     *
+     * @param listener to listener to invoke, or null if no listener is to be invoked.
+     */
+    void setSSLExceptionListener(SSLExceptionListener listener);
+
+    /**
+     * Indicates the listener to be called when {@link javax.net.ssl.SSLHandshakeException}s are thrown during resource
+     * retrieval.
+     *
+     * @return the exception listener, or null if no listener has been specified.
+     */
+    SSLExceptionListener getSSLExceptionListener();
 }

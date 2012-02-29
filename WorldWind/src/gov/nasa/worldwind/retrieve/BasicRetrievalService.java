@@ -9,7 +9,8 @@ import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.Logging;
 
-import java.net.*;
+import javax.net.ssl.SSLHandshakeException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 
@@ -37,9 +38,7 @@ public final class BasicRetrievalService extends WWObjectImpl
     private ConcurrentLinkedQueue<RetrievalTask> activeTasks; // tasks currently allocated a thread
     private int queueSize; // maximum queue size
 
-    /**
-     * Encapsulates a single threaded retrieval as a {@link java.util.concurrent.FutureTask}.
-     */
+    /** Encapsulates a single threaded retrieval as a {@link java.util.concurrent.FutureTask}. */
     private static class RetrievalTask extends FutureTask<Retriever>
         implements RetrievalFuture, Comparable<RetrievalTask>
     {
@@ -74,7 +73,9 @@ public final class BasicRetrievalService extends WWObjectImpl
 
         /**
          * @param that the task to compare with this one
+         *
          * @return 0 if task priorities are equal, -1 if priority of this is less than that, 1 otherwise
+         *
          * @throws IllegalArgumentException if <code>that</code> is null
          */
         public int compareTo(RetrievalTask that)
@@ -119,6 +120,18 @@ public final class BasicRetrievalService extends WWObjectImpl
         {
             return this.retriever.getName().hashCode();
         }
+    }
+
+    protected SSLExceptionListener sslExceptionListener;
+
+    public SSLExceptionListener getSSLExceptionListener()
+    {
+        return sslExceptionListener;
+    }
+
+    public void setSSLExceptionListener(SSLExceptionListener sslExceptionListener)
+    {
+        this.sslExceptionListener = sslExceptionListener;
     }
 
     public void uncaughtException(Thread thread, Throwable throwable)
@@ -166,6 +179,7 @@ public final class BasicRetrievalService extends WWObjectImpl
         /**
          * @param thread   the thread the task is running on
          * @param runnable the <code>Retriever</code> running on the thread
+         *
          * @throws IllegalArgumentException if either <code>thread</code> or <code>runnable</code> is null
          */
         protected void beforeExecute(Thread thread, Runnable runnable)
@@ -216,6 +230,7 @@ public final class BasicRetrievalService extends WWObjectImpl
         /**
          * @param runnable  the <code>Retriever</code> running on the thread
          * @param throwable an exception thrown during retrieval, will be null if no exception occurred
+         *
          * @throws IllegalArgumentException if <code>runnable</code> is null
          */
         protected void afterExecute(Runnable runnable, Throwable throwable)
@@ -251,6 +266,13 @@ public final class BasicRetrievalService extends WWObjectImpl
                 if (e.getCause() instanceof SocketTimeoutException)
                 {
                     Logging.logger().fine(message + " " + e.getCause().getLocalizedMessage());
+                }
+                else if (e.getCause() instanceof SSLHandshakeException)
+                {
+                    if (sslExceptionListener != null)
+                        sslExceptionListener.onException(e.getCause());
+                    else
+                        Logging.logger().fine(message + " " + e.getCause().getLocalizedMessage());
                 }
                 else
                 {
@@ -298,7 +320,9 @@ public final class BasicRetrievalService extends WWObjectImpl
 
     /**
      * @param retriever the retriever to run
+     *
      * @return a future object that can be used to query the request status of cancel the request.
+     *
      * @throws IllegalArgumentException if <code>retriever</code> is null or has no name
      */
     public RetrievalFuture runRetriever(Retriever retriever)
@@ -323,7 +347,9 @@ public final class BasicRetrievalService extends WWObjectImpl
     /**
      * @param retriever the retriever to run
      * @param priority  the secondary priority of the retriever, or negative if it is to be the primary priority
+     *
      * @return a future object that can be used to query the request status of cancel the request.
+     *
      * @throws IllegalArgumentException if <code>retriever</code> is null or has no name
      */
     public synchronized RetrievalFuture runRetriever(Retriever retriever, double priority)
@@ -361,6 +387,7 @@ public final class BasicRetrievalService extends WWObjectImpl
 
     /**
      * @param poolSize the number of threads in the thread pool
+     *
      * @throws IllegalArgumentException if <code>poolSize</code> is non-positive
      */
     public void setRetrieverPoolSize(int poolSize)
@@ -412,7 +439,9 @@ public final class BasicRetrievalService extends WWObjectImpl
 
     /**
      * @param retriever the retriever to check
+     *
      * @return <code>true</code> if the retriever is being run or pending execution
+     *
      * @throws IllegalArgumentException if <code>retriever</code> is null
      */
     public boolean contains(Retriever retriever)

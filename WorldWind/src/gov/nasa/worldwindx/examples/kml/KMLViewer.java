@@ -7,7 +7,9 @@ All Rights Reserved.
 
 package gov.nasa.worldwindx.examples.kml;
 
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.retrieve.RetrievalService;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwindx.examples.util.*;
 import gov.nasa.worldwind.util.layertree.*;
@@ -92,6 +94,15 @@ public class KMLViewer extends ApplicationTemplate
             WWUtil.alignComponent(null, this, AVKey.CENTER);
 
             makeMenu(this);
+
+            // Set up to receive SSLHandshakeExceptions that occur during resource retrieval.
+            WorldWind.getRetrievalService().setSSLExceptionListener(new RetrievalService.SSLExceptionListener()
+            {
+                public void onException(Throwable e)
+                {
+                    System.out.println(e);
+                }
+            });
         }
 
         /**
