@@ -18,7 +18,7 @@ import java.util.*;
  * attributes. New <code>AnnotationAttributes</code> refer this static bundle as their default values source when an
  * attribute has not been set. </p> <p> New <code>AnnotationAttributes</code> set have all their attributes pointing to
  * the default values until they are set by the application. Most attributes refer to the default value by using minus
- * one (<code>-1</code>) for munerics and <code>null</code> for objects. </p> <p> The default attributes set can be
+ * one (<code>-1</code>) for numerics and <code>null</code> for objects. </p> <p> The default attributes set can be
  * changed for a non static one under the application control. The process can be extended or cascaded to handle
  * multiple levels of inheritance for default attributes. </p>
  *
