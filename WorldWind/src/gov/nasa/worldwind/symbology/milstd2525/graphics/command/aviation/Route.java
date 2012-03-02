@@ -16,7 +16,9 @@ import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Implementation of the aviation route graphics. This class implements the following graphics: <ul> <li>Air Corridor
@@ -30,6 +32,8 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 {
     /** Width of the route if no width is specified in the modifiers. */
     public static final double DEFAULT_WIDTH = 2000;
+
+    protected static final Offset DEFAULT_OFFSET = Offset.fromFraction(-0.5, -0.5d);
 
     /** Path used to render the route. */
     protected List<Path> paths;
@@ -401,7 +405,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         TacticalGraphicLabel label = this.addLabel(labelText);
         label.setTextAlign(AVKey.LEFT);
-        label.setOffset(new Offset(0d, 0d, AVKey.FRACTION, AVKey.FRACTION));
+        label.setOffset(DEFAULT_OFFSET);
 
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
@@ -461,15 +465,22 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             Position posB = iterator.next();
             Position midpoint = Position.interpolate(0.5, posA, posB);
 
+            TacticalGraphicLabel label = this.labels.get(i);
+
             // Compute the main label position on the first iteration
             if (i == 0)
             {
-                // Position the main label to the side of the first segment
-                this.labels.get(i).setPosition(this.computeMainLabelPosition(dc, midpoint, posB));
-                i += 1;
-            }
+                // The position of the main label is computed to keep the label a constant screen distance from the
+                // route. However, in order to determine the label size the label needs to have a position, so give it a
+                // temporary position of the route reference position.
+                label.setPosition(this.getReferencePosition());
 
-            TacticalGraphicLabel label = this.labels.get(i);
+                // Position the main label to the side of the first segment
+                label.setPosition(this.computeMainLabelPosition(dc, label, midpoint, posB));
+
+                i += 1;
+                label = this.labels.get(i);
+            }
 
             // Position segment label at the midpoint of the segment
             label.setPosition(midpoint);
@@ -482,17 +493,25 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
         }
     }
 
+    @Override
+    protected Offset getDefaultLabelOffset()
+    {
+        return DEFAULT_OFFSET;
+    }
+
     /**
      * Compute the position of the graphic's main label. This label is positioned to the side of the first segment along
      * the route.
      *
      * @param dc       Current draw context.
+     * @param label    Label for which to compute position.
      * @param midpoint Midpoint of the first route segment.
      * @param posB     End point of the first route segment.
      *
      * @return The position of the main label.
      */
-    protected Position computeMainLabelPosition(DrawContext dc, Position midpoint, Position posB)
+    protected Position computeMainLabelPosition(DrawContext dc, TacticalGraphicLabel label, Position midpoint,
+        Position posB)
     {
         Globe globe = dc.getGlobe();
 
@@ -502,10 +521,18 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         Vec4 vMB = pB.subtract3(pMid);
 
+        Vec4 eyePoint = dc.getView().getEyePoint();
+        double pixelSize = dc.getView().computePixelSizeAtDistance(eyePoint.distanceTo3(pMid));
+
+        // Position the label a constant pixel distance from the route. Compute the pixel distance as half of the
+        // label's diagonal dimension.
+        Rectangle labelBounds = label.getBounds(dc);
+        double labelDiagonal = labelBounds != null ? Math.hypot(labelBounds.width, labelBounds.height) : 0d;
+        double pixelDistance = labelDiagonal / 2.0;
+
         // Compute a vector perpendicular to the route, at the midpoint of the first two control points
         Vec4 perpendicular = vMB.cross3(normal);
-        perpendicular = perpendicular.normalize3().multiply3(
-            DEFAULT_WIDTH * 2); // TODO arbitrary offset, should be based on size of label
+        perpendicular = perpendicular.normalize3().multiply3(this.getWidth() + pixelDistance * pixelSize);
 
         // Position the label to the side of the route
         Vec4 pLabel = pMid.add3(perpendicular);

@@ -82,7 +82,7 @@ public class TacticalGraphicLabel implements OrderedRenderable
     protected Object delegateOwner;
 
     // Computed each frame
-    protected long frameTimestamp = -1L;
+    protected long frameTimeStamp = -1L;
     /** Geographic position in cartesian coordinates. */
     protected Vec4 placePoint;
     /** Location of the place point projected onto the screen. */
@@ -151,6 +151,10 @@ public class TacticalGraphicLabel implements OrderedRenderable
     public void setPosition(Position position)
     {
         this.position = position;
+
+        // Label has moved, need to recompute screen extent. Explicitly set the extent to null so that it will be
+        // recomputed even if the application calls setPosition multiple times per frame.
+        this.screenExtent = null;
     }
 
     /**
@@ -547,6 +551,69 @@ public class TacticalGraphicLabel implements OrderedRenderable
     }
 
     /**
+     * Get the label bounding {@link java.awt.Rectangle} using OGL coordinates - bottom-left corner x and y relative to
+     * the {@link gov.nasa.worldwind.WorldWindow} bottom-left corner. If the label is rotated then the returned
+     * rectangle is the bounding rectangle of the rotated label.
+     *
+     * @param dc the current DrawContext.
+     *
+     * @return the label bounding {@link java.awt.Rectangle} using OGL viewport coordinates.
+     *
+     * @throws IllegalArgumentException if <code>dc</code> is null.
+     */
+    public Rectangle getBounds(DrawContext dc)
+    {
+        if (dc == null)
+        {
+            String message = Logging.getMessage("nullValue.DrawContextIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        this.computeGeometryIfNeeded(dc);
+        return this.screenExtent;
+    }
+
+    /**
+     * Compute label geometry, if it has not already been computed this frame, or if the label position has changed
+     * since the extent was last computed.
+     *
+     * @param dc Current geometry.
+     */
+    protected void computeGeometryIfNeeded(DrawContext dc)
+    {
+        // Re-use rendering state values already calculated this frame. If the screenExtent is null, recompute even if
+        // the timestamp is the same. This prevents using a stale position if the application calls setPosition and
+        // getBounds multiple times before the label is rendered.
+        long timeStamp = dc.getFrameTimeStamp();
+        if (timeStamp != this.frameTimeStamp || this.screenExtent == null)
+        {
+            this.computeGeometry(dc);
+            this.frameTimeStamp = timeStamp;
+        }
+    }
+
+    /**
+     * Compute the bounds of the text, if necessary.
+     *
+     * @param dc the current DrawContext.
+     */
+    protected void computeBoundsIfNeeded(DrawContext dc)
+    {
+        // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
+        // calculation if necessary.
+        if (this.bounds == null)
+        {
+            TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
+                this.getFont());
+            MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
+            mltr.setLineSpacing(this.getLineSpacing());
+
+            this.bounds = this.computeMultilineTextBounds(this.text, textRenderer);
+        }
+    }
+
+    /**
      * Compute the label's screen position from its geographic position.
      *
      * @param dc Current draw context.
@@ -579,17 +646,7 @@ public class TacticalGraphicLabel implements OrderedRenderable
             orientationReversed = (orientationScreenPoint.x <= this.screenPlacePoint.x);
         }
 
-        TextRenderer textRenderer = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(),
-            this.getFont());
-        MultiLineTextRenderer mltr = new MultiLineTextRenderer(textRenderer);
-        mltr.setLineSpacing(this.getLineSpacing());
-
-        // Compute bounds if they are not available. Computing text bounds is expensive, so only do this
-        // calculation if necessary.
-        if (this.bounds == null)
-        {
-            this.bounds = this.getMultilineTextBounds(this.text, textRenderer);
-        }
+        this.computeBoundsIfNeeded(dc);
 
         Offset offset = this.getOffset();
         Point2D offsetPoint = offset.computeOffset(this.bounds.getWidth(), this.bounds.getHeight(), null, null);
@@ -739,12 +796,7 @@ public class TacticalGraphicLabel implements OrderedRenderable
         if (this.text == null || this.position == null)
             return;
 
-        long timestamp = dc.getFrameTimeStamp();
-        if (this.frameTimestamp != timestamp)
-        {
-            this.computeGeometry(dc);
-            this.frameTimestamp = timestamp;
-        }
+        this.computeGeometryIfNeeded(dc);
 
         // Don't draw if beyond the horizon.
         double horizon = dc.getView().getHorizonDistance();
@@ -1053,7 +1105,7 @@ public class TacticalGraphicLabel implements OrderedRenderable
      * @return A rectangle that describes the node bounds. See com.sun.opengl.util.j2d.TextRenderer.getBounds for
      *         information on how this rectangle should be interpreted.
      */
-    protected Rectangle2D getMultilineTextBounds(String text, TextRenderer textRenderer)
+    protected Rectangle2D computeMultilineTextBounds(String text, TextRenderer textRenderer)
     {
         int width = 0;
         int maxLineHeight = 0;
