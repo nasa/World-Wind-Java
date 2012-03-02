@@ -372,6 +372,19 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPEWRH--MTUSG");
             layer.addRenderable(graphic);
 
+            ///////////////////////////////////////////////////
+            // Search Area/Reconnaissance Area (2.X.2.1.3.9)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.9738, -118.2632),
+                Position.fromDegrees(34.9306, -118.1597),
+                Position.fromDegrees(35.0092, -118.1717));
+            graphic = factory.createGraphic("GFGPGAS-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Search Area/Reconnaissance Area (2.X.2.1.3.9)");
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPEWRH--MTUSG");
+            layer.addRenderable(graphic);
+
             // Apply shared attributes to all graphics on this layer
             this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
@@ -700,6 +713,26 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic = factory.createGraphic("GHGPDAB----J--X", positions, null);
             graphic.setText("Blue");
             graphic.setValue(AVKey.DISPLAY_NAME, "Battle Position, Prepared but not Occupied (2.X.2.4.3.1.1)");
+            layer.addRenderable(graphic);
+
+            //////////////////////////////////////////////////////////////
+            // Encirclement (2.X.2.6.2.3)
+            //////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.8166, -116.5491),
+                Position.fromDegrees(34.8121, -116.5027),
+                Position.fromDegrees(34.8182, -116.4528),
+                Position.fromDegrees(34.8489, -116.4137),
+                Position.fromDegrees(34.8848, -116.4246),
+                Position.fromDegrees(34.9050, -116.4664),
+                Position.fromDegrees(34.9080, -116.5246),
+                Position.fromDegrees(34.8893, -116.5828),
+                Position.fromDegrees(34.8495, -116.6091),
+                Position.fromDegrees(34.8211, -116.5782));
+
+            graphic = factory.createGraphic("GHGPSAE-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Encirclement (2.X.2.6.2.3)");
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer

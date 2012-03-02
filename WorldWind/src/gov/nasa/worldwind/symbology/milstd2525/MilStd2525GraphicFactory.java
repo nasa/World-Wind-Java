@@ -80,6 +80,8 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(ForwardEdgeOfBattleArea.class, ForwardEdgeOfBattleArea.getSupportedGraphics());
         this.mapClass(BattlePosition.class, BattlePosition.getSupportedGraphics());
         this.mapClass(PrincipleDirectionOfFire.class, PrincipleDirectionOfFire.getSupportedGraphics());
+        this.mapClass(Encirclement.class, Encirclement.getSupportedGraphics());
+        this.mapClass(SearchArea.class, SearchArea.getSupportedGraphics());
 
         // Mobility/survivability
 
