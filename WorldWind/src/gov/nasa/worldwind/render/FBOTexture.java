@@ -47,38 +47,48 @@ public class FBOTexture extends FramebufferTexture
 
         GL gl = GLContext.getCurrent().getGL();
 
+        int[] previousFbo = new int[1];
+        gl.glGetIntegerv(GL.GL_FRAMEBUFFER_BINDING_EXT, previousFbo, 0);
+
         int[] fbo = new int[1];
         gl.glGenFramebuffersEXT(1, fbo, 0);
-        gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, fbo[0]);
 
-        TextureData td = new TextureData(GL.GL_RGBA, this.width, this.height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
-            false, false, true, BufferUtil.newByteBuffer(this.width * this.height * 4), null);
-        Texture t = TextureIO.newTexture(td);
-        t.bind();
-
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-
-        gl.glFramebufferTexture2DEXT(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D,
-            t.getTextureObject(), 0);
-
-        int status = gl.glCheckFramebufferStatusEXT(GL.GL_FRAMEBUFFER_EXT);
-        if (status == GL.GL_FRAMEBUFFER_COMPLETE_EXT)
+        try
         {
-            this.generateTexture(dc, this.width, this.height);
-            gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, 0);
+            gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, fbo[0]);
+            
+            TextureData td = new TextureData(GL.GL_RGBA, this.width, this.height, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE,
+                false, false, true, BufferUtil.newByteBuffer(this.width * this.height * 4), null);
+            Texture t = TextureIO.newTexture(td);
+            t.bind();
+
+            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
+            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
+
+            gl.glFramebufferTexture2DEXT(GL.GL_FRAMEBUFFER_EXT, GL.GL_COLOR_ATTACHMENT0_EXT, GL.GL_TEXTURE_2D,
+                t.getTextureObject(), 0);
+
+            int status = gl.glCheckFramebufferStatusEXT(GL.GL_FRAMEBUFFER_EXT);
+            if (status == GL.GL_FRAMEBUFFER_COMPLETE_EXT)
+            {
+                this.generateTexture(dc, this.width, this.height);
+            }
+            else
+            {
+                String msg = Logging.getMessage("FBOTexture.TextureNotCreated");
+                throw new IllegalStateException(msg);
+            }
+
+            dc.getTextureCache().put(this, t);
+
+            return t;
+        }
+        finally
+        {
+            gl.glBindFramebufferEXT(GL.GL_FRAMEBUFFER_EXT, previousFbo[0]);
             gl.glDeleteFramebuffersEXT(1, fbo, 0);
         }
-        else
-        {
-            String msg = Logging.getMessage("FBOTexture.TextureNotCreated");
-            throw new IllegalStateException(msg);
-        }
-
-        dc.getTextureCache().put(this, t);
-
-        return t;
     }
 }
