@@ -285,7 +285,12 @@ public class PrincipleDirectionOfFire extends MilStd2525TacticalGraphic implemen
         {
             this.thickLine.render(dc);
         }
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void doRenderModifiers(DrawContext dc)
+    {
         if (this.symbol != null)
         {
             this.symbol.render(dc);

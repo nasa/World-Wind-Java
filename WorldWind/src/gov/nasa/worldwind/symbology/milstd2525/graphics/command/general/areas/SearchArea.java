@@ -282,7 +282,12 @@ public class SearchArea extends MilStd2525TacticalGraphic implements PreRenderab
 
         this.arrowHead1.render(dc);
         this.arrowHead2.render(dc);
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void doRenderModifiers(DrawContext dc)
+    {
         if (this.symbol != null)
         {
             this.symbol.render(dc);
