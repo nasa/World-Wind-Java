@@ -8,6 +8,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.tree.*;
+import gov.nasa.worldwindx.examples.EntityMap;
 
 /**
  * A <code>TreeNode</code> that represents a KML feature defined by a <code>{@link
@@ -204,7 +205,7 @@ public class KMLFeatureTreeNode extends BasicTreeNode
             text = this.getFeature().getDescription();
         }
 
-        return this.stripHtmlTags(text);
+        return EntityMap.replaceAll(this.stripHtmlTags(text));
     }
 
     /**
