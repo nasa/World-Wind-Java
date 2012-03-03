@@ -56,6 +56,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
 
         this.mapClass(Boundary.class, Boundary.getSupportedGraphics());
         this.mapClass(PhaseLine.class, PhaseLine.getSupportedGraphics());
+        this.mapClass(ForwardLineOfOwnTroops.class, ForwardLineOfOwnTroops.getSupportedGraphics());
         this.mapClass(BasicArea.class, BasicArea.getSupportedGraphics());
         this.mapClass(AirfieldZone.class, AirfieldZone.getSupportedGraphics());
         this.mapClass(FortifiedArea.class, FortifiedArea.getSupportedGraphics());

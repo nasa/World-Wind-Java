@@ -194,7 +194,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
             mainLabel.setOffset(this.getDefaultLabelOffset());
         }
 
-        if (this.mustCreateIdentityLabels())
+        if (this.mustShowHostileIndicator())
         {
             this.identityLabel1 = this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
             this.identityLabel2 = this.addLabel(SymbologyConstants.HOSTILE_ENEMY);
@@ -215,7 +215,7 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         Position mainLabelPosition = this.determineMainLabelPosition(dc);
         this.labels.get(0).setPosition(mainLabelPosition);
 
-        if (this.mustCreateIdentityLabels())
+        if (this.mustShowHostileIndicator())
         {
             this.determineIdentityLabelPositions();
         }
@@ -269,12 +269,6 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
         {
             this.identityLabel2.setPosition(new Position(midpoint, 0));
         }
-    }
-
-    protected boolean mustCreateIdentityLabels()
-    {
-        return this.isShowHostileIndicator()
-            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity());
     }
 
     protected int getPositionCount()

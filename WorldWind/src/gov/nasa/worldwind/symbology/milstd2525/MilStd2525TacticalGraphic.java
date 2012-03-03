@@ -125,6 +125,23 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
     }
 
     /**
+     * Indicates whether or not the graphic must display the hostile/enemy indicator, if the graphic supports the
+     * indicator.
+     *
+     * @return true if {@link #isShowHostileIndicator()} is true, and the graphic represents a hostile entity.
+     */
+    protected boolean mustShowHostileIndicator()
+    {
+        String id = this.symbolCode.getStandardIdentity();
+        boolean isHostile = SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_SUSPECT.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(id);
+
+        return this.isShowHostileIndicator() && isHostile;
+    }
+
+    /**
      * Apply defaults to the active attributes bundle. The default attributes are determined by the type of graphic.
      * This method is called each frame to reset the active shape attributes to the appropriate default state. Override
      * attributes specified by the application may be applied after the defaults have been set.
