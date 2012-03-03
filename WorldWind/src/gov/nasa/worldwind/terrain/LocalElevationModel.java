@@ -231,6 +231,9 @@ public class LocalElevationModel extends AbstractElevationModel
         if (this.intersects(sector) == -1)
             return Double.MAX_VALUE; // as stated in the javadoc above, this is the sentinel for "not in my domain"
 
+        // Mark the model as used this frame.
+        this.setValue(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+
         for (int i = 0; i < latlons.size(); i++)
         {
             LatLon ll = latlons.get(i);

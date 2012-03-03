@@ -171,4 +171,12 @@ public class BathymetryFilterElevationModel extends AbstractElevationModel
     {
         return this.sourceModel.getLocalDataAvailability(sector, targetResolution);
     }
+
+    @Override
+    public Object getValue(String key)
+    {
+        Object o = super.getValue(key);
+
+        return o != null ? o : this.sourceModel != null ? this.sourceModel.getValue(key) : null;
+    }
 }

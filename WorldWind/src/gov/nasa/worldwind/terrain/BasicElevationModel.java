@@ -1121,6 +1121,9 @@ public class BasicElevationModel extends AbstractElevationModel implements BulkR
         if (this.intersects(sector) == -1)
             return Double.MAX_VALUE;
 
+        // Mark the model as used this frame.
+        this.setValue(AVKey.FRAME_TIMESTAMP, System.currentTimeMillis());
+
         for (int i = 0; i < latlons.size(); i++)
         {
             LatLon ll = latlons.get(i);
