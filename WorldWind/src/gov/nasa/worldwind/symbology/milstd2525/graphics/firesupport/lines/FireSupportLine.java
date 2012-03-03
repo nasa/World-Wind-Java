@@ -162,7 +162,7 @@ public class FireSupportLine extends MilStd2525TacticalGraphic
     }
 
     /** {@inheritDoc} */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         this.path.render(dc);
     }

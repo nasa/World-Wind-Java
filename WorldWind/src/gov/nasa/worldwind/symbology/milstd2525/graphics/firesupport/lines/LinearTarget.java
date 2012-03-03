@@ -214,7 +214,7 @@ public class LinearTarget extends MilStd2525TacticalGraphic
     }
 
     /** {@inheritDoc} */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         if (this.paths == null)
         {

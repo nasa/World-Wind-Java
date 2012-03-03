@@ -138,7 +138,7 @@ public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic 
      *
      * @param dc Current draw context.
      */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         this.circle.render(dc);
     }

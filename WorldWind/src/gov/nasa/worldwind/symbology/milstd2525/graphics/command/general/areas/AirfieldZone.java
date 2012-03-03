@@ -49,7 +49,7 @@ public class AirfieldZone extends BasicArea
 
     /** {@inheritDoc} Overridden to draw airfield graphic. */
     @Override
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         super.doRenderGraphic(dc);
 

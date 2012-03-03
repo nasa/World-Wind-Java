@@ -188,7 +188,7 @@ public class AbstractRectangularGraphic extends MilStd2525TacticalGraphic implem
      *
      * @param dc Current draw context.
      */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         this.quad.render(dc);
     }

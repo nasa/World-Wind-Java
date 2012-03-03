@@ -188,7 +188,7 @@ public class MinimumSafeDistanceZones extends MilStd2525TacticalGraphic implemen
      *
      * @param dc Current draw context.
      */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         for (SurfaceCircle ring : this.rings)
         {

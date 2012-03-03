@@ -254,7 +254,7 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
     }
 
     /** {@inheritDoc} */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         this.symbol1.render(dc);
         this.symbol2.render(dc);

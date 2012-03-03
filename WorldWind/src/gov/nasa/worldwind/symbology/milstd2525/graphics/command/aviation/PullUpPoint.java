@@ -59,7 +59,7 @@ public class PullUpPoint extends AbstractCircularGraphic implements TacticalPoin
 
     /** {@inheritDoc} Overridden to draw airfield graphic. */
     @Override
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         super.doRenderGraphic(dc);
 

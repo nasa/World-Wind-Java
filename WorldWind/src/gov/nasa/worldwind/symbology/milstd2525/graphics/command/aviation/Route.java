@@ -236,7 +236,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
     }
 
     /** {@inheritDoc} */
-    public void doRenderGraphic(DrawContext dc)
+    protected void doRenderGraphic(DrawContext dc)
     {
         if (this.paths == null)
         {
