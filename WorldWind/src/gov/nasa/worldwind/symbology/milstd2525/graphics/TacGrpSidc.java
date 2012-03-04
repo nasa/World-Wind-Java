@@ -291,8 +291,10 @@ public interface TacGrpSidc
     final String C2GM_GNL_PNT_UCTL_SBSTN_ASW = "G-G-GPBSA------";
     /** Boundaries */
     final String C2GM_GNL_LNE_BNDS = "G-G-GLB--------";
-    /** Forward, GLC--- ,Line Of Contact */
+    /** Forward Line of Own Troops */
     final String C2GM_GNL_LNE_FLOT = "G-G-GLF--------";
+    /** Line Of Contact */
+    final String C2GM_GNL_LNE_LOC = "G-G-GLC--------";
     /** Phase Line */
     final String C2GM_GNL_LNE_PHELNE = "G-G-GLP--------";
     /** Light Line */

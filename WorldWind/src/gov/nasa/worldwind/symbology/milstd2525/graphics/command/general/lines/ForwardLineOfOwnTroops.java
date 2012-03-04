@@ -7,6 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines;
 
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
@@ -24,7 +25,7 @@ import java.util.*;
 public class ForwardLineOfOwnTroops extends PhaseLine
 {
     /** Default number of wave lengths for a simple shape. This number is used to compute a default wave length. */
-    public static final int DEFAULT_NUM_WAVES = 10;
+    public static final int DEFAULT_NUM_WAVES = 20;
     /** Default number of intervals used to draw the arcs. */
     public final static int DEFAULT_NUM_INTERVALS = 32;
 
@@ -36,7 +37,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      */
     protected List<Position> computedPositions;
 
-    /** Indicates the wavelength of the triangle wave that forms the graphic's border. */
+    /** Indicates wave length (in meters) of the semicircle wave along the graphic boundary. */
     protected double waveLength;
     /** Number of intervals used to draw the arcs along the line. */
     protected int intervals = DEFAULT_NUM_INTERVALS;
@@ -77,11 +78,12 @@ public class ForwardLineOfOwnTroops extends PhaseLine
     }
 
     /**
-     * Indicates the wavelength of the triangle wave that forms the graphic's boundary. This is the length from the
-     * start of one "tooth" to the start of the next.
+     * Indicates the wavelength of the semicircle wave that forms the graphic's boundary. This is the length from the
+     * start of one "tooth" to the start of the next. If not wave length is specified a default wave length will be
+     * computed.
      * <p/>
      * <pre>
-     *  /\/\/\
+     * /\/\/\/\/\
      * ^ ^
      * Wavelength
      * </pre>
@@ -99,7 +101,7 @@ public class ForwardLineOfOwnTroops extends PhaseLine
      *
      * @param waveLength The wavelength, in meters.
      */
-    public void setWaveLength(double waveLength)
+    public void setWaveLength(int waveLength)
     {
         this.waveLength = waveLength;
         this.onShapeChanged();
@@ -185,17 +187,24 @@ public class ForwardLineOfOwnTroops extends PhaseLine
     protected void generateIntermediatePositions(DrawContext dc, Iterable<? extends Position> positions)
     {
         Globe globe = dc.getGlobe();
-        List<Position> wavePositions = new ArrayList<Position>();
 
         double waveLength = this.getWaveLength();
         if (waveLength == 0)
-        {
-            waveLength = this.computeDefaultWavelength(dc.getGlobe());
-        }
+            waveLength = this.computeDefaultWavelength(positions, globe);
         double radius = (waveLength / 2.0) / globe.getRadius();
-        int intervals = this.getIntervals();
 
         PositionIterator iterator = new PositionIterator(positions, waveLength, globe);
+        this.computedPositions = this.generateWavePositions(iterator, radius, false);
+    }
+
+    protected List<Position> generateWavePositions(Iterator<? extends Position> iterator, double radius,
+        boolean reverse)
+    {
+        List<Position> wavePositions = new ArrayList<Position>();
+
+        int intervals = this.getIntervals();
+        int sign = reverse ? -1 : 1;
+
         Position posB = iterator.next();
         while (iterator.hasNext())
         {
@@ -204,41 +213,47 @@ public class ForwardLineOfOwnTroops extends PhaseLine
                 continue;
 
             LatLon midPoint = LatLon.interpolateGreatCircle(0.5, posA, posB);
-            Angle azimuth1 = LatLon.greatCircleAzimuth(midPoint, posB);
-            Angle azimuth2 = LatLon.greatCircleAzimuth(midPoint, posA);
+            Angle azimuth = LatLon.greatCircleAzimuth(posA, posB);
 
             // Generate positions for a semicircle centered on the midpoint.
-            double delta = azimuth2.subtract(azimuth1).radians /  intervals;
-            for (double theta = azimuth1.radians; theta < azimuth2.radians; theta += delta)
+            double delta = Angle.POS180.radians / intervals;
+            for (int i = 0; i < intervals; i++)
             {
-                LatLon ll = LatLon.greatCircleEndPosition(midPoint, theta, radius);
+                LatLon ll = LatLon.greatCircleEndPosition(midPoint, azimuth.radians + delta * i * sign, radius);
                 wavePositions.add(new Position(ll, 0));
             }
             posB = posA;
         }
 
-        this.computedPositions = wavePositions;
+        return wavePositions;
     }
 
-    protected double computeDefaultWavelength(Globe globe)
+    protected double computeDefaultWavelength(Iterable<? extends Position> positions, Globe globe)
     {
-        double perimeter = 0;
+        Sector sector = Sector.boundingSector(positions);
+        double diagonal = Math.hypot(sector.getDeltaLatRadians(), sector.getDeltaLonRadians());
 
-        // Compute the number of vertices and the perimeter of the polygon.
+        return (diagonal * globe.getRadius()) / DEFAULT_NUM_WAVES;
+    }
+
+    protected Angle computeGreatCirclePathLength(Iterable<? extends Position> positions)
+    {
+        double length = 0;
+
+        // Compute the number of vertices and the length of the path.
         Position prev = null;
-        for (Position pos : this.positions)
+        for (Position pos : positions)
         {
             if (prev != null)
             {
                 Angle dist = LatLon.greatCircleDistance(pos, prev);
-                perimeter += dist.radians;
+                length += dist.radians;
             }
 
             prev = pos;
         }
 
-        perimeter = perimeter * globe.getRadius(); // Convert perimeter to meters.
-        return perimeter / DEFAULT_NUM_WAVES;
+        return Angle.fromRadians(length);
     }
 
     @Override
@@ -255,13 +270,15 @@ public class ForwardLineOfOwnTroops extends PhaseLine
     }
 
     /** Iterator to generate equally spaced positions along a control line. */
-    protected static class PositionIterator implements Iterator
+    protected static class PositionIterator implements Iterator<Position>
     {
         /** Control positions. */
         protected Iterator<? extends Position> positions;
 
         /** Wavelength, as a geographic angle. */
         protected Angle interval;
+
+        protected double tolerance = 0.25;
 
         /** Current position. */
         protected Position thisPosition;
@@ -333,8 +350,13 @@ public class ForwardLineOfOwnTroops extends PhaseLine
                 }
                 else
                 {
+                    Position next = this.nextControlPosition;
                     this.nextControlPosition = null;
-                    return null;
+
+                    if (Math.abs(diff) < this.interval.degrees * this.tolerance)
+                        return next;
+                    else
+                        return null;
                 }
 
                 // The sample distance wraps around a corner. Adjust step size.

@@ -347,6 +347,17 @@ public class TacticalGraphics extends ApplicationTemplate
             layer.addRenderable(graphic);
 
             ///////////////////////////////////////////////////
+            // Line of Contact (.X.2.1.2.3)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.2829, -117.5900),
+                Position.fromDegrees(35.2990, -117.3727));
+                graphic = factory.createGraphic("GFGPGLC-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Line of Contact (2.X.2.1.2.3)");
+            layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
             // Fire Support Coordination Line (2.X.4.2.2.1)
             ///////////////////////////////////////////////////
 
