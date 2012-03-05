@@ -8,6 +8,7 @@ package gov.nasa.worldwind.symbology;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
+import gov.nasa.worldwind.render.DrawContext;
 
 import java.util.*;
 
@@ -110,5 +111,62 @@ public class TacticalGraphicUtil
         }
 
         return new Object[] {alt1, alt2};
+    }
+
+    /**
+     * Position one or two labels some distance along the path. Top and bottom labels are often positioned above and
+     * below the same point, so this method supports positioning a pair of labels at the same point. The label offsets
+     * determine how the labels draw in relation to the line.
+     *
+     * @param dc        Current draw context.
+     * @param positions Positions that describe the path.
+     * @param label1    First label to position.
+     * @param label2    Second label to position. (May be null.)
+     * @param distance  Distance along the path at which to position the labels.
+     */
+    public static void placeLabelsOnPath(DrawContext dc, Iterable<? extends Position> positions,
+        TacticalGraphicLabel label1,
+        TacticalGraphicLabel label2, double distance)
+    {
+        Iterator<? extends Position> iterator = positions.iterator();
+        Globe globe = dc.getGlobe();
+
+        Position pos1 = null;
+        Position pos2;
+        Vec4 pt1, pt2;
+
+        double length = 0;
+        double thisDistance = 0;
+
+        pos2 = iterator.next();
+        pt2 = globe.computePointFromPosition(pos2);
+
+        while (iterator.hasNext() && length < distance)
+        {
+            pos1 = pos2;
+            pt1 = pt2;
+
+            pos2 = iterator.next();
+            pt2 = globe.computePointFromLocation(pos2);
+
+            thisDistance = pt2.distanceTo2(pt1);
+            length += thisDistance;
+        }
+
+        if (pos1 != null && pos2 != null && thisDistance > 0)
+        {
+            double delta = length - distance;
+            LatLon ll = LatLon.interpolateGreatCircle(delta / thisDistance, pos1, pos2);
+            pos1 = new Position(ll, 0);
+
+            label1.setPosition(pos1);
+            label1.setOrientationPosition(pos2);
+
+            if (label2 != null)
+            {
+                label2.setPosition(pos1);
+                label2.setOrientationPosition(pos2);
+            }
+        }
     }
 }

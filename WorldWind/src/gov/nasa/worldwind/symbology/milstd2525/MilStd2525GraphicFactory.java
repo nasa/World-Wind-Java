@@ -71,6 +71,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         this.mapClass(SpecialInterestArea.class, SpecialInterestArea.getSupportedGraphics());
         this.mapClass(Airhead.class, Airhead.getSupportedGraphics());
         this.mapClass(DirectionOfAttack.class, DirectionOfAttack.getSupportedGraphics());
+        this.mapClass(DirectionOfAttackAviation.class, DirectionOfAttackAviation.getSupportedGraphics());
         this.mapClass(Aviation.class, Aviation.getSupportedGraphics());
         this.mapClass(Airborne.class, Airborne.getSupportedGraphics());
         this.mapClass(MainAttack.class, MainAttack.getSupportedGraphics());

@@ -327,11 +327,13 @@ public class FireSupportLine extends MilStd2525TacticalGraphic
         TacticalGraphicLabel topLabel = labelIterator.next();
         TacticalGraphicLabel bottomLabel = labelIterator.next();
 
+        Iterable<? extends Position> positions = this.getPositions();
+
         // Determine if there are more labels. If there are, position this pair 25% of the way along the path. Otherwise
         // put the labels 50% along the path.
         double fraction = labelIterator.hasNext() ? 0.25 : 0.5;
         double dist = pathLength * fraction;
-        this.placeLabels(dc, topLabel, bottomLabel, dist);
+        TacticalGraphicUtil.placeLabelsOnPath(dc, positions, topLabel, bottomLabel, dist);
 
         // If there are more labels it will be a second top/bottom pair. (Note that CFL graphic has only one top/bottom pair.)
         if (labelIterator.hasNext())
@@ -340,62 +342,7 @@ public class FireSupportLine extends MilStd2525TacticalGraphic
             bottomLabel = labelIterator.next();
 
             dist = pathLength * 0.75;
-            this.placeLabels(dc, topLabel, bottomLabel, dist);
-        }
-    }
-
-    /**
-     * Position one or two labels some distance along the path. Top and bottom labels are often positioned above and
-     * below the same point, so this method supports positioning a pair of labels at the same point. The label offsets
-     * determine if the label draws above the line or below the line.
-     *
-     * @param dc             Current draw context.
-     * @param topLabel       First label to position.
-     * @param bottomLabel    Second label to position. (May be null.)
-     * @param targetDistance Distance along the path at which to position the labels.
-     */
-    protected void placeLabels(DrawContext dc, TacticalGraphicLabel topLabel, TacticalGraphicLabel bottomLabel,
-        double targetDistance)
-    {
-        Iterator<? extends Position> iterator = this.getPositions().iterator();
-        Globe globe = dc.getGlobe();
-
-        Position pos1 = null;
-        Position pos2;
-        Vec4 pt1, pt2;
-
-        double length = 0;
-        double thisDistance = 0;
-
-        pos2 = iterator.next();
-        pt2 = globe.computePointFromPosition(pos2);
-
-        while (iterator.hasNext() && length < targetDistance)
-        {
-            pos1 = pos2;
-            pt1 = pt2;
-
-            pos2 = iterator.next();
-            pt2 = globe.computePointFromLocation(pos2);
-
-            thisDistance = pt2.distanceTo2(pt1);
-            length += thisDistance;
-        }
-
-        if (pos1 != null && pos2 != null && thisDistance > 0)
-        {
-            double delta = length - targetDistance;
-            LatLon ll = LatLon.interpolateGreatCircle(delta / thisDistance, pos1, pos2);
-            pos1 = new Position(ll, 0);
-
-            topLabel.setPosition(pos1);
-            topLabel.setOrientationPosition(pos2);
-
-            if (bottomLabel != null)
-            {
-                bottomLabel.setPosition(pos1);
-                bottomLabel.setOrientationPosition(pos2);
-            }
+            TacticalGraphicUtil.placeLabelsOnPath(dc, positions, topLabel, bottomLabel, dist);
         }
     }
 

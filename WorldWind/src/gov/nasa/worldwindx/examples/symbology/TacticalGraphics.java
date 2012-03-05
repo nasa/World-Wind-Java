@@ -404,8 +404,19 @@ public class TacticalGraphics extends ApplicationTemplate
                 Position.fromDegrees(35.3401, -117.6356),
                 Position.fromDegrees(35.3723, -117.5290),
                 Position.fromDegrees(35.3776, -117.4182));
-            graphic = factory.createGraphic("GPGPGLF-------X", positions, null);
+            graphic = factory.createGraphic("GFGPGLF-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Forward Line of Own Troops (2.X.2.1.2.2)");
+            layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Direction of Attack, Aviation (2.X.2.5.2.2.1)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.0765, -118.2397),
+                Position.fromDegrees(35.1143, -118.0609));
+            graphic = factory.createGraphic("GHGPOLKA------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Attack, Aviation (2.X.2.5.2.2.1)");
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer

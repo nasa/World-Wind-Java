@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.lines;
 
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -65,13 +66,15 @@ public class MunitionFlightPath extends FireSupportLine
         Object[] pathData = this.computePathLength(dc);
         double pathLength = (Double) pathData[2];
 
+        Iterable<? extends Position> positions = this.getPositions();
+
         TacticalGraphicLabel label = this.labels.get(0);
-        this.placeLabels(dc, label, null, pathLength * 0.5);
+        TacticalGraphicUtil.placeLabelsOnPath(dc, positions, label, null, pathLength * 0.5);
 
         if (this.labels.size() > 1)
         {
             label = this.labels.get(1);
-            this.placeLabels(dc, label, null, pathLength * 0.25);
+            TacticalGraphicUtil.placeLabelsOnPath(dc, positions, label, null, pathLength * 0.25);
         }
     }
 

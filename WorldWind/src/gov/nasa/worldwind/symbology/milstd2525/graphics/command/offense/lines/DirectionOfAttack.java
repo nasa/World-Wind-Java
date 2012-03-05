@@ -257,18 +257,30 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
         this.paths[0] = this.createPath(Arrays.asList(this.startPosition, this.endPosition));
 
         // Create the arrowhead
-        List<Position> positions = this.computeArrowheadPositions(dc);
+
+        Globe globe = dc.getGlobe();
+        Vec4 p1 = globe.computePointFromPosition(this.startPosition);
+        Vec4 p2 = globe.computePointFromPosition(this.endPosition);
+
+        // Find vector in the direction of the arrow
+        Vec4 v21 = p1.subtract3(p2);
+
+        List<Position> positions = this.computeArrowheadPositions(dc, p2, v21, v21.getLength3());
         this.paths[1] = createPath(positions);
     }
 
     /**
      * Determine the positions that make up the arrowhead.
      *
-     * @param dc Current draw context.
+     * @param dc     Current draw context.
+     * @param tip    Point at the tip of the arrow head.
+     * @param dir    Vector in the direction of the arrow head.
+     * @param length Total length of the arrow graphic. The size of the arrow head is computed from this based on the
+     *               {@link #getArrowLength() arrowLength} field.
      *
      * @return Positions that define the arrowhead.
      */
-    protected List<Position> computeArrowheadPositions(DrawContext dc)
+    protected List<Position> computeArrowheadPositions(DrawContext dc, Vec4 tip, Vec4 dir, double length)
     {
         Globe globe = dc.getGlobe();
 
@@ -287,30 +299,27 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
         //         | |
         //      Length
 
-        Vec4 p1 = globe.computePointFromPosition(this.startPosition);
-        Vec4 pB = globe.computePointFromPosition(this.endPosition);
-
-        // Find vector in the direction of the arrow
-        Vec4 vB1 = p1.subtract3(pB);
+        @SuppressWarnings({"UnnecessaryLocalVariable"})
+        Vec4 ptB = tip;
 
         double arrowLengthFraction = this.getArrowLength();
 
         // Find the point at the base of the arrowhead
-        Vec4 arrowBase = pB.add3(vB1.multiply3(arrowLengthFraction));
+        Vec4 arrowBase = ptB.add3(dir.multiply3(arrowLengthFraction));
 
         Vec4 normal = globe.computeSurfaceNormalAtPoint(arrowBase);
 
         // Compute the length of the arrowhead
-        double arrowLength = vB1.getLength3() * arrowLengthFraction;
+        double arrowLength = length * arrowLengthFraction;
         double arrowHalfWidth = arrowLength * this.getArrowAngle().tanHalfAngle();
 
         // Compute a vector perpendicular to the segment and the normal vector
-        Vec4 perpendicular = vB1.cross3(normal);
+        Vec4 perpendicular = dir.cross3(normal);
         perpendicular = perpendicular.normalize3().multiply3(arrowHalfWidth);
 
         // Find points A and C
-        Vec4 pA = arrowBase.add3(perpendicular);
-        Vec4 pC = arrowBase.subtract3(perpendicular);
+        Vec4 ptA = arrowBase.add3(perpendicular);
+        Vec4 ptC = arrowBase.subtract3(perpendicular);
 
         List<Position> positions;
         if (this.isDrawOutlined())
@@ -319,16 +328,16 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
 
             // Find points D and F
             perpendicular = perpendicular.multiply3(1 + outlineWidth);
-            Vec4 pF = arrowBase.add3(perpendicular);
-            Vec4 pD = arrowBase.subtract3(perpendicular);
+            Vec4 ptF = arrowBase.add3(perpendicular);
+            Vec4 ptD = arrowBase.subtract3(perpendicular);
 
-            Vec4 pE = pB.add3(vB1.normalize3().multiply3(-arrowLength * outlineWidth));
+            Vec4 ptE = ptB.add3(dir.normalize3().multiply3(-arrowLength * outlineWidth));
 
-            positions = TacticalGraphicUtil.asPositionList(globe, pA, pB, pC, pD, pE, pF, pA);
+            positions = TacticalGraphicUtil.asPositionList(globe, ptA, ptB, ptC, ptD, ptE, ptF, ptA);
         }
         else
         {
-            positions = TacticalGraphicUtil.asPositionList(globe, pA, pB, pC);
+            positions = TacticalGraphicUtil.asPositionList(globe, ptA, ptB, ptC);
         }
 
         return positions;
