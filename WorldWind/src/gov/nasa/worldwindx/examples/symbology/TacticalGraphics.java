@@ -9,6 +9,7 @@ package gov.nasa.worldwindx.examples.symbology;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -305,8 +306,8 @@ public class TacticalGraphics extends ApplicationTemplate
             ///////////////////////////////////////////////////
 
             positions = Arrays.asList(
-                Position.fromDegrees(35.0459, -117.5633),
-                Position.fromDegrees(35.0459, -117.3795));
+                Position.fromDegrees(35.0459, -117.3795),
+                Position.fromDegrees(35.0459, -117.5633));
             graphic = factory.createGraphic("GFGPOLKGM-----X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Main Attack (2.X.2.5.2.2.2.1)");
             layer.addRenderable(graphic);
@@ -353,7 +354,7 @@ public class TacticalGraphics extends ApplicationTemplate
             positions = Arrays.asList(
                 Position.fromDegrees(35.2829, -117.5900),
                 Position.fromDegrees(35.2990, -117.3727));
-                graphic = factory.createGraphic("GFGPGLC-------X", positions, null);
+            graphic = factory.createGraphic("GFGPGLC-------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Line of Contact (2.X.2.1.2.3)");
             layer.addRenderable(graphic);
 
@@ -413,8 +414,8 @@ public class TacticalGraphics extends ApplicationTemplate
             ///////////////////////////////////////////////////
 
             positions = Arrays.asList(
-                Position.fromDegrees(35.0765, -118.2397),
-                Position.fromDegrees(35.1143, -118.0609));
+                Position.fromDegrees(35.1143, -118.0609),
+                Position.fromDegrees(35.0765, -118.2397));
             graphic = factory.createGraphic("GHGPOLKA------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Attack, Aviation (2.X.2.5.2.2.1)");
             layer.addRenderable(graphic);

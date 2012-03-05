@@ -182,8 +182,8 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
         try
         {
             Iterator<? extends Position> iterator = positions.iterator();
-            this.startPosition = iterator.next();
             this.endPosition = iterator.next();
+            this.startPosition = iterator.next();
         }
         catch (NoSuchElementException e)
         {
@@ -198,7 +198,7 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
     /** {@inheritDoc} */
     public Iterable<? extends Position> getPositions()
     {
-        return Arrays.asList(this.startPosition, this.endPosition);
+        return Arrays.asList(this.endPosition, this.startPosition);
     }
 
     /** {@inheritDoc} */
