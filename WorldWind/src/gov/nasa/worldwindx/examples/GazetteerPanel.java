@@ -197,7 +197,6 @@ public class GazetteerPanel extends JPanel
     Coordinate formats:
     39.53, -119.816  (Reno, NV)
     21 10 14 N, 86 51 0 W (Cancun)
-    -31¡ 59' 43", 115¡ 45' 32" (Perth)
      */
     private java.util.List<PointOfInterest> parseSearchValues(String searchStr)
     {

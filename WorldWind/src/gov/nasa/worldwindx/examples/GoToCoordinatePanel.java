@@ -39,8 +39,6 @@ import java.util.regex.*;
  * +45.1234, -123.12
  * 45.1234N 123.12W
  *
- * 45° 30' 00"N, 50° 30'W
- * 45°30' -50°30'
  * 45 30 N 50 30 W
  * </pre>
  * </p>
@@ -214,8 +212,8 @@ public class GoToCoordinatePanel extends JPanel
 
         // Try to extract two degrees minute seconds blocks separated by a space, ',' or ', '
         // Allow S, N, W, E suffixes and signs.
-        // eg: -123° 34' 42" +45° 12' 30"
-        // eg: 123° 34' 42"S 45° 12' 30"W
+        // eg: -123ï¿½ 34' 42" +45ï¿½ 12' 30"
+        // eg: 123ï¿½ 34' 42"S 45ï¿½ 12' 30"W
         if (lat == null || lon == null)
         {
             regex = "([-|\\+]?\\d{1,3}[d|D|\u00B0|\\s](\\s*\\d{1,2}['|\u2019|\\s])?(\\s*\\d{1,2}[\"|\u201d])?\\s*[N|n|S|s]?)";

@@ -94,11 +94,11 @@ public class InstallImageryAndElevationsDemo extends ApplicationTemplate
     public static class InstalledDataFrame extends JFrame
     {
         public static final String TOOLTIP_FULL_PYRAMID =
-            "Installing a full pyramid takes longer and consumes more space on the user’s hard drive, "
+            "Installing a full pyramid takes longer and consumes more space on the user's hard drive, "
                 + "but has the best runtime performance, which is important for World Wind Server";
 
         public static final String TOOLTIP_PARTIAL_PYRAMID =
-            "Installing a partial pyramid takes less time and consumes less space on the user’s hard drive"
+            "Installing a partial pyramid takes less time and consumes less space on the user's hard drive"
                 + "but requires that the original data not be moved or deleted";
 
         protected FileStore fileStore;

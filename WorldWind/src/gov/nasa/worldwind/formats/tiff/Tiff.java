@@ -203,7 +203,7 @@ public interface Tiff
         public static final int CHUNKY = 1;
 
         // PLANAR
-        // The components are stored in separate Òcomponent planes.Ó
+        // The components are stored in separate component planes.
         // The values in StripOffsets and StripByteCounts are then arranged as
         // a 2-dimensional array, with SamplesPerPixel rows and StripsPerImage columns.
         // (All of the columns for row 0 are stored first, followed by the columns of row 1, and so on.)
