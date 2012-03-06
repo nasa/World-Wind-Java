@@ -9,7 +9,6 @@ package gov.nasa.worldwindx.examples.symbology;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -418,6 +417,19 @@ public class TacticalGraphics extends ApplicationTemplate
                 Position.fromDegrees(35.0765, -118.2397));
             graphic = factory.createGraphic("GHGPOLKA------X", positions, null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Attack, Aviation (2.X.2.5.2.2.1)");
+            layer.addRenderable(graphic);
+
+            ///////////////////////////////////////////////////
+            // Infiltration Lane (2.X.2.5.2.4)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.2678, -118.0194),
+                Position.fromDegrees(35.1504, -118.1822),
+                Position.fromDegrees(35.2402, -118.0716));
+            graphic = factory.createGraphic("GFGPOLI-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Infiltration Lane (2.X.2.5.2.4)");
+            graphic.setText("CHARLIE");
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer
