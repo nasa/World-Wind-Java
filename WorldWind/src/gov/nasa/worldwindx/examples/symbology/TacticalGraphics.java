@@ -432,6 +432,20 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setText("CHARLIE");
             layer.addRenderable(graphic);
 
+            ///////////////////////////////////////////////////
+            // Axis of Advance for Feint (2.X.2.3.2)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.6377, -118.0770),
+                Position.fromDegrees(34.6413, -118.1572),
+                Position.fromDegrees(34.6808, -118.2100),
+                Position.fromDegrees(34.6547, -118.0988));
+            graphic = factory.createGraphic("GFGPPA--------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Axis of Advance for Feint (2.X.2.3.2)");
+            graphic.setText("GREEN");
+            layer.addRenderable(graphic);
+
             // Apply shared attributes to all graphics on this layer
             this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
