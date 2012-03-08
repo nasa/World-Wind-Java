@@ -304,7 +304,7 @@ public class Angle implements Comparable<Angle>
      *
      * @param angle the angle to subtract from this angle.
      *
-     * @return a new angle correpsonding to this angle's size minus angle's size.
+     * @return a new angle corresponding to this angle's size minus angle's size.
      *
      * @throws IllegalArgumentException if angle is null.
      */
@@ -661,7 +661,7 @@ public class Angle implements Comparable<Angle>
         }
 
         // A segment cross the line if end pos have different longitude signs
-        // and are more than 180 degress longitude apart
+        // and are more than 180 degrees longitude apart
         return (Math.signum(angleA.degrees) != Math.signum(angleB.degrees))
             && (Math.abs(angleA.degrees - angleB.degrees) > 180);
     }
@@ -719,8 +719,8 @@ public class Angle implements Comparable<Angle>
     }
 
     /**
-     * Obtains a {@link String} representation of this {@link Angle} formated as degrees, minutes and seconds
-     * integer values.
+     * Obtains a {@link String} representation of this {@link Angle} formatted as degrees, minutes and seconds integer
+     * values.
      *
      * @return the value of this angle in degrees, minutes, seconds as a string.
      */
