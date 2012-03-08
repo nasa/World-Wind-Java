@@ -446,6 +446,19 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setText("GREEN");
             layer.addRenderable(graphic);
 
+            ///////////////////////////////////////////////////
+            // Holding Line (2.X.2.6.1.2)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.1184, -118.4377),
+                Position.fromDegrees(35.0339, -118.4318),
+                Position.fromDegrees(35.0843, -118.3376));
+            graphic = factory.createGraphic("GFGPSLH-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Holding Line (2.X.2.6.1.2)");
+            graphic.setText("ALPHA");
+            layer.addRenderable(graphic);
+
             // Apply shared attributes to all graphics on this layer
             this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
