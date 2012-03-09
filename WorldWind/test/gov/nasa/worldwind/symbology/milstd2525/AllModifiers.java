@@ -11,7 +11,6 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.symbology.TacticalSymbol;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
@@ -193,7 +192,6 @@ public class AllModifiers extends ApplicationTemplate
         "EL", /* TF Army Group/Front */
         "EM", /* TF Region */
         "EN", /* TF Command */
-        "F-", /* Feint Dummy (FD) */
         "FA", /* FD Team/Crew */
         "FB", /* FD Squad */
         "FC", /* FD Section */
@@ -222,6 +220,7 @@ public class AllModifiers extends ApplicationTemplate
         "GL", /* FD/TF Army Group/Front */
         "GM", /* FD/TF Region */
         "GN", /* FD/TF Command */
+        "H-", /* Feint Dummy Installation */
 //        "HB", /* Feint Dummy Installation */ // TODO not implemented yet
         "MO", /* Mobility Wheeled/Limited Cross Country */
         "MP", /* Mobility Cross Country */
