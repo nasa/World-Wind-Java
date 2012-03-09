@@ -4,9 +4,8 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology;
+package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import junit.framework.TestCase;
 

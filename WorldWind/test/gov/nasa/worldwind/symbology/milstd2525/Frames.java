@@ -4,12 +4,13 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology;
+package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
@@ -21,7 +22,7 @@ import java.util.*;
  * @author ccrick
  * @version $Id: Symbology.java 132 2011-10-25 18:47:52Z ccrick $
  */
-public class MilStd2525Frames extends ApplicationTemplate
+public class Frames extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {

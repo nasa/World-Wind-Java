@@ -4,11 +4,11 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology;
+package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.IconRetriever;
 import junit.framework.TestCase;
 
 import java.awt.image.*;
@@ -17,7 +17,7 @@ import java.awt.image.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class MilStd2525PointGraphicRetrievalTest extends TestCase
+public class PointGraphicRetrievalTest extends TestCase
 {
     // This path should correspond to the location of the appropriate symbology source icons on your system
     private final static String ICON_RETRIEVER_PATH = Configuration.getStringValue(
@@ -188,6 +188,6 @@ public class MilStd2525PointGraphicRetrievalTest extends TestCase
 
     public static void main(String[] args)
     {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(MilStd2525PointGraphicRetrievalTest.class));
+        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(PointGraphicRetrievalTest.class));
     }
 }

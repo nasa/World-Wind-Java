@@ -3,12 +3,13 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-package gov.nasa.worldwind.symbology;
+package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
@@ -21,7 +22,7 @@ import java.util.List;
  * @author dcollins
  * @version $Id$
  */
-public class MilStd2525AllTacticalSymbols extends ApplicationTemplate
+public class AllTacticalSymbols extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {

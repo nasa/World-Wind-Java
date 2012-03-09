@@ -4,17 +4,18 @@
  * All Rights Reserved.
  */
 
-package gov.nasa.worldwind.symbology;
+package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.symbology.IconRetriever;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import junit.framework.*;
 import junit.textui.TestRunner;
 
 import java.awt.image.*;
 
-public class MilStd2525IconRetrievalTest
+public class IconRetrievalTest
 {
     // TODO: test all possible values for Standard Identity and Status
     // TODO: test unframed icons
