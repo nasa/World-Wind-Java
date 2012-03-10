@@ -336,11 +336,11 @@ public interface MetocSidc
     final String AMPHC_STOG_WSMIC_LDSNLH = "WAS-GSSLL-P----";
     /** Loose dry snow covering at least one-half ground, but ground not completely covered. */
     final String AMPHC_STOG_WSMIC_LDSALH = "WAS-GSSLH-P----";
-    /** = "Even layer of loose dry snow covering ground completely. */
+    /** Even layer of loose dry snow covering ground completely. */
     final String AMPHC_STOG_WSMIC_ELDSCG = "WAS-GSSLCEP----";
-    /** Uneven = "layer of loose dry snow covering ground completely. */
+    /** Uneven layer of loose dry snow covering ground completely. */
     final String AMPHC_STOG_WSMIC_ULDSCG = "WAS-GSSLCUP----";
-    /** Snow covering = "ground completely; deep drifts. */
+    /** Snow covering ground completely; deep drifts. */
     final String AMPHC_STOG_WSMIC_SCGC = "WAS-GSSDC-P----";
     /** Icebergs. */
     final String OCA_ISYS_IB = "WOS-IB----P----";
@@ -394,9 +394,9 @@ public interface MetocSidc
     final String OCA_ISYS_LMT_LORO = "WO-DILOR---L---";
     /** Observed ice edge or boundary. */
     final String OCA_ISYS_LMT_OIEOB = "WO-DILIEO--L---";
-    /** Estimated = "ice edge or boundary. */
+    /** Estimated ice edge or boundary. */
     final String OCA_ISYS_LMT_EIEOB = "WO-DILIEE--L---";
-    /** Ice edge or boundary = from radar. */
+    /** Ice edge or boundary from radar. */
     final String OCA_ISYS_LMT_IEOBFR = "WO-DILIER--L---";
     /** Openings in the ice, cracks. */
     final String OCA_ISYS_OITI_CRK = "WO-DIOC----L---";
@@ -406,9 +406,9 @@ public interface MetocSidc
     final String OCA_ISYS_OITI_LED = "WO-DIOL----L---";
     /** Frozen lead. */
     final String OCA_ISYS_OITI_FZLED = "WO-DIOLF---L---";
-    /** Snow = "cover. */
+    /** Snow cover. */
     final String OCA_ISYS_SC = "WOS-ISC---P----";
-    /** Sastrugi = "(with orientation). */
+    /** Sastrugi (with orientation). */
     final String OCA_ISYS_SC_SWO = "WOS-ISS---P----";
     /** Ridges or hummocks. */
     final String OCA_ISYS_TOPFTR_HUM = "WOS-ITRH--P----";
@@ -508,7 +508,7 @@ public interface MetocSidc
     final String OCA_HYDGRY_DANHAZ_RCKSBM = "WOS-HHRS--P----";
     /** Rock awashed. */
     final String OCA_HYDGRY_DANHAZ_RCKAWD = "WOS-HHRA--P----";
-    /** = "Underwater danger/hazard. */
+    /** Underwater danger/hazard. */
     final String OCA_HYDGRY_DANHAZ_UH2DAN = "WO-DHHD-----A--";
     /** Foul ground. */
     final String OCA_HYDGRY_DANHAZ_FLGRD1_FLGRD2 = "WOS-HHDF--P----";
@@ -628,7 +628,7 @@ public interface MetocSidc
     final String OCA_GPHY_MNEWBD_MIWBS_COBLOS = "WO-DGMS-CO--A--";
     /** Pebbles, shells. */
     final String OCA_GPHY_MNEWBD_MIWBS_PBLSHE = "WO-DGMS-PH--A--";
-    /** = "Sand and shells. */
+    /** Sand and shells. */
     final String OCA_GPHY_MNEWBD_MIWBS_SD_SHE = "WO-DGMS-SH--A--";
     /** Miw-bottom sediments, land. */
     final String OCA_GPHY_MNEWBD_MIWBS_LND = "WO-DGML-----A--";
