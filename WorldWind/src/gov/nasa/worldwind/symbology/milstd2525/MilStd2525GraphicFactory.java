@@ -22,7 +22,7 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.command.special.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.areas.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.firesupport.lines.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.mobility.MinimumSafeDistanceZones;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.mobility.*;
 import gov.nasa.worldwind.util.Logging;
 
 import java.lang.reflect.Constructor;
@@ -93,6 +93,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
 
         this.mapClass(MinimumSafeDistanceZones.class, MinimumSafeDistanceZones.getSupportedGraphics());
         this.mapClass(FilledArea.class, FilledArea.getSupportedGraphics());
+        this.mapClass(DoseRateContourLine.class, DoseRateContourLine.getSupportedGraphics());
 
         // Fire support
 

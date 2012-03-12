@@ -809,6 +809,45 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setValue(AVKey.DISPLAY_NAME, "Encirclement (2.X.2.6.2.3)");
             layer.addRenderable(graphic);
 
+            //////////////////////////////////////////////////////////////
+            // Dose Rate Contour Line (2.X.3.4.9)
+            //////////////////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(34.7710, -116.4909),
+                Position.fromDegrees(34.7764, -116.4720),
+                Position.fromDegrees(34.7790, -116.4210),
+                Position.fromDegrees(34.7509, -116.3918),
+                Position.fromDegrees(34.7285, -116.3810),
+                Position.fromDegrees(34.7066, -116.3831),
+                Position.fromDegrees(34.6787, -116.4378),
+                Position.fromDegrees(34.6850, -116.4900),
+                Position.fromDegrees(34.7063, -116.5192),
+                Position.fromDegrees(34.7330, -116.5170));
+
+            graphic = factory.createGraphic("GFMPNL--------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Dose Rate Contour Line (2.X.3.4.9)");
+            graphic.setText("100 cGY");
+            layer.addRenderable(graphic);
+
+            // Create a second contour line inside the first.
+            positions = Arrays.asList(
+                Position.fromDegrees(34.7504, -116.4800),
+                Position.fromDegrees(34.7552, -116.4637),
+                Position.fromDegrees(34.7556, -116.4283),
+                Position.fromDegrees(34.7469, -116.4137),
+                Position.fromDegrees(34.7259, -116.4129),
+                Position.fromDegrees(34.7091, -116.4138),
+                Position.fromDegrees(34.7053, -116.4280),
+                Position.fromDegrees(34.7073, -116.4634),
+                Position.fromDegrees(34.7149, -116.4891),
+                Position.fromDegrees(34.7314, -116.4908));
+
+            graphic = factory.createGraphic("GFMPNL--------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Dose Rate Contour Line (2.X.3.4.9)");
+            graphic.setText("300 cGY");
+            layer.addRenderable(graphic);
+
             // Apply shared attributes to all graphics on this layer
             this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
