@@ -428,8 +428,10 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
         List<String> graphics = new ArrayList<String>();
         graphics.addAll(getTacGrpGraphics());
         graphics.addAll(getMetocGraphics());
+        graphics.addAll(getEmsGraphics());
         return graphics;
     }
+
     /**
      * Indicates the graphics in MIL-STD-2525C Appendix B supported by this class.
      *
@@ -830,6 +832,27 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
             MetocSidc.OCA_MMD_LCK,
             MetocSidc.OCA_MMD_OLRG,
             MetocSidc.OCA_MMD_PLE
+        );
+    }
+
+    public static List<String> getEmsGraphics()
+    {
+        return Arrays.asList(
+            EmsSidc.NATEVT_GEO_AFTSHK,
+            EmsSidc.NATEVT_GEO_AVL,
+            EmsSidc.NATEVT_GEO_EQKEPI,
+            EmsSidc.NATEVT_GEO_LNDSLD,
+            EmsSidc.NATEVT_GEO_SBSDNC,
+            EmsSidc.NATEVT_GEO_VLCTHT,
+            EmsSidc.NATEVT_HYDMET_DRGHT,
+            EmsSidc.NATEVT_HYDMET_FLD,
+            EmsSidc.NATEVT_HYDMET_INV,
+            EmsSidc.NATEVT_HYDMET_TSNMI,
+            EmsSidc.NATEVT_INFST_BIRD,
+            EmsSidc.NATEVT_INFST_INSCT,
+            EmsSidc.NATEVT_INFST_MICROB,
+            EmsSidc.NATEVT_INFST_REPT,
+            EmsSidc.NATEVT_INFST_RDNT
         );
     }
 }

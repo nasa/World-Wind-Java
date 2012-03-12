@@ -157,7 +157,22 @@ public class DefaultOffsets
             OTH_SSUBSR_BTMRTN,
             OTH_SSUBSR_BTMRTN_INS,
             OTH_SSUBSR_BTMRTN_SBRSOO,
-            OTH_SSUBSR_SA);
+            OTH_SSUBSR_SA,
+
+            EmsSidc.NATEVT_GEO_AVL,
+            EmsSidc.NATEVT_GEO_LNDSLD,
+            EmsSidc.NATEVT_GEO_SBSDNC,
+            EmsSidc.NATEVT_GEO_VLCTHT,
+            EmsSidc.NATEVT_HYDMET_DRGHT,
+            EmsSidc.NATEVT_HYDMET_FLD,
+            EmsSidc.NATEVT_HYDMET_INV,
+            EmsSidc.NATEVT_HYDMET_TSNMI,
+            EmsSidc.NATEVT_INFST_BIRD,
+            EmsSidc.NATEVT_INFST_INSCT,
+            EmsSidc.NATEVT_INFST_MICROB,
+            EmsSidc.NATEVT_INFST_REPT,
+            EmsSidc.NATEVT_INFST_RDNT
+        );
 
         // Sonobouy and a few other graphics are anchored a point 25% up from the bottom edge.
         this.putAll(OFFSET_BOTTOM_QUARTER,

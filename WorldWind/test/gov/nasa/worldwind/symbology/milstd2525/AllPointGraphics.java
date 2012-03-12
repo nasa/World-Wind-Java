@@ -12,7 +12,6 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525PointGraphic;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
@@ -36,6 +35,7 @@ public class AllPointGraphics extends ApplicationTemplate
     {
         protected RenderableLayer tacgrpLayer;
         protected RenderableLayer metocLayer;
+        protected RenderableLayer emsLayer;
 
         protected TacticalGraphicAttributes sharedAttrs;
         protected TacticalGraphicAttributes sharedHighlightAttrs;
@@ -51,16 +51,22 @@ public class AllPointGraphics extends ApplicationTemplate
             this.metocLayer.setName("METOC (Appendix C)");
             this.metocLayer.setEnabled(false);
 
+            this.emsLayer = new RenderableLayer();
+            this.emsLayer.setName("Emergency Management (Appendix G)");
+            this.emsLayer.setEnabled(false);
+
             this.sharedAttrs = new BasicTacticalGraphicAttributes();
             this.sharedHighlightAttrs = new BasicTacticalGraphicAttributes();
             this.sharedHighlightAttrs.setInteriorMaterial(Material.WHITE);
 
             this.createTacGrpPoints(this.tacgrpLayer);
             this.createMetocPoints(this.metocLayer);
+            this.createEmsPoints(this.emsLayer);
 
             WorldWindow wwd = this.getWwd();
             insertBeforePlacenames(wwd, this.tacgrpLayer);
             insertBeforePlacenames(wwd, this.metocLayer);
+            insertBeforePlacenames(wwd, this.emsLayer);
             this.getLayerPanel().update(this.getWwd());
 
             this.addGraphicControls();
@@ -160,6 +166,49 @@ public class AllPointGraphics extends ApplicationTemplate
 //                graphic.setHighlightAttributes(this.sharedHighlightAttrs);
 
                 graphic.setValue(AVKey.DISPLAY_NAME, sidc);
+
+                layer.addRenderable(graphic);
+
+                if ((i + 1) % cols == 0)
+                {
+                    latitude -= delta;
+                    longitude = startLon;
+                }
+                else
+                {
+                    longitude += delta;
+                }
+            }
+        }
+
+        protected void createEmsPoints(RenderableLayer layer)
+        {
+            List<String> allGraphics = MilStd2525PointGraphic.getEmsGraphics();
+            int numGraphics = allGraphics.size();
+            int cols = (int) Math.sqrt(numGraphics * 2);
+
+            double startLon = -118.5439;
+
+            double latitude = 43.3464;
+            double longitude = startLon;
+            double delta = 0.02;
+
+            for (int i = 0; i < numGraphics; i++)
+            {
+                Position pos = Position.fromDegrees(latitude, longitude, 0);
+
+                StringBuilder sidc = new StringBuilder(allGraphics.get(i));
+
+                sidc.setCharAt(1, 'F'); // Standard identify: Friend
+                sidc.setCharAt(3, 'A');
+
+                TacticalPoint graphic = new MilStd2525PointGraphic(sidc.toString());
+                graphic.setPosition(pos);
+
+                graphic.setAttributes(this.sharedAttrs);
+                graphic.setHighlightAttributes(this.sharedHighlightAttrs);
+
+                graphic.setValue(AVKey.DISPLAY_NAME, sidc.toString());
 
                 layer.addRenderable(graphic);
 
