@@ -848,6 +848,32 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setText("300 cGY");
             layer.addRenderable(graphic);
 
+            //////////////////////////////////////////////////////////////
+            // Limited Access Area (2.X.2.1.3.10)
+            //////////////////////////////////////////////////////////////
+
+            // Create the area part of the graphic. This can be any type of area graphic. Here we use a General Area.
+            positions = Arrays.asList(
+                Position.fromDegrees(35.1421, -116.5798),
+                Position.fromDegrees(35.0979, -116.5971),
+                Position.fromDegrees(35.0934, -116.4595),
+                Position.fromDegrees(35.1570, -116.4832));
+            graphic = factory.createGraphic("GFGPGAG-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "General Area (2.X.2.1.3.1)");
+            graphic.setText("CHEM");
+            layer.addRenderable(graphic);
+
+            // Now create a pentagon associated with the area. The first position specifies the position of the pentagon,
+            // and the second position specifies the end point of the line that connects the pentagon to the area.
+            positions = Arrays.asList(
+                Position.fromDegrees(35.1612, -116.4304),
+                Position.fromDegrees(35.1358, -116.4955));
+
+            graphic = factory.createGraphic("GFGPGAY-------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Limited Access Area (2.X.2.1.3.10)");
+            graphic.setModifier(SymbologyConstants.SYMBOL_INDICATOR, "SFGPUCI--------");
+            layer.addRenderable(graphic);
+
             // Apply shared attributes to all graphics on this layer
             this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }
