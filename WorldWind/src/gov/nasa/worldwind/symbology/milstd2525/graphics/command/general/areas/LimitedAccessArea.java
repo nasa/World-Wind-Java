@@ -241,7 +241,6 @@ public class LimitedAccessArea extends MilStd2525TacticalGraphic
         {
             ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
             this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
-            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
             this.symbolAttributes.setScale(this.activeOverrides.getScale());
         }
     }

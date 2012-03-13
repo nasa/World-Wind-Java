@@ -37,6 +37,8 @@ public class Boundary extends PhaseLine
 
     /** Tactical symbols used to render the echelon modifiers. */
     protected List<EchelonSymbol> echelonSymbols = Collections.emptyList();
+    /** Attribute bundle for the echelon symbols. */
+    protected TacticalSymbolAttributes symbolAttributes;
 
     // Determined when labels are created
     /** Indicates whether or not there are labels above the boundary line. */
@@ -332,6 +334,20 @@ public class Boundary extends PhaseLine
         return BOTTOM_LABEL_OFFSET;
     }
 
+    /** {@inheritDoc} Overridden to update echelon symbol attributes. */
+    @Override
+    protected void determineActiveAttributes()
+    {
+        super.determineActiveAttributes();
+
+        // Apply active attributes to the symbol.
+        if (this.symbolAttributes != null)
+        {
+            ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
+            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+        }
+    }
+
     /**
      * Create a tactical symbol to render the echelon modifier.
      *
@@ -341,6 +357,12 @@ public class Boundary extends PhaseLine
      */
     protected EchelonSymbol createEchelonSymbol(String sidc)
     {
-        return new EchelonSymbol(sidc);
+        EchelonSymbol symbol = new EchelonSymbol(sidc);
+
+        if (this.symbolAttributes == null)
+            this.symbolAttributes = new BasicTacticalSymbolAttributes();
+        symbol.setAttributes(this.symbolAttributes);
+
+        return symbol;
     }
 }

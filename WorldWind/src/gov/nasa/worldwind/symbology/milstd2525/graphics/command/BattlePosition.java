@@ -8,7 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.TacticalSymbol;
+import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
@@ -34,6 +34,8 @@ public class BattlePosition extends BasicArea
 
     /** Tactical symbol used to render the echelon modifier. */
     protected TacticalSymbol echelonSymbol;
+    /** Attribute bundle for the echelon symbol. */
+    protected TacticalSymbolAttributes symbolAttributes;
 
     /**
      * Indicates the graphics supported by this class.
@@ -190,6 +192,20 @@ public class BattlePosition extends BasicArea
         }
     }
 
+    /** {@inheritDoc} Overridden to update echelon symbol attributes. */
+    @Override
+    protected void determineActiveAttributes()
+    {
+        super.determineActiveAttributes();
+
+        // Apply active attributes to the symbol.
+        if (this.symbolAttributes != null)
+        {
+            ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
+            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+        }
+    }
+
     /** {@inheritDoc} Overridden to apply delegate owner to echelon symbol. */
     @Override
     protected void applyDelegateOwner(Object owner)
@@ -210,6 +226,12 @@ public class BattlePosition extends BasicArea
      */
     protected TacticalSymbol createEchelonSymbol(String sidc)
     {
-        return new EchelonSymbol(sidc);
+        TacticalSymbol symbol = new EchelonSymbol(sidc);
+
+        if (this.symbolAttributes == null)
+            this.symbolAttributes = new BasicTacticalSymbolAttributes();
+        symbol.setAttributes(this.symbolAttributes);
+
+        return symbol;
     }
 }
