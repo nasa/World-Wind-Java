@@ -33,7 +33,7 @@ public interface RetrievalService extends WWObject
 
     public interface SSLExceptionListener
     {
-        void onException(Throwable e);
+        void onException(Throwable e, String path);
     }
 
     /**

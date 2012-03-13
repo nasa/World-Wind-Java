@@ -270,7 +270,7 @@ public final class BasicRetrievalService extends WWObjectImpl
                 else if (e.getCause() instanceof SSLHandshakeException)
                 {
                     if (sslExceptionListener != null)
-                        sslExceptionListener.onException(e.getCause());
+                        sslExceptionListener.onException(e.getCause(), task.getRetriever().getName());
                     else
                         Logging.logger().fine(message + " " + e.getCause().getLocalizedMessage());
                 }
