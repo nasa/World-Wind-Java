@@ -1046,7 +1046,7 @@ public class PointPlacemark extends WWObjectImpl
         else
         {
             Color pickColor = dc.getUniquePickColor();
-            pickCandidates.addPickableObject(pickColor.getRGB(), this, null);
+            pickCandidates.addPickableObject(pickColor.getRGB(), this, this.getPosition());
             dc.getGL().glColor3ub((byte) pickColor.getRed(), (byte) pickColor.getGreen(), (byte) pickColor.getBlue());
         }
     }
