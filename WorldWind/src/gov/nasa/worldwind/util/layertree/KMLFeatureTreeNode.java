@@ -78,10 +78,10 @@ public class KMLFeatureTreeNode extends BasicTreeNode
             throw new IllegalArgumentException(message);
         }
 
-        if (feature instanceof KMLAbstractContainer)
-            return new KMLContainerTreeNode((KMLAbstractContainer) feature);
-        else if (feature instanceof KMLNetworkLink)
+        if (feature instanceof KMLNetworkLink)
             return new KMLNetworkLinkTreeNode((KMLNetworkLink) feature);
+        else if (feature instanceof KMLAbstractContainer)
+            return new KMLContainerTreeNode((KMLAbstractContainer) feature);
         else
             return new KMLFeatureTreeNode(feature);
     }
