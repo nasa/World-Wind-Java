@@ -248,6 +248,16 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
 
         Position posN_prime = globe.computePositionFromPoint(pN_prime);
 
+        // Compute the scalar triple product of the vector 12, the normal vector, and a vector from the center line
+        // toward Pt. N to determine if the offset points to the left or the right of the control line.
+        double tripleProduct = offset.dot3(pN.subtract3(p1_prime));
+        if (tripleProduct < 0)
+        {
+            Position tmp = posN; // Swap N and N'
+            posN = posN_prime;
+            posN_prime = tmp;
+        }
+
         arrowHeadPositions.add(posN);
         arrowHeadPositions.add(pos1);
         arrowHeadPositions.add(posN_prime);
