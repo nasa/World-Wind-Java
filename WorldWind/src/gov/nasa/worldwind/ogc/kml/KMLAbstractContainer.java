@@ -181,7 +181,7 @@ public class KMLAbstractContainer extends KMLAbstractFeature
         // general overlay that is higher in the tree.
         for (KMLAbstractFeature feature : this.getFeatures())
         {
-            if (feature instanceof KMLAbstractContainer || feature instanceof KMLNetworkLink)
+            if (feature instanceof KMLAbstractContainer)
                 containers.add(feature);
             else
                 feature.preRender(tc, dc);
@@ -211,7 +211,7 @@ public class KMLAbstractContainer extends KMLAbstractFeature
         // general overlay that is higher in the tree.
         for (KMLAbstractFeature feature : this.getFeatures())
         {
-            if (feature instanceof KMLAbstractContainer || feature instanceof KMLNetworkLink)
+            if (feature instanceof KMLAbstractContainer)
                 containers.add(feature);
             else
                 feature.render(tc, dc);
