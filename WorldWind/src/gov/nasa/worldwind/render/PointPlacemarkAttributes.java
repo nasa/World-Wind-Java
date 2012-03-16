@@ -637,9 +637,9 @@ public class PointPlacemarkAttributes implements Exportable
             xmlWriter.writeAttribute("y", Double.toString(offset.getY()));
             xmlWriter.writeAttribute("xunits", offset.getXUnits());
             xmlWriter.writeAttribute("yunits", offset.getYUnits());
+            xmlWriter.writeEndElement(); // hotSpot
         }
 
-        xmlWriter.writeEndElement(); // hotSpot
         xmlWriter.writeEndElement(); // IconStyle
 
         // Label style
