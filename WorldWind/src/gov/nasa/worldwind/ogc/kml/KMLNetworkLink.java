@@ -241,6 +241,8 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
     @Override
     protected void doPreRender(KMLTraversalContext tc, DrawContext dc)
     {
+        super.doPreRender(tc, dc);
+
         if (this.mustRetrieveNetworkResource())
             this.requestResource(dc);
 
@@ -258,7 +260,7 @@ public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChan
     @Override
     protected void doRender(KMLTraversalContext tc, DrawContext dc)
     {
-        this.renderBalloon(tc, dc);
+        super.doRender(tc, dc);
 
         if (this.getNetworkResource() != null)
             this.getNetworkResource().render(tc, dc);
