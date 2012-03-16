@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.*;
  * @author tag
  * @version $Id$
  */
-public class KMLNetworkLink extends KMLAbstractFeature implements PropertyChangeListener
+public class KMLNetworkLink extends KMLAbstractContainer implements PropertyChangeListener
 {
     /** Indicates the network resource referenced by this <code>KMLNetworkLink</code>. Initially <code>null</code>. */
     protected AtomicReference<KMLRoot> networkResource = new AtomicReference<KMLRoot>();

@@ -6,7 +6,6 @@ package gov.nasa.worldwind.util.layertree;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.ogc.kml.*;
-import gov.nasa.worldwind.util.tree.TreeNode;
 
 import javax.swing.*;
 import java.beans.*;
@@ -21,7 +20,7 @@ import java.beans.*;
  * @author dcollins
  * @version $Id$
  */
-public class KMLNetworkLinkTreeNode extends KMLFeatureTreeNode
+public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode
 {
     /**
      * Creates a new <code>KMLNetworkLinkTreeNode</code> from the specified <code>networkLink</code>. The node's name is
@@ -134,17 +133,5 @@ public class KMLNetworkLinkTreeNode extends KMLFeatureTreeNode
         {
             this.addFeatureNode(kmlRoot.getFeature());
         }
-    }
-
-    /**
-     * Adds the a new <code>KMLFeatureTreeNode</code> created with the specified <code>feature</code> to this node.
-     *
-     * @param feature the KML feature to add.
-     */
-    protected void addFeatureNode(KMLAbstractFeature feature)
-    {
-        TreeNode featureNode = KMLFeatureTreeNode.fromKMLFeature(feature);
-        if (featureNode != null)
-            this.addChild(featureNode);
     }
 }
