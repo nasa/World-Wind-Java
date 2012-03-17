@@ -145,9 +145,11 @@ public class KMLBalloonTextDecoder extends BasicTextDecoder
             return this.getGeDirectionsText();
 
         // First look for a field in the Feature
-        String replacement = (String) feature.getField(pattern);
-        if (replacement != null)
-            return replacement;
+        Object replacement = feature.getField(pattern);
+        if (replacement instanceof KMLAbstractObject)
+            return ((KMLAbstractObject) replacement).getCharacters();
+        else if (replacement != null)
+            return replacement.toString();
 
         // Before searching data fields, split the pattern into name, field, and display name components
         String name;            // Name of data element or schema
