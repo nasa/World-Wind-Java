@@ -310,7 +310,7 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
             // Compute a vector perpendicular to segment BC, and the globe normal vector.
             Vec4 perpendicular = vBC.cross3(normal);
 
-            if (iterator.hasNext())
+            if (iterator.hasNext() && !Vec4.areColinear(pA, pB, pC))
             {
                 Vec4 vBA = pA.subtract3(pB);
 
