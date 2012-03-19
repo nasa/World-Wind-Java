@@ -1358,7 +1358,7 @@ public class WWIO
         if (suffix.startsWith("."))
             suffix = suffix.substring(1, suffix.length());
 
-        return suffixToMimeTypeMap.get(suffix);
+        return suffixToMimeTypeMap.get(suffix.toLowerCase());
     }
 
     protected static Map<String, String> mimeTypeToSuffixMap = new HashMap<String, String>();

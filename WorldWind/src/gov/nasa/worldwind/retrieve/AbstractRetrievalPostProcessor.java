@@ -187,8 +187,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (this.isWMSException())
             this.handleWMSExceptionContent();
 
-        else if (this.isPrimaryContentType("text")) // the buffer might contain error info, so log it
-            this.logTextBuffer(this.getRetriever().getBuffer());
+        else if (this.isPrimaryContentType("text", this.getRetriever().getContentType()))
+            this.logTextBuffer(this.getRetriever().getBuffer()); // the buffer might contain error info, so log it
     }
 
     /**
@@ -295,11 +295,8 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         return this;
     }
 
-    protected boolean isPrimaryContentType(String typeOfContent)
+    protected boolean isPrimaryContentType(String typeOfContent, String contentType)
     {
-        String contentType = this.getRetriever().getContentType();
-
-        //noinspection SimplifiableIfStatement
         if (WWUtil.isEmpty(contentType) || WWUtil.isEmpty(typeOfContent))
             return false;
 
@@ -310,7 +307,6 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
     {
         String contentType = this.getRetriever().getContentType();
 
-        //noinspection SimplifiableIfStatement
         if (WWUtil.isEmpty(contentType))
             return false;
 
@@ -331,8 +327,16 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         String contentType = this.getRetriever().getContentType();
         if (WWUtil.isEmpty(contentType))
         {
-            Logging.logger().severe(Logging.getMessage("nullValue.ContentTypeIsNullOrEmpty"));
-            return null;
+            // Try to determine the content type from the URL's suffix, if any.
+            String suffix = WWIO.getSuffix(this.getRetriever().getName().split(";")[0]);
+            if (!WWUtil.isEmpty(suffix))
+                contentType = WWIO.makeMimeTypeForSuffix(suffix);
+
+            if (WWUtil.isEmpty(contentType))
+            {
+                Logging.logger().severe(Logging.getMessage("nullValue.ContentTypeIsNullOrEmpty"));
+                return null;
+            }
         }
         contentType = contentType.trim().toLowerCase();
 
@@ -342,13 +346,13 @@ public abstract class AbstractRetrievalPostProcessor implements RetrievalPostPro
         if (contentType.contains("zip"))
             return this.handleZipContent();
 
-        if (this.isPrimaryContentType("text"))
+        if (this.isPrimaryContentType("text", contentType))
             return this.handleTextContent();
 
-        if (this.isPrimaryContentType("image"))
+        if (this.isPrimaryContentType("image", contentType))
             return this.handleImageContent();
 
-        if (this.isPrimaryContentType("application"))
+        if (this.isPrimaryContentType("application", contentType))
             return this.handleApplicationContent();
 
         return this.handleUnknownContentType();
