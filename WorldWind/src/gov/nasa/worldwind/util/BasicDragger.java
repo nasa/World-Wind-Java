@@ -20,6 +20,7 @@ public class BasicDragger implements SelectListener
 {
     private final WorldWindow wwd;
     private boolean dragging = false;
+    private boolean useTerrain = true;
 
     private Point dragRefCursorPoint;
     private Vec4 dragRefObjectPoint;
@@ -35,6 +36,29 @@ public class BasicDragger implements SelectListener
         }
 
         this.wwd = wwd;
+    }
+
+    public BasicDragger(WorldWindow wwd, boolean useTerrain)
+    {
+        if (wwd == null)
+        {
+            String msg = Logging.getMessage("nullValue.WorldWindow");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.wwd = wwd;
+        this.setUseTerrain(useTerrain);
+    }
+
+    public boolean isUseTerrain()
+    {
+        return useTerrain;
+    }
+
+    public void setUseTerrain(boolean useTerrain)
+    {
+        this.useTerrain = useTerrain;
     }
 
     public boolean isDragging()
@@ -77,7 +101,7 @@ public class BasicDragger implements SelectListener
                 return;
 
             Vec4 refPoint = null;
-            if (refPos.getElevation() < globe.getMaxElevation())
+            if (this.isUseTerrain() && refPos.getElevation() < globe.getMaxElevation())
                 refPoint = wwd.getSceneController().getTerrain().getSurfacePoint(refPos);
             if (refPoint == null)
                 refPoint = globe.computePointFromPosition(refPos);
@@ -102,7 +126,7 @@ public class BasicDragger implements SelectListener
             double y = event.getMouseEvent().getComponent().getSize().height - this.dragRefObjectPoint.y + dy - 1;
             Line ray = view.computeRayFromScreenPoint(x, y);
             Position pickPos = null;
-            if (view.getEyePosition().getElevation() < globe.getMaxElevation() * 10)
+            if (this.isUseTerrain() && view.getEyePosition().getElevation() < globe.getMaxElevation() * 10)
             {
                 // Use ray casting below some altitude
                 // Try ray intersection with current terrain geometry
