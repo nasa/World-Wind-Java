@@ -338,8 +338,8 @@ public class PointPlacemark extends WWObjectImpl
     }
 
     /**
-     * Specifies whether adjacent PointPlacemarks in the ordered renderable list may be rendered together if they are contained
-     * in the same layer. This increases performance and there is seldom a reason to disable it.
+     * Specifies whether adjacent PointPlacemarks in the ordered renderable list may be rendered together if they are
+     * contained in the same layer. This increases performance and there is seldom a reason to disable it.
      *
      * @param enableBatchRendering true to enable batch rendering, otherwise false.
      */
@@ -412,7 +412,7 @@ public class PointPlacemark extends WWObjectImpl
      *
      * @return true if a point should be drawn, otherwise false.
      */
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected boolean isDrawPoint(DrawContext dc)
     {
         return this.activeTexture == null && this.getActiveAttributes().isUsePointAsDefaultImage();
@@ -525,9 +525,23 @@ public class PointPlacemark extends WWObjectImpl
 
         Rectangle rect = this.computeImageRectangle(dc);
         if (dc.isPickingMode())
+        {
+            // Test image rect against pick frustums. Note that we do this even when the label is visible and the image
+            // is not because we do not support picking via the label.
             return dc.getPickFrustums().intersectsAny(rect);
-        else
+        }
+        else if (rect.width > 0)
+        {
             return view.getViewport().intersects(rect);
+        }
+        else if (mustDrawLabel())
+        {
+            // We are drawing a label but not an image. Determine if the placemark point is visible. This case comes up
+            // when the image scale is zero and the label scale is non-zero.
+            return view.getViewport().contains((int) this.screenPoint.x, (int) this.screenPoint.y);
+        }
+
+        return false;
     }
 
     /**

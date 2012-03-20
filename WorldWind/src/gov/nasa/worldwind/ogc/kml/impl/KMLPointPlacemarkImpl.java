@@ -176,7 +176,8 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
     }
 
     /**
-     * Draw the label if the label scale is greater than the label scale threshold, or if the placemark is highlighted.
+     * Draw the label if the label scale is greater than the label scale threshold, if the image scale is zero (only the
+     * text is rendered, there is no image), or if the placemark is highlighted.
      *
      * @return True if the label must be drawn.
      */
@@ -185,7 +186,10 @@ public class KMLPointPlacemarkImpl extends PointPlacemark implements KMLRenderab
     {
         double labelScale = this.getActiveAttributes().getLabelScale() != null
             ? this.getActiveAttributes().getLabelScale() : PointPlacemarkAttributes.DEFAULT_LABEL_SCALE;
-        return this.isHighlighted() || labelScale >= this.getLabelScaleThreshold();
+        double imageScale = this.getActiveAttributes().getScale() != null
+            ? this.getActiveAttributes().getScale() : PointPlacemarkAttributes.DEFAULT_IMAGE_SCALE;
+
+        return this.isHighlighted() || labelScale >= this.getLabelScaleThreshold() || imageScale == 0;
     }
 
     /**
