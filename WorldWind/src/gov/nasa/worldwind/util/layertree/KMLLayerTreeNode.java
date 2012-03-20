@@ -81,7 +81,8 @@ public class KMLLayerTreeNode extends LayerTreeNode
      */
     protected void addChildFeatures()
     {
-        if (this.kmlRoot.getFeature() == null)
+        KMLAbstractFeature rootFeature = this.kmlRoot.getFeature();
+        if (rootFeature == null)
             return;
 
         // A KML document has only one top-level feature. Except for very simple files, this top level is typically a
@@ -89,9 +90,9 @@ public class KMLLayerTreeNode extends LayerTreeNode
         // beneath the container. Attaching the container as a tree node would add an extra level to the tree that
         // doesn't provide any meaningful grouping.
 
-        if (this.kmlRoot.getFeature() instanceof KMLAbstractContainer)
+        if (rootFeature instanceof KMLDocument || rootFeature instanceof KMLFolder)
         {
-            KMLAbstractContainer container = (KMLAbstractContainer) this.kmlRoot.getFeature();
+            KMLAbstractContainer container = (KMLAbstractContainer) rootFeature;
             for (KMLAbstractFeature child : container.getFeatures())
             {
                 if (child != null)
@@ -109,7 +110,7 @@ public class KMLLayerTreeNode extends LayerTreeNode
         }
         else
         {
-            this.addFeatureNode(this.kmlRoot.getFeature());
+            this.addFeatureNode(rootFeature);
         }
     }
 
