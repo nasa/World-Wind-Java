@@ -10,6 +10,9 @@ import gov.nasa.worldwind.ogc.kml.*;
 import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.tree.*;
 
+import javax.swing.*;
+import java.beans.*;
+
 /**
  * A <code>LayerTreeNode</code> that represents a KML feature hierarchy defined by a <code>{@link
  * gov.nasa.worldwind.ogc.kml.KMLRoot}</code>.
@@ -47,6 +50,32 @@ public class KMLLayerTreeNode extends LayerTreeNode
 
         this.kmlRoot = kmlRoot;
         this.addChildFeatures();
+
+        // Add a listener that will refresh the tree model when the KML document is updated.
+        this.kmlRoot.addPropertyChangeListener(new PropertyChangeListener()
+        {
+            public void propertyChange(PropertyChangeEvent event)
+            {
+                if (event != null && AVKey.UPDATED.equals(event.getPropertyName()))
+                {
+                    // Ensure that the node list is manipulated on the EDT
+                    if (SwingUtilities.isEventDispatchThread())
+                    {
+                        KMLLayerTreeNode.this.refresh();
+                    }
+                    else
+                    {
+                        SwingUtilities.invokeLater(new Runnable()
+                        {
+                            public void run()
+                            {
+                                KMLLayerTreeNode.this.refresh();
+                            }
+                        });
+                    }
+                }
+            }
+        });
 
         // Set the context of the KML document node to the root feature in the document.
         this.setValue(AVKey.CONTEXT, kmlRoot.getFeature());
@@ -175,5 +204,12 @@ public class KMLLayerTreeNode extends LayerTreeNode
         }
 
         return this.kmlRoot.getFeature() != null;
+    }
+
+    /** Refresh the tree model to match the contents of the KML document. */
+    protected void refresh()
+    {
+        this.removeAllChildren();
+        this.addChildFeatures();
     }
 }

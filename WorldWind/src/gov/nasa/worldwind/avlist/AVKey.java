@@ -480,6 +480,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String UNIT_METER = "gov.nasa.worldwind.avkey.Unit.Meter";
 
     final String UNRESOLVED = "gov.nasa.worldwind.avkey.Unresolved";
+    final String UPDATED = "gov.nasa.worldwind.avkey.Updated";
     final String URL = "gov.nasa.worldwind.avkey.URL";
     final String URL_CONNECT_TIMEOUT = "gov.nasa.worldwind.avkey.URLConnectTimeout";
     final String URL_PROXY_HOST = "gov.nasa.worldwind.avkey.UrlProxyHost";
