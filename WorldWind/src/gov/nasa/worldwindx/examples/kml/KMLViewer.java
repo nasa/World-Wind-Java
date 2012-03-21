@@ -138,7 +138,7 @@ public class KMLViewer extends ApplicationTemplate
 
             // Listens to refresh property change events from KML network link nodes. Upon receiving such an event this
             // expands any tree paths that represent open KML containers. When a KML network link refreshes, its tree
-            // node replaces its children with new nodes created form the refreshed content, then sends a refresh
+            // node replaces its children with new nodes created from the refreshed content, then sends a refresh
             // property change event through the layer tree. By expanding open containers after a network link refresh,
             // we ensure that the network link tree view appearance is consistent with the KML specification.
             layerNode.addPropertyChangeListener(AVKey.RETRIEVAL_STATE_SUCCESSFUL, new PropertyChangeListener()
