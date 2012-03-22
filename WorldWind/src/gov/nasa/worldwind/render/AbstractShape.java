@@ -628,6 +628,18 @@ public abstract class AbstractShape extends WWObjectImpl
         return this.getCurrentData().getExtent();
     }
 
+    /**
+     * Returns the Cartesian coordinates of this shape's reference position as computed during the most recent
+     * rendering.
+     *
+     * @return the Cartesian coordinates corresponding to this shape's reference position, or null if the point has not
+     *         been computed.
+     */
+    public Vec4 getReferencePoint()
+    {
+        return this.currentData.getReferencePoint();
+    }
+
     public Extent getExtent(Globe globe, double verticalExaggeration)
     {
         if (globe == null)
@@ -754,7 +766,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return true if lighting must be applied, otherwise false.
      */
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected boolean mustApplyLighting(DrawContext dc, ShapeAttributes activeAttrs)
     {
         return activeAttrs != null ? activeAttrs.isEnableLighting() : this.activeAttributes.isEnableLighting();
@@ -781,7 +793,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @return true if normal vectors must be computed, otherwise false.
      */
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected boolean mustCreateNormals(DrawContext dc, ShapeAttributes activeAttrs)
     {
         return activeAttrs != null ? activeAttrs.isEnableLighting() : this.getActiveAttributes().isEnableLighting();
@@ -1114,7 +1126,7 @@ public abstract class AbstractShape extends WWObjectImpl
      *
      * @deprecated Use the more general {@link #createPickedObject(int)} instead.
      */
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected PickedObject createPickedObject(DrawContext dc, Color pickColor)
     {
         return this.createPickedObject(pickColor.getRGB());
