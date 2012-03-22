@@ -9,7 +9,7 @@ package gov.nasa.worldwind.util.tree;
 import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.BasicWWTexture;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
 import java.beans.PropertyChangeEvent;
 import java.net.URL;
@@ -168,7 +168,7 @@ public class BasicTreeNode extends WWObjectImpl implements TreeNode
     /** {@inheritDoc} */
     public boolean isLeaf()
     {
-        return this.children == null;
+        return WWUtil.isEmpty(this.children);
     }
 
     /** {@inheritDoc} */

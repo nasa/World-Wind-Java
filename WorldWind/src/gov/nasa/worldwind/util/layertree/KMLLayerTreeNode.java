@@ -51,12 +51,19 @@ public class KMLLayerTreeNode extends LayerTreeNode
         this.kmlRoot = kmlRoot;
         this.addChildFeatures();
 
-        // Add a listener that will refresh the tree model when the KML document is updated.
+        // Add a listener to refresh the tree model when the KML document is updated or a network link is retrieved.
         this.kmlRoot.addPropertyChangeListener(new PropertyChangeListener()
         {
-            public void propertyChange(PropertyChangeEvent event)
+            public void propertyChange(final PropertyChangeEvent event)
             {
-                if (event != null && AVKey.UPDATED.equals(event.getPropertyName()))
+                String name = (event != null) ? event.getPropertyName() : null;
+                Object newValue = (event != null) ? event.getNewValue() : null;
+                KMLAbstractFeature rootFeature = KMLLayerTreeNode.this.kmlRoot.getFeature();
+
+                // Update the document if an update is received, or if this node represents a network link that has been
+                // resolved.
+                if (AVKey.UPDATED.equals(name)
+                    || (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(name) && rootFeature == newValue))
                 {
                     // Ensure that the node list is manipulated on the EDT
                     if (SwingUtilities.isEventDispatchThread())
@@ -114,12 +121,17 @@ public class KMLLayerTreeNode extends LayerTreeNode
         if (rootFeature == null)
             return;
 
-        // A KML document has only one top-level feature. Except for very simple files, this top level is typically a
-        // Document or Folder. In this case we skip the top level container, and attach tree nodes for the features
-        // beneath the container. Attaching the container as a tree node would add an extra level to the tree that
-        // doesn't provide any meaningful grouping.
+        // Create a KMLFeatureTreeNode only to construct the description string for the root node and set it on this
+        // node. We do not add the root node to the tree because it would add a redundant.
+        KMLFeatureTreeNode featureNode = KMLFeatureTreeNode.fromKMLFeature(rootFeature);
+        this.setDescription(featureNode.getDescription());
 
-        if (rootFeature instanceof KMLDocument || rootFeature instanceof KMLFolder)
+        // Initialize the selected state of this node to match the visibility of the root container.
+        Boolean visibility = rootFeature.getVisibility();
+        this.setSelected(visibility == null || visibility);
+
+        // If the root is a container, add its children
+        if (rootFeature instanceof KMLAbstractContainer)
         {
             KMLAbstractContainer container = (KMLAbstractContainer) rootFeature;
             for (KMLAbstractFeature child : container.getFeatures())
@@ -127,19 +139,31 @@ public class KMLLayerTreeNode extends LayerTreeNode
                 if (child != null)
                     this.addFeatureNode(child);
             }
-
-            // Create a KMLFeatureTreeNode only to construct the description string for the container and set it on this
-            // node. We do not add the container node to the tree.
-            KMLFeatureTreeNode containerNode = KMLFeatureTreeNode.fromKMLFeature(container);
-            this.setDescription(containerNode.getDescription());
-
-            // Initialize the selected state of this node to match the visibility of the root container.
-            Boolean visibility = container.getVisibility();
-            this.setSelected(visibility == null || visibility);
         }
-        else
+
+        // If the root is a network link, add the linked document
+        if (rootFeature instanceof KMLNetworkLink)
         {
-            this.addFeatureNode(rootFeature);
+            KMLRoot networkResource = ((KMLNetworkLink) rootFeature).getNetworkResource();
+            if (networkResource != null && networkResource.getFeature() != null)
+            {
+                rootFeature = networkResource.getFeature();
+
+                // Don't add Document nodes (they don't provide meaningful grouping).
+                if (rootFeature instanceof KMLDocument)
+                {
+                    KMLAbstractContainer container = (KMLAbstractContainer) rootFeature;
+                    for (KMLAbstractFeature child : container.getFeatures())
+                    {
+                        if (child != null)
+                            this.addFeatureNode(child);
+                    }
+                }
+                else if (rootFeature != null)
+                {
+                    this.addFeatureNode(rootFeature);
+                }
+            }
         }
     }
 
@@ -197,8 +221,7 @@ public class KMLLayerTreeNode extends LayerTreeNode
      */
     protected boolean mustExpandNode()
     {
-        if (this.kmlRoot.getFeature() instanceof KMLAbstractContainer
-            || this.kmlRoot.getFeature() instanceof KMLNetworkLink)
+        if (this.kmlRoot.getFeature() instanceof KMLAbstractContainer)
         {
             return Boolean.TRUE.equals(this.kmlRoot.getFeature().getOpen());
         }
