@@ -242,9 +242,12 @@ public class KMLPlacemark extends KMLAbstractFeature
         {
             Message msg = new Message(KMLAbstractObject.MSG_STYLE_CHANGED, placemark);
 
-            for (KMLRenderable renderable : this.renderables)
+            if (this.renderables != null)
             {
-                renderable.onMessage(msg);
+                for (KMLRenderable renderable : this.renderables)
+                {
+                    renderable.onMessage(msg);
+                }
             }
         }
     }

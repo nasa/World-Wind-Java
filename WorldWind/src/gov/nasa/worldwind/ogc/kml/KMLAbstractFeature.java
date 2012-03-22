@@ -423,7 +423,7 @@ public abstract class KMLAbstractFeature extends KMLAbstractObject implements KM
         // Make a copy of the existing list so we can modify it as we traverse the copy.
         List<KMLAbstractStyleSelector> styleSelectorsCopy =
             new ArrayList<KMLAbstractStyleSelector>(this.getStyleSelectors().size());
-        Collections.copy(styleSelectorsCopy, this.getStyleSelectors());
+        styleSelectorsCopy.addAll(this.getStyleSelectors());
 
         for (KMLAbstractStyleSelector sourceSelector : sourceFeature.getStyleSelectors())
         {
