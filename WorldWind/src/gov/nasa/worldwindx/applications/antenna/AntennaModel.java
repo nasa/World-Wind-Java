@@ -7,7 +7,7 @@
 package gov.nasa.worldwindx.applications.antenna;
 
 import com.sun.opengl.util.BufferUtil;
-import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
@@ -636,6 +636,12 @@ public class AntennaModel extends AbstractShape
     public List<Intersection> intersect(Line line, Terrain terrain) throws InterruptedException
     {
         return null;
+    }
+
+    @Override
+    public String isExportFormatSupported(String mimeType)
+    {
+        return Exportable.FORMAT_NOT_SUPPORTED;
     }
 
     @Override
