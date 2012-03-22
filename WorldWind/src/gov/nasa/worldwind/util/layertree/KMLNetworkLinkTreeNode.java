@@ -36,6 +36,17 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode
     }
 
     /**
+     * Indicates the KML network link this node represents.
+     *
+     * @return this node's KML network link.
+     */
+    @Override
+    public KMLNetworkLink getFeature()
+    {
+        return (KMLNetworkLink) super.getFeature();
+    }
+
+    /**
      * {@inheritDoc}
      * <p/>
      * Additionally, this node's hierarchy is populated from the KML features in its <code>KMLNetworkLink</code>, and
@@ -47,8 +58,6 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode
     {
         super.initialize();
 
-        this.addNetworkResourceNodes();
-
         // Add a property change listener to the KMLRoot. Upon receiving an RETRIEVAL_STATE_SUCCESSFUL event,
         // repopulate this node's hierarchy with the KML features in its KMLNetworkLink and fire a
         // RETRIEVAL_STATE_SUCCESSFUL to this nodes listeners.
@@ -59,58 +68,45 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode
                 if (AVKey.RETRIEVAL_STATE_SUCCESSFUL.equals(propertyChangeEvent.getPropertyName())
                     && KMLNetworkLinkTreeNode.this.getFeature() == propertyChangeEvent.getNewValue())
                 {
-                    KMLNetworkLinkTreeNode.this.onNetworkLinkRefresh();
-                    KMLNetworkLinkTreeNode.this.firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null, this);
+                    // Ensure that the node list is manipulated on the EDT
+                    if (!SwingUtilities.isEventDispatchThread())
+                    {
+                        refresh();
+                        KMLNetworkLinkTreeNode.this.firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null, this);
+                    }
+                    else
+                    {
+                        SwingUtilities.invokeLater(new Runnable()
+                        {
+                            public void run()
+                            {
+                                refresh();
+                                KMLNetworkLinkTreeNode.this.firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null,
+                                    this);
+                            }
+                        });
+                    }
                 }
             }
         });
     }
 
     /**
-     * Indicates the KML network link this node represents.
-     *
-     * @return this node's KML network link.
-     */
-    public KMLNetworkLink getFeature()
-    {
-        return (KMLNetworkLink) super.getFeature();
-    }
-
-    /**
      * Called when this node's <code>KMLNetworkLink</code> refreshes. Clears this node's hierarchy by removing its
      * children, then adds a new <code>KMLFeatureTreeNode</code> to this node for each KML feature in the
      * <code>KMLNetworkLink</code>.
-     */
-    protected void onNetworkLinkRefresh()
-    {
-        // Ensure that the node list is manipulated on the EDT
-        if (!SwingUtilities.isEventDispatchThread())
-        {
-            SwingUtilities.invokeLater(new Runnable()
-            {
-                public void run()
-                {
-                    onNetworkLinkRefresh();
-                }
-            });
-            return;
-        }
-
-        this.removeAllChildren();
-        this.addNetworkResourceNodes();
-    }
-
-    /**
-     * Adds a new <code>KMLFeatureTreeNode</code> to this node for each KML feature in the <code>KMLNetworkLink</code>.
      * <p/>
-     * If the <code>KMLNetworkLink</code>'s top level feature is a <code>KMLDocument</code>, this ignores this document
-     * and adds its children directly to this node. Creating a node for the document adds an extra level to the tree
-     * node that doesn't provide any meaningful grouping.
-     * <p/>
-     * This does nothing if the <code>KMLNetworkLink</code>'s top level feature is <code>null</code>.
+     * If the <code>KMLNetworkLink</code>'s top level feature is a <code>KMLDocument</code>, this method ignores the
+     * document and adds its children directly to this node. Creating a node for the document adds an extra level to the
+     * tree node that doesn't provide any meaningful grouping.
      */
-    protected void addNetworkResourceNodes()
+    @Override
+    protected void refresh()
     {
+        // Call super to add features contained by the NetworkLink.
+        super.refresh();
+
+        // Now add the network resource.
         KMLRoot kmlRoot = this.getFeature().getNetworkResource();
         if (kmlRoot == null || kmlRoot.getFeature() == null)
             return;

@@ -30,14 +30,28 @@ public class KMLContainerTreeNode extends KMLFeatureTreeNode
     }
 
     /**
-     * {@inheritDoc}
-     * <p/>
-     * Additionally, this node's hierarchy is populated from the KML features in its <code>KMLAbstractContainer</code>.
+     * Indicates the KML container this node represents.
+     *
+     * @return this node's KML container.
      */
+    @Override
+    public KMLAbstractContainer getFeature()
+    {
+        return (KMLAbstractContainer) super.getFeature();
+    }
+
+    /** {@inheritDoc} */
     @Override
     protected void initialize()
     {
         super.initialize();
+        this.refresh();
+    }
+
+    /** Populate this node's hierarchy from the KML features in its <code>KMLAbstractContainer</code>. */
+    protected void refresh()
+    {
+        this.removeAllChildren();
 
         for (KMLAbstractFeature child : this.getFeature().getFeatures())
         {
@@ -56,16 +70,5 @@ public class KMLContainerTreeNode extends KMLFeatureTreeNode
         TreeNode featureNode = KMLFeatureTreeNode.fromKMLFeature(feature);
         if (featureNode != null)
             this.addChild(featureNode);
-    }
-
-    /**
-     * Indicates the KML container this node represents.
-     *
-     * @return this node's KML container.
-     */
-    @Override
-    public KMLAbstractContainer getFeature()
-    {
-        return (KMLAbstractContainer) super.getFeature();
     }
 }
