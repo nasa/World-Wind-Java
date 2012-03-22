@@ -69,7 +69,7 @@ public class KMLNetworkLinkTreeNode extends KMLContainerTreeNode
                     && KMLNetworkLinkTreeNode.this.getFeature() == propertyChangeEvent.getNewValue())
                 {
                     // Ensure that the node list is manipulated on the EDT
-                    if (!SwingUtilities.isEventDispatchThread())
+                    if (SwingUtilities.isEventDispatchThread())
                     {
                         refresh();
                         KMLNetworkLinkTreeNode.this.firePropertyChange(AVKey.RETRIEVAL_STATE_SUCCESSFUL, null, this);
