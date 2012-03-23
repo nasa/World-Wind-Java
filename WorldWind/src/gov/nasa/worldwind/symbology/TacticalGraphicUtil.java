@@ -9,6 +9,7 @@ package gov.nasa.worldwind.symbology;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.DrawContext;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
@@ -166,6 +167,108 @@ public class TacticalGraphicUtil
             {
                 label2.setPosition(pos1);
                 label2.setOrientationPosition(pos2);
+            }
+        }
+    }
+
+    /**
+     * Compute a point along a Bezier curve defined by a list of control points. The first and last points should mark
+     * the start and end of the curve.
+     * <p/>
+     * This function implements the Bezier curve equation from "Mathematics for 3D Game Programming and Computer
+     * Graphics, Second Edition" by Eric Lengyel (equation 15.16, pg. 458).
+     * <p/>
+     * A typical usage looks like this:
+     * <pre>
+     * Vec4[] controlPoints = ... // Determine control points appropriate for your curve
+     *
+     * List<Position> curvePositions = new ArrayList<Position>();
+     * int[] coefficients = new int[controlPoints.length];
+     *
+     * int intervals = 32;
+     * double delta = 1.0 / intervals;
+     * for (int i = 0; i < intervals; i++)
+     * {
+     *     double t = i * delta;
+     *     Vec4 pt = TacticalGraphicUtil.bezierCurve(controlPoints, t, coefficients);
+     *     Position pos = globe.computePositionFromPoint(p);
+     *     curvePositions.add(pos);
+     * }
+     * </pre>
+     *
+     * @param controlPoints Control points for the curve.
+     * @param t             Interpolation parameter in the range [0..1].
+     * @param coefficients  Array to store binomial coefficients between invocations of this function. On the first
+     *                      invocation, pass an int[] with length equal to the controlPoints array. bezierCurve will
+     *                      populate the array on the first invocation, and reuse the computed values on subsequent
+     *                      invocations.
+     *
+     * @return A point along the curve.
+     */
+    public static Vec4 bezierCurve(Vec4[] controlPoints, double t, int[] coefficients)
+    {
+        if (coefficients == null || controlPoints == null)
+        {
+            String message = Logging.getMessage("nullValue.ArrayIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (coefficients.length != controlPoints.length)
+        {
+            String message = Logging.getMessage("generic.ArrayInvalidLength", coefficients.length);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (coefficients[0] != 1)
+        {
+            binomial(coefficients.length - 1, coefficients);
+        }
+
+        int n = controlPoints.length - 1;
+
+        Vec4 r = Vec4.ZERO;
+        for (int k = 0; k <= n; k++)
+        {
+            double c = coefficients[k] * Math.pow(t, k) * Math.pow(1 - t, n - k);
+            r = r.add3(controlPoints[k].multiply3(c));
+        }
+
+        return r;
+    }
+
+    /**
+     * Compute binomial coefficients for a polynomial of order n. Stated another way, computes the nth row of Pascal's
+     * triangle.
+     *
+     * @param n            Order of polynomial for which to calculate coefficients.
+     * @param coefficients Array to receive coefficients. The length of this array must be n + 1.
+     */
+    protected static void binomial(int n, int[] coefficients)
+    {
+        if (coefficients == null)
+        {
+            String message = Logging.getMessage("nullValue.ArrayIsNull");
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        if (coefficients.length != n + 1)
+        {
+            String message = Logging.getMessage("generic.ArrayInvalidLength", coefficients.length);
+            Logging.logger().severe(message);
+            throw new IllegalArgumentException(message);
+        }
+
+        // Algorithm from "Data Structures and Algorithms with Object-Oriented Design Patterns in Java" by Bruno R.
+        // Preiss (http://www.brpreiss.com/books/opus5/html/page460.html)
+        for (int i = 0; i <= n; i++)
+        {
+            coefficients[i] = 1;
+            for (int j = i - 1; j > 0; j--)
+            {
+                coefficients[j] += coefficients[j - 1];
             }
         }
     }

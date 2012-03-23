@@ -10,7 +10,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
 import java.util.*;
@@ -238,8 +238,8 @@ public class DirectionOfAttackAviation extends DirectionOfAttack
         this.paths[1] = this.createPath(curvePositions.subList(bowTieIndex2, numPositions));
 
         // Create the arrowhead.
-        List<Position> positions = this.computeArrowheadPositions(dc, p2, t1.multiply3(-1),
-            p2.subtract3(p1).getLength3());
+        double arrowheadLength = p2.subtract3(p1).getLength3() * this.getArrowLength();
+        List<Position> positions = this.computeArrowheadPositions(dc, p2, t1.multiply3(-1), arrowheadLength);
         this.paths[2] = this.createPath(positions);
 
         // Create the bow tie.

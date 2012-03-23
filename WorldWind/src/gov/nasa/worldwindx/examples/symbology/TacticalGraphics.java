@@ -459,6 +459,18 @@ public class TacticalGraphics extends ApplicationTemplate
             graphic.setText("ALPHA");
             layer.addRenderable(graphic);
 
+            ///////////////////////////////////////////////////
+            // Direction of Attack for Feint (2.X.2.3.3)
+            ///////////////////////////////////////////////////
+
+            positions = Arrays.asList(
+                Position.fromDegrees(35.0656, -118.0508),
+                Position.fromDegrees(35.0383, -118.2275));
+            graphic = factory.createGraphic("GFGPPF--------X", positions, null);
+            graphic.setValue(AVKey.DISPLAY_NAME, "Direction of Attack for Feint (2.X.2.3.3)");
+            graphic.setText("DAVID");
+            layer.addRenderable(graphic);
+
             // Apply shared attributes to all graphics on this layer
             this.setAttributes(layer, this.sharedAttrs, this.sharedPointAttrs);
         }

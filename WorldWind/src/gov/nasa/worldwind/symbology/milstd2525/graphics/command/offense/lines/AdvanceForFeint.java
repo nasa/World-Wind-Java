@@ -15,6 +15,8 @@ import gov.nasa.worldwind.util.WWUtil;
 import java.util.*;
 
 /**
+ * Implementation of the Axis of Advance for Feint graphic (2.X.2.3.3).
+ *
  * @author pabercrombie
  * @version $Id$
  */

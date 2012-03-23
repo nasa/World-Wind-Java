@@ -98,7 +98,7 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
             throw new IllegalArgumentException(msg);
         }
 
-        if (arrowAngle.degrees <= 0 || arrowAngle.degrees >= 90)
+        if (arrowAngle.degrees <= 0)
         {
             String msg = Logging.getMessage("generic.AngleOutOfRange");
             Logging.logger().severe(msg);
@@ -265,7 +265,8 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
         // Find vector in the direction of the arrow
         Vec4 v21 = p1.subtract3(p2);
 
-        List<Position> positions = this.computeArrowheadPositions(dc, p2, v21, v21.getLength3());
+        double arrowheadLength = v21.getLength3() * this.getArrowLength();
+        List<Position> positions = this.computeArrowheadPositions(dc, p2, v21, arrowheadLength);
         this.paths[1] = createPath(positions);
     }
 
@@ -275,8 +276,7 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
      * @param dc     Current draw context.
      * @param tip    Point at the tip of the arrow head.
      * @param dir    Vector in the direction of the arrow head.
-     * @param length Total length of the arrow graphic. The size of the arrow head is computed from this based on the
-     *               {@link #getArrowLength() arrowLength} field.
+     * @param length Length of the arrowhead from base to tip.
      *
      * @return Positions that define the arrowhead.
      */
@@ -302,16 +302,14 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
         @SuppressWarnings({"UnnecessaryLocalVariable"})
         Vec4 ptB = tip;
 
-        double arrowLengthFraction = this.getArrowLength();
+        // Compute the length of the arrowhead
+        double arrowHalfWidth = length * this.getArrowAngle().tanHalfAngle();
 
+        dir = dir.normalize3();
         // Find the point at the base of the arrowhead
-        Vec4 arrowBase = ptB.add3(dir.multiply3(arrowLengthFraction));
+        Vec4 arrowBase = ptB.add3(dir.multiply3(length));
 
         Vec4 normal = globe.computeSurfaceNormalAtPoint(arrowBase);
-
-        // Compute the length of the arrowhead
-        double arrowLength = length * arrowLengthFraction;
-        double arrowHalfWidth = arrowLength * this.getArrowAngle().tanHalfAngle();
 
         // Compute a vector perpendicular to the segment and the normal vector
         Vec4 perpendicular = dir.cross3(normal);
@@ -331,7 +329,7 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
             Vec4 ptF = arrowBase.add3(perpendicular);
             Vec4 ptD = arrowBase.subtract3(perpendicular);
 
-            Vec4 ptE = ptB.add3(dir.normalize3().multiply3(-arrowLength * outlineWidth));
+            Vec4 ptE = ptB.subtract3(dir.multiply3(length * outlineWidth));
 
             positions = TacticalGraphicUtil.asPositionList(globe, ptA, ptB, ptC, ptD, ptE, ptF, ptA);
         }
