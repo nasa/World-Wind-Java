@@ -39,6 +39,10 @@
               value="gov.nasa.worldwind.StereoOptionSceneController"/>
     <Property name="gov.nasa.worldwind.avkey.NetworkStatusClassName"
               value="gov.nasa.worldwind.util.BasicNetworkStatus"/>
+    <Property name="gov.nasa.worldwind.render.PointPlacemarkAttributes.DefaultImagePath"
+              value="images/pushpins/plain-yellow.png"/>
+    <Property name="gov.nasa.worldwind.render.PointPlacemarkAttributes.DefaultLabelFont"
+              value="Arial-BOLD-14"/>
     <!-- The following lists the sites to test for public network access. Specify an empty string, "", for no sites.-->
     <!-- Don't specify the property at all to use the default list. -->
     <Property name="gov.nasa.worldwind.avkey.NetworkStatusTestSites"
