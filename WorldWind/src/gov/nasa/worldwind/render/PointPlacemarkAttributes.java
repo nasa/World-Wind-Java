@@ -6,7 +6,7 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.Exportable;
+import gov.nasa.worldwind.*;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.ogc.kml.KMLConstants;
 import gov.nasa.worldwind.ogc.kml.impl.KMLExportUtil;
@@ -42,7 +42,9 @@ public class PointPlacemarkAttributes implements Exportable
     protected boolean unresolved;
 
     /** The image file to use for the placemark's icon if no image file is specified in the placemark attributes. */
-    public static final String DEFAULT_IMAGE_PATH = "images/pushpins/plain-yellow.png";
+    public static final String DEFAULT_IMAGE_PATH =
+        Configuration.getStringValue("gov.nasa.worldwind.render.PointPlacemarkAttributes.DefaultImagePath",
+            "images/pushpins/plain-yellow.png");
     /** The image offset to use if none specified. This value is that required by the default image. */
     public static final Offset DEFAULT_IMAGE_OFFSET = new Offset(19d, 8d, AVKey.PIXELS, AVKey.PIXELS);
     /** The image scale to use if none specified. This value is appropriate for the default image. */
@@ -54,7 +56,9 @@ public class PointPlacemarkAttributes implements Exportable
     /** The default label offset. This value is appropriate for the default image. */
     public static final Offset DEFAULT_LABEL_OFFSET = new Offset(0.9d, 0.6d, AVKey.FRACTION, AVKey.FRACTION);
     /** The default font to use for the placemark's label. */
-    protected static final Font DEFAULT_LABEL_FONT = Font.decode("Arial-BOLD-14");
+    protected static final Font DEFAULT_LABEL_FONT = Font.decode(
+    Configuration.getStringValue("gov.nasa.worldwind.render.PointPlacemarkAttributes.DefaultLabelFont",
+        "Arial-BOLD-14"));
     /** The default label color. */
     protected static final Color DEFAULT_LABEL_COLOR = Color.WHITE;
     /** The default line color. */
