@@ -792,7 +792,11 @@ public class KMLRoot extends KMLAbstractObject implements KMLRenderable
             // not KML/Z, just return the url for the cached file.
             String contentType = WorldWind.getDataFileStore().getContentType(linkBase);
             if (contentType == null)
-                contentType = WWIO.makeMimeTypeForSuffix(WWIO.getSuffix(linkBase));
+            {
+                String suffix = WWIO.getSuffix(linkBase.split(";")[0]); // strip of trailing garbage
+                if (!WWUtil.isEmpty(suffix))
+                    contentType = WWIO.makeMimeTypeForSuffix(suffix);
+            }
 
             if (!this.canParseContentType(contentType))
                 return url;
