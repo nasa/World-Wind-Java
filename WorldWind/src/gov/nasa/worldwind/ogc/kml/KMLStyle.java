@@ -77,6 +77,9 @@ public class KMLStyle extends KMLAbstractStyleSelector
             throw new IllegalArgumentException(message);
         }
 
+        if (!this.hasFields())
+            return subStyle;
+
         Class subStyleClass = subStyle.getClass();
         for (Map.Entry<String, Object> field : this.getFields().getEntries())
         {
