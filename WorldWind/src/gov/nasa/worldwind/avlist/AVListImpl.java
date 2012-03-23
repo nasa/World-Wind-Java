@@ -58,7 +58,7 @@ public class AVListImpl implements AVList
         if (!this.hasAvList())
         {
             // The map type used must accept null values. java.util.concurrent.ConcurrentHashMap does not.
-            this.avList = new java.util.HashMap<String, Object>();
+            this.avList = new java.util.HashMap<String, Object>(1);
         }
 
         return this.avList;
