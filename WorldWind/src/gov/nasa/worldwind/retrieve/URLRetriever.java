@@ -430,7 +430,10 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         {
             int count = channel.read(buffer);
             if (count > 0)
-                this.contentLengthRead.getAndAdd(numBytesRead += count);
+            {
+                numBytesRead += count;
+                this.contentLengthRead.getAndAdd(count);
+            }
             if (count < 0)
                 throw new WWRuntimeException("Premature end of stream from server.");
         }
@@ -454,7 +457,10 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
         {
             count = channel.read(buffer);
             if (count > 0)
-                this.contentLengthRead.getAndAdd(numBytesRead += count);
+            {
+                numBytesRead += count;
+                this.contentLengthRead.getAndAdd(count);
+            }
 
             if (count > 0 && !buffer.hasRemaining())
             {
