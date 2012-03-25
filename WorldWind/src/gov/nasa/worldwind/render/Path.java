@@ -525,7 +525,7 @@ public class Path extends AbstractShape
          * @param pickRect the rectangle in AWT screen coordinates.
          * @param layer    the layer associated with the picked objects.
          */
-        @SuppressWarnings( {"unchecked"})
+        @SuppressWarnings({"unchecked"})
         @Override
         protected void doResolvePick(DrawContext dc, Rectangle pickRect, Layer layer)
         {
@@ -1879,19 +1879,11 @@ public class Path extends AbstractShape
             Color colorB = this.getColor(posB, ordinalB);
             Vec4 ptB = this.computePoint(dc.getTerrain(), posB);
 
-            if (iter.hasNext()) // if this is not the final position
-            {
-                // If the segment is very small or not visible, don't tessellate, just add the segment's end position.
-                if (this.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB))
-                    this.addTessellatedPosition(posB, colorB, ordinalB, pathData);
-                else
-                    this.makeSegment(dc, posA, posB, ptA, ptB, colorA, colorB, ordinalA, ordinalB, pathData);
-            }
-            else
-            {
-                // Add the final point.
+            // If the segment is very small or not visible, don't tessellate, just add the segment's end position.
+            if (this.isSmall(dc, ptA, ptB, 8) || !this.isSegmentVisible(dc, posA, posB, ptA, ptB))
                 this.addTessellatedPosition(posB, colorB, ordinalB, pathData);
-            }
+            else
+                this.makeSegment(dc, posA, posB, ptA, ptB, colorA, colorB, ordinalA, ordinalB, pathData);
 
             posA = posB;
             ptA = ptB;
@@ -2036,7 +2028,7 @@ public class Path extends AbstractShape
      * @param ordinalB the ordinal number corresponding to the segment's second position in the original position list.
      * @param pathData the current globe-specific path data.
      */
-    @SuppressWarnings( {"StringEquality", "UnusedParameters"})
+    @SuppressWarnings({"StringEquality", "UnusedParameters"})
     protected void makeSegment(DrawContext dc, Position posA, Position posB, Vec4 ptA, Vec4 ptB, Color colorA,
         Color colorB, int ordinalA, int ordinalB, PathData pathData)
     {
@@ -2056,7 +2048,7 @@ public class Path extends AbstractShape
         Angle segmentAzimuth = null;
         Angle segmentDistance = null;
 
-        for (double s = 0, p = 0; s < 1;)
+        for (double s = 0, p = 0; s < 1; )
         {
             if (this.isFollowTerrain())
                 p += this.terrainConformance * dc.getView().computePixelSizeAtDistance(
