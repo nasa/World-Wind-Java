@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.event.Message;
 import gov.nasa.worldwind.ogc.kml.impl.*;
 import gov.nasa.worldwind.render.DrawContext;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
 import gov.nasa.worldwind.util.xml.XMLEventParserContext;
 
 import javax.xml.stream.XMLStreamException;
@@ -210,12 +210,26 @@ public class KMLPlacemark extends KMLAbstractFeature
         if (shape.getOuterBoundary().getCoordinates() == null)
             return null;
 
-        if (WWUtil.isEmpty(shape.getAltitudeMode()) || "clampToGround".equals(shape.getAltitudeMode()))
+        if ("clampToGround".equals(shape.getAltitudeMode()) || !this.isValidAltitudeMode(shape.getAltitudeMode()))
             return new KMLSurfacePolygonImpl(tc, this, geom);
         else if (shape.isExtrude())
             return new KMLExtrudedPolygonImpl(tc, this, geom);
         else
             return new KMLPolygonImpl(tc, this, geom);
+    }
+
+    /**
+     * Indicates whether or not an altitude mode equals one of the altitude modes defined in the KML specification.
+     *
+     * @param altMode Altitude mode test.
+     *
+     * @return True if {@code altMode} is one of "clampToGround", "relativeToGround", or "absolute".
+     */
+    protected boolean isValidAltitudeMode(String altMode)
+    {
+        return "clampToGround".equals(altMode)
+            || "relativeToGround".equals(altMode)
+            || "absolute".equals(altMode);
     }
 
     @Override
