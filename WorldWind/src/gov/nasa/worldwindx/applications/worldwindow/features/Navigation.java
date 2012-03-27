@@ -19,15 +19,15 @@ import java.beans.PropertyChangeEvent;
  */
 public class Navigation extends AbstractFeatureLayer
 {
-    public static final String POSITION_PROPERTY = "com.pemex.geopemex.features.Navegacion.PostionProperty";
-    public static final String ORIENTATION_PROPERTY = "com.pemex.geopemex.features.Navegacion.OrientationProperty";
-    public static final String SIZE_PROPERTY = "com.pemex.geopemex.features.Navegacion.SizeProperty";
-    public static final String OPACITY_PROPERTY = "com.pemex.geopemex.features.Navegacion.OpacityProperty";
+    public static final String POSITION_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.PostionProperty";
+    public static final String ORIENTATION_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.OrientationProperty";
+    public static final String SIZE_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.SizeProperty";
+    public static final String OPACITY_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.OpacityProperty";
 
-    public static final String PAN_CONTROLS_PROPERTY = "com.pemex.geopemex.features.Navegacion.PanControlS";
-    public static final String ZOOM_CONTROLS_PROPERTY = "com.pemex.geopemex.features.Navegacion.ZoomControlS";
-    public static final String TILT_CONTROLS_PROPERTY = "com.pemex.geopemex.features.Navegacion.TiltControlS";
-    public static final String HEADING_CONTROLS_PROPERTY = "com.pemex.geopemex.features.Navegacion.HeadingControlS";
+    public static final String PAN_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.PanControlS";
+    public static final String ZOOM_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.ZoomControlS";
+    public static final String TILT_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.TiltControlS";
+    public static final String HEADING_CONTROLS_PROPERTY = "gov.nasa.worldwindowx.applications.features.Navegacion.HeadingControlS";
 
     public Navigation()
     {
@@ -43,10 +43,6 @@ public class Navigation extends AbstractFeatureLayer
     public void initialize(Controller controller)
     {
         super.initialize(controller);
-//
-//        Feature navPreferences = (Feature) controller.getRegisteredObject(Constants.FEATURE_NAVEGACION_PREFERENCIAS);
-//        if (navPreferences != null)
-//            navPreferences.addPropertyChangeListener(this);
     }
 
     protected Layer doAddLayer()
