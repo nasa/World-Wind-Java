@@ -11,7 +11,7 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
-import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.util.*;
@@ -261,6 +261,18 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
             this.symbol.setDelegateOwner(owner);
         else
             this.symbol.setDelegateOwner(this);
+    }
+
+    /** {@inheritDoc} */
+    public UnitsFormat getUnitsFormat()
+    {
+        return this.symbol.getUnitsFormat();
+    }
+
+    /** {@inheritDoc} */
+    public void setUnitsFormat(UnitsFormat unitsFormat)
+    {
+        this.symbol.setUnitsFormat(unitsFormat);
     }
 
     /** {@inheritDoc} */

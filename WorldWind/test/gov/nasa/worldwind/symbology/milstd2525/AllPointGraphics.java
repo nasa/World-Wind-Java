@@ -117,8 +117,7 @@ public class AllPointGraphics extends ApplicationTemplate
                     graphic.setModifier(SymbologyConstants.TYPE, "V"); // Applies only to Nuclear graphic
 
                     // Location and Direction of Movement apply only to CBRN graphics.
-                    graphic.setModifier(SymbologyConstants.LOCATION,
-                        "45'35\"N009'59\"E"); // TODO should be computed from position
+                    graphic.setModifier(SymbologyConstants.LOCATION, "Y");
                     graphic.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
 
                     graphic.setAttributes(this.sharedAttrs);

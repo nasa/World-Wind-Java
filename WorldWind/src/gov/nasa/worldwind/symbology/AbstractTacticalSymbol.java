@@ -368,6 +368,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
+    /** Default unit format. */
+    public static final UnitsFormat DEFAULT_UNITS_FORMAT = new UnitsFormat();
+
     protected static final String LAYOUT_ABSOLUTE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutAbsolute";
     protected static final String LAYOUT_RELATIVE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutRelative";
     protected static final String LAYOUT_NONE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutNone";
@@ -526,6 +529,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected TextureAtlas glyphAtlas;
     protected Map<String, IconAtlasElement> glyphMap = new HashMap<String, IconAtlasElement>();
     protected long maxTimeSinceLastUsed = DEFAULT_MAX_TIME_SINCE_LAST_USED;
+
+    /** Unit format used to format location and altitude for text modifiers. */
+    protected UnitsFormat unitsFormat = DEFAULT_UNITS_FORMAT;
 
     /**
      * Support for setting up and restoring OpenGL state during rendering. Initialized to a new OGLStackHandler, and
@@ -762,6 +768,25 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     public void setDelegateOwner(Object owner)
     {
         this.delegateOwner = owner;
+    }
+
+    /** {@inheritDoc} */
+    public UnitsFormat getUnitsFormat()
+    {
+        return this.unitsFormat;
+    }
+
+    /** {@inheritDoc} */
+    public void setUnitsFormat(UnitsFormat unitsFormat)
+    {
+        if (unitsFormat == null)
+        {
+            String msg = Logging.getMessage("nullValue.Format");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.unitsFormat = unitsFormat;
     }
 
     /** {@inheritDoc} */
@@ -1246,7 +1271,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.addLine(dc, offset, points, null, 0);
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected void addLine(DrawContext dc, Offset offset, List<? extends Point2D> points, Object layoutMode,
         int numPointsInLayout)
     {
@@ -1577,19 +1602,19 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             this.drawTextModifiers(dc);
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected boolean mustDrawIcon(DrawContext dc)
     {
         return true;
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected boolean mustDrawGraphicModifiers(DrawContext dc)
     {
         return this.isShowGraphicModifiers();
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected boolean mustDrawTextModifiers(DrawContext dc)
     {
         return this.isShowTextModifiers();
@@ -1660,7 +1685,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected void drawLabels(DrawContext dc)
     {
         if (this.currentLabels.isEmpty())

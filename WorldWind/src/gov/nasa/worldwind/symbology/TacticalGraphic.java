@@ -10,6 +10,7 @@ import gov.nasa.worldwind.Movable;
 import gov.nasa.worldwind.avlist.AVList;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.util.UnitsFormat;
 
 /**
  * TacticalGraphic provides a common interface for displaying a graphic from a symbology set. A graphic can be an icon
@@ -340,11 +341,24 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     Object getDelegateOwner();
 
     /**
-     * Specifies the delegate owner of the graphic. If non-null, the delegate owner replaces the graphic as the
-     * pickable object returned during picking. If null, the graphic itself is the pickable object returned during
-     * picking.
+     * Specifies the delegate owner of the graphic. If non-null, the delegate owner replaces the graphic as the pickable
+     * object returned during picking. If null, the graphic itself is the pickable object returned during picking.
      *
      * @param owner the object to use as the pickable object returned during picking, or null to return the graphic.
      */
     void setDelegateOwner(Object owner);
+
+    /**
+     * Indicates the unit format used to format values in text modifiers.
+     *
+     * @return Units format used to format text modifiers.
+     */
+    UnitsFormat getUnitsFormat();
+
+    /**
+     * Specifies the unit format used to format values in text modifiers.
+     *
+     * @param unitsFormat Format used to format text modifiers.
+     */
+    void setUnitsFormat(UnitsFormat unitsFormat);
 }

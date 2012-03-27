@@ -63,6 +63,8 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
 
     /** Object returned during picking to represent this graphic. */
     protected Object delegateOwner;
+    /** Unit format used to format location and altitude for text modifiers. */
+    protected UnitsFormat unitsFormat = AbstractTacticalSymbol.DEFAULT_UNITS_FORMAT;
 
     /**
      * Attributes to apply when the graphic is not highlighted. These attributes override defaults determined by the
@@ -231,6 +233,25 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     public void setDelegateOwner(Object owner)
     {
         this.delegateOwner = owner;
+    }
+
+    /** {@inheritDoc} */
+    public UnitsFormat getUnitsFormat()
+    {
+        return this.unitsFormat;
+    }
+
+    /** {@inheritDoc} */
+    public void setUnitsFormat(UnitsFormat unitsFormat)
+    {
+        if (unitsFormat == null)
+        {
+            String msg = Logging.getMessage("nullValue.Format");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.unitsFormat = unitsFormat;
     }
 
     /** {@inheritDoc} */

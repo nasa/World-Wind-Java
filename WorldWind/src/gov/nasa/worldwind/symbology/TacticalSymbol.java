@@ -9,6 +9,7 @@ package gov.nasa.worldwind.symbology;
 import gov.nasa.worldwind.WWObject;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
+import gov.nasa.worldwind.util.UnitsFormat;
 
 /**
  * TacticalSymbol provides a common interface for displaying tactical point symbols from symbology sets. A tactical
@@ -320,5 +321,19 @@ public interface TacticalSymbol extends WWObject, Renderable, Highlightable
      * @param owner the object to use as the pickable object returned during picking, or null to return the symbol.
      */
     void setDelegateOwner(Object owner);
+
+    /**
+     * Indicates the unit format used to format values in text modifiers.
+     *
+     * @return Units format used to format text modifiers.
+     */
+    UnitsFormat getUnitsFormat();
+
+    /**
+     * Specifies the unit format used to format values in text modifiers.
+     *
+     * @param unitsFormat Format used to format text modifiers.
+     */
+    void setUnitsFormat(UnitsFormat unitsFormat);
 }
 

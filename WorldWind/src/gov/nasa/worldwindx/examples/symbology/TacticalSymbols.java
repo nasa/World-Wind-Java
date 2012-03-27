@@ -70,6 +70,7 @@ public class TacticalSymbols extends ApplicationTemplate
             airSymbol.setAttributes(this.sharedAttrs);
             airSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             airSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(235));
+            airSymbol.setShowLocation(false);
             this.symbolLayer.addRenderable(airSymbol);
 
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies
@@ -87,6 +88,7 @@ public class TacticalSymbols extends ApplicationTemplate
             groundSymbol.setHighlightAttributes(this.sharedHighlightAttrs);
             groundSymbol.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(90));
             groundSymbol.setModifier(SymbologyConstants.SPEED_LEADER_SCALE, 0.5);
+            groundSymbol.setShowLocation(false);
             this.symbolLayer.addRenderable(groundSymbol);
 
             // Create a ground tactical symbol for the MIL-STD-2525 symbology set. This symbol identifier specifies a
@@ -105,7 +107,6 @@ public class TacticalSymbols extends ApplicationTemplate
             machineGunSymbol.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, "ADDED SUPPORT FOR JJ");
             machineGunSymbol.setModifier(SymbologyConstants.TYPE, "MACHINE GUN");
             machineGunSymbol.setModifier(SymbologyConstants.DATE_TIME_GROUP, "30140000ZSEP97");
-            machineGunSymbol.setModifier(SymbologyConstants.LOCATION, "32.39020N063.41610E");
             this.symbolLayer.addRenderable(machineGunSymbol);
 
             // Add the symbol layer to the World Wind model.

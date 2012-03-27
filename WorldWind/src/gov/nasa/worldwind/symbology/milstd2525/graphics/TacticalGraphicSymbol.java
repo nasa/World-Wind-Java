@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
-import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -125,6 +125,9 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         // hostile as possible (to avoid being mistaken for friendly entities). In the case of tactical symbols, however
         // the indicator is redundant to both the symbol frame and fill, so it is not displayed by default.
         this.setShowHostileIndicator(true);
+
+        // Use the same default unit format as 2525 tactical symbols.
+        this.setUnitsFormat(MilStd2525TacticalSymbol.DEFAULT_UNITS_FORMAT);
     }
 
     /** {@inheritDoc} */
@@ -139,10 +142,17 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         if (this.iconRect == null)
             return;
 
+        // Layout all of the graphic and text modifiers around the symbol's frame bounds. The location of each modifier
+        // is the same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4, page 34.
+
+        AVList modifierParams = new AVListImpl();
+        modifierParams.setValues(this.modifiers);
+        this.applyImplicitModifiers(modifierParams);
+
         if (this.mustDrawTextModifiers(dc))
         {
             this.currentLabels.clear();
-            this.doLayoutModifiers(dc, this.iconRect);
+            this.doLayoutModifiers(dc, modifierParams, this.iconRect);
         }
 
         if (this.mustDrawGraphicModifiers(dc))
@@ -153,13 +163,63 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         }
     }
 
+    protected void applyImplicitModifiers(AVList modifiers)
+    {
+        String si = this.symbolCode.getStandardIdentity();
+
+        // If this symbol represents a hostile entity, and the "hostile/enemy" indicator is enabled, then set the
+        // hostile modifier to "ENY".
+        boolean isHostile = SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(si)
+            || SymbologyConstants.STANDARD_IDENTITY_SUSPECT.equalsIgnoreCase(si)
+            || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(si)
+            || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(si);
+        if (!modifiers.hasKey(SymbologyConstants.HOSTILE_ENEMY) && this.isShowHostileIndicator() && isHostile)
+        {
+            modifiers.setValue(SymbologyConstants.HOSTILE_ENEMY, SymbologyConstants.HOSTILE_ENEMY);
+        }
+
+        // Determine location, if location modifier is enabled.
+        if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation())
+        {
+            modifiers.setValue(SymbologyConstants.LOCATION, this.getUnitsFormat().latLon(this.getPosition()));
+        }
+
+        // Determine altitude, if location modifier is enabled.
+        if (!modifiers.hasKey(SymbologyConstants.ALTITUDE_DEPTH) && this.isShowLocation())
+        {
+            Position position = this.getPosition();
+            UnitsFormat format = this.getUnitsFormat();
+
+            // If the symbol is clamped to the ground, return "GL" (Ground Level) for the altitude. Otherwise format
+            // the altitude using the active units format, and append the datum. See MIL-STD-2525C section 5.5.2.5.2 (pg. 41).
+            String altitude;
+            int altitudeMode = this.getAltitudeMode();
+            if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
+                altitude = "GL";
+            else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND)
+                altitude = format.eyeAltitude(position.getElevation()) + " AGL";
+            else
+                altitude = format.eyeAltitude(position.getElevation()) + " AMSL";
+
+            modifiers.setValue(SymbologyConstants.ALTITUDE_DEPTH, altitude);
+        }
+
+        if (!modifiers.hasKey(SymbologyConstants.TYPE))
+        {
+            if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(this.maskedSymbolCode))
+                modifiers.setValue(SymbologyConstants.TYPE, "BIO");
+            else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(this.maskedSymbolCode))
+                modifiers.setValue(SymbologyConstants.TYPE, "CML");
+        }
+    }
+
     /**
      * Layout text and graphic modifiers around the symbol.
      *
      * @param dc       Current draw context.
      * @param iconRect Symbol's screen rectangle.
      */
-    protected void doLayoutModifiers(DrawContext dc, Rectangle iconRect)
+    protected void doLayoutModifiers(DrawContext dc, AVList modifiers, Rectangle iconRect)
     {
         // We compute a default font rather than using a static default in order to choose a font size that is
         // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
@@ -175,7 +235,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
             if (WWUtil.isEmpty(layouts))
                 continue;
 
-            Object value = this.getLabelValue(key);
+            Object value = modifiers.getValue(key);
 
             // If we're retrieving the date modifier, maybe add a hyphen to the first value to indicate a date range.
             if (SymbologyConstants.DATE_TIME_GROUP.equals(key) && (value instanceof Iterable))
@@ -275,51 +335,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
                 this.layoutLabel(dc, font, layout, value.toString(), mode);
             }
         }
-    }
-
-    protected Object getLabelValue(String key)
-    {
-        Object value = null;
-        if (SymbologyConstants.HOSTILE_ENEMY.equals(key))
-        {
-            if (this.isShowHostileIndicator()
-                && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity()))
-            {
-                value = SymbologyConstants.HOSTILE_ENEMY;
-            }
-        }
-        else if (SymbologyConstants.TYPE.equals(key))
-        {
-            value = this.getType();
-        }
-        else if (SymbologyConstants.LOCATION.equals(key))
-        {
-            if (this.isShowLocation())
-                value = this.getModifier(key); // TODO compute from actual location
-        }
-        else
-        {
-            value = this.getModifier(key);
-        }
-        return value;
-    }
-
-    /**
-     * Indicates the Type modifier. This modifier is only used by Nuclear/Chemical/Biological graphics. In the case of
-     * Nuclear graphics the modifier is specified by the application. In the case of chemical or biological this method
-     * returns the string "CML" or "BIO".
-     *
-     * @return The value of the type modifier. Returns null if no type modifier has been set, and the graphics is not
-     *         Chemical or Biological.
-     */
-    protected String getType()
-    {
-        if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(this.maskedSymbolCode))
-            return "BIO";
-        else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(this.maskedSymbolCode))
-            return "CML";
-        else
-            return (String) this.getModifier(SymbologyConstants.TYPE);
     }
 
     /**

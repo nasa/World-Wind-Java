@@ -781,6 +781,7 @@ public class TacticalGraphics extends ApplicationTemplate
 
             graphic = factory.createPoint("GFMPNEB-------X", Position.fromDegrees(34.5059, -117.2020), null);
             graphic.setValue(AVKey.DISPLAY_NAME, "Biological Release Event (2.X.3.4.7.1)");
+            graphic.setShowLocation(false);
             layer.addRenderable(graphic);
 
             // Apply shared attributes to all graphics on this layer

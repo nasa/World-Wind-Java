@@ -67,6 +67,7 @@ public class Symbology extends ApplicationTemplate
             TacticalSymbol symbol = new MilStd2525TacticalSymbol("SFAPMFQM------A",
                 Position.fromDegrees(34.4934, -117.6003, 3000));
             symbol.setValue(AVKey.DISPLAY_NAME, "MIL-STD-2525 Tactical Symbol"); // Tool tip text.
+            symbol.setShowLocation(false);
             layer.addRenderable(symbol);
 
             // Add the symbol layer to the World Wind model.

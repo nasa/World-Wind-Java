@@ -29,6 +29,9 @@ import java.util.List;
  */
 public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 {
+    /** Default unit format. */
+    public static final UnitsFormat DEFAULT_UNITS_FORMAT = new MilStd2525UnitsFormat();
+
     protected static final Offset CENTER_OFFSET = Offset.fromFraction(0.5, 0.5);
     protected static final Offset BOTTOM_CENTER_OFFSET = Offset.fromFraction(0.5, 0.0);
     protected static final Offset TOP_CENTER_OFFSET = Offset.fromFraction(0.5, 1.0);
@@ -147,6 +150,8 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 
         // Initialize this tactical symbol's icon offset, icon size, and altitude mode from its symbol code.
         this.initIconLayout();
+
+        this.setUnitsFormat(DEFAULT_UNITS_FORMAT);
     }
 
     /** {@inheritDoc} */
@@ -403,6 +408,43 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
                 modifiers.setValue(SymbologyConstants.FRAME_SHAPE, SymbologyConstants.FRAME_SHAPE_FAKER);
             }
         }
+
+        // If this symbol represents a hostile entity, and the "hostile/enemy" indicator is enabled, then set the
+        // hostile modifier to "ENY".
+        boolean isHostile = SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(si)
+            || SymbologyConstants.STANDARD_IDENTITY_SUSPECT.equalsIgnoreCase(si)
+            || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(si)
+            || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(si);
+        if (!modifiers.hasKey(SymbologyConstants.HOSTILE_ENEMY) && this.isShowHostileIndicator() && isHostile)
+        {
+            modifiers.setValue(SymbologyConstants.HOSTILE_ENEMY, SymbologyConstants.HOSTILE_ENEMY);
+        }
+
+        // Determine location, if location modifier is enabled.
+        if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation())
+        {
+            modifiers.setValue(SymbologyConstants.LOCATION, this.getUnitsFormat().latLon(this.getPosition()));
+        }
+
+        // Determine altitude, if location modifier is enabled.
+        if (!modifiers.hasKey(SymbologyConstants.ALTITUDE_DEPTH) && this.isShowLocation())
+        {
+            Position position = this.getPosition();
+            UnitsFormat format = this.getUnitsFormat();
+
+            // If the symbol is clamped to the ground, return "GL" (Ground Level) for the altitude. Otherwise format
+            // the altitude using the active units format, and append the datum. See MIL-STD-2525C section 5.5.2.5.2 (pg. 41).
+            String altitude;
+            int altitudeMode = this.getAltitudeMode();
+            if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
+                altitude = "GL";
+            else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND)
+                altitude = format.eyeAltitude(position.getElevation()) + " AGL";
+            else
+                altitude = format.eyeAltitude(position.getElevation()) + " AMSL";
+
+            modifiers.setValue(SymbologyConstants.ALTITUDE_DEPTH, altitude);
+        }
     }
 
     protected void layoutGraphicModifiers(DrawContext dc, AVList modifiers)
@@ -568,9 +610,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         this.appendTextModifier(sb, modifiers, SymbologyConstants.EVALUATION_RATING, 2);
         this.appendTextModifier(sb, modifiers, SymbologyConstants.COMBAT_EFFECTIVENESS, 3);
         this.appendTextModifier(sb, modifiers, SymbologyConstants.SIGNATURE_EQUIPMENT, 1);
-        // TODO: compute value from standard identity
-        if (this.isShowHostileIndicator())
-            this.appendTextModifier(sb, modifiers, SymbologyConstants.HOSTILE_ENEMY, 3);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.HOSTILE_ENEMY, 3);
         this.appendTextModifier(sb, modifiers, SymbologyConstants.IFF_SIF, 5);
         if (sb.length() > 0)
         {
@@ -587,11 +627,8 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         }
 
         // Altitude/Depth and Location modifier layout.
-        // TODO: compute value from position
         this.appendTextModifier(sb, modifiers, SymbologyConstants.ALTITUDE_DEPTH, 14);
-        // TODO: compute value from position
-        if (this.isShowLocation())
-            this.appendTextModifier(sb, modifiers, SymbologyConstants.LOCATION, 19);
+        this.appendTextModifier(sb, modifiers, SymbologyConstants.LOCATION, 19);
 
         if (sb.length() > 0)
         {
