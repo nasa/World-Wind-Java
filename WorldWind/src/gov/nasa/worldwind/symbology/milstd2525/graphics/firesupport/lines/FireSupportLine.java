@@ -214,7 +214,7 @@ public class FireSupportLine extends MilStd2525TacticalGraphic
      */
     protected boolean isDrawDoubleLabel()
     {
-        return !TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equals(this.maskedSymbolCode);
+        return !TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equalsIgnoreCase(this.maskedSymbolCode);
     }
 
     /**
@@ -249,15 +249,15 @@ public class FireSupportLine extends MilStd2525TacticalGraphic
         if (!WWUtil.isEmpty(text))
             sb.append(text);
 
-        if (TacGrpSidc.FSUPP_LNE_C2LNE_FSCL.equals(this.maskedSymbolCode))
+        if (TacGrpSidc.FSUPP_LNE_C2LNE_FSCL.equalsIgnoreCase(this.maskedSymbolCode))
         {
             sb.append(" FSCL");
         }
-        else if (TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equals(this.maskedSymbolCode))
+        else if (TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equalsIgnoreCase(this.maskedSymbolCode))
         {
             sb.insert(0, "CFL ");
         }
-        else if (TacGrpSidc.FSUPP_LNE_C2LNE_RFL.equals(this.maskedSymbolCode))
+        else if (TacGrpSidc.FSUPP_LNE_C2LNE_RFL.equalsIgnoreCase(this.maskedSymbolCode))
         {
             sb.insert(0, "RFL ");
         }
@@ -414,7 +414,7 @@ public class FireSupportLine extends MilStd2525TacticalGraphic
         super.applyDefaultAttributes(attributes);
 
         // Coordinated Fire Line always renders with dashed lines.
-        if (TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equals(this.maskedSymbolCode))
+        if (TacGrpSidc.FSUPP_LNE_C2LNE_CFL.equalsIgnoreCase(this.maskedSymbolCode))
         {
             attributes.setOutlineStippleFactor(CFL_OUTLINE_STIPPLE_FACTOR);
             attributes.setOutlineStipplePattern(this.getOutlineStipplePattern());

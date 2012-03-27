@@ -84,7 +84,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         this.drawImage(srcImg, destImg);
 
         // TODO: handle color for METOC symbols
-        if (!SymbologyConstants.SCHEME_METOC.equals(symbolCode.getScheme()))
+        if (!SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(symbolCode.getScheme()))
         {
             Color color = this.getColorFromParams(params);
             if (color == null)
@@ -144,9 +144,9 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     {
         String masked = code.toMaskedString();
 
-        return TacGrpSidc.MOBSU_CBRN_NDGZ.equals(masked)
-            || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(masked)
-            || TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(masked);
+        return TacGrpSidc.MOBSU_CBRN_NDGZ.equalsIgnoreCase(masked)
+            || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equalsIgnoreCase(masked)
+            || TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equalsIgnoreCase(masked);
     }
 
     /**
@@ -176,7 +176,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
      */
     protected Color getColorForStandardIdentity(SymbolCode code)
     {
-        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(code.getStandardIdentity()))
+        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(code.getStandardIdentity()))
             return MilStd2525TacticalGraphic.MATERIAL_HOSTILE.getDiffuse();
         else
             return MilStd2525TacticalGraphic.MATERIAL_FRIEND.getDiffuse();
@@ -207,12 +207,12 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     {
         String scheme = code.getScheme();
 
-        if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equals(scheme))
+        if (SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equalsIgnoreCase(scheme))
             return this.composeFilenameTacticalGraphic(code, DIR_ICON_TACGRP);
-        else if (SymbologyConstants.SCHEME_METOC.equals(scheme))
+        else if (SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(scheme))
             return this.composeFilenameMetoc(code);
-        else if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equals(scheme))
-             return this.composeFilenameEms(code);
+        else if (SymbologyConstants.SCHEME_EMERGENCY_MANAGEMENT.equalsIgnoreCase(scheme))
+            return this.composeFilenameEms(code);
 
         return null;
     }
@@ -234,7 +234,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         // Two images are provided for each graphic: one for Present status and one for all other statuses.
         // MIL-STD-2525C section 5.5.1.2 (pg. 37) states that graphics must draw using solid lines when Present, and
         // dashed lines in other states.
-        char status = SymbologyConstants.STATUS_PRESENT.equals(code.getStatus()) ? 'p' : 'a';
+        char status = SymbologyConstants.STATUS_PRESENT.equalsIgnoreCase(code.getStatus()) ? 'p' : 'a';
 
         if (functionId == null)
             functionId = "------";
@@ -299,7 +299,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         // Two images are provided for each graphic: one for Present status and one for all other statuses.
         // MIL-STD-2525C section 5.5.1.2 (pg. 37) states that graphics must draw using solid lines when Present, and
         // dashed lines in other states.
-        char status = SymbologyConstants.STATUS_PRESENT.equals(code.getStatus()) ? 'p' : 'a';
+        char status = SymbologyConstants.STATUS_PRESENT.equalsIgnoreCase(code.getStatus()) ? 'p' : 'a';
 
         if (functionId == null)
             functionId = "------";

@@ -190,7 +190,7 @@ public class IrregularFireSupportArea extends BasicArea
     @Override
     protected String getLabelAlignment()
     {
-        boolean isACA = TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equals(this.maskedSymbolCode);
+        boolean isACA = TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. All others are center aligned.
         if (isACA)
@@ -208,7 +208,7 @@ public class IrregularFireSupportArea extends BasicArea
     @Override
     protected Offset getDefaultLabelOffset()
     {
-        boolean isACA = TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equals(this.maskedSymbolCode);
+        boolean isACA = TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. Adjust the offset to center the left aligned label
         // in the circle. (This is not necessary with a center aligned label because centering the text automatically
@@ -240,9 +240,9 @@ public class IrregularFireSupportArea extends BasicArea
      */
     protected boolean isFilled()
     {
-        return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equals(this.maskedSymbolCode)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equals(this.maskedSymbolCode)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equals(this.maskedSymbolCode);
+        return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equalsIgnoreCase(this.maskedSymbolCode)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equalsIgnoreCase(this.maskedSymbolCode)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equalsIgnoreCase(this.maskedSymbolCode);
     }
 
     /**

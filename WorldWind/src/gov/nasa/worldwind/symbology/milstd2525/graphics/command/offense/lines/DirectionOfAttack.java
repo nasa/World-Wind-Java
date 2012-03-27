@@ -241,7 +241,7 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
     protected boolean isDrawOutlined()
     {
         // Draw the arrow head outlined if this is a Main Attack graphic.
-        return TacGrpSidc.C2GM_OFF_LNE_DIRATK_GRD_MANATK.equals(this.maskedSymbolCode);
+        return TacGrpSidc.C2GM_OFF_LNE_DIRATK_GRD_MANATK.equalsIgnoreCase(this.maskedSymbolCode);
     }
 
     /**

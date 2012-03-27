@@ -154,19 +154,20 @@ public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderabl
     {
         String code = this.maskedSymbolCode;
 
-        if (TacGrpSidc.C2GM_GNL_ARS_GENARA.equals(code))
+        if (TacGrpSidc.C2GM_GNL_ARS_GENARA.equalsIgnoreCase(code))
             return "";
-        else if (TacGrpSidc.C2GM_GNL_ARS_ABYARA.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_ARS_ABYARA.equalsIgnoreCase(code))
             return "AA";
-        else if (TacGrpSidc.C2GM_GNL_ARS_DRPZ.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_ARS_DRPZ.equalsIgnoreCase(code))
             return "DZ";
-        else if (TacGrpSidc.C2GM_GNL_ARS_EMTARA.equals(code) || TacGrpSidc.C2GM_DEF_ARS_EMTARA.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_ARS_EMTARA.equalsIgnoreCase(
+            code) || TacGrpSidc.C2GM_DEF_ARS_EMTARA.equalsIgnoreCase(code))
             return "EA";
-        else if (TacGrpSidc.C2GM_GNL_ARS_EZ.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_ARS_EZ.equalsIgnoreCase(code))
             return "EZ";
-        else if (TacGrpSidc.C2GM_GNL_ARS_LZ.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_ARS_LZ.equalsIgnoreCase(code))
             return "LZ";
-        else if (TacGrpSidc.C2GM_GNL_ARS_PZ.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_ARS_PZ.equalsIgnoreCase(code))
             return "PZ";
 
         return "";

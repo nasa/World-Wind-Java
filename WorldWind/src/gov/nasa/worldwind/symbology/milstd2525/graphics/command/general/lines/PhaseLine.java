@@ -139,23 +139,23 @@ public class PhaseLine extends MilStd2525TacticalGraphic
 
         String pattern = null;
 
-        if (TacGrpSidc.C2GM_GNL_LNE_PHELNE.equals(code))
+        if (TacGrpSidc.C2GM_GNL_LNE_PHELNE.equalsIgnoreCase(code))
             pattern = "PL %s";
-        else if (TacGrpSidc.C2GM_GNL_LNE_LITLNE.equals(code))
+        else if (TacGrpSidc.C2GM_GNL_LNE_LITLNE.equalsIgnoreCase(code))
             pattern = "LL\n(PL %s)";
-        else if (TacGrpSidc.C2GM_OFF_LNE_FCL.equals(code))
+        else if (TacGrpSidc.C2GM_OFF_LNE_FCL.equalsIgnoreCase(code))
             pattern = "FINAL CL\n(PL %s)";
-        else if (TacGrpSidc.C2GM_OFF_LNE_LMTADV.equals(code))
+        else if (TacGrpSidc.C2GM_OFF_LNE_LMTADV.equalsIgnoreCase(code))
             pattern = "LOA\n(PL %s)";
-        else if (TacGrpSidc.C2GM_OFF_LNE_LD.equals(code))
+        else if (TacGrpSidc.C2GM_OFF_LNE_LD.equalsIgnoreCase(code))
             pattern = "LD\n(PL %s)";
-        else if (TacGrpSidc.C2GM_OFF_LNE_LDLC.equals(code))
+        else if (TacGrpSidc.C2GM_OFF_LNE_LDLC.equalsIgnoreCase(code))
             pattern = "LD/LC\n(PL %s)";
-        else if (TacGrpSidc.C2GM_OFF_LNE_PLD.equals(code))
+        else if (TacGrpSidc.C2GM_OFF_LNE_PLD.equalsIgnoreCase(code))
             pattern = "PLD\n(PL %s)";
-        else if (TacGrpSidc.C2GM_SPL_LNE_REL.equals(code))
+        else if (TacGrpSidc.C2GM_SPL_LNE_REL.equalsIgnoreCase(code))
             pattern = "RL\n(PL %s)";
-        else if (TacGrpSidc.FSUPP_LNE_C2LNE_NFL.equals(code))
+        else if (TacGrpSidc.FSUPP_LNE_C2LNE_NFL.equalsIgnoreCase(code))
             pattern = "NFL\n(PL %s)";
 
         if (pattern != null)
@@ -221,7 +221,7 @@ public class PhaseLine extends MilStd2525TacticalGraphic
         super.applyDefaultAttributes(attributes);
 
         // Probable Line of Deployment graphic always renders with dashed lines.
-        if (TacGrpSidc.C2GM_OFF_LNE_PLD.equals(this.maskedSymbolCode))
+        if (TacGrpSidc.C2GM_OFF_LNE_PLD.equalsIgnoreCase(this.maskedSymbolCode))
         {
             attributes.setOutlineStippleFactor(PLD_OUTLINE_STIPPLE_FACTOR);
             attributes.setOutlineStipplePattern(this.getOutlineStipplePattern());

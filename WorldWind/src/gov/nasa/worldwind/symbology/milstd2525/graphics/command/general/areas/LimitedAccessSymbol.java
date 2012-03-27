@@ -8,11 +8,11 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.areas;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.util.Logging;
-import gov.nasa.worldwind.geom.Position;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -155,7 +155,7 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol
          */
         protected Color getColorForStandardIdentity(SymbolCode code)
         {
-            if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(code.getStandardIdentity()))
+            if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(code.getStandardIdentity()))
                 return MilStd2525TacticalGraphic.MATERIAL_HOSTILE.getDiffuse();
             else
                 return MilStd2525TacticalGraphic.MATERIAL_FRIEND.getDiffuse();

@@ -51,7 +51,7 @@ public class OffenseArea extends BasicArea
     protected String createLabelText()
     {
         // Penetration box graphic does not support text modifiers.
-        if (TacGrpSidc.C2GM_OFF_ARS_PBX.equals(this.maskedSymbolCode))
+        if (TacGrpSidc.C2GM_OFF_ARS_PBX.equalsIgnoreCase(this.maskedSymbolCode))
             return null;
 
         return super.createLabelText();
@@ -62,11 +62,11 @@ public class OffenseArea extends BasicArea
     {
         String code = this.maskedSymbolCode;
 
-        if (TacGrpSidc.C2GM_OFF_ARS_ASTPSN.equals(code))
+        if (TacGrpSidc.C2GM_OFF_ARS_ASTPSN.equalsIgnoreCase(code))
             return "ASLT\nPSN";
-        else if (TacGrpSidc.C2GM_OFF_ARS_ATKPSN.equals(code))
+        else if (TacGrpSidc.C2GM_OFF_ARS_ATKPSN.equalsIgnoreCase(code))
             return "ATK";
-        else if (TacGrpSidc.C2GM_OFF_ARS_OBJ.equals(code))
+        else if (TacGrpSidc.C2GM_OFF_ARS_OBJ.equalsIgnoreCase(code))
             return "OBJ";
 
         return "";

@@ -333,11 +333,11 @@ public class LinearTarget extends MilStd2525TacticalGraphic
     protected String getBottomLabelText()
     {
         String code = this.maskedSymbolCode;
-        if (TacGrpSidc.FSUPP_LNE_LNRTGT_LSTGT.equals(code))
+        if (TacGrpSidc.FSUPP_LNE_LNRTGT_LSTGT.equalsIgnoreCase(code))
         {
             return "SMOKE";
         }
-        else if (TacGrpSidc.FSUPP_LNE_LNRTGT_FPF.equals(code))
+        else if (TacGrpSidc.FSUPP_LNE_LNRTGT_FPF.equalsIgnoreCase(code))
         {
             StringBuilder sb = new StringBuilder("FPF");
             String additionalText = this.getAdditionalText();

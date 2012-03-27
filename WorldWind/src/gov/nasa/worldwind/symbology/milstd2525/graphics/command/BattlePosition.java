@@ -103,7 +103,7 @@ public class BattlePosition extends BasicArea
     @Override
     protected String getGraphicLabel()
     {
-        if (TacGrpSidc.C2GM_DEF_ARS_BTLPSN_PBNO.equals(this.maskedSymbolCode))
+        if (TacGrpSidc.C2GM_DEF_ARS_BTLPSN_PBNO.equalsIgnoreCase(this.maskedSymbolCode))
             return "(P)";
 
         return null;
@@ -184,7 +184,7 @@ public class BattlePosition extends BasicArea
         super.applyDefaultAttributes(attributes);
 
         // Prepared but not Occupied graphic always renders with dashed lines.
-        if (TacGrpSidc.C2GM_DEF_ARS_BTLPSN_PBNO.equals(this.maskedSymbolCode))
+        if (TacGrpSidc.C2GM_DEF_ARS_BTLPSN_PBNO.equalsIgnoreCase(this.maskedSymbolCode))
         {
             attributes.setOutlineStippleFactor(PBNO_OUTLINE_STIPPLE_FACTOR);
             attributes.setOutlineStipplePattern(this.getOutlineStipplePattern());

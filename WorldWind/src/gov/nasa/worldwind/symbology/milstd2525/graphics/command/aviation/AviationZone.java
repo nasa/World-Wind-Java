@@ -137,17 +137,17 @@ public class AviationZone extends BasicArea
     {
         String code = this.maskedSymbolCode;
 
-        if (TacGrpSidc.C2GM_AVN_ARS_ROZ.equals(code))
+        if (TacGrpSidc.C2GM_AVN_ARS_ROZ.equalsIgnoreCase(code))
             return "ROZ";
-        else if (TacGrpSidc.C2GM_AVN_ARS_SHRDEZ.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_ARS_SHRDEZ.equalsIgnoreCase(code))
             return "SHORADEZ";
-        else if (TacGrpSidc.C2GM_AVN_ARS_HIDACZ.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_ARS_HIDACZ.equalsIgnoreCase(code))
             return "HIDACZ";
-        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ.equalsIgnoreCase(code))
             return "MEZ";
-        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ_LAMEZ.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ_LAMEZ.equalsIgnoreCase(code))
             return "LOMEZ";
-        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ_HAMEZ.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_ARS_MEZ_HAMEZ.equalsIgnoreCase(code))
             return "HIMEZ";
 
         return "";

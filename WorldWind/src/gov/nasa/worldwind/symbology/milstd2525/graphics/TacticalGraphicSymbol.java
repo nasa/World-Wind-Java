@@ -206,9 +206,9 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
 
         if (!modifiers.hasKey(SymbologyConstants.TYPE))
         {
-            if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(this.maskedSymbolCode))
+            if (TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equalsIgnoreCase(this.maskedSymbolCode))
                 modifiers.setValue(SymbologyConstants.TYPE, "BIO");
-            else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(this.maskedSymbolCode))
+            else if (TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equalsIgnoreCase(this.maskedSymbolCode))
                 modifiers.setValue(SymbologyConstants.TYPE, "CML");
         }
     }
@@ -349,10 +349,10 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     {
         String code = this.maskedSymbolCode;
 
-        return TacGrpSidc.MOBSU_CBRN_NDGZ.equals(code)
-            || TacGrpSidc.MOBSU_CBRN_FAOTP.equals(code)
-            || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equals(code)
-            || TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equals(code);
+        return TacGrpSidc.MOBSU_CBRN_NDGZ.equalsIgnoreCase(code)
+            || TacGrpSidc.MOBSU_CBRN_FAOTP.equalsIgnoreCase(code)
+            || TacGrpSidc.MOBSU_CBRN_REEVNT_BIO.equalsIgnoreCase(code)
+            || TacGrpSidc.MOBSU_CBRN_REEVNT_CML.equalsIgnoreCase(code);
     }
 
     @Override

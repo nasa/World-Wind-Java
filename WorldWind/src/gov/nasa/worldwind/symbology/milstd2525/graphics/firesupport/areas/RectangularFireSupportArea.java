@@ -156,7 +156,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      */
     protected String getMainLabelTextAlign()
     {
-        boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equals(this.maskedSymbolCode);
+        boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. All others are center aligned.
         if (isACA)
@@ -174,7 +174,7 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
     @Override
     protected Offset getDefaultLabelOffset()
     {
-        boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equals(this.maskedSymbolCode);
+        boolean isACA = TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equalsIgnoreCase(this.maskedSymbolCode);
 
         // Airspace Coordination Area labels are left aligned. Adjust the offset to center the left aligned label
         // in the circle. (This is not necessary with a center aligned label because centering the text automatically
@@ -206,9 +206,9 @@ public class RectangularFireSupportArea extends AbstractRectangularGraphic imple
      */
     protected boolean isFilled()
     {
-        return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equals(this.maskedSymbolCode)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equals(this.maskedSymbolCode)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equals(this.maskedSymbolCode);
+        return TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equalsIgnoreCase(this.maskedSymbolCode)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equalsIgnoreCase(this.maskedSymbolCode)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equalsIgnoreCase(this.maskedSymbolCode);
     }
 
     /**

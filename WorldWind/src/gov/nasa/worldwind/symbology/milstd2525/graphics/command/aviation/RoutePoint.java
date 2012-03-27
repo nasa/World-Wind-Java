@@ -66,9 +66,9 @@ public class RoutePoint extends AbstractCircularGraphic implements TacticalPoint
     {
         String code = this.maskedSymbolCode;
 
-        if (TacGrpSidc.C2GM_AVN_PNT_ACP.equals(code))
+        if (TacGrpSidc.C2GM_AVN_PNT_ACP.equalsIgnoreCase(code))
             return "ACP";
-        else if (TacGrpSidc.C2GM_AVN_PNT_COMMCP.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_PNT_COMMCP.equalsIgnoreCase(code))
             return "CCP";
 
         return "";

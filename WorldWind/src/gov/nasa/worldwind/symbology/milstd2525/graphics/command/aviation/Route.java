@@ -431,15 +431,15 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
     {
         String code = this.maskedSymbolCode;
 
-        if (TacGrpSidc.C2GM_AVN_LNE_ACDR.equals(code))
+        if (TacGrpSidc.C2GM_AVN_LNE_ACDR.equalsIgnoreCase(code))
             return "AC";
-        else if (TacGrpSidc.C2GM_AVN_LNE_MRR.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_LNE_MRR.equalsIgnoreCase(code))
             return "MRR";
-        else if (TacGrpSidc.C2GM_AVN_LNE_SAAFR.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_LNE_SAAFR.equalsIgnoreCase(code))
             return "SAAFR";
-        else if (TacGrpSidc.C2GM_AVN_LNE_LLTR.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_LNE_LLTR.equalsIgnoreCase(code))
             return "LLTR";
-        else if (TacGrpSidc.C2GM_AVN_LNE_UAR.equals(code))
+        else if (TacGrpSidc.C2GM_AVN_LNE_UAR.equalsIgnoreCase(code))
             return "UA";
 
         return "";

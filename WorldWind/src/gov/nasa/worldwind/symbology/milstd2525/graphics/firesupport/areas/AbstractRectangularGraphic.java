@@ -114,7 +114,7 @@ public class AbstractRectangularGraphic extends MilStd2525TacticalGraphic implem
     @Override
     public void setModifier(String modifier, Object value)
     {
-        if (SymbologyConstants.DISTANCE.equals(modifier))
+        if (SymbologyConstants.DISTANCE.equalsIgnoreCase(modifier))
         {
             if (value instanceof Double)
             {
@@ -137,7 +137,7 @@ public class AbstractRectangularGraphic extends MilStd2525TacticalGraphic implem
     @Override
     public Object getModifier(String modifier)
     {
-        if (SymbologyConstants.DISTANCE.equals(modifier))
+        if (SymbologyConstants.DISTANCE.equalsIgnoreCase(modifier))
             return this.getWidth();
         else
             return super.getModifier(modifier);

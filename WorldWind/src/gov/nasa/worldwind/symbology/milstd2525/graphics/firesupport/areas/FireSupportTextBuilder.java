@@ -48,17 +48,17 @@ public class FireSupportTextBuilder
         SymbolCode symCode = new SymbolCode(graphic.getIdentifier());
         String maskedSidc = symCode.toMaskedString();
 
-        if (TacGrpSidc.FSUPP_ARS_ARATGT_CIRTGT.equals(maskedSidc))
+        if (TacGrpSidc.FSUPP_ARS_ARATGT_CIRTGT.equalsIgnoreCase(maskedSidc))
         {
             // Circular Target just uses the Unique Designation as a label.
             result = new String[] {graphic.getText()};
         }
-        else if (TacGrpSidc.FSUPP_ARS_ARATGT_BMARA.equals(maskedSidc))
+        else if (TacGrpSidc.FSUPP_ARS_ARATGT_BMARA.equalsIgnoreCase(maskedSidc))
         {
             // Bomb graphic just says "BOMB"
             result = new String[] {"BOMB"};
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TGMF.equals(maskedSidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TGMF.equalsIgnoreCase(maskedSidc))
         {
             // Terminally guided munitions footprint says "TGMF", and does not support modifiers.
             result = new String[] {"TGMF"};
@@ -102,16 +102,16 @@ public class FireSupportTextBuilder
 
     protected boolean isShowAltitude(String maskedSidc)
     {
-        return TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equals(maskedSidc)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equals(maskedSidc)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equals(maskedSidc);
+        return TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equalsIgnoreCase(maskedSidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equalsIgnoreCase(maskedSidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equalsIgnoreCase(maskedSidc);
     }
 
     protected boolean isAirspaceCoordinationArea(String functionId)
     {
-        return TacGrpSidc.FSUPP_ARS_C2ARS_ACA_IRR.equals(functionId)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equals(functionId)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equals(functionId);
+        return TacGrpSidc.FSUPP_ARS_C2ARS_ACA_IRR.equalsIgnoreCase(functionId)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_RTG.equalsIgnoreCase(functionId)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equalsIgnoreCase(functionId);
     }
 
     protected String createMainText(MilStd2525TacticalGraphic graphic, String functionId, boolean includeTime,
@@ -177,89 +177,89 @@ public class FireSupportTextBuilder
 
     protected String getGraphicLabel(String sidc)
     {
-        if (TacGrpSidc.FSUPP_ARS_C2ARS_FFA_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_IRR.equals(sidc))
+        if (TacGrpSidc.FSUPP_ARS_C2ARS_FFA_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FFA_IRR.equalsIgnoreCase(sidc))
         {
             return "FFA";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_RFA_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_RFA_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_RFA_IRR.equalsIgnoreCase(sidc))
         {
             return "RFA";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_FSA_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_FSA_IRR.equalsIgnoreCase(sidc))
         {
             return "FSA";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_SNSZ_IRR.equalsIgnoreCase(sidc))
         {
             return "SENSOR\nZONE";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_DA_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_DA_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equalsIgnoreCase(sidc))
         {
             return "DA";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_ZOR_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_DA_IRR.equalsIgnoreCase(sidc))
         {
             return "ZOR";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TBA_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TBA_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TBA_IRR.equalsIgnoreCase(sidc))
         {
             return "TBA";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_TVAR_IRR.equalsIgnoreCase(sidc))
         {
             return "TVAR";
         }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_ATIZ_IRR.equalsIgnoreCase(sidc))
         {
             return "ATI ZONE";
         }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFFZ_IRR.equalsIgnoreCase(sidc))
         {
             return "CFF ZONE";
         }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CNS_IRR.equalsIgnoreCase(sidc))
         {
             return "CENSOR ZONE";
         }
-        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_TGTAQZ_CFZ_IRR.equalsIgnoreCase(sidc))
         {
             return "CF ZONE";
         }
-        else if (TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_C2ARS_NFA_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_C2ARS_NFA_IRR.equalsIgnoreCase(sidc))
         {
             return "NFA";
         }
-        else if (TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_BLUE_IRR.equalsIgnoreCase(sidc))
         {
             return "BKB";
         }
-        else if (TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equals(sidc)
-            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equals(sidc))
+        else if (TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_RTG.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_CIRCLR.equalsIgnoreCase(sidc)
+            || TacGrpSidc.FSUPP_ARS_KLBOX_PURPLE_IRR.equalsIgnoreCase(sidc))
         {
             return "PKB";
         }

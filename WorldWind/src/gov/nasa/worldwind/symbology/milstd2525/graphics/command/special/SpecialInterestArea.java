@@ -50,11 +50,11 @@ public class SpecialInterestArea extends BasicArea
     {
         String code = this.maskedSymbolCode;
 
-        if (TacGrpSidc.C2GM_SPL_ARA_AOO.equals(code))
+        if (TacGrpSidc.C2GM_SPL_ARA_AOO.equalsIgnoreCase(code))
             return "AO";
-        else if (TacGrpSidc.C2GM_SPL_ARA_NAI.equals(code))
+        else if (TacGrpSidc.C2GM_SPL_ARA_NAI.equalsIgnoreCase(code))
             return "NAI";
-        else if (TacGrpSidc.C2GM_SPL_ARA_TAI.equals(code))
+        else if (TacGrpSidc.C2GM_SPL_ARA_TAI.equalsIgnoreCase(code))
             return "TAI";
 
         return "";

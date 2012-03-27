@@ -163,7 +163,7 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
         // when in the Present status, and dashed lines when the status is not Present. Note that the default is
         //  overridden by some graphics, which always draw with dashed lines.
         String status = this.symbolCode.getStatus();
-        if (!SymbologyConstants.STATUS_PRESENT.equals(status))
+        if (!SymbologyConstants.STATUS_PRESENT.equalsIgnoreCase(status))
         {
             attributes.setOutlineStippleFactor(this.getOutlineStippleFactor());
             attributes.setOutlineStipplePattern(this.getOutlineStipplePattern());
@@ -206,7 +206,7 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
     protected Material getDefaultMaterial()
     {
         String identity = this.symbolCode.getStandardIdentity();
-        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(identity))
+        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(identity))
             return MATERIAL_HOSTILE;
         else
             return MATERIAL_FRIEND;

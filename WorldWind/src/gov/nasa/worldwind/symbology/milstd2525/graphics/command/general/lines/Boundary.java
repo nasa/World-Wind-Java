@@ -208,7 +208,7 @@ public class Boundary extends PhaseLine
     protected boolean mustCreateIdentityLabels()
     {
         return this.isShowHostileIndicator()
-            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equals(this.symbolCode.getStandardIdentity());
+            && SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(this.symbolCode.getStandardIdentity());
     }
 
     /**

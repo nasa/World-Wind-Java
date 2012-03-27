@@ -59,19 +59,19 @@ public class CombatSupportArea extends BasicArea
     {
         String code = this.maskedSymbolCode;
 
-        if (TacGrpSidc.CSS_ARA_DHA.equals(code))
+        if (TacGrpSidc.CSS_ARA_DHA.equalsIgnoreCase(code))
             return "DETAINEE\nHOLDING\nAREA";
-        else if (TacGrpSidc.CSS_ARA_EPWHA.equals(code))
+        else if (TacGrpSidc.CSS_ARA_EPWHA.equalsIgnoreCase(code))
             return "EPW\nHOLDING\nAREA";
-        else if (TacGrpSidc.CSS_ARA_FARP.equals(code))
+        else if (TacGrpSidc.CSS_ARA_FARP.equalsIgnoreCase(code))
             return "FARP";
-        else if (TacGrpSidc.CSS_ARA_RHA.equals(code))
+        else if (TacGrpSidc.CSS_ARA_RHA.equalsIgnoreCase(code))
             return "REFUGEE\nHOLDING\nAREA";
-        else if (TacGrpSidc.CSS_ARA_SUPARS_BSA.equals(code))
+        else if (TacGrpSidc.CSS_ARA_SUPARS_BSA.equalsIgnoreCase(code))
             return "BSA";
-        else if (TacGrpSidc.CSS_ARA_SUPARS_DSA.equals(code))
+        else if (TacGrpSidc.CSS_ARA_SUPARS_DSA.equalsIgnoreCase(code))
             return "DSA";
-        else if (TacGrpSidc.CSS_ARA_SUPARS_RSA.equals(code))
+        else if (TacGrpSidc.CSS_ARA_SUPARS_RSA.equalsIgnoreCase(code))
             return "RSA";
 
         return "";
