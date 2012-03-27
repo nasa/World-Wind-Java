@@ -55,7 +55,7 @@ public class UnitsFormat extends AVListImpl
     public static final String SYMBOL_SQUARE_YARDS = "yd\u00b2";
     public static final String SYMBOL_SQUARE_FEET = "ft\u00b2";
 
-    // These keys identifying labels correspond to message catalog propterties
+    // These keys identifying labels correspond to message catalog properties
     public static final String LABEL_LATITUDE = "UnitsFormat.LatitudeLabel";
     public static final String LABEL_LONGITUDE = "UnitsFormat.LongitudeLabel";
     public static final String LABEL_LATLON_LAT = "UnitsFormat.LatLonLatLabel";
@@ -82,17 +82,17 @@ public class UnitsFormat extends AVListImpl
 
     protected static final String NL = "\n";
 
-    private boolean showDMS = false;
+    protected boolean showDMS = false;
 
-    private String lengthUnits;
-    private String lengthUnitsSymbol;
-    private double lengthUnitsMultiplier; // factor to convert from meters to current units
-    private String areaUnits;
-    private String areaUnitsSymbol;
-    private double areaUnitsMultiplier; // factor to convert from meters to current units
-    private String altitudeUnits;
-    private String altitudeUnitsSymbol;
-    private double altitudeUnitsMultiplier; // factor to convert from meters to current units
+    protected String lengthUnits;
+    protected String lengthUnitsSymbol;
+    protected double lengthUnitsMultiplier; // factor to convert from meters to current units
+    protected String areaUnits;
+    protected String areaUnitsSymbol;
+    protected double areaUnitsMultiplier; // factor to convert from meters to current units
+    protected String altitudeUnits;
+    protected String altitudeUnitsSymbol;
+    protected double altitudeUnitsMultiplier; // factor to convert from meters to current units
 
     /**
      * Construct an instance that displays length in kilometers, area in square kilometers and angles in decimal
@@ -276,7 +276,7 @@ public class UnitsFormat extends AVListImpl
     }
 
     /**
-     * Returns the format for a spcified value type.
+     * Returns the format for a specified value type.
      *
      * @param formatName the name of the value type whose format is desired.
      *
