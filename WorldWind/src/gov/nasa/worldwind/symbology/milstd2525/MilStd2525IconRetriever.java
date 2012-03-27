@@ -11,6 +11,7 @@ import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.*;
 
 import java.awt.*;
+import java.awt.geom.*;
 import java.awt.image.*;
 import java.util.*;
 
@@ -48,6 +49,11 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final Color DEFAULT_ICON_COLOR = Color.BLACK;
     protected static final String DEFAULT_IMAGE_FORMAT = "image/png";
 
+    /** Radius (in pixels) of circle that is drawn to the represent the symbol when both frame and icon are off. */
+    protected static final int CIRCLE_RADIUS = 32;
+    /** Line width used to stroke circle when fill is turned off. */
+    protected static final int CIRCLE_LINE_WIDTH = 2;
+
     // Static maps and sets providing fast access to attributes about a symbol ID. These data structures are populated
     // in a static block at the bottom of this class.
     protected static final Map<String, String> schemePathMap = new HashMap<String, String>();
@@ -75,16 +81,26 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         SymbolCode symbolCode = new SymbolCode(symbolId);
         BufferedImage image = null;
 
-        if (this.mustDrawFill(symbolCode, params) && this.mustDrawFrame(symbolCode, params))
-            image = this.drawFill(symbolCode, params, null);
+        boolean mustDrawFill = this.mustDrawFill(symbolCode, params);
+        boolean mustDrawIcon = this.mustDrawIcon(symbolCode, params);
+        boolean mustDrawFrame = this.mustDrawFrame(symbolCode, params);
 
-        if (this.mustDrawFrame(symbolCode, params))
-            image = this.drawFrame(symbolCode, params, image);
+        if (mustDrawFrame || mustDrawIcon)
+        {
+            if (mustDrawFill && mustDrawFrame)
+                image = this.drawFill(symbolCode, params, null);
 
-        if (this.mustDrawIcon(symbolCode, params))
-            image = this.drawIcon(symbolCode, params, image);
+            if (mustDrawFrame)
+                image = this.drawFrame(symbolCode, params, image);
 
-        // TODO: if frame and icon are both off, draw a circle with either a solid or a dashed outline, with an optional fill.
+            if (mustDrawIcon)
+                image = this.drawIcon(symbolCode, params, image);
+        }
+        else
+        {
+            // Draw a dot if both frame and icon are turned off
+            image = this.drawCircle(symbolCode, params, image);
+        }
 
         return image;
     }
@@ -109,7 +125,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         return o == null || o.equals(Boolean.TRUE);
     }
 
-    @SuppressWarnings( {"UnusedParameters"})
+    @SuppressWarnings({"UnusedParameters"})
     protected boolean mustDrawIcon(SymbolCode symbolCode, AVList params)
     {
         Object o = params.getValue(SymbologyConstants.SHOW_ICON);
@@ -138,6 +154,48 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         Color color = this.getIconColor(symbolCode, params);
 
         return path != null ? this.drawIconComponent(path, color, dest) : dest;
+    }
+
+    protected BufferedImage drawCircle(SymbolCode symbolCode, AVList params, BufferedImage dest)
+    {
+        Color frameColor = DEFAULT_FRAME_COLOR;
+        Color fillColor = this.mustDrawFill(symbolCode, params) ? this.getFillColor(symbolCode, params)
+            : DEFAULT_ICON_COLOR;
+
+        if (dest == null)
+        {
+            int diameter = CIRCLE_RADIUS * 2;
+            dest = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        Graphics2D g = null;
+        try
+        {
+            g = dest.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int upperLeft = dest.getWidth() / 2 - CIRCLE_RADIUS / 2 - CIRCLE_LINE_WIDTH;
+            int width = CIRCLE_RADIUS - 2 * CIRCLE_LINE_WIDTH;
+            Ellipse2D circle = new Ellipse2D.Double(upperLeft, upperLeft, width, width);
+
+            // Draw filled circle
+            g.setColor(fillColor);
+            g.fill(circle);
+
+            // Draw the circle's border. Always draw the circle with a solid border, even if the status is not Present.
+            // MIL-STD-2525C section 5.3.1.4 (pg. 18) states: "Planned status cannot be shown if the symbol is [...]
+            // displayed as a dot."
+            g.setColor(frameColor);
+            g.setStroke(new BasicStroke(CIRCLE_LINE_WIDTH));
+            g.draw(circle);
+        }
+        finally
+        {
+            if (g != null)
+                g.dispose();
+        }
+
+        return dest;
     }
 
     protected BufferedImage drawIconComponent(String path, Color color, BufferedImage dest)
