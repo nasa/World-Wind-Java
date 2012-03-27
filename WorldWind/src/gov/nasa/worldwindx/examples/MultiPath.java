@@ -14,7 +14,9 @@ import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Example of how to draw parallel paths. This example specifies the positions of a control path, and then computes four
@@ -69,6 +71,25 @@ public class MultiPath extends ApplicationTemplate
             insertBeforePlacenames(getWwd(), layer);
         }
 
+        public static class ExamplePositionColors implements Path.PositionColors
+        {
+            protected Color[] colors;
+            protected int pathLength;
+
+            public ExamplePositionColors(Color[] colors, int pathLength)
+            {
+                this.colors = colors;
+                this.pathLength = pathLength;
+            }
+
+            public Color getColor(Position position, int ordinal)
+            {
+                // Color the positions based on their altitude.
+                double altitude = position.getAltitude();
+                return altitude < 115 ? Color.GREEN :altitude < 135 ? Color.BLUE : Color.RED;
+            }
+        }
+
         protected void addPath(RenderableLayer layer, List<Position> positions, Material material, String displayName)
         {
             ShapeAttributes attrs = new BasicShapeAttributes();
@@ -81,6 +102,15 @@ public class MultiPath extends ApplicationTemplate
             path.setAttributes(attrs);
             path.setValue(AVKey.DISPLAY_NAME, displayName);
             layer.addRenderable(path);
+
+            // Show how to make the colors vary along the paths.
+            Color[] colors =
+                {
+                    new Color(1f, 0f, 0f, 0.2f),
+                    new Color(0f, 1f, 0f, 0.6f),
+                    new Color(0f, 0f, 1f, 1.0f),
+                };
+            path.setPositionColors(new ExamplePositionColors(colors, positions.size()));
         }
 
         /**
