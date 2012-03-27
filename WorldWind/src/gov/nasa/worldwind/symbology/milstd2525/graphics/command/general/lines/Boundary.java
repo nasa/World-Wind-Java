@@ -14,7 +14,6 @@ import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
 import gov.nasa.worldwind.util.WWUtil;
 
 import java.util.*;
-import java.util.List;
 
 /**
  * Implementation of the Boundary graphic (2.X.2.1.2.1).
@@ -345,6 +344,7 @@ public class Boundary extends PhaseLine
         {
             ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
             this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+            this.symbolAttributes.setTextModifierMaterial(this.getLabelMaterial());
         }
     }
 

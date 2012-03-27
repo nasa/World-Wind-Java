@@ -26,7 +26,6 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-// TODO: apply color to echelon modifier.
 public class BattlePosition extends BasicArea
 {
     /** Factor applied to the stipple pattern used to draw the dashed line for a Prepared but not Occupied area. */
@@ -203,6 +202,7 @@ public class BattlePosition extends BasicArea
         {
             ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
             this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
+            this.symbolAttributes.setTextModifierMaterial(this.getLabelMaterial());
         }
     }
 

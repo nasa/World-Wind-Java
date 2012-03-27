@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.AbstractTacticalSymbol;
@@ -26,8 +26,10 @@ import java.awt.geom.*;
  */
 public class EchelonSymbol extends AbstractTacticalSymbol
 {
+    protected static final Offset DEFAULT_OFFSET = Offset.fromFraction(0.5, -0.5);
+
     /** Identifier for this graphic. */
-    protected String echelonId;
+    protected String sidc;
     /** The label is drawn along a line from the label position to the orientation position. */
     protected Position orientationPosition;
 
@@ -62,11 +64,10 @@ public class EchelonSymbol extends AbstractTacticalSymbol
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
-
-        this.echelonId = "-" + echelon;
+        this.sidc = sidc;
 
         this.setAltitudeMode(WorldWind.CLAMP_TO_GROUND);
-        this.setOffset(Offset.fromFraction(0.5, -0.5));
+        this.setOffset(DEFAULT_OFFSET);
 
         // Configure this tactical point graphic's icon retriever and modifier retriever with either the
         // configuration value or the default value (in that order of precedence).
@@ -100,7 +101,25 @@ public class EchelonSymbol extends AbstractTacticalSymbol
     /** {@inheritDoc} */
     public String getIdentifier()
     {
-        return this.echelonId;
+        SymbolCode symbolCode = new SymbolCode(this.sidc);
+        String echelon = symbolCode.getEchelon();
+
+        return "-" + echelon;
+    }
+
+    @Override
+    protected AVList assembleIconRetrieverParameters(AVList params)
+    {
+        params = super.assembleIconRetrieverParameters(params);
+
+        if (params == null)
+            params = new AVListImpl();
+
+        Material material = this.getActiveAttributes().getTextModifierMaterial();
+        if (material != null)
+            params.setValue(AVKey.COLOR, material.getDiffuse());
+
+        return params;
     }
 
     @Override

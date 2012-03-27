@@ -11,6 +11,7 @@ import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.Logging;
 
+import java.awt.*;
 import java.awt.image.*;
 
 /**
@@ -19,6 +20,8 @@ import java.awt.image.*;
  */
 public class MilStd2525ModifierRetriever extends AbstractIconRetriever
 {
+    protected static final Color DEFAULT_COLOR = Color.BLACK;
+
     protected static final String PATH_PREFIX = "modifiers";
     protected static final String PATH_SUFFIX = ".png";
     protected static final int[] variableWidths = {88, 93, 114, 119};
@@ -53,6 +56,12 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
             Logging.logger().severe(msg);
             throw new WWRuntimeException(msg);
         }
+
+        // Apply the correct color the modifier.
+        Color color = this.getColorFromParams(params);
+        if (color == null)
+            color = DEFAULT_COLOR;
+        this.multiply(image, color);
 
         return image;
     }
@@ -108,5 +117,23 @@ public class MilStd2525ModifierRetriever extends AbstractIconRetriever
         }
 
         return width;
+    }
+
+    /**
+     * Retrieves the value of the AVKey.COLOR parameter.
+     *
+     * @param params Parameter list.
+     *
+     * @return The value of the AVKey.COLOR parameter, if such a parameter exists and is of type java.awt.Color. Returns
+     *         null if the parameter list is null, if there is no value for key AVKey.COLOR, or if the value is not a
+     *         Color.
+     */
+    protected Color getColorFromParams(AVList params)
+    {
+        if (params == null)
+            return null;
+
+        Object o = params.getValue(AVKey.COLOR);
+        return (o instanceof Color) ? (Color) o : null;
     }
 }
