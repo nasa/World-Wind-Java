@@ -12,9 +12,9 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
 
@@ -162,8 +162,7 @@ public class SearchArea extends MilStd2525TacticalGraphic implements PreRenderab
             if (this.symbolAttributes == null)
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
-            this.symbol = this.createSymbol(sidc, this.position1);
-            this.symbol.setAttributes(this.symbolAttributes);
+            this.symbol = this.createSymbol(sidc, this.position1, this.symbolAttributes);
         }
         else
         {
@@ -481,7 +480,6 @@ public class SearchArea extends MilStd2525TacticalGraphic implements PreRenderab
         {
             ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
             this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
-            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
             this.symbolAttributes.setScale(this.activeOverrides.getScale());
         }
     }
@@ -502,14 +500,6 @@ public class SearchArea extends MilStd2525TacticalGraphic implements PreRenderab
         path.setDelegateOwner(this.getActiveDelegateOwner());
         path.setAttributes(this.getActiveShapeAttributes());
         return path;
-    }
-
-    protected TacticalSymbol createSymbol(String sidc, Position position)
-    {
-        TacticalSymbol symbol = new MilStd2525TacticalSymbol(sidc,
-            position != null ? position : Position.ZERO);
-        symbol.setDelegateOwner(this);
-        return symbol;
     }
 
     protected SurfacePolygon createPolygon(List<? extends LatLon> positions)

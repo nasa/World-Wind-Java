@@ -6,6 +6,7 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
 
@@ -209,5 +210,15 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
             return MATERIAL_HOSTILE;
         else
             return MATERIAL_FRIEND;
+    }
+
+    protected TacticalSymbol createSymbol(String sidc, Position position, TacticalSymbolAttributes attrs)
+    {
+        TacticalSymbol symbol = new MilStd2525TacticalSymbol(sidc,
+            position != null ? position : Position.ZERO);
+        symbol.setDelegateOwner(this);
+        symbol.setAttributes(attrs);
+        symbol.setShowTextModifiers(false);
+        return symbol;
     }
 }

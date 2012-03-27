@@ -9,7 +9,6 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.command.offense.lines;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 
 import java.util.*;
@@ -92,7 +91,7 @@ public class Airborne extends Aviation
             if (this.symbolAttributes == null)
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
-            this.symbol = this.createSymbol(sidc);
+            this.symbol = this.createSymbol(sidc, this.computeSymbolPosition(), this.symbolAttributes);
         }
         else
         {
@@ -155,18 +154,7 @@ public class Airborne extends Aviation
         {
             ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
             this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
-            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
             this.symbolAttributes.setScale(this.activeOverrides.getScale());
         }
-    }
-
-    protected TacticalSymbol createSymbol(String sidc)
-    {
-        Position symbolPosition = this.computeSymbolPosition();
-        TacticalSymbol symbol = new MilStd2525TacticalSymbol(sidc,
-            symbolPosition != null ? symbolPosition : Position.ZERO);
-        symbol.setDelegateOwner(this);
-        symbol.setAttributes(this.symbolAttributes);
-        return symbol;
     }
 }

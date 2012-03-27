@@ -216,9 +216,11 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     /**
      * Layout text and graphic modifiers around the symbol.
      *
-     * @param dc       Current draw context.
-     * @param iconRect Symbol's screen rectangle.
+     * @param dc        Current draw context.
+     * @param modifiers Modifiers applied to this graphic.
+     * @param iconRect  Symbol's screen rectangle.
      */
+    @SuppressWarnings("UnusedParameters")
     protected void doLayoutModifiers(DrawContext dc, AVList modifiers, Rectangle iconRect)
     {
         // We compute a default font rather than using a static default in order to choose a font size that is

@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -506,7 +506,7 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
             if (this.symbolAttributes == null)
                 this.symbolAttributes = new BasicTacticalSymbolAttributes();
 
-            this.symbol = this.createSymbol(sidc);
+            this.symbol = this.createSymbol(sidc, this.getPosition(), this.symbolAttributes);
         }
         else
         {
@@ -1041,7 +1041,6 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         {
             ShapeAttributes activeAttributes = this.getActiveShapeAttributes();
             this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
-            this.symbolAttributes.setOpacity(activeAttributes.getInteriorOpacity());
             this.symbolAttributes.setScale(this.activeOverrides.getScale());
         }
     }
@@ -1075,15 +1074,5 @@ public class SectorRangeFan extends MilStd2525TacticalGraphic implements PreRend
         polygon.setDelegateOwner(this.getActiveDelegateOwner());
         polygon.setAttributes(this.getActiveShapeAttributes());
         return polygon;
-    }
-
-    protected TacticalSymbol createSymbol(String sidc)
-    {
-        Position symbolPosition = this.getPosition();
-        TacticalSymbol symbol = new MilStd2525TacticalSymbol(sidc,
-            symbolPosition != null ? symbolPosition : Position.ZERO);
-        symbol.setDelegateOwner(this);
-        symbol.setAttributes(this.symbolAttributes);
-        return symbol;
     }
 }
