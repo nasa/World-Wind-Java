@@ -25,7 +25,7 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public class MultiPath extends ApplicationTemplate
+public class ParallelPaths extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame
     {
