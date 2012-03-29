@@ -16,6 +16,10 @@ import java.awt.image.*;
 import java.util.*;
 
 /**
+ * Retriever to retrieve icons for symbols in the MIL-STD-2525 symbol set. The retriever can retrieve icons from either
+ * a local or remote symbol store. See the <a href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/#offline-use">Symbology
+ * Usage Guide</a> for details on how to configure a local symbol repository.
+ *
  * @author ccrick
  * @version $Id: MilStd2525IconRetriever.java 90 2011-17-10 23:58:29Z ccrick $
  */
@@ -64,6 +68,11 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final Set<String> unframedIconMap = new HashSet<String>();
     protected static final Set<String> emsEquipment = new HashSet<String>();
 
+    /**
+     * Create a new retriever.
+     *
+     * @param retrieverPath File path or URL to the symbol directory, for example "http://myserver.com/milstd2525/".
+     */
     public MilStd2525IconRetriever(String retrieverPath)
     {
         super(retrieverPath);
@@ -176,6 +185,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
 
             int upperLeft = dest.getWidth() / 2 - CIRCLE_RADIUS / 2 - CIRCLE_LINE_WIDTH;
             int width = CIRCLE_RADIUS - 2 * CIRCLE_LINE_WIDTH;
+            @SuppressWarnings({"SuspiciousNameCombination"})
             Ellipse2D circle = new Ellipse2D.Double(upperLeft, upperLeft, width, width);
 
             // Draw filled circle
