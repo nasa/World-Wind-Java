@@ -70,6 +70,10 @@
          source and destination directories. The optional force parameter causes this task to overwrite any existing
          files.
 
+         The optional background parameter controls the background color of the rasterized files. The default is
+         background is transparent. The format of the parameters is "A.R.G.B" where A, R, G, and B are integers in the
+         range 0-255. For example, "255.255.255.255" is opaque white.
+
          The following example demonstrates basic usage:
          <rasterize-svgdirs maxwidth="128" height="128" destdir="my/dest/path">
             <svgdirs>
@@ -84,11 +88,14 @@
         <attribute name="height"/>
         <attribute name="destdir"/>
         <attribute name="force" default="false"/>
+        <attribute name="background" default="0.0.0.0"/>
         <element name="svgdirs"/>
         <sequential>
             <apply executable="java" dest="@{destdir}" force="@{force}" failonerror="true">
                 <arg value="-jar"/>
                 <arg value="${basedir}/build/lib/batik/batik-rasterizer.jar"/>
+                <arg value="-bg"/>
+                <arg value="@{background}"/>
                 <arg value="-m"/>
                 <arg value="image/png"/>
                 <arg value="-maxw"/>
