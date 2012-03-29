@@ -103,4 +103,14 @@ public interface TacticalGraphicFactory
      */
     TacticalRoute createRoute(String symbolIdentifier, Iterable<? extends TacticalPoint> controlPoints,
         AVList modifiers);
+
+    /**
+     * Determines if this factory can create a graphic for a given symbol identifier.
+     *
+     * @param symbolIdentifier An identifier for a symbol within the symbol set.
+     *
+     * @return True if this factory can create a graphic for the given symbol id. Returns false if the symbol identifier
+     *         is not valid, or if the identifier is valid but the factory does not support the graphic.
+     */
+    boolean isSupported(String symbolIdentifier);
 }

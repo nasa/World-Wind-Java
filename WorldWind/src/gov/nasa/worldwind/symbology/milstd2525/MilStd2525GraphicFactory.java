@@ -265,6 +265,14 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
         return null;
     }
 
+    /** {@inheritDoc} */
+    public boolean isSupported(String sidc)
+    {
+        SymbolCode symbolCode = new SymbolCode(sidc);
+        String key = symbolCode.toMaskedString();
+        return this.classMap.containsKey(key);
+    }
+
     protected void setModifiers(TacticalGraphic graphic, AVList props)
     {
         for (Map.Entry<String, Object> entry : props.getEntries())
