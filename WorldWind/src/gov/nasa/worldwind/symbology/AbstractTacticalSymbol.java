@@ -265,7 +265,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             }
             catch (Exception e)
             {
-                String msg = Logging.getMessage("Symbology.ExceptionRetrievingGraphicModifier", this.getImageSource());
+                String msg = Logging.getMessage("Symbology.ExceptionRetrievingGraphicModifier",
+                    this.getImageSource());
                 Logging.logger().log(java.util.logging.Level.SEVERE, msg, e);
                 this.imageInitializationFailed = true; // Suppress subsequent requests for this modifier.
                 return null;
@@ -371,12 +372,16 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     /** Default unit format. */
     public static final UnitsFormat DEFAULT_UNITS_FORMAT = new UnitsFormat();
 
+    /** The image file displayed while the icon is loading. */
+    public static final String LOADING_IMAGE_PATH =
+        Configuration.getStringValue("gov.nasa.worldwind.avkey.MilStd2525LoadingIconPath", "images/doc-loading-128x128.png");
+
     protected static final String LAYOUT_ABSOLUTE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutAbsolute";
     protected static final String LAYOUT_RELATIVE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutRelative";
     protected static final String LAYOUT_NONE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutNone";
     /**
-     * The default depth offset in device independent depth units: -8200. This value is configured to match the depth
-     * offset produced by existing screen elements such as PointPlacemark.
+     * The default depth offset in device independent depth units: -8200. This value is configured to match the
+     * depth offset produced by existing screen elements such as PointPlacemark.
      */
     protected static final double DEFAULT_DEPTH_OFFSET = -8200;
     protected static final long DEFAULT_MAX_TIME_SINCE_LAST_USED = 10000;
@@ -420,18 +425,18 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected Position position;
     /**
-     * Indicates this symbol's altitude mode. See {@link #setAltitudeMode(int)} for a description of the valid altitude
-     * modes. Initially Worldwind.ABSOLUTE.
+     * Indicates this symbol's altitude mode. See {@link #setAltitudeMode(int)} for a description of the valid
+     * altitude modes. Initially Worldwind.ABSOLUTE.
      */
     protected int altitudeMode = WorldWind.ABSOLUTE;
     /**
-     * Indicates whether this symbol draws its supplemental graphic modifiers. <code>true</code> if this symbol draws
-     * its graphic modifiers, otherwise <code>false</code>. Initially <code>true</code>.
+     * Indicates whether this symbol draws its supplemental graphic modifiers. <code>true</code> if this symbol
+     * draws its graphic modifiers, otherwise <code>false</code>. Initially <code>true</code>.
      */
     protected boolean showGraphicModifiers = true;
     /**
-     * Indicates whether this symbol draws its supplemental text modifiers. <code>true</code> if this symbol draws its
-     * text modifiers, otherwise <code>false</code>. Initially <code>true</code>.
+     * Indicates whether this symbol draws its supplemental text modifiers. <code>true</code> if this symbol draws
+     * its text modifiers, otherwise <code>false</code>. Initially <code>true</code>.
      */
     protected boolean showTextModifiers = true;
 
@@ -444,25 +449,25 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     /** Indicates whether or not to display the implicit hostile indicator modifier. */
     protected boolean showHostileIndicator;
     /**
-     * Indicates the current text and graphic modifiers assigned to this symbol. This list of key-value pairs contains
-     * both the modifiers specified by the string identifier during construction, and those specified by calling {@link
-     * #setModifier(String, Object)}. Initialized to a new AVListImpl, and populated during construction from values in
-     * the string identifier and the modifiers list.
+     * Indicates the current text and graphic modifiers assigned to this symbol. This list of key-value pairs
+     * contains both the modifiers specified by the string identifier during construction, and those specified by
+     * calling {@link #setModifier(String, Object)}. Initialized to a new AVListImpl, and populated during
+     * construction from values in the string identifier and the modifiers list.
      */
     protected AVList modifiers = new AVListImpl();
     /**
-     * Indicates this symbol's normal (as opposed to highlight) attributes. May be <code>null</code>, indicating that
-     * the default attributes are used. Initially <code>null</code>.
+     * Indicates this symbol's normal (as opposed to highlight) attributes. May be <code>null</code>, indicating
+     * that the default attributes are used. Initially <code>null</code>.
      */
     protected TacticalSymbolAttributes normalAttrs;
     /**
-     * Indicates this symbol's highlight attributes. May be <code>null</code>, indicating that the default attributes
-     * are used. Initially <code>null</code>.
+     * Indicates this symbol's highlight attributes. May be <code>null</code>, indicating that the default
+     * attributes are used. Initially <code>null</code>.
      */
     protected TacticalSymbolAttributes highlightAttrs;
     /**
-     * Indicates this symbol's currently active attributes. Updated in {@link #determineActiveAttributes}. Initialized
-     * to a new BasicTacticalSymbolAttributes.
+     * Indicates this symbol's currently active attributes. Updated in {@link #determineActiveAttributes}.
+     * Initialized to a new BasicTacticalSymbolAttributes.
      */
     protected TacticalSymbolAttributes activeAttrs = new BasicTacticalSymbolAttributes();
     protected Offset offset;
@@ -473,8 +478,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected IconRetriever modifierRetriever;
 
     /**
-     * The frame used to calculate this symbol's per-frame values. Set to the draw context's frame number each frame.
-     * Initially -1.
+     * The frame used to calculate this symbol's per-frame values. Set to the draw context's frame number each
+     * frame. Initially -1.
      */
     protected long frameNumber = -1;
     /**
@@ -489,30 +494,30 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected Vec4 screenPoint;
     /**
-     * Per-frame distance corresponding to the distance between the placePoint and the View's eye point. Used to order
-     * the symbol as an ordered renderable, and is returned by getDistanceFromEye. Calculated each frame in {@link
-     * #computeSymbolPoints(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     * Per-frame distance corresponding to the distance between the placePoint and the View's eye point. Used to
+     * order the symbol as an ordered renderable, and is returned by getDistanceFromEye. Calculated each frame in
+     * {@link #computeSymbolPoints(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
      */
     protected double eyeDistance;
     /**
-     * Per-frame screen scale indicating this symbol's x-scale relative to the screen offset. Calculated each frame in
-     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     * Per-frame screen scale indicating this symbol's x-scale relative to the screen offset. Calculated each frame
+     * in {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
      */
     protected double sx;
     /**
-     * Per-frame screen scale indicating this symbol's y-scale relative to the screen offset. Calculated each frame in
-     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     * Per-frame screen scale indicating this symbol's y-scale relative to the screen offset. Calculated each frame
+     * in {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
      */
     protected double sy;
 
     /**
-     * Per-frame screen offset indicating this symbol's x-offset relative to the screenPoint. Calculated each frame in
-     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     * Per-frame screen offset indicating this symbol's x-offset relative to the screenPoint. Calculated each frame
+     * in {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
      */
     protected double dx;
     /**
-     * Per-frame screen offset indicating this symbol's y-offset relative to the screenPoint. Calculated each frame in
-     * {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
+     * Per-frame screen offset indicating this symbol's y-offset relative to the screenPoint. Calculated each frame
+     * in {@link #computeTransform(gov.nasa.worldwind.render.DrawContext)}. Initially 0.
      */
     protected double dy;
 
@@ -524,8 +529,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected List<Label> currentLabels = new ArrayList<Label>();
     protected List<Line> currentLines = new ArrayList<Line>();
 
-    protected IconTexture iconTexture;
-    protected IconTexture activeIconTexture;
+    protected WWTexture iconTexture;
+    protected WWTexture activeIconTexture;
     protected TextureAtlas glyphAtlas;
     protected Map<String, IconAtlasElement> glyphMap = new HashMap<String, IconAtlasElement>();
     protected long maxTimeSinceLastUsed = DEFAULT_MAX_TIME_SINCE_LAST_USED;
@@ -545,9 +550,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected PickSupport pickSupport = new PickSupport();
     /**
-     * Per-frame layer indicating this symbol's layer when its ordered renderable was created. Assigned each frame in
-     * {@link #makeOrderedRenderable(gov.nasa.worldwind.render.DrawContext)}. Used to define the picked object's layer
-     * during pick resolution. Initially <code>null</code>.
+     * Per-frame layer indicating this symbol's layer when its ordered renderable was created. Assigned each frame
+     * in {@link #makeOrderedRenderable(gov.nasa.worldwind.render.DrawContext)}. Used to define the picked object's
+     * layer during pick resolution. Initially <code>null</code>.
      */
     protected Layer pickLayer;
 
@@ -558,9 +563,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     /**
-     * Constructs a new symbol with the specified position. The position specifies the latitude, longitude, and altitude
-     * where this symbol is drawn on the globe. The position's altitude component is interpreted according to the
-     * altitudeMode.
+     * Constructs a new symbol with the specified position. The position specifies the latitude, longitude, and
+     * altitude where this symbol is drawn on the globe. The position's altitude component is interpreted according
+     * to the altitudeMode.
      *
      * @param position the latitude, longitude, and altitude where the symbol is drawn.
      *
@@ -1072,16 +1077,27 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             this.iconRect = null; // Recompute the icon rectangle when the active icon texture changes.
         }
 
+        // If the icon is not available then draw a default icon. Only draw the default before any icon is loaded. If
+        // the icon is changed after loading then we will continue to draw the old icon until the new one becomes
+        // available rather than going back to the default icon.
+        boolean textureLoaded = this.activeIconTexture != null;
+        if (!textureLoaded)
+        {
+            this.activeIconTexture = new BasicWWTexture(LOADING_IMAGE_PATH);
+            textureLoaded = this.activeIconTexture.bind(dc);
+        }
+
         // Lazily compute the symbol icon rectangle only when necessary, and only after the symbol icon texture has
         // successfully loaded.
-        if (this.iconRect == null && this.activeIconTexture != null)
+        if (this.iconRect == null && textureLoaded)
         {
             // Compute the symbol icon's frame rectangle in local coordinates. This is used by the modifier layout to
             // determine where to place modifier graphics and modifier text. Note that we bind the texture in order to
             // load the texture image, and make the width and height available.
             int w = this.activeIconTexture.getWidth(dc);
             int h = this.activeIconTexture.getHeight(dc);
-            Point2D point = this.iconOffset != null ? this.iconOffset.computeOffset(w, h, null, null) : new Point(0, 0);
+            Point2D point = this.iconOffset != null ? this.iconOffset.computeOffset(w, h, null, null)
+                : new Point(0, 0);
             Dimension size = this.iconSize != null ? this.iconSize.compute(w, h, w, h) : new Dimension(w, h);
             this.iconRect = new Rectangle((int) point.getX(), (int) point.getY(), size.width, size.height);
         }
@@ -1212,7 +1228,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.addGlyph(dc, offset, hotspot, modifierCode, null, null);
     }
 
-    protected void addGlyph(DrawContext dc, Offset offset, Offset hotspot, String modifierCode, AVList retrieverParams,
+    protected void addGlyph(DrawContext dc, Offset offset, Offset hotspot, String modifierCode,
+        AVList retrieverParams,
         Object layoutMode)
     {
         IconAtlasElement elem = this.getGlyph(modifierCode, retrieverParams);
@@ -1230,7 +1247,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.addLabel(dc, offset, hotspot, modifierText, null, null, null);
     }
 
-    protected void addLabel(DrawContext dc, Offset offset, Offset hotspot, String modifierText, Font font, Color color,
+    protected void addLabel(DrawContext dc, Offset offset, Offset hotspot, String modifierText, Font font,
+        Color color,
         Object layoutMode)
     {
         if (font == null)
@@ -1339,7 +1357,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         if (this.getOffset() != null && this.iconRect != null)
         {
-            Point2D p = this.getOffset().computeOffset(this.iconRect.getWidth(), this.iconRect.getHeight(), null, null);
+            Point2D p = this.getOffset().computeOffset(this.iconRect.getWidth(), this.iconRect.getHeight(), null,
+                null);
             this.dx = -this.iconRect.getX() - p.getX();
             this.dy = -this.iconRect.getY() - p.getY();
         }
@@ -1764,7 +1783,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
             // Restore the current color to that specified in doDrawOrderedRenderable.
             if (!dc.isPickingMode())
-                gl.glColor4f(opacity.floatValue(), opacity.floatValue(), opacity.floatValue(), opacity.floatValue());
+                gl.glColor4f(opacity.floatValue(), opacity.floatValue(), opacity.floatValue(),
+                    opacity.floatValue());
         }
     }
 
