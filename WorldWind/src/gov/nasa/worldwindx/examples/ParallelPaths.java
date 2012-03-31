@@ -86,7 +86,7 @@ public class ParallelPaths extends ApplicationTemplate
             {
                 // Color the positions based on their altitude.
                 double altitude = position.getAltitude();
-                return altitude < 115 ? Color.GREEN :altitude < 135 ? Color.BLUE : Color.RED;
+                return altitude < 115 ? Color.GREEN : altitude < 135 ? Color.BLUE : Color.RED;
             }
         }
 
@@ -216,6 +216,16 @@ public class ParallelPaths extends ApplicationTemplate
                 offset = forward.normalize3().add3(backward.normalize3());
                 offset = offset.normalize3();
 
+                // Determine the length of the offset vector that will keep the left and right lines parallel to the control
+                // line.
+                Angle theta = backward.angleBetween3(offset);
+
+                // If the angle is less than 1/10 of a degree than treat this segment as if it were linear.
+                if (theta.degrees > 0.1)
+                    length = distance / theta.sin();
+                else
+                    length = distance;
+
                 // Compute the scalar triple product of the vector BC, the normal vector, and the offset vector to
                 // determine if the offset points to the left or the right of the control line.
                 double tripleProduct = perpendicular.dot3(offset);
@@ -223,14 +233,6 @@ public class ParallelPaths extends ApplicationTemplate
                 {
                     offset = offset.multiply3(-1);
                 }
-
-                // Determine the length of the offset vector that will keep the left and right lines parallel to the control
-                // line.
-                Angle theta = backward.angleBetween3(offset);
-                if (!Angle.ZERO.equals(theta))
-                    length = distance / theta.sin();
-                else
-                    length = distance;
             }
             else
             {
