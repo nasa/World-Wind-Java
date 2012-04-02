@@ -164,6 +164,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String HTTP_SERVER_ALLOW_GET = "gov.nasa.worldwind.avkey.HTTP.Server.Allow.GET";
     final String HTTP_SERVER_ALLOW_POST = "gov.nasa.worldwind.avkey.HTTP.Server.Allow.POST";
     final String HTTP_SERVER_FILE_UPLOAD_MAX_SIZE = "gov.nasa.worldwind.avkey.HTTP.Server.FileUpload.MaxSize";
+    final String HTTP_SSL_CONTEXT = "gov.nasa.worldwind.avkey.HTTP.SSLContext";
 
     final String ICON_NAME = "gov.nasa.worldwind.avkey.IconName";
     final String IGNORE = "gov.nasa.worldwind.avkey.Ignore";

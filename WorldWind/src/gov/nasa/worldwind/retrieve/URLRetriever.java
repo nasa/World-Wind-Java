@@ -10,6 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.exception.WWRuntimeException;
 import gov.nasa.worldwind.util.*;
 
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
@@ -313,10 +314,21 @@ public abstract class URLRetriever extends WWObjectImpl implements Retriever
             throw new IllegalStateException(message);
         }
 
+        if (this.connection instanceof HttpsURLConnection)
+            this.configureSSLContext((HttpsURLConnection) this.connection);
+
         this.connection.setConnectTimeout(this.connectTimeout);
         this.connection.setReadTimeout(this.readTimeout);
 
         return connection;
+    }
+
+    protected void configureSSLContext(HttpsURLConnection connection)
+    {
+        SSLContext sslContext = (SSLContext) WorldWind.getValue(AVKey.HTTP_SSL_CONTEXT);
+
+        if (sslContext != null)
+            connection.setSSLSocketFactory(sslContext.getSocketFactory());
     }
 
     protected void end() throws Exception
