@@ -152,26 +152,37 @@ public class ParallelPaths extends ApplicationTemplate
             Position posB = iterator.next();
             Position posA = iterator.next();
 
-            Vec4 ptA = globe.computePointFromPosition(posA);
-            Vec4 ptB = globe.computePointFromPosition(posB);
+            // Compute points, ignoring elevation. We will project the path onto the surface of the globe, compute the
+            // parallel points on the surface, and then raise the points to the correct elevation.
+            Vec4 ptA = globe.computePointFromLocation(posA);
+            Vec4 ptB = globe.computePointFromLocation(posB);
             Vec4 ptC;
 
-            // Compute side points at the start of the line.
-            this.generateParallelPoints(ptB, null, ptA, leftPositions, rightPositions, distance, globe);
+            // We'll keep track of the offset used to compute parallel points as we go through the list. We need this
+            // to handle cases where the position list contains sequential co-located points.
+            Vec4 prevOffset = null;
 
+            // Compute side points at the start of the line.
+            prevOffset = this.generateParallelPoints(ptB, null, ptA, leftPositions, rightPositions, distance,
+                posB.getElevation(), globe, prevOffset);
+
+            double prevElevation;
             while (iterator.hasNext())
             {
+                prevElevation = posA.getElevation();
                 posA = iterator.next();
 
                 ptC = ptB;
                 ptB = ptA;
-                ptA = globe.computePointFromPosition(posA);
+                ptA = globe.computePointFromLocation(posA);
 
-                this.generateParallelPoints(ptB, ptC, ptA, leftPositions, rightPositions, distance, globe);
+                prevOffset = this.generateParallelPoints(ptB, ptC, ptA, leftPositions, rightPositions, distance,
+                    prevElevation, globe, prevOffset);
             }
 
             // Compute side points at the end of the line.
-            this.generateParallelPoints(ptA, ptB, null, leftPositions, rightPositions, distance, globe);
+            this.generateParallelPoints(ptA, ptB, null, leftPositions, rightPositions, distance, posA.getElevation(),
+                globe, prevOffset);
         }
 
         /**
@@ -184,10 +195,15 @@ public class ParallelPaths extends ApplicationTemplate
          * @param leftPositions  Left position will be added to this list.
          * @param rightPositions Right position will be added to this list.
          * @param distance       Distance from the center line to the left and right lines.
+         * @param elevation      Elevation at which to place the generated positions.
          * @param globe          Globe used to compute positions.
+         * @param previousOffset Offset vector from a previous call to this method. May be null.
+         *
+         * @return Offset vector that should be passed back to this method on the next call for a list of positions.
+         *         (Used to generate parallel points when a position list contains sequential co-located positions.)
          */
-        protected void generateParallelPoints(Vec4 point, Vec4 prev, Vec4 next, List<Position> leftPositions,
-            List<Position> rightPositions, double distance, Globe globe)
+        protected Vec4 generateParallelPoints(Vec4 point, Vec4 prev, Vec4 next, List<Position> leftPositions,
+            List<Position> rightPositions, double distance, double elevation, Globe globe, Vec4 previousOffset)
         {
             if ((point == null) || (prev == null && next == null))
             {
@@ -205,9 +221,13 @@ public class ParallelPaths extends ApplicationTemplate
             // Compute a vector perpendicular to segment BC, and the globe normal vector.
             Vec4 perpendicular = backward.cross3(normal);
 
-            double length;
+            // If the current point is co-located with either the next or prev points, then reuse the previously computed offset.
+            if (point.equals(prev) || (point.equals(next)) && previousOffset != null)
+            {
+                offset = previousOffset;
+            }
             // If both next and previous points are supplied then calculate the angle that bisects the angle current, next, prev.
-            if (next != null && prev != null && !Vec4.areColinear(prev, point, next))
+            else if (next != null && prev != null && !Vec4.areColinear(prev, point, next))
             {
                 // Compute vector in the forward direction.
                 Vec4 forward = next.subtract3(point);
@@ -221,6 +241,7 @@ public class ParallelPaths extends ApplicationTemplate
                 Angle theta = backward.angleBetween3(offset);
 
                 // If the angle is less than 1/10 of a degree than treat this segment as if it were linear.
+                double length;
                 if (theta.degrees > 0.1)
                     length = distance / theta.sin();
                 else
@@ -233,24 +254,27 @@ public class ParallelPaths extends ApplicationTemplate
                 {
                     offset = offset.multiply3(-1);
                 }
+
+                offset = offset.multiply3(length);
             }
             else
             {
                 offset = perpendicular.normalize3();
-                length = distance;
+                offset = offset.multiply3(distance);
             }
-            offset = offset.multiply3(length);
 
             // Determine the left and right points by applying the offset.
             Vec4 ptRight = point.add3(offset);
             Vec4 ptLeft = point.subtract3(offset);
 
             // Convert cartesian points to geographic.
-            Position posLeft = globe.computePositionFromPoint(ptLeft);
-            Position posRight = globe.computePositionFromPoint(ptRight);
+            Position posLeft = new Position(globe.computePositionFromPoint(ptLeft), elevation);
+            Position posRight = new Position(globe.computePositionFromPoint(ptRight), elevation);
 
             leftPositions.add(posLeft);
             rightPositions.add(posRight);
+
+            return offset;
         }
     }
 
