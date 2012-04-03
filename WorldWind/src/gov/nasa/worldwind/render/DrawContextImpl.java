@@ -1359,4 +1359,34 @@ public class DrawContextImpl extends WWObjectImpl implements DrawContext
         this.getGL().glEnable(GL.GL_DEPTH_TEST);
         this.getGL().glDepthMask(true);
     }
+
+    public Vec4 computePointFromPosition(Position position, int altitudeMode)
+    {
+        if (position == null)
+        {
+            String msg = Logging.getMessage("nullValue.PositionIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        Vec4 point;
+
+        if (altitudeMode == WorldWind.CLAMP_TO_GROUND)
+        {
+            point = this.computeTerrainPoint(position.getLatitude(), position.getLongitude(), 0);
+        }
+        else if (altitudeMode == WorldWind.RELATIVE_TO_GROUND)
+        {
+            point = this.computeTerrainPoint(position.getLatitude(), position.getLongitude(),
+                position.getAltitude());
+        }
+        else  // ABSOLUTE
+        {
+            double height = position.getElevation() * this.getVerticalExaggeration();
+            point = this.getGlobe().computePointFromPosition(position.getLatitude(),
+                position.getLongitude(), height);
+        }
+
+        return point;
+    }
 }

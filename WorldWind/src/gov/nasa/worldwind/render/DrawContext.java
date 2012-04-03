@@ -958,4 +958,16 @@ public interface DrawContext extends WWObject, Disposable
      * @see PreRenderable
      */
     void setPreRenderMode(boolean preRenderMode);
+
+    /**
+     * Computes a Cartesian point from a specified geographic position, applying a specified altitude mode.
+     *
+     * @param position     the position to convert.
+     * @param altitudeMode the altitude mode.
+     *
+     * @return the Cartesian point corresponding to the specified position and this context's current globe or terrain.
+     *
+     * @throws IllegalArgumentException if the position is null.
+     */
+    Vec4 computePointFromPosition(Position position, int altitudeMode);
 }
