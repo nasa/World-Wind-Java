@@ -62,26 +62,17 @@ public class ParallelPaths extends ApplicationTemplate
 
             // Create Path objects from the position lists, and add them to a layer.
             RenderableLayer layer = new RenderableLayer();
-            this.addPath(layer, positions, Material.BLUE, "Control Path");
-            this.addPath(layer, pathPositions1, Material.CYAN, "Path 1");
-            this.addPath(layer, pathPositions2, Material.GREEN, "Path 2");
-            this.addPath(layer, pathPositions3, Material.MAGENTA, "Path 3");
-            this.addPath(layer, pathPositions4, Material.RED, "Path 4");
+            this.addPath(layer, positions, "Control Path");
+            this.addPath(layer, pathPositions1, "Path 1");
+            this.addPath(layer, pathPositions2, "Path 2");
+            this.addPath(layer, pathPositions3, "Path 3");
+            this.addPath(layer, pathPositions4, "Path 4");
 
             insertBeforePlacenames(getWwd(), layer);
         }
 
         public static class ExamplePositionColors implements Path.PositionColors
         {
-            protected Color[] colors;
-            protected int pathLength;
-
-            public ExamplePositionColors(Color[] colors, int pathLength)
-            {
-                this.colors = colors;
-                this.pathLength = pathLength;
-            }
-
             public Color getColor(Position position, int ordinal)
             {
                 // Color the positions based on their altitude.
@@ -90,11 +81,10 @@ public class ParallelPaths extends ApplicationTemplate
             }
         }
 
-        protected void addPath(RenderableLayer layer, List<Position> positions, Material material, String displayName)
+        protected void addPath(RenderableLayer layer, List<Position> positions, String displayName)
         {
             ShapeAttributes attrs = new BasicShapeAttributes();
             attrs.setOutlineWidth(5);
-            attrs.setOutlineMaterial(material);
 
             Path path = new Path(positions);
             path.setPathType(AVKey.LINEAR);
@@ -104,13 +94,7 @@ public class ParallelPaths extends ApplicationTemplate
             layer.addRenderable(path);
 
             // Show how to make the colors vary along the paths.
-            Color[] colors =
-                {
-                    new Color(1f, 0f, 0f, 0.2f),
-                    new Color(0f, 1f, 0f, 0.6f),
-                    new Color(0f, 0f, 1f, 1.0f),
-                };
-            path.setPositionColors(new ExamplePositionColors(colors, positions.size()));
+            path.setPositionColors(new ExamplePositionColors());
         }
 
         /**
