@@ -92,12 +92,12 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         List<Position> newPositions = new ArrayList<Position>();
 
-        double width = this.getWidth();
+        double radius = this.getWidth() / 2.0;
 
         for (TacticalPoint p : points)
         {
             // Set the circle's radius to the width of the route
-            p.setModifier(SymbologyConstants.DISTANCE, width);
+            p.setModifier(SymbologyConstants.DISTANCE, radius);
 
             // Assign the route as the point's delegate owner so that the entire route will highlight
             // as a unit.
@@ -293,7 +293,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         this.paths = new ArrayList<Path>();
 
-        double width = this.getWidth();
+        double halfWidth = this.getWidth() / 2.0;
 
         Iterator<? extends Position> iterator = this.getPositions().iterator();
 
@@ -312,7 +312,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             Vec4 vAB = pB.subtract3(pA);
 
             Vec4 perpendicular = vAB.cross3(normal);
-            perpendicular = perpendicular.normalize3().multiply3(width);
+            perpendicular = perpendicular.normalize3().multiply3(halfWidth);
 
             Vec4 pStart = pA.add3(perpendicular);
             Vec4 pEnd = pB.add3(perpendicular);
@@ -333,6 +333,13 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             this.paths.add(path);
 
             pA = pB;
+        }
+
+        // Apply width to the control points.
+        double radius = this.getWidth() / 2.0;
+        for (TacticalPoint p : this.getControlPoints())
+        {
+            p.setModifier(SymbologyConstants.DISTANCE, radius);
         }
     }
 
@@ -532,7 +539,7 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
 
         // Compute a vector perpendicular to the route, at the midpoint of the first two control points
         Vec4 perpendicular = vMB.cross3(normal);
-        perpendicular = perpendicular.normalize3().multiply3(this.getWidth() + pixelDistance * pixelSize);
+        perpendicular = perpendicular.normalize3().multiply3(this.getWidth() / 2.0 + pixelDistance * pixelSize);
 
         // Position the label to the side of the route
         Vec4 pLabel = pMid.add3(perpendicular);

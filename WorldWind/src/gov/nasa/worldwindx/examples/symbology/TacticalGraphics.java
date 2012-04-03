@@ -292,7 +292,7 @@ public class TacticalGraphics extends ApplicationTemplate
             TacticalRoute route = factory.createRoute("GFGPALM-------X", controlPoints, null);
             route.setValue(AVKey.DISPLAY_NAME, "Minimum Risk Route (2.X.2.2.2.2)");
             route.setText("KNIGHT");
-            route.setModifier(SymbologyConstants.DISTANCE, 2000.0);
+            route.setModifier(SymbologyConstants.DISTANCE, 4000.0);
             route.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("270600Z", "271845Z"));
             route.setModifier(SymbologyConstants.ALTITUDE_DEPTH, Arrays.asList("50 FT AGL", "200 FT AGL"));
 
