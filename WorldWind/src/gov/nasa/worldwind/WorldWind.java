@@ -264,6 +264,11 @@ public final class WorldWind
         }
     }
 
+    public static void setValue(String key, Object value)
+    {
+        instance.wwo.setValue(key, value);
+    }
+
     public static void setValue(String key, String value)
     {
         instance.wwo.setValue(key, value);
