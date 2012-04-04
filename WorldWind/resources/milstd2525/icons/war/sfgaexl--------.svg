@@ -1,13 +1,73 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 Copyright (C) 2012 United States Government as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 -->
 
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
 MIL-STD-2525 tactical symbol icon image. During icon composition this image is multiplied by the desired frame color 
 (e.g. black), then drawn on top of the frame and fill.
 -->
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="400px" viewBox="0 0 400 400" width="400px"><g transform="translate(170 108) scale(5 5)"><path d="M7.924 28.934 C7.158 28.791 6.391 28.672 5.625 28.575 L5.625 20.889 C5.047 20.793     3.484 20.578 0.937 20.243 L0.431 19.237 L7.486 17.799 L0.638 16.508 L0.648     15.379 L7.919 13.795 C7.249 13.699 6.483 13.604 5.624 13.508 L5.624 1.699 C4.664     2.275 3.389 3.066 1.803 4.074 L0 3.637 L6.191 0 L12.24 3.637 L10.496 4.147     L6.5 1.627 L6.5 12.328 L11.625 13.189 L11.619 14.267 L4.301 15.734 L11.625     17.252 L11.625 18.326 L4.752 19.543 C5.236 19.592 5.82 19.664 6.5 19.758     L6.5 27.422 L11.637 28.336 L11.625 29.49 L4.613 30.844 L11.621 32.176 L11.625     33.235 L4.465 34.747 L11.305 36.024 L11.233 36.876 L0.648 35.252 L0.644 34.148     L7.908 32.742 L0.648 31.363 L0.658 30.336 z" style="fill:rgb(255,255,255)"/></g></svg>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="400px"
+   viewBox="0 0 400 400"
+   width="400px"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="sfgaexl--------.svg">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="640"
+     inkscape:window-height="480"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="0.59"
+     inkscape:cx="-6.779661"
+     inkscape:cy="200"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     sodipodi:nodetypes="ccc"
+     inkscape:connector-curvature="0"
+     id="path4244-3-0"
+     d="M 168.97243,129.01192 200,112.21466 l 31.02757,16.28395"
+     style="fill:none;stroke:#ffffff;stroke-width:3.85865330999999980;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:7.71730660999999870, 3.85865330999999980;stroke-dashoffset:0" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:10, 5;stroke-dashoffset:0"
+     d="m 200,113.21466 0,44 25,10 -45,10 45,10 -45,10 20,10 0,31.36453 25,10 -45,10 45,10 -45,10 45,8.63548"
+     id="path5336"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccccccccccccc" />
+</svg>

@@ -1,13 +1,97 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 Copyright (C) 2012 United States Government as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 -->
 
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
 MIL-STD-2525 tactical symbol icon image. During icon composition this image is multiplied by the desired frame color 
 (e.g. black), then drawn on top of the frame and fill.
 -->
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="400px" viewBox="0 0 400 400" width="400px"><g transform="translate(152 88) scale(6.5 6.5)"><path d="M12.602 23.473 L12.602 8.064 C12.602 6.48 12.11 5.076 11.125 3.851 C10.141 2.628    8.881 2.015 7.346 2.015 C5.809 2.015 4.537 2.617 3.53 3.816 C3.145 4.297 2.855    4.943 2.664 5.76 C2.328 7.201 2.137 7.969 2.09 8.064 L2.16 23.543 L0.072 23.543    L0 8.064 C0 5.857 0.684 3.96 2.053 2.376 C3.42 0.793 5.186 0 7.346 0 C9.409    0 11.149 0.816 12.565 2.449 C13.981 4.082 14.69 5.953 14.69 8.064 L14.618    23.615 L12.602 23.615 zM12.889 32.473 L11.45 33.84 L8.282 30.817 L6.338 30.817    L3.24 33.84 L1.728 32.473 L7.345 26.784 zM6.48 11.232 L6.48 9.215 L2.09 9.215    L2.09 11.233 L6.48 11.233 zM6.48 14.688 L6.48 12.672 L2.09 12.672 L2.09 14.688    zM6.48 18 L6.48 15.984 L2.09 15.984 L2.09 18 zM6.553 0.936 L8.282 0.936    L8.282 28.295 L6.553 28.295 zM12.529 11.232 L12.529 9.215 L8.281 9.215 L8.281    11.233 L12.529 11.233 zM12.529 14.688 L12.529 12.672 L8.281 12.672 L8.281 14.688    zM12.529 18 L12.529 15.984 L8.354 15.984 L8.354 18 z" style="fill:rgb(255,255,255)"/></g></svg>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="400px"
+   viewBox="0 0 400 400"
+   width="400px"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="sfgaewmth------.svg">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="705"
+     inkscape:window-height="480"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="0.59"
+     inkscape:cx="349.77869"
+     inkscape:cy="200"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     sodipodi:nodetypes="cc"
+     inkscape:connector-curvature="0"
+     id="path4279-1-8"
+     d="m 198.65053,95.997866 0,184.304734"
+     style="fill:none;stroke:#ffffff;stroke-width:9.16677284000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:18.33354568000000000, 9.16677284000000010;stroke-dashoffset:0;display:inline" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:9.05146217000000060;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:18.10292434999999900, 9.05146217000000060;stroke-dashoffset:0"
+     d="m 156.06002,239.81288 c 0,0 0,-53.69314 0,-98.75407 0,-45.060944 40.71289,-45.060944 40.71289,-45.060944 0,0 44.99999,-3.32577 44.99999,46.216344 0,36.86804 -0.71289,97.37318 -0.71289,97.37318"
+     id="path4516-9"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cscsc" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:9.16677284000000010;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:18.33354568000000000, 9.16677284000000010;stroke-dashoffset:0"
+     d="m 167.62296,304.00213 31.02757,-23.69953 31.02756,22.9753"
+     id="path4121-2"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccc" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:10.79998207000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:21.59996414000000100, 10.79998207000000000;stroke-dashoffset:0;display:inline"
+     d="m 243.06572,156.87169 -84.99999,0"
+     id="path4303-7"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
+  <path
+     sodipodi:nodetypes="cc"
+     inkscape:connector-curvature="0"
+     id="path4323-9"
+     d="m 243.06572,181.87168 -84.99999,0"
+     style="fill:none;stroke:#ffffff;stroke-width:10.79998207000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:21.59996414000000100, 10.79998207000000000;stroke-dashoffset:0;display:inline" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:10.79998207000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:21.59996414000000100, 10.79998207000000000;stroke-dashoffset:0;display:inline"
+     d="m 243.06572,206.87168 -84.99999,0"
+     id="path4614"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
+</svg>

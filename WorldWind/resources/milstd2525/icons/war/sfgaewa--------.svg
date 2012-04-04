@@ -1,13 +1,83 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
 Copyright (C) 2012 United States Government as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 -->
 
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
 MIL-STD-2525 tactical symbol icon image. During icon composition this image is multiplied by the desired frame color 
 (e.g. black), then drawn on top of the frame and fill.
 -->
-<svg xmlns:xlink="http://www.w3.org/1999/xlink" height="400px" viewBox="0 0 400 400" width="400px"><g transform="translate(147 89) scale(5.5 5.5)"><path d="M19.375 36.25 L19.375 37.625 L0 37.625 L0 36.25 C0 34.121 1.148 32.404 3.445 31.098    C5.309 30.033 7.391 29.5 9.688 29.5 C12.032 29.5 14.161 30.082 16.075 31.242    C17.317 32.015 18.132 32.67 18.514 33.201 C19.039 33.928 19.326 34.945 19.375    36.25 zM18.07 36.25 C18.07 34.508 17.062 33.127 15.047 32.109 C13.461 31.287    11.686 30.875 9.719 30.875 C7.799 30.875 6.047 31.287 4.463 32.109 C2.494    33.127 1.512 34.507 1.512 36.25 zM2.875 7.625 L4.625 7.625 L4.625 21 L2.875    21 zM10.5 0 L10.5 29.49 L8.625 29.49 L8.625 0 C9.18 -0.047 9.805 -0.047 10.5    0 zM14.125 7.625 L16 7.625 L16 21 L14.125 21 z" style="fill:rgb(255,255,255)"/></g></svg>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="400px"
+   viewBox="0 0 400 400"
+   width="400px"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   sodipodi:docname="sfgaewa--------.svg">
+  <metadata
+     id="metadata12">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1075"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="3.2817065"
+     inkscape:cx="206.38286"
+     inkscape:cy="212.90264"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20, 10;display:inline;stroke-dashoffset:0"
+     d="m 200,99.180765 0,164.853245"
+     id="path2990"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20, 10;display:inline;stroke-dashoffset:0"
+     d="m 229.25367,141.0797 0,73.7421"
+     id="path2990-1"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc" />
+  <path
+     sodipodi:nodetypes="cc"
+     inkscape:connector-curvature="0"
+     id="path3778"
+     d="m 167.39561,141.0797 0,73.7421"
+     style="fill:none;stroke:#ffffff;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:20, 10;display:inline;stroke-dashoffset:0" />
+  <path
+     style="fill:none;stroke:#ffffff;stroke-width:8;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:16, 8;display:inline;stroke-dashoffset:0"
+     d="m 150.63603,301.81923 98.72912,0 c 0,0 -1.52359,-36.87106 -50.58344,-36.87106 -49.05984,0 -48.14568,36.87106 -48.14568,36.87106 z"
+     id="path3784"
+     inkscape:connector-curvature="0" />
+</svg>
