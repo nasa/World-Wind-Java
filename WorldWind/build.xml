@@ -54,6 +54,7 @@
                encoding="ISO-8859-1"
                memoryMaximumSize="512m">
             <classpath>
+	        <pathelement location="lib-external/jackson/jackson-core-asl-1.9.6.jar"/>
                 <pathelement location="jogl.jar"/>
                 <pathelement location="gluegen-rt.jar"/>
                 <pathelement location="gdal.jar"/>
@@ -111,7 +112,6 @@
             <fileset dir="${worldwind.classes.dir}">
                 <include name="gov/nasa/worldwind/**/*.class"/>
                 <include name="com/zebraimaging/**/*.class"/>
-                <include name="org/codehaus/jackson/**/*.class"/>
                 <type type="file"/>
             </fileset>
             <!-- Include the MessageStrings properties files, and all resource files under the config and images
