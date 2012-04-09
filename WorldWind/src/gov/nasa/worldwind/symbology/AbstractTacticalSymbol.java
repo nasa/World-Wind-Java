@@ -1705,15 +1705,19 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
-    @SuppressWarnings({"UnusedParameters"})
     protected void drawLabels(DrawContext dc)
     {
         if (this.currentLabels.isEmpty())
             return;
 
+        GL gl = dc.getGL();
         TextRenderer tr = null;
         try
         {
+            // Don't depth buffer labels. Depth buffering would cause the labels to intersect terrain, which is
+            // usually a bigger usability problem for text than a label showing through a hill.
+            gl.glDisable(GL.GL_DEPTH_TEST);
+
             for (Label modifier : this.currentLabels)
             {
                 if (tr == null || tr != modifier.getTextRenderer())
@@ -1733,6 +1737,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         {
             if (tr != null)
                 tr.end3DRendering();
+
+            gl.glEnable(GL.GL_DEPTH_TEST);
         }
     }
 
