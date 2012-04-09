@@ -4,28 +4,28 @@ as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 */
-
 package gov.nasa.worldwind.geom;
 
-import gov.nasa.worldwind.globes.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
-import org.junit.*;
+import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.Globe;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author tag
  * @version $Id$
  */
+@RunWith(Enclosed.class)
 public class BoundingVolumeTest
 {
-    public static void main(String[] args)
-    {
-        TestSuite testSuite = new TestSuite();
-        testSuite.addTestSuite(PerformanceTests.class);
-        new TestRunner().doRun(testSuite);
-    }
-
-    public static class PerformanceTests extends TestCase
+    public static class PerformanceTests
     {
         private Sector sector;
         private Frustum frustum;
@@ -48,7 +48,7 @@ public class BoundingVolumeTest
             this.globe = null;
         }
 
-        @SuppressWarnings({"UnusedAssignment"})
+        @Test
         public void testBoxCulling()
         {
             this.frustum = new Frustum(
@@ -65,7 +65,7 @@ public class BoundingVolumeTest
             assertTrue("Box/Frustum intersection not detected", tf);
         }
 
-        @SuppressWarnings({"UnusedAssignment"})
+        @Test
         public void testSphereCulling()
         {
             this.frustum = new Frustum(
@@ -87,7 +87,7 @@ public class BoundingVolumeTest
             assertFalse("sphere.intersects(frustum) erroneously detects intersection", tf);
         }
 
-        @SuppressWarnings({"UnusedAssignment"})
+	@Test
         public void testBoxCullingSpeed()
         {
             this.frustum = new Frustum(); // unit frustum around origin
@@ -109,7 +109,7 @@ public class BoundingVolumeTest
             }
         }
 
-        @SuppressWarnings({"UnusedAssignment"})
+	@Test
         public void testCylinderCullingSpeed()
         {
             this.frustum = new Frustum(); // unit frustum around origin
@@ -131,7 +131,7 @@ public class BoundingVolumeTest
             }
         }
 
-        @SuppressWarnings({"UnusedAssignment"})
+	@Test
         public void testBoxCreationSpeed()
         {
             Box box = new Box(Vec4.ZERO);
@@ -150,7 +150,7 @@ public class BoundingVolumeTest
             }
         }
 
-        @SuppressWarnings({"UnusedAssignment"})
+	@Test
         public void testCylinderCreationSpeed()
         {
             Cylinder cyl = new Cylinder(Vec4.ZERO, new Vec4(1, 1, 1), 1);

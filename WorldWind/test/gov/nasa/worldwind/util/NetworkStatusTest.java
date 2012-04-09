@@ -6,19 +6,27 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.util;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-import org.junit.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import java.net.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author tag
  * @version $Id$
  */
+@RunWith(Enclosed.class)
 public class NetworkStatusTest
 {
-    public static class Tests extends TestCase
+    public static class Tests
     {
         private BasicNetworkStatus netStat;
 
@@ -33,6 +41,7 @@ public class NetworkStatusTest
         {
         }
 
+        @Test
         public void testSetAttemptLimit()
         {
             int limit = 5;
@@ -41,6 +50,7 @@ public class NetworkStatusTest
             assertEquals("Set attempt limit test ", ai, limit);
         }
 
+        @Test
         public void testSetTryAgainInterval()
         {
             long interval = 200;
@@ -49,18 +59,21 @@ public class NetworkStatusTest
             assertEquals("Set try again interval test ", tai, interval);
         }
 
+        @Test
         public void testNetworkAvailable()
         {
             boolean tf = this.netStat.isNetworkUnavailable();
             assertFalse("Network unavailable test ", tf);
         }
 
+        @Test
         public void testWorldWindAvailable()
         {
             boolean tf = this.netStat.isWorldWindServerUnavailable();
             assertFalse("World Wind server unavailable test ", tf);
         }
 
+        @Test
         public void testHostAvailable() throws MalformedURLException
         {
             String hostName = "nasa.gov";
@@ -69,6 +82,7 @@ public class NetworkStatusTest
             assertFalse("Host unavailable test ", tf);
         }
 
+        @Test
         public void testHostLimitReached() throws MalformedURLException
         {
             String hostName = "nasa.gov";
@@ -79,6 +93,7 @@ public class NetworkStatusTest
             assertTrue("Host limit reached test ", tf);
         }
 
+        @Test
         public void testHostLimitNotReached() throws MalformedURLException
         {
             String hostName = "nasa.gov";
@@ -93,6 +108,7 @@ public class NetworkStatusTest
             assertFalse("Host limit not reached test ", tf);
         }
 
+        @Test
         public void testHostReavailable() throws MalformedURLException
         {
             String hostName = "nasa.gov";
@@ -104,6 +120,7 @@ public class NetworkStatusTest
             assertFalse("Host reavailable test ", tf);
         }
 
+        @Test
         public void testHostTryAgain() throws MalformedURLException, InterruptedException
         {
             String hostName = "nasa.gov";
@@ -119,6 +136,7 @@ public class NetworkStatusTest
             assertFalse("Host try again test B", tf);
         }
 
+        @Test
         public void testNetworkAvailableAfterSuccessLogged() throws MalformedURLException
         {
             String hostName = "nasa.gov";
@@ -137,10 +155,5 @@ public class NetworkStatusTest
                 this.netStat.logUnavailableHost(url);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new TestRunner().doRun(new TestSuite(Tests.class));
     }
 }

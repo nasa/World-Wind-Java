@@ -5,23 +5,37 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.ogc.kml;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.Exportable;
+import gov.nasa.worldwind.WorldWind;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwindx.examples.kml.KMLDocumentBuilder;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.util.Logging;
-import org.junit.*;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import gov.nasa.worldwindx.examples.kml.KMLDocumentBuilder;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import javax.xml.XMLConstants;
-import javax.xml.stream.*;
-import javax.xml.transform.*;
-import javax.xml.transform.stream.*;
-import javax.xml.validation.*;
-import java.io.*;
-import java.util.*;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Test export of KML by writing shapes to KML and validating the resulting document against the KML schema.

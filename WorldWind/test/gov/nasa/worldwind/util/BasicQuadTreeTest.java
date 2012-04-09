@@ -4,22 +4,28 @@ as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 */
-
 package gov.nasa.worldwind.util;
 
 import gov.nasa.worldwind.geom.Sector;
-import junit.framework.*;
-import junit.textui.TestRunner;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author tag
  * @version $Id$
  */
+@RunWith(Enclosed.class)
 public class BasicQuadTreeTest
 {
-    public static class Tests extends TestCase
+    public static class Tests
     {
         protected int countItemsInTree(BasicQuadTree<Integer> tree)
         {
@@ -35,6 +41,7 @@ public class BasicQuadTreeTest
         }
 
         /** Tests incremental removal of all items from the tree. */
+	@Test
         public void testFullRemoval()
         {
             int numItems = 1000;
@@ -55,6 +62,7 @@ public class BasicQuadTreeTest
         }
 
         /** Tests removal of named items from the tree. */
+	@Test
         public void testIndividualRemoval()
         {
             int numItems = 1000;
@@ -73,10 +81,5 @@ public class BasicQuadTreeTest
                 assertNull("Item not fully removed from tree ", item);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new TestRunner().doRun(new TestSuite(Tests.class));
     }
 }

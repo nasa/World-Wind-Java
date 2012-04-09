@@ -7,19 +7,29 @@ package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.geom.Position;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
  * @version $Id$
  */
-public class PolylineTest extends junit.framework.TestCase
+public class PolylineTest
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
     /** ******************************************************************************************************** */
 
+    @Test
     public void testSaveAndRestoreOnNewObject_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -35,6 +45,7 @@ public class PolylineTest extends junit.framework.TestCase
         assertEquals(expected, polyline);
     }
 
+    @Test
     public void testSaveAndRestoreOnSameObject_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -50,6 +61,7 @@ public class PolylineTest extends junit.framework.TestCase
         assertEquals(expected, polyline);
     }
 
+    @Test
     public void testEmptyStateDocument_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -67,6 +79,7 @@ public class PolylineTest extends junit.framework.TestCase
         assertEquals(expected, polyline);
     }
 
+    @Test
     public void testInvalidStateDocument_Polyline()
     {
         try
@@ -82,6 +95,7 @@ public class PolylineTest extends junit.framework.TestCase
         }
     }
 
+    @Test
     public void testPartialStateDocument_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -153,36 +167,31 @@ public class PolylineTest extends junit.framework.TestCase
         assertNotNull("Expected is null", expected);
         assertNotNull("Actual is null", actual);
 
-        assertEquals("color", expected.getColor(), actual.getColor());
-        assertEquals("highlightColor", expected.getColor(), actual.getColor());
-        assertEquals("antiAliasHint", expected.getAntiAliasHint(), actual.getAntiAliasHint());
-        assertEquals("filled", expected.isFilled(), actual.isFilled());
-        assertEquals("closed", expected.isClosed(), actual.isClosed());
-        assertEquals("highlighted", expected.isFilled(), actual.isFilled());
-        assertEquals("pathType", expected.getPathType(), actual.getPathType());
-        assertEquals("followTerrain", expected.isFollowTerrain(), actual.isFollowTerrain());
-        assertEquals("offset", expected.getOffset(), actual.getOffset());
-        assertEquals("terrainConformance", expected.getTerrainConformance(), actual.getTerrainConformance());
-        assertEquals("lineWidth", expected.getLineWidth(), actual.getLineWidth());
-        assertEquals("stipplePattern", expected.getStipplePattern(), actual.getStipplePattern());
-        assertEquals("stippleFactor", expected.getStippleFactor(), actual.getStippleFactor());
-        assertEquals("numSubsegments", expected.getNumSubsegments(), actual.getNumSubsegments());
+        Assert.assertEquals("color", expected.getColor(), actual.getColor());
+        Assert.assertEquals("highlightColor", expected.getColor(), actual.getColor());
+        Assert.assertEquals("antiAliasHint", expected.getAntiAliasHint(), actual.getAntiAliasHint());
+        Assert.assertEquals("filled", expected.isFilled(), actual.isFilled());
+        Assert.assertEquals("closed", expected.isClosed(), actual.isClosed());
+        Assert.assertEquals("highlighted", expected.isFilled(), actual.isFilled());
+        Assert.assertEquals("pathType", expected.getPathType(), actual.getPathType());
+        Assert.assertEquals("followTerrain", expected.isFollowTerrain(), actual.isFollowTerrain());
+        Assert.assertEquals("offset", expected.getOffset(), actual.getOffset(), 0.0001);
+        Assert.assertEquals("terrainConformance", expected.getTerrainConformance(), actual.getTerrainConformance(), 0.0001);
+        Assert.assertEquals("lineWidth", expected.getLineWidth(), actual.getLineWidth(), 0.0001);
+        Assert.assertEquals("stipplePattern", expected.getStipplePattern(), actual.getStipplePattern());
+        Assert.assertEquals("stippleFactor", expected.getStippleFactor(), actual.getStippleFactor());
+        Assert.assertEquals("numSubsegments", expected.getNumSubsegments(), actual.getNumSubsegments());
         // Position does not override equals(), so we must compare the contents of "positions" ourselves.
         Iterator<Position> expectedPositions = expected.getPositions().iterator();
         Iterator<Position> actualPositions = actual.getPositions().iterator();
         while (expectedPositions.hasNext() && actualPositions.hasNext())
         {
             Position expectedPos = expectedPositions.next(), actualPos = actualPositions.next();
-            assertEquals("positions.i.latitude", expectedPos.getLatitude(), actualPos.getLatitude());
-            assertEquals("positions.i.longitude", expectedPos.getLongitude(), actualPos.getLongitude());
-            assertEquals("positions.i.elevation", expectedPos.getElevation(), actualPos.getElevation());
+            Assert.assertEquals("positions.i.latitude", expectedPos.getLatitude(), actualPos.getLatitude());
+            Assert.assertEquals("positions.i.longitude", expectedPos.getLongitude(), actualPos.getLongitude());
+            Assert.assertEquals("positions.i.elevation", expectedPos.getElevation(), actualPos.getElevation(), 0.0001);
         }
         // If either iterator has more elements, then their lengths are different.
         assertFalse("positions.length", expectedPositions.hasNext() || actualPositions.hasNext());
-    }
-
-    public static void main(String[] args)
-    {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(PolylineTest.class));
     }
 }

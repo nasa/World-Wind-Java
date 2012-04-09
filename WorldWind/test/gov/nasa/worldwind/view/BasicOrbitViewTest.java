@@ -5,19 +5,31 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.view;
 
-import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.view.orbit.*;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.view.orbit.BasicOrbitView;
+import gov.nasa.worldwind.view.orbit.BasicOrbitViewLimits;
+import gov.nasa.worldwind.view.orbit.OrbitView;
+import gov.nasa.worldwind.view.orbit.OrbitViewLimits;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
  * @version $Id$
  */
-public class BasicOrbitViewTest extends junit.framework.TestCase
+public class BasicOrbitViewTest
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
     /** ****************************************************************************************************** */
 
+    @Test
     public void testRestore_NewInstance()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -32,6 +44,7 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_SameInstance()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -46,6 +59,7 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_EmptyStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -62,6 +76,7 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -76,6 +91,7 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         }
     }
 
+    @Test
     public void testRestore_PartialStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -97,6 +113,7 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testLegacyStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -137,6 +154,7 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_OldVersionStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -207,15 +225,15 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertNotNull("Expected is null", expected);
         assertNotNull("Actual is null", actual);
 
-        assertEquals("center", expected.getCenterPosition(), actual.getCenterPosition());
-        assertEquals("heading", expected.getHeading(), actual.getHeading());
-        assertEquals("pitch", expected.getPitch(), actual.getPitch());
-        assertEquals("zoom", expected.getZoom(), actual.getZoom());
-        assertEquals("fieldOfView", expected.getFieldOfView(), actual.getFieldOfView());
+        Assert.assertEquals("center", expected.getCenterPosition(), actual.getCenterPosition());
+        Assert.assertEquals("heading", expected.getHeading(), actual.getHeading());
+        Assert.assertEquals("pitch", expected.getPitch(), actual.getPitch());
+        Assert.assertEquals("zoom", expected.getZoom(), actual.getZoom(), 0.0001);
+        Assert.assertEquals("fieldOfView", expected.getFieldOfView(), actual.getFieldOfView());
 
-        assertEquals("detectCollisions", expected.isDetectCollisions(), actual.isDetectCollisions());
-        assertEquals("nearClipDistance", expected.getNearClipDistance(), actual.getNearClipDistance());
-        assertEquals("farClipDistance", expected.getFarClipDistance(), actual.getFarClipDistance());
+        Assert.assertEquals("detectCollisions", expected.isDetectCollisions(), actual.isDetectCollisions());
+        Assert.assertEquals("nearClipDistance", expected.getNearClipDistance(), actual.getNearClipDistance(), 0.0001);
+        Assert.assertEquals("farClipDistance", expected.getFarClipDistance(), actual.getFarClipDistance(), 0.0001);
 
         assertEquals(expected.getOrbitViewLimits(), actual.getOrbitViewLimits());
     }
@@ -225,20 +243,15 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertNotNull("Expected is null", expected);
         assertNotNull("Actual is null", actual);
 
-        assertEquals("centerLocationLimits", expected.getCenterLocationLimits(), actual.getCenterLocationLimits());
+        Assert.assertEquals("centerLocationLimits", expected.getCenterLocationLimits(), actual.getCenterLocationLimits());
 
         for (int i = 0; i < 2; i++)
         {
-            assertEquals("centerElevationLimits[" + i + "]", expected.getCenterElevationLimits()[i],
-                actual.getCenterElevationLimits()[i]);
-            assertEquals("headingLimits[" + i + "]", expected.getHeadingLimits()[i], actual.getHeadingLimits()[i]);
-            assertEquals("pitchLimits[" + i + "]", expected.getPitchLimits()[i], actual.getPitchLimits()[i]);
-            assertEquals("zoomLimits[" + i + "]", expected.getZoomLimits()[i], actual.getZoomLimits()[i]);
+            Assert.assertEquals("centerElevationLimits[" + i + "]", expected.getCenterElevationLimits()[i],
+                actual.getCenterElevationLimits()[i], 0.0001);
+            Assert.assertEquals("headingLimits[" + i + "]", expected.getHeadingLimits()[i], actual.getHeadingLimits()[i]);
+            Assert.assertEquals("pitchLimits[" + i + "]", expected.getPitchLimits()[i], actual.getPitchLimits()[i]);
+            Assert.assertEquals("zoomLimits[" + i + "]", expected.getZoomLimits()[i], actual.getZoomLimits()[i], 0.0001);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(BasicOrbitViewTest.class));
     }
 }

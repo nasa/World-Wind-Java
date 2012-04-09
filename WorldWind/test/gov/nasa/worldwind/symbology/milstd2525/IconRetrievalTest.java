@@ -3,17 +3,26 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.symbology.IconRetriever;
-import junit.framework.*;
-import junit.textui.TestRunner;
 
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import org.junit.Ignore;
+
+@RunWith(Enclosed.class)
+@Ignore
 public class IconRetrievalTest
 {
     // TODO: test all possible values for Standard Identity and Status
@@ -23,13 +32,14 @@ public class IconRetrievalTest
     private final static String ICON_RETRIEVER_PATH = Configuration.getStringValue(
         AVKey.MIL_STD_2525_ICON_RETRIEVER_PATH, MilStd2525Constants.DEFAULT_ICON_RETRIEVER_PATH);
 
-    public static class RetrievalTests extends TestCase
+    public static class RetrievalTests
     {
         //////////////////////////////////////////////////////////
         // Test retrieval of a MilStd2525 icon from both a remote
         // server and the local file system.
         //////////////////////////////////////////////////////////
 
+        @Test
         public void testServerRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -39,13 +49,14 @@ public class IconRetrievalTest
         }
     }
 
-    public static class ParsingTests extends TestCase
+    public static class ParsingTests
     {
         //////////////////////////////////////////////////////////
         // Test parsing of the Symbol Code.
         // MilStd2525 SymCodes should be exactly 15 characters.
         //////////////////////////////////////////////////////////
 
+        @Test
         public void testParseCodeTooShort()
         {
             try
@@ -59,6 +70,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testParseCodeTooLong()
         {
             try
@@ -72,6 +84,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testParseNullCode()
         {
             try
@@ -86,7 +99,7 @@ public class IconRetrievalTest
         }
     }
 
-    public static class CodeTests extends TestCase
+    public static class CodeTests
     {
         //////////////////////////////////////////////////////////
         // Test validity of Symbol Code.
@@ -94,6 +107,7 @@ public class IconRetrievalTest
         // TODO: is this correct?
         //////////////////////////////////////////////////////////
 
+        @Test
         public void testInvalidCodingScheme()
         {
             try
@@ -107,6 +121,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testInvalidStandardIdentity()
         {
             try
@@ -120,6 +135,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testInvalidBattleDimension()
         {
             try
@@ -133,6 +149,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testInvalidStatus()
         {
             try
@@ -146,6 +163,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testInvalidFunctionID()
         {
             try
@@ -160,7 +178,7 @@ public class IconRetrievalTest
         }
 
         /*
-        @org.junit.Test
+        @Test
         public void testInvalidModifierCode()
         {
             IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -168,7 +186,7 @@ public class IconRetrievalTest
             assertNull(img);
         }
 
-        @org.junit.Test
+        @Test
         public void testInvalidCountryCode()
         {
             IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -177,6 +195,7 @@ public class IconRetrievalTest
         }
         */
 
+        @Test
         public void testInvalidOrderOfBattle()
         {
             try
@@ -191,13 +210,14 @@ public class IconRetrievalTest
         }
     }
 
-    public static class WarfightingFunctionIDTests extends TestCase
+    public static class WarfightingFunctionIDTests
     {
         //////////////////////////////////////////////////////////
         // Test for the presence and retrieval of a every possible Warfighting base icon by
         // iterating through all combinations of Standard Identity and FunctionID.
         //////////////////////////////////////////////////////////
 
+        @Test
         public void testUnknownFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -220,6 +240,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testSpaceFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -242,6 +263,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testAirFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -264,6 +286,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testGroundFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -290,6 +313,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testSeaSurfaceFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -312,6 +336,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testSubsurfaceFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -334,6 +359,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testSpecialOpsFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -357,7 +383,7 @@ public class IconRetrievalTest
         }
     }
 
-    public static class SignalsIntelligenceFunctionIDTests extends TestCase
+    public static class SignalsIntelligenceFunctionIDTests
     {
         //////////////////////////////////////////////////////////
         // Test for the presence and retrieval of a every possible Signals Intelligence
@@ -365,6 +391,7 @@ public class IconRetrievalTest
         // FunctionID.
         //////////////////////////////////////////////////////////
 
+        @Test
         public void testSpaceFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -387,6 +414,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testAirFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -409,6 +437,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testGroundFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -431,6 +460,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testSeaSurfaceFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -453,6 +483,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testSubsurfaceFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -476,7 +507,7 @@ public class IconRetrievalTest
         }
     }
 
-    public static class StabilityOperationsFunctionIDTests extends TestCase
+    public static class StabilityOperationsFunctionIDTests
     {
         //////////////////////////////////////////////////////////
         // Test for the presence and retrieval of a every possible Stability Operations
@@ -484,6 +515,7 @@ public class IconRetrievalTest
         // FunctionID.
         //////////////////////////////////////////////////////////
 
+        @Test
         public void testViolentActivitiesFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -506,6 +538,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testLocationsFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -528,6 +561,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testOperationsFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -550,6 +584,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testItemsFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -572,6 +607,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testIndividualFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -594,6 +630,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testNonmilitaryFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -616,6 +653,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testRapeFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -639,7 +677,7 @@ public class IconRetrievalTest
         }
     }
 
-    public static class EmergencyManagementFunctionIDTests extends TestCase
+    public static class EmergencyManagementFunctionIDTests
     {
         //////////////////////////////////////////////////////////
         // Test for the presence and retrieval of a every possible Emergency Management
@@ -647,6 +685,7 @@ public class IconRetrievalTest
         // FunctionID.
         //////////////////////////////////////////////////////////
 
+        @Test
         public void testIncidentFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -670,7 +709,7 @@ public class IconRetrievalTest
         }
 
         /*
-                @org.junit.Test
+                @Test
                 public void testNaturalEventFunctionIDRetrieval()
                 {
                     MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -693,6 +732,7 @@ public class IconRetrievalTest
                     }
                 }
         */
+        @Test
         public void testOperationFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -715,6 +755,7 @@ public class IconRetrievalTest
             }
         }
 
+        @Test
         public void testInfrastructureFunctionIDRetrieval()
         {
             MilStd2525IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
@@ -736,19 +777,6 @@ public class IconRetrievalTest
                 assertNotNull("Icon " + "ehfp" + s.toLowerCase() + " not found.", img);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        TestSuite testSuite = new TestSuite();
-        testSuite.addTestSuite(RetrievalTests.class);
-        testSuite.addTestSuite(ParsingTests.class);
-        testSuite.addTestSuite(CodeTests.class);
-        //testSuite.addTestSuite(WarfightingFunctionIDTests.class);
-        //testSuite.addTestSuite(SignalsIntelligenceFunctionIDTests.class);
-        //testSuite.addTestSuite(StabilityOperationsFunctionIDTests.class);
-        testSuite.addTestSuite(EmergencyManagementFunctionIDTests.class);
-        new TestRunner().doRun(testSuite);
     }
 
     //////////////////////

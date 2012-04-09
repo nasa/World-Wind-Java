@@ -5,19 +5,29 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.view;
 
-import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.view.orbit.*;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.view.orbit.BasicOrbitView;
+import gov.nasa.worldwind.view.orbit.FlatOrbitView;
+import gov.nasa.worldwind.view.orbit.OrbitView;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
  * @version $Id$
  */
-public class FlatOrbitViewTest extends junit.framework.TestCase
+public class FlatOrbitViewTest
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /** ******************************************************************************************************** */
-
+    /*************************************************************************************************************/
+    
+    @Test
     public void testRestore_NewInstance()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -33,6 +43,7 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_SameInstance()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -48,6 +59,7 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_EmptyStateDocument()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -65,6 +77,7 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -80,6 +93,7 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         }
     }
 
+    @Test
     public void testRestore_PartialStateDocument()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -102,6 +116,7 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
+    @Test
     public void testRestore_SaveOrbitView_RestoreFlatOrbitView()
     {
         BasicOrbitView basicOrbitView = new BasicOrbitView();
@@ -116,6 +131,7 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals((OrbitView) flatOrbitView, (OrbitView) basicOrbitView);
     }
 
+    @Test
     public void testRestore_OldVersionStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -179,24 +195,16 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
     {
         assertNotNull("Expected is null", expected);
         assertNotNull("Actual is null", actual);
-        assertEquals("center.latitude", expected.getCenterPosition().getLatitude(),
-            actual.getCenterPosition().getLatitude());
-        assertEquals("center.longitude", expected.getCenterPosition().getLongitude(),
-            actual.getCenterPosition().getLongitude());
-        assertEquals("center.elevation", expected.getCenterPosition().getElevation(),
-            actual.getCenterPosition().getElevation());
-        assertEquals("heading", expected.getHeading(), actual.getHeading());
-        assertEquals("pitch", expected.getPitch(), actual.getPitch());
-        assertEquals("zoom", expected.getZoom(), actual.getZoom());
-        assertEquals("fieldOfView", expected.getFieldOfView(), actual.getFieldOfView());
+        Assert.assertEquals("center.latitude", expected.getCenterPosition().getLatitude(), actual.getCenterPosition().getLatitude());
+        Assert.assertEquals("center.longitude", expected.getCenterPosition().getLongitude(), actual.getCenterPosition().getLongitude());
+        Assert.assertEquals("center.elevation", expected.getCenterPosition().getElevation(), actual.getCenterPosition().getElevation(), 0.0001);
+        Assert.assertEquals("heading", expected.getHeading(), actual.getHeading());
+        Assert.assertEquals("pitch", expected.getPitch(), actual.getPitch());
+        Assert.assertEquals("zoom", expected.getZoom(), actual.getZoom(), 0.0001);
+        Assert.assertEquals("fieldOfView", expected.getFieldOfView(), actual.getFieldOfView());
 
-        assertEquals("detectCollisions", expected.isDetectCollisions(), actual.isDetectCollisions());
-        assertEquals("nearClipDistance", expected.getNearClipDistance(), actual.getNearClipDistance());
-        assertEquals("farClipDistance", expected.getFarClipDistance(), actual.getFarClipDistance());
-    }
-
-    public static void main(String[] args)
-    {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(FlatOrbitViewTest.class));
+        Assert.assertEquals("detectCollisions", expected.isDetectCollisions(), actual.isDetectCollisions());
+        Assert.assertEquals("nearClipDistance", expected.getNearClipDistance(), actual.getNearClipDistance(), 0.0001);
+        Assert.assertEquals("farClipDistance", expected.getFarClipDistance(), actual.getFarClipDistance(), 0.0001);
     }
 }

@@ -7,24 +7,36 @@ package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwindx.examples.ApplicationTemplate;
-import gov.nasa.worldwindx.examples.util.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.util.*;
+import gov.nasa.worldwind.util.Logging;
+import gov.nasa.worldwind.util.WWIO;
+import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
+import gov.nasa.worldwindx.examples.util.BalloonController;
+import gov.nasa.worldwindx.examples.util.HotSpotController;
 
-import javax.swing.*;
-import javax.swing.filechooser.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
 import java.nio.ByteBuffer;
+
+import javax.swing.AbstractAction;
+import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.junit.Ignore;
 
 /**
  * @author pabercrombie
  * @version $Id$
  */
+@Ignore
 public class BrowserBalloonTest extends ApplicationTemplate
 {
     public static final String DEFAULT_FILE = "test/gov/nasa/worldwind/render/BrowserBalloonTest.html";

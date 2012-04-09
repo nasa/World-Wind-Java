@@ -6,28 +6,25 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.geom;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-import org.junit.*;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author tag
  * @version $Id$
  */
+@RunWith(Enclosed.class)
 public class PlaneTest
 {
-    public static class Tests extends TestCase
+    public static class Tests
     {
-        @Before
-        public void setUp()
-        {
-        }
-
-        @After
-        public void tearDown()
-        {
-        }
-
+        @Test
         public void testSegmentIntersection()
         {
             Plane p = new Plane(new Vec4(0, 0, -1, 0));
@@ -73,6 +70,7 @@ public class PlaneTest
             assertNull("Parallel, integer end points off origin, should produce null for no intersection", pt);
         }
 
+        @Test
         public void testLineIntersection()
         {
             Plane p = new Plane(new Vec4(0, 0, 1, 0));
@@ -81,10 +79,5 @@ public class PlaneTest
                 new Vec4(0.0, 0.0, -1.0, 0.0)));
             assertNotNull("Simple intersection", pt);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new TestRunner().doRun(new TestSuite(Tests.class));
     }
 }

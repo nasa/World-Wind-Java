@@ -7,15 +7,20 @@ package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwindx.examples.ApplicationTemplate;
-import gov.nasa.worldwindx.examples.util.*;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.util.WWUtil;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
+import gov.nasa.worldwindx.examples.util.BalloonController;
+import gov.nasa.worldwindx.examples.util.HotSpotController;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+import org.junit.Ignore;
 
 /**
  * Test of BrowserBalloon sizing. This test creates several BrowserBalloons with different size configurations. The
@@ -24,6 +29,7 @@ import java.awt.event.*;
  * @author pabercrombie
  * @version $Id$
  */
+@Ignore
 public class BrowserBalloonSizeTest extends ApplicationTemplate
 {
     public static class AppFrame extends ApplicationTemplate.AppFrame

@@ -6,28 +6,23 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.geom;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-import org.junit.*;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author tag
  * @version $Id$
  */
+@RunWith(Enclosed.class)
 public class LineTest
 {
-    public static class Tests extends TestCase
+    public static class Tests
     {
-        @Before
-        public void setUp()
-        {
-        }
-
-        @After
-        public void tearDown()
-        {
-        }
-
+        @Test
         public void testFrustumClipping()
         {
             Frustum f = new Frustum(); // default frustum is [-1,1] in all 3 dimensions
@@ -66,6 +61,7 @@ public class LineTest
             assertTrue("Segment not in frustum", clipped == null);
         }
 
+        @Test
         public void testDistanceToPoint()
         {
             Vec4 p0 = Vec4.ZERO;
@@ -75,36 +71,31 @@ public class LineTest
             Vec4 p;
             p = new Vec4(0, 0, 0);
             d = Line.distanceToSegment(p0, p1, p);
-            assertEquals("Point at start of line at origin", d, 0d);
+            assertEquals("Point at start of line at origin", d, 0d, 0.0001);
 
             p = new Vec4(-2, 0, 0);
             d = Line.distanceToSegment(p0, p1, p);
-            assertEquals("Point to left of segment on x axis", d, 2d);
+            assertEquals("Point to left of segment on x axis", d, 2d, 0.0001);
 
             p = new Vec4(3, 0, 0);
             d = Line.distanceToSegment(p0, p1, p);
-            assertEquals("Point to right of segment on x axis", d, 1d);
+            assertEquals("Point to right of segment on x axis", d, 1d, 0.0001);
 
             p = new Vec4(2, 7, 0);
             d = Line.distanceToSegment(p0, p1, p);
-            assertEquals("Point 7 above segment end point", d, 7d);
+            assertEquals("Point 7 above segment end point", d, 7d, 0.0001);
 
             p = new Vec4(1, 7, 0);
             d = Line.distanceToSegment(p0, p1, p);
-            assertEquals("Point 7 above segment mid-point", d, 7d);
+            assertEquals("Point 7 above segment mid-point", d, 7d, 0.0001);
 
             p = new Vec4(1, -7, 0);
             d = Line.distanceToSegment(p0, p1, p);
-            assertEquals("Point 7 below segment mid-point", d, 7d);
+            assertEquals("Point 7 below segment mid-point", d, 7d, 0.0001);
 
             p = new Vec4(1, 0.5, 0);
             d = Line.distanceToSegment(p0, p1, p);
-            assertEquals("Point 1/2 above segment 1/4-point", d, 0.5);
+            assertEquals("Point 1/2 above segment 1/4-point", d, 0.5, 0.0001);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new TestRunner().doRun(new TestSuite(Tests.class));
     }
 }

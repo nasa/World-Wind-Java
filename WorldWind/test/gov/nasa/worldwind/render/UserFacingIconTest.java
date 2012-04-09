@@ -7,18 +7,28 @@ package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.geom.Position;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
  * @version $Id$
  */
-public class UserFacingIconTest extends junit.framework.TestCase
+public class UserFacingIconTest
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
     /** ******************************************************************************************************** */
 
+    @Test
     public void testRestore_NewInstance()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -34,6 +44,7 @@ public class UserFacingIconTest extends junit.framework.TestCase
         assertEquals(expected, icon);
     }
 
+    @Test
     public void testRestore_SameInstance()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -49,6 +60,7 @@ public class UserFacingIconTest extends junit.framework.TestCase
         assertEquals(expected, icon);
     }
 
+    @Test
     public void testRestore_EmptyStateDocument()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -66,6 +78,7 @@ public class UserFacingIconTest extends junit.framework.TestCase
         assertEquals(expected, icon);
     }
 
+    @Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -81,6 +94,7 @@ public class UserFacingIconTest extends junit.framework.TestCase
         }
     }
 
+    @Test
     public void testRestore_PartialStateDocument()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -113,7 +127,7 @@ public class UserFacingIconTest extends junit.framework.TestCase
         icon.setImageSource("path/to/image.ext");
         icon.setPosition(Position.fromDegrees(45.5, 55.5, 100.5));
         icon.setHighlighted(true);
-        icon.setSize(new java.awt.Dimension(255, 255));
+        icon.setSize(new Dimension(255, 255));
         icon.setVisible(false);
         icon.setHighlightScale(3.141592);
         icon.setToolTipText("Hello World!");
@@ -142,37 +156,33 @@ public class UserFacingIconTest extends junit.framework.TestCase
     {
         assertNotNull("Expected is null", expected);
         assertNotNull("Actual is null", actual);
-        assertEquals("imageSource", expected.getImageSource(), actual.getImageSource());
+        Assert.assertEquals("imageSource", expected.getImageSource(), actual.getImageSource());
         if (expected.getPosition() != null && actual.getPosition() != null)
         {
-            assertEquals("position.latitude",
-                expected.getPosition().getLatitude(),
-                actual.getPosition().getLatitude());
-            assertEquals("position.longitude",
-                expected.getPosition().getLongitude(),
-                actual.getPosition().getLongitude());
-            assertEquals("position.elevation",
-                expected.getPosition().getElevation(),
-                actual.getPosition().getElevation());
+            Assert.assertEquals("position.latitude",
+                    expected.getPosition().getLatitude(),
+                    actual.getPosition().getLatitude());
+            Assert.assertEquals("position.longitude",
+                    expected.getPosition().getLongitude(),
+                    actual.getPosition().getLongitude());
+            Assert.assertEquals("position.elevation",
+                    expected.getPosition().getElevation(),
+                    actual.getPosition().getElevation(),
+                    0.0001);
         }
         else
         {
             assertNull("Expected position is not null", expected.getPosition());
             assertNull("Actual position is not null", actual.getPosition());
         }
-        assertEquals("highlighted", expected.isHighlighted(), actual.isHighlighted());
-        assertEquals("size", expected.getSize(), actual.getSize());
-        assertEquals("visible", expected.isVisible(), actual.isVisible());
-        assertEquals("highlightScale", expected.getHighlightScale(), actual.getHighlightScale());
-        assertEquals("toolTipText", expected.getToolTipText(), actual.getToolTipText());
-        assertEquals("toolTipFont", expected.getToolTipFont(), actual.getToolTipFont());
-        assertEquals("showToolTip", expected.isShowToolTip(), actual.isShowToolTip());
-        assertEquals("toolTipTextColor", expected.getToolTipTextColor(), actual.getToolTipTextColor());
-        assertEquals("alwaysOnTop", expected.isAlwaysOnTop(), actual.isAlwaysOnTop());
-    }
-
-    public static void main(String[] args)
-    {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(UserFacingIconTest.class));
+        Assert.assertEquals("highlighted", expected.isHighlighted(), actual.isHighlighted());
+        Assert.assertEquals("size", expected.getSize(), actual.getSize());
+        Assert.assertEquals("visible", expected.isVisible(), actual.isVisible());
+        Assert.assertEquals("highlightScale", expected.getHighlightScale(), actual.getHighlightScale(), 0.0001);
+        Assert.assertEquals("toolTipText", expected.getToolTipText(), actual.getToolTipText());
+        Assert.assertEquals("toolTipFont", expected.getToolTipFont(), actual.getToolTipFont());
+        Assert.assertEquals("showToolTip", expected.isShowToolTip(), actual.isShowToolTip());
+        Assert.assertEquals("toolTipTextColor", expected.getToolTipTextColor(), actual.getToolTipTextColor());
+        Assert.assertEquals("alwaysOnTop", expected.isAlwaysOnTop(), actual.isAlwaysOnTop());
     }
 }

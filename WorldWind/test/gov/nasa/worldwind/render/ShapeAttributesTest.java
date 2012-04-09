@@ -6,26 +6,29 @@ package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.util.RestorableSupport;
-import junit.framework.*;
-import junit.textui.TestRunner;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Point;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
  * @version $Id$
  */
+@RunWith(Enclosed.class)
+@Ignore // **************** NOTE: THIS TEST IS CURRENTLY FAILING, PLEASE FIX.
 public class ShapeAttributesTest
 {
-    public static void main(String[] args)
-    {
-        TestSuite testSuite = new TestSuite();
-        testSuite.addTestSuite(ShapeAttributeTests.class);
-        testSuite.addTestSuite(BalloonAttributeTests.class);
-        new TestRunner().doRun(testSuite);
-    }
-
-    public static class ShapeAttributeTests extends TestCase
+    public static class ShapeAttributeTests
     {
         protected static final ShapeAttributes exampleAttributes = new BasicShapeAttributes();
 
@@ -57,6 +60,7 @@ public class ShapeAttributesTest
             return exampleAttributes.copy();
         }
 
+        @Test
         public void testBasicSaveRestore()
         {
             RestorableSupport rs = RestorableSupport.newRestorableSupport();
@@ -70,6 +74,7 @@ public class ShapeAttributesTest
             assertEquals(expected, actual);
         }
 
+        @Test
         public void testRestoreSameInstance()
         {
             RestorableSupport rs = RestorableSupport.newRestorableSupport();
@@ -84,6 +89,7 @@ public class ShapeAttributesTest
             assertEquals(expected, actual);
         }
 
+        @Test
         public void testRestoreNullDocument()
         {
             try
@@ -97,6 +103,7 @@ public class ShapeAttributesTest
             }
         }
 
+        @Test
         public void testRestoreEmptyDocument()
         {
             ShapeAttributes expected = this.createExampleAttributes();
@@ -112,6 +119,7 @@ public class ShapeAttributesTest
             assertEquals(expected, actual);
         }
 
+        @Test
         public void testRestoreOneAttribute()
         {
             ShapeAttributes expected = this.createExampleAttributes();

@@ -6,21 +6,29 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.globes;
 
-import gov.nasa.worldwind.geom.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
-import org.junit.*;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Vec4;
+
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author tag
  * @version $Id$
  */
+@RunWith(Enclosed.class)
 public class EllipsoidalGlobeTest
 {
     private static final double TOLERANCE = 0.1d;
 
-    public static class Tests extends TestCase
+    public static class Tests
     {
         private Globe globe;
 
@@ -36,13 +44,15 @@ public class EllipsoidalGlobeTest
             this.globe = null;
         }
 
+        @Test
         public void testEquatorialRadius()
         {
             double radius = this.globe.getEquatorialRadius();
 
-            assertEquals("Equatorial radius", radius, 6378137d);
+            assertEquals("Equatorial radius", radius, 6378137d, TOLERANCE);
         }
 
+        @Test
         public void testgeodeticToCartesian()
         {
             Position orig = new Position(LatLon.fromDegrees(30.42515, -97.547562), 200.5d);
@@ -60,6 +70,7 @@ public class EllipsoidalGlobeTest
             assertEquals("Height comparision", orig.getElevation(), p.getElevation(), TOLERANCE);
         }
 
+        @Test
         public void testgeodeticToCartesian2()
         {
 
@@ -78,6 +89,7 @@ public class EllipsoidalGlobeTest
             assertEquals("Height comparision", orig.getElevation(), p.getElevation(), TOLERANCE);
         }
 
+        @Test
         public void testgeodeticToCartesian3()
         {
 
@@ -96,6 +108,7 @@ public class EllipsoidalGlobeTest
             assertEquals("Height comparision", orig.getElevation(), p.getElevation(), TOLERANCE);
         }
 
+        @Test
         public void testgeodeticToCartesian4()
         {
 
@@ -120,10 +133,11 @@ public class EllipsoidalGlobeTest
      *
      * @author nkronenfeld
      */
-    public static class CoordinateConversionTests extends TestCase
+    public static class CoordinateConversionTests
     {
         private static final double REQUIRED_PRECISION = 0.00000001;
 
+        @Test
         public void testEllipsoidEquatorialPlane()
         {
             // Test to make sure that coordinate transforms near the equatorial plane work correctly.
@@ -193,6 +207,7 @@ public class EllipsoidalGlobeTest
             }
         }
 
+        @Test
         public void testEllipsoidAxis()
         {
             // Test to make sure that coordinate transforms near the equatorial plane work correctly.
@@ -225,6 +240,7 @@ public class EllipsoidalGlobeTest
             }
         }
 
+        @Test
         public void testEllipsoidCenter()
         {
             Earth earth = new Earth();
@@ -250,6 +266,7 @@ public class EllipsoidalGlobeTest
             // I'm wrong - it's case b, and lat and lon are just wrong at the moment.  Perhaps fix?
         }
 
+        @Test
         public void testGeneralRoundTripCartesianConversion()
         {
             // Tests cartesian->geodetic->cartesian conversion in a rough grid all
@@ -288,6 +305,7 @@ public class EllipsoidalGlobeTest
             }
         }
 
+        @Test
         public void testRoundTripCartesianConversionAtEvolute()
         {
             // The evolute is the area in the center of the ellipsoid where we get the most problems.  Normalizing the ellipse (2d) to a unit circle in p and q (q is minor axis), the formula for it is:
@@ -339,11 +357,5 @@ public class EllipsoidalGlobeTest
                 Assert.assertEquals(msg, 1.0, actual / expected, precision);
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new TestRunner().doRun(new TestSuite(Tests.class));
-        new TestRunner().doRun(new TestSuite(CoordinateConversionTests.class));
     }
 }

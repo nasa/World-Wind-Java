@@ -4,11 +4,13 @@ as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 */
-
 package gov.nasa.worldwind.util;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests operation of AbsentResourceList.
@@ -16,9 +18,10 @@ import junit.textui.TestRunner;
  * @author tag
  * @version $ID$
  */
+@RunWith(Enclosed.class)
 public class AbsentResourceListTest
 {
-    public static class Tests extends TestCase
+    public static class Tests
     {
         protected void addResources(AbsentResourceList list, int numResources)
         {
@@ -50,6 +53,7 @@ public class AbsentResourceListTest
         }
 
         /** Tests addition of resources to the list. */
+	@Test
         public void testResourceAddition()
         {
             int numResources = 100;
@@ -60,6 +64,7 @@ public class AbsentResourceListTest
         }
 
         /** Tests whether resources are considered not absent after initial check interval expires. */
+	@Test
         public void testCheckInitialInterval()
         {
             int numResources = 100;
@@ -80,6 +85,7 @@ public class AbsentResourceListTest
         }
 
         /** Tests whether resources are considered absent after maximum number of tries. */
+	@Test
         public void testMaxTries()
         {
             int numResources = 100;
@@ -112,6 +118,7 @@ public class AbsentResourceListTest
         }
 
         /** Tests whether resources are considered not absent after try-again interval expires. */
+	@Test
         public void testCheckTryAgainInterval()
         {
             int numResources = 100;
@@ -136,6 +143,7 @@ public class AbsentResourceListTest
         }
 
         /** Tests whether a specified list size is adhered to. */
+	@Test
         public void testListSize()
         {
             int maxListSize = 100;
@@ -144,10 +152,5 @@ public class AbsentResourceListTest
             this.markResourcesAbsent(list, maxListSize + 1); // should eject first resource, 0, from list
             assertTrue("Oldest resource not considered absent ", !list.isResourceAbsent(0));
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new TestRunner().doRun(new TestSuite(Tests.class));
     }
 }

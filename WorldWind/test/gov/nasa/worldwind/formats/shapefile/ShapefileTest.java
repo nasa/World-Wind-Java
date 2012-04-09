@@ -5,52 +5,49 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.formats.shapefile;
 
-import gov.nasa.worldwind.avlist.*;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.AVListImpl;
 import gov.nasa.worldwind.exception.WWRuntimeException;
-import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.util.*;
-import junit.framework.*;
-import junit.textui.TestRunner;
-import org.junit.*;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.LatLon;
+import gov.nasa.worldwind.util.WWIO;
+import gov.nasa.worldwind.util.WWUtil;
 
 import java.io.File;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
  * @version $Id$
  */
+@RunWith(Enclosed.class)
 public class ShapefileTest
 {
-    public static void main(String[] args)
-    {
-        TestSuite testSuite = new TestSuite();
-        testSuite.addTestSuite(BasicTests.class);
-        new TestRunner().doRun(testSuite);
-    }
-
-    public static class BasicTests extends TestCase
+    public static class BasicTests
     {
         public static final String STATE_BOUNDS_PATH = "testData/shapefiles/state_bounds.shp";
         public static final String WORLD_BORDERS_PATH = "testData/shapefiles/TM_WORLD_BORDERS-0.2.shp";
-        public static final String SPRINGFIELD_URBAN_GROWTH_URL
-            = "http://worldwind.arc.nasa.gov/java/apps/springfield/SPR_UGB.shp";
-
-        @Before
-        public void setUp()
-        {
-        }
-
-        @After
-        public void tearDown()
-        {
-        }
+        public static final String SPRINGFIELD_URBAN_GROWTH_URL = "http://worldwind.arc.nasa.gov/java/apps/springfield/SPR_UGB.shp";
 
         //**************************************************************//
         //********************  Test Basic Reading  ********************//
         //**************************************************************//
 
+        @Test
         public void testOpenFile()
         {
             Shapefile shapefile = new Shapefile(new File(STATE_BOUNDS_PATH));
@@ -64,6 +61,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
+        @Test
         public void testOpenPath()
         {
             Shapefile shapefile = new Shapefile(STATE_BOUNDS_PATH);
@@ -77,6 +75,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
+        @Test
         public void testOpenURL() throws MalformedURLException
         {
             Shapefile shapefile = new Shapefile(new URL(SPRINGFIELD_URBAN_GROWTH_URL));
@@ -90,6 +89,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
+        @Test
         public void testOpenURLString()
         {
             Shapefile shapefile = new Shapefile(SPRINGFIELD_URBAN_GROWTH_URL);
@@ -103,6 +103,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
+        @Test
         public void testOpenSingleInputStream() throws Exception
         {
             Shapefile shapefile = new Shapefile(WWIO.openStream(STATE_BOUNDS_PATH));
@@ -116,6 +117,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
+        @Test
         public void testOpenMultipleInputStreams() throws Exception
         {
             Shapefile shapefile = new Shapefile(
@@ -137,6 +139,7 @@ public class ShapefileTest
         //********************  Test Coordinate Conversion  ************//
         //**************************************************************//
 
+        @Test
         public void testUTMCoordinates()
         {
             Shapefile shapefile = new Shapefile(SPRINGFIELD_URBAN_GROWTH_URL);
@@ -145,6 +148,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
+        @Test
         public void testGeographicCoordinates()
         {
             Shapefile shapefile = new Shapefile(WORLD_BORDERS_PATH);
@@ -153,7 +157,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @SuppressWarnings({"UnusedDeclaration"})
+	@Test
         public void testUnsupportedCoordinates() throws Exception
         {
             AVList params = new AVListImpl();
@@ -174,6 +178,7 @@ public class ShapefileTest
         //********************  Test Expected Values  ******************//
         //**************************************************************//
 
+        @Test
         public void testExpectedValuesForStateBounds()
         {
             Shapefile shapefile = new Shapefile(STATE_BOUNDS_PATH);
