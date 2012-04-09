@@ -12,7 +12,6 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Point;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -25,7 +24,6 @@ import static org.junit.Assert.fail;
  * @version $Id$
  */
 @RunWith(Enclosed.class)
-@Ignore // **************** NOTE: THIS TEST IS CURRENTLY FAILING, PLEASE FIX.
 public class ShapeAttributesTest
 {
     public static class ShapeAttributeTests
@@ -159,6 +157,7 @@ public class ShapeAttributesTest
             exampleBalloonAttrs.setOutlineStipplePattern((short) 0xABAB);
             exampleBalloonAttrs.setSize(new Size(Size.EXPLICIT_DIMENSION, 0.5, AVKey.FRACTION,
                 Size.EXPLICIT_DIMENSION, 100.0, AVKey.PIXELS));
+            exampleBalloonAttrs.setMaximumSize(exampleBalloonAttrs.getSize());
             exampleBalloonAttrs.setOffset(new Offset(0.5, 0.0, AVKey.FRACTION, AVKey.PIXELS));
             exampleBalloonAttrs.setInsets(new Insets(5, 10, 15, 20));
             exampleBalloonAttrs.setBalloonShape(AVKey.SHAPE_ELLIPSE);
