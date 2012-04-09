@@ -528,14 +528,14 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 
             if (this.useGroundHeadingIndicator)
             {
-                List<? extends Point2D> points = MilStd2525Util.computeGroundHeadingIndicatorPoints(dc, (Angle) o,
-                    length, this.iconRect.getHeight());
+                List<? extends Point2D> points = MilStd2525Util.computeGroundHeadingIndicatorPoints(dc, this.placePoint,
+                    (Angle) o, length, this.iconRect.getHeight());
                 this.addLine(dc, BOTTOM_CENTER_OFFSET, points, LAYOUT_RELATIVE, points.size() - 1);
             }
             else
             {
-                List<? extends Point2D> points = MilStd2525Util.computeCenterHeadingIndicatorPoints(dc, (Angle) o,
-                    length);
+                List<? extends Point2D> points = MilStd2525Util.computeCenterHeadingIndicatorPoints(dc,
+                    this.placePoint, (Angle) o, length);
                 this.addLine(dc, CENTER_OFFSET, points, null, 0);
             }
         }

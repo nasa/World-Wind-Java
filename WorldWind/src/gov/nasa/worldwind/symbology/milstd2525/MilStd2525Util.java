@@ -6,7 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.View;
+import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.Logging;
@@ -301,8 +303,19 @@ public class MilStd2525Util
         return symbolInfo;
     }
 
-    public static List<? extends Point2D> computeCenterHeadingIndicatorPoints(DrawContext dc, Angle heading,
-        double length)
+    /**
+     * Compute screen points required to draw a leader line on a tactical symbol. This method returns two points that
+     * will draw a line out from the center of the symbol.
+     *
+     * @param dc          Current draw context.
+     * @param symbolPoint Symbol position in model coordinates.
+     * @param heading     Direction of movement, as a bearing clockwise from North.
+     * @param length      Length of the indicator line, in pixels.
+     *
+     * @return List of screen points that describe the speed leader line.
+     */
+    public static List<? extends Point2D> computeCenterHeadingIndicatorPoints(DrawContext dc, Vec4 symbolPoint,
+        Angle heading, double length)
     {
         if (dc == null)
         {
@@ -318,17 +331,32 @@ public class MilStd2525Util
             throw new IllegalArgumentException(msg);
         }
 
-        Angle angle = dc.getView().getHeading().add(Angle.POS90).subtract(heading);
-        double dx = length * angle.cos();
-        double dy = length * angle.sin();
+        View view = dc.getView();
+        Vec4 dir = computeDirectionOfMovement(dc, symbolPoint, heading, length);
+
+        // Project geographic points into screen space.
+        Vec4 pt1 = view.project(symbolPoint);
+        Vec4 pt2 = view.project(symbolPoint.add3(dir));
 
         return Arrays.asList(
             new Point2D.Double(0, 0),
-            new Point2D.Double(dx, dy));
+            new Point2D.Double(pt2.x - pt1.x, pt2.y - pt1.y));
     }
 
-    public static List<? extends Point2D> computeGroundHeadingIndicatorPoints(DrawContext dc, Angle heading,
-        double length, double frameHeight)
+    /**
+     * Compute screen points required to draw a leader line on a tactical ground symbol. This method returns two points
+     * that will draw a line down from the base of the symbol and then out in the direction of movement.
+     *
+     * @param dc          Current draw context.
+     * @param symbolPoint Symbol position in model coordinates.
+     * @param heading     Direction of movement, as a bearing clockwise from North.
+     * @param length      Length of the indicator line, in pixels.
+     * @param frameHeight Height of the symbol's bounding rectangle, in pixels.
+     *
+     * @return List of screen points that describe the speed leader line.
+     */
+    public static List<? extends Point2D> computeGroundHeadingIndicatorPoints(DrawContext dc, Vec4 symbolPoint,
+        Angle heading, double length, double frameHeight)
     {
         if (dc == null)
         {
@@ -344,13 +372,43 @@ public class MilStd2525Util
             throw new IllegalArgumentException(msg);
         }
 
-        Angle angle = dc.getView().getHeading().add(Angle.POS90).subtract(heading);
-        double dx = length * angle.cos();
-        double dy = length * angle.sin();
+        View view = dc.getView();
+        Vec4 dir = computeDirectionOfMovement(dc, symbolPoint, heading, length);
+
+        // Project geographic points into screen space.
+        Vec4 pt1 = view.project(symbolPoint);
+        Vec4 pt2 = view.project(symbolPoint.add3(dir));
 
         return Arrays.asList(
             new Point2D.Double(0, 0),
             new Point2D.Double(0, -frameHeight / 2d),
-            new Point2D.Double(dx, -frameHeight / 2d + dy));
+            new Point2D.Double(pt2.x - pt1.x, -frameHeight / 2d + (pt2.y - pt1.y)));
+    }
+
+    /**
+     * Compute a vector in the direction that a symbol is moving.
+     *
+     * @param dc          Current draw context.
+     * @param symbolPoint Symbol position in model coordinates.
+     * @param heading     Heading as a bearing clockwise from North.
+     * @param length      Length of the leader line, in pixels. The computed vector will have magnitude equal to this
+     *                    distance in pixels multiplied by the size of a pixel (in meters) at the position of the symbol
+     *                    relative to the current view.
+     *
+     * @return A vector that points in the direction of a symbol's movement.
+     */
+    protected static Vec4 computeDirectionOfMovement(DrawContext dc, Vec4 symbolPoint, Angle heading, double length)
+    {
+        View view = dc.getView();
+        Globe globe = dc.getGlobe();
+
+        double pixelSize = view.computePixelSizeAtDistance(view.getEyePoint().distanceTo3(symbolPoint));
+
+        // Compute a vector in the direction of the heading.
+        Position position = globe.computePositionFromPoint(symbolPoint);
+        Matrix surfaceOrientation = globe.computeSurfaceOrientationAtPosition(position);
+        Vec4 dir = new Vec4(heading.sin(), heading.cos());
+
+        return dir.transformBy3(surfaceOrientation).normalize3().multiply3(length * pixelSize);
     }
 }
