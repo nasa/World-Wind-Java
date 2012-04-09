@@ -4,11 +4,9 @@ as represented by the Administrator of the
 National Aeronautics and Space Administration.
 All Rights Reserved.
 */
-
 package gov.nasa.worldwind.ogc.kml;
 
 import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwindx.examples.ApplicationTemplate;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.ogc.kml.gx.GXConstants;
@@ -16,10 +14,17 @@ import gov.nasa.worldwind.ogc.kml.impl.KMLController;
 import gov.nasa.worldwind.util.WWIO;
 import gov.nasa.worldwind.util.xml.atom.AtomConstants;
 import gov.nasa.worldwind.util.xml.xal.XALConstants;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import javax.swing.*;
-import java.io.*;
-import java.util.zip.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.swing.SwingUtilities;
+
+import org.junit.Ignore;
 
 /**
  * Tests the resolution of Style, StyleMap and styleUrl in a number of situations.
@@ -27,7 +32,8 @@ import java.util.zip.*;
  * @author tag
  * @version $Id$
  */
-public class StyleLocationTests extends ApplicationTemplate
+@Ignore
+public class StyleLocationTest extends ApplicationTemplate
 {
     private static String ICON_LOCATIONS = "http://tomgaskins.net/kmltest/placemarks/";
     protected static Position nextPosition = Position.fromDegrees(0, -151, 1e6);

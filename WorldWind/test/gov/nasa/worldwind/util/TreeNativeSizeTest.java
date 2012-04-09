@@ -4,14 +4,18 @@
  * National Aeronautics and Space Administration.
  * All Rights Reserved.
  */
-
 package gov.nasa.worldwind.util;
 
-import gov.nasa.worldwindx.examples.ApplicationTemplate;
-import gov.nasa.worldwindx.examples.util.HotSpotController;
 import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Size;
-import gov.nasa.worldwind.util.tree.*;
+import gov.nasa.worldwind.util.tree.BasicTree;
+import gov.nasa.worldwind.util.tree.BasicTreeLayout;
+import gov.nasa.worldwind.util.tree.BasicTreeModel;
+import gov.nasa.worldwind.util.tree.BasicTreeNode;
+import gov.nasa.worldwindx.examples.ApplicationTemplate;
+import gov.nasa.worldwindx.examples.util.HotSpotController;
+
+import org.junit.Ignore;
 
 /**
  * Test of tree frame that sizes to fit its content. The tree frame should change size to fit the content as the nodes
@@ -20,7 +24,8 @@ import gov.nasa.worldwind.util.tree.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class TreeNativeSize extends ApplicationTemplate
+@Ignore
+public class TreeNativeSizeTest extends ApplicationTemplate
 {
     private static final String ICON_PATH = "images/16x16-icon-nasa.png";
 
