@@ -242,7 +242,7 @@ public class RenderableLayerTest
     /** Exceptional Condition Tests **/
     /** ****************************************************************************************************** */
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testAddRenderableFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -250,18 +250,11 @@ public class RenderableLayerTest
         RenderableLayer layer = new RenderableLayer();
         layer.setRenderables(renderables);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.addRenderable(new Polyline());
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.addRenderable(new Polyline());
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testAddRenderablesFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -269,18 +262,11 @@ public class RenderableLayerTest
         RenderableLayer layer = new RenderableLayer();
         layer.setRenderables(renderables);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.addRenderables(renderables);
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.addRenderables(renderables);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testRemoveRenderableFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -288,18 +274,11 @@ public class RenderableLayerTest
         RenderableLayer layer = new RenderableLayer();
         layer.setRenderables(renderables);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.removeRenderable(new Polyline());
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.removeRenderable(new Polyline());
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testRemoveAllRenderablesFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -307,18 +286,11 @@ public class RenderableLayerTest
         RenderableLayer layer = new RenderableLayer();
         layer.setRenderables(renderables);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.removeAllRenderables();
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.removeAllRenderables();
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testDisposeFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -326,15 +298,8 @@ public class RenderableLayerTest
         RenderableLayer layer = new RenderableLayer();
         layer.setRenderables(renderables);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.dispose();
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.dispose();
     }
 
     /*************************************************************************************************************/

@@ -26,7 +26,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
@@ -152,21 +151,12 @@ public class ShapefileTest
         shapefile.close();
     }
 
-    @Test
+    @Test(expected = WWRuntimeException.class)
     public void testUnsupportedCoordinates() throws Exception
     {
         AVList params = new AVListImpl();
         params.setValue(AVKey.COORDINATE_SYSTEM, AVKey.COORDINATE_SYSTEM_UNKNOWN);
-
-        try
-        {
-            Shapefile shapefile = new Shapefile(WWIO.openStream(STATE_BOUNDS_PATH), null, null, params);
-            fail("Unknown coordinate system not detected.");
-        }
-        catch (WWRuntimeException e)
-        {
-            // WWRuntimeException expected from unknown coordinate system.
-        }
+        Shapefile shapefile = new Shapefile(WWIO.openStream(STATE_BOUNDS_PATH), null, null, params);
     }
 
     //**************************************************************//

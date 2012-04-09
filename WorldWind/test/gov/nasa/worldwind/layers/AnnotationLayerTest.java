@@ -229,7 +229,7 @@ public class AnnotationLayerTest
     /** Exceptional Condition Tests **/
     /** ******************************************************************************************************** */
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testAddAnnotationFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -237,18 +237,11 @@ public class AnnotationLayerTest
         AnnotationLayer layer = new AnnotationLayer();
         layer.setAnnotations(annotations);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.addAnnotation(new GlobeAnnotation("", Position.ZERO));
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.addAnnotation(new GlobeAnnotation("", Position.ZERO));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testAddAnnotationsFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -256,18 +249,11 @@ public class AnnotationLayerTest
         AnnotationLayer layer = new AnnotationLayer();
         layer.setAnnotations(annotations);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.addAnnotations(annotations);
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.addAnnotations(annotations);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testRemoveAnnotationFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -275,18 +261,11 @@ public class AnnotationLayerTest
         AnnotationLayer layer = new AnnotationLayer();
         layer.setAnnotations(annotations);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.removeAnnotation(new GlobeAnnotation("", Position.ZERO));
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.removeAnnotation(new GlobeAnnotation("", Position.ZERO));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testRemoveAllAnnotationsFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -294,15 +273,8 @@ public class AnnotationLayerTest
         AnnotationLayer layer = new AnnotationLayer();
         layer.setAnnotations(annotations);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.removeAllAnnotations();
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.removeAllAnnotations();
     }
 
     /*************************************************************************************************************/

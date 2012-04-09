@@ -17,7 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
@@ -79,20 +78,12 @@ public class AnnotationAttributesTest
         assertEquals(expected, attrib);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testRestore_InvalidStateDocument()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            AnnotationAttributes attrib = new AnnotationAttributes();
-            attrib.restoreState(badStateInXml);
-
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        AnnotationAttributes attrib = new AnnotationAttributes();
+        attrib.restoreState(badStateInXml);
     }
 
     @Test

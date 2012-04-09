@@ -19,8 +19,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author tag
@@ -90,20 +90,12 @@ public class SurfaceShapeTest
         assertEquals(expected, shape);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidStateDocument()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            Polyline polyline = new Polyline();
-            polyline.restoreState(badStateInXml);
-
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        Polyline polyline = new Polyline();
+        polyline.restoreState(badStateInXml);
     }
 
     @Test
@@ -374,10 +366,7 @@ public class SurfaceShapeTest
         {
             Assert.assertEquals(name, a.next(), b.next());
         }
-
-        if (a.hasNext() || b.hasNext())
-        {
-            fail();
-        }
+        
+        assertFalse(a.hasNext() || b.hasNext());
     }
 }

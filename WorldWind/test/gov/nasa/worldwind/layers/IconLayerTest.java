@@ -234,7 +234,7 @@ public class IconLayerTest
     /** Exceptional Condition Tests **/
     /** ******************************************************************************************************** */
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testAddIconFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -242,18 +242,11 @@ public class IconLayerTest
         IconLayer layer = new IconLayer();
         layer.setIcons(icons);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.addIcon(new UserFacingIcon("", Position.ZERO));
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.addIcon(new UserFacingIcon("", Position.ZERO));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testAddIconsFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -261,18 +254,11 @@ public class IconLayerTest
         IconLayer layer = new IconLayer();
         layer.setIcons(icons);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.addIcons(icons);
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.addIcons(icons);
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testRemoveIconFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -280,18 +266,11 @@ public class IconLayerTest
         IconLayer layer = new IconLayer();
         layer.setIcons(icons);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.removeIcon(new UserFacingIcon("", Position.ZERO));
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.removeIcon(new UserFacingIcon("", Position.ZERO));
     }
 
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testRemoveAllIconsFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -299,15 +278,8 @@ public class IconLayerTest
         IconLayer layer = new IconLayer();
         layer.setIcons(icons);
 
-        try
-        {
-            // Expecting an IllegalStateException here.
-            layer.removeAllIcons();
-            fail("");
-        }
-        catch (IllegalStateException e)
-        {
-        }
+        // Expecting an IllegalStateException here.
+        layer.removeAllIcons();
     }
 
     /*************************************************************************************************************/

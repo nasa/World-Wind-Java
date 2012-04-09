@@ -82,20 +82,12 @@ public class GlobeAnnotationTest
         assertEquals(expected, annotation);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testRestore_InvalidStateDocument()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            GlobeAnnotation annotation = new GlobeAnnotation("", Position.fromDegrees(0.0, 0.0, 0.0));
-            annotation.restoreState(badStateInXml);
-
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        GlobeAnnotation annotation = new GlobeAnnotation("", Position.fromDegrees(0.0, 0.0, 0.0));
+        annotation.restoreState(badStateInXml);
     }
 
     @Test

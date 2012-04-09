@@ -77,20 +77,12 @@ public class FlatOrbitViewTest
         assertEquals(expected, orbitView);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testRestore_InvalidStateDocument()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            FlatOrbitView orbitView = new FlatOrbitView();
-            orbitView.restoreState(badStateInXml);
-
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        FlatOrbitView orbitView = new FlatOrbitView();
+        orbitView.restoreState(badStateInXml);
     }
 
     @Test

@@ -17,7 +17,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
@@ -79,20 +78,12 @@ public class PolylineTest
         assertEquals(expected, polyline);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testInvalidStateDocument_Polyline()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            Polyline polyline = new Polyline();
-            polyline.restoreState(badStateInXml);
-
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        Polyline polyline = new Polyline();
+        polyline.restoreState(badStateInXml);
     }
 
     @Test

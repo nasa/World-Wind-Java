@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
@@ -78,20 +77,12 @@ public class PedestalTest
         assertEquals(expected, pedestal);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testRestore_InvalidStateDocument()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            Pedestal pedestal = new Pedestal("", null);
-            pedestal.restoreState(badStateInXml);
-
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        Pedestal pedestal = new Pedestal("", null);
+        pedestal.restoreState(badStateInXml);
     }
 
     @Test

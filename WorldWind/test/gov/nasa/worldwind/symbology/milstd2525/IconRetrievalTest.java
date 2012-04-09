@@ -13,13 +13,12 @@ import gov.nasa.worldwind.symbology.IconRetriever;
 
 import java.awt.image.BufferedImage;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import org.junit.Ignore;
 
 @RunWith(Enclosed.class)
 @Ignore
@@ -56,46 +55,25 @@ public class IconRetrievalTest
         // MilStd2525 SymCodes should be exactly 15 characters.
         //////////////////////////////////////////////////////////
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testParseCodeTooShort()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon("SUAPC", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon("SUAPC", null);
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testParseCodeTooLong()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon("SUAPCTEST", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon("SUAPCTEST", null);
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testParseNullCode()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon(null, null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon(null, null);
         }
     }
 
@@ -107,74 +85,39 @@ public class IconRetrievalTest
         // TODO: is this correct?
         //////////////////////////////////////////////////////////
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testInvalidCodingScheme()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon(".UAPC----------", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon(".UAPC----------", null);
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testInvalidStandardIdentity()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon("S.APC----------", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon("S.APC----------", null);
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testInvalidBattleDimension()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon("SU.PC----------", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon("SU.PC----------", null);
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testInvalidStatus()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon("SUA.C----------", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon("SUA.C----------", null);
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testInvalidFunctionID()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon("SUAPZ----------", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon("SUAPZ----------", null);
         }
 
         /*
@@ -195,18 +138,11 @@ public class IconRetrievalTest
         }
         */
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testInvalidOrderOfBattle()
         {
-            try
-            {
-                IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
-                symGen.createIcon("SUAPC---------.", null);
-                fail("Should raise an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            IconRetriever symGen = new MilStd2525IconRetriever(ICON_RETRIEVER_PATH);
+            symGen.createIcon("SUAPC---------.", null);
         }
     }
 

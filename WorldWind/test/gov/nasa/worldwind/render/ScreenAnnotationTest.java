@@ -19,7 +19,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
@@ -81,20 +80,12 @@ public class ScreenAnnotationTest
         assertEquals(expected, annotation);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testRestore_InvalidStateDocument()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            ScreenAnnotation annotation = new ScreenAnnotation("", new Point(0, 0));
-            annotation.restoreState(badStateInXml);
-
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        ScreenAnnotation annotation = new ScreenAnnotation("", new Point(0, 0));
+        annotation.restoreState(badStateInXml);
     }
 
     @Test

@@ -17,7 +17,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
@@ -76,19 +75,12 @@ public class BasicOrbitViewTest
         assertEquals(expected, orbitView);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testRestore_InvalidStateDocument()
     {
-        try
-        {
-            String badStateInXml = "!!invalid xml string!!";
-            OrbitView orbitView = new BasicOrbitView();
-            orbitView.restoreState(badStateInXml);
-            fail("Expected an IllegalArgumentException");
-        }
-        catch (IllegalArgumentException e)
-        {
-        }
+        String badStateInXml = "!!invalid xml string!!";
+        OrbitView orbitView = new BasicOrbitView();
+        orbitView.restoreState(badStateInXml);
     }
 
     @Test

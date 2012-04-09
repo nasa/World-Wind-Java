@@ -17,7 +17,6 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * @author dcollins
@@ -87,18 +86,11 @@ public class ShapeAttributesTest
             assertEquals(expected, actual);
         }
 
-        @Test
+        @Test(expected = IllegalArgumentException.class)
         public void testRestoreNullDocument()
         {
-            try
-            {
-                ShapeAttributes attrs = this.createDefaultAttributes();
-                attrs.restoreState(null, null);
-                fail("Expected an IllegalArgumentException");
-            }
-            catch (Exception e)
-            {
-            }
+            ShapeAttributes attrs = this.createDefaultAttributes();
+            attrs.restoreState(null, null);
         }
 
         @Test
