@@ -186,6 +186,7 @@ public class DirectionOfAttackAviation extends DirectionOfAttack
      *
      * @param dc Current draw context.
      */
+    @Override
     protected void createShapes(DrawContext dc)
     {
         // This graphic is composed of four paths:

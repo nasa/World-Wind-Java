@@ -210,15 +210,21 @@ public class DirectionOfAttack extends MilStd2525TacticalGraphic
     /** {@inheritDoc} */
     protected void doRenderGraphic(DrawContext dc)
     {
+        for (Path path : this.paths)
+        {
+            path.render(dc);
+        }
+    }
+
+    @Override
+    protected void computeGeometry(DrawContext dc)
+    {
         if (this.paths == null)
         {
             this.createShapes(dc);
         }
 
-        for (Path path : this.paths)
-        {
-            path.render(dc);
-        }
+        super.computeGeometry(dc);
     }
 
     /** {@inheritDoc} */
