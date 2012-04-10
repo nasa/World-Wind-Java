@@ -105,11 +105,10 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             if (mustDrawIcon)
                 image = this.drawIcon(symbolCode, params, image);
         }
-        else
-        {
-            // Draw a dot if both frame and icon are turned off
+
+        // Draw a dot if both frame and icon are turned off
+        if (image == null)
             image = this.drawCircle(symbolCode, params, image);
-        }
 
         return image;
     }
