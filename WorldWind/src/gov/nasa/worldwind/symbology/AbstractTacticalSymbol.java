@@ -382,7 +382,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected static final String LAYOUT_NONE = "gov.nasa.worldwind.symbology.TacticalSymbol.LayoutNone";
     /**
      * The default depth offset in device independent depth units: -8200. This value is configured to match the depth
-     * offset produced by existing screen elements such as PointPlacemark.
+     * offset produced by existing screen elements such as PointPlacemark. This value was determined empirically.
      */
     protected static final double DEFAULT_DEPTH_OFFSET = -8200;
     protected static final long DEFAULT_MAX_TIME_SINCE_LAST_USED = 10000;
@@ -1754,8 +1754,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         {
             gl.glDisable(GL.GL_TEXTURE_2D);
 
-            // TODO: this depth range does not take into account an application specified depth offset. Try to make this
-            // TODO: consistent with the polygon offset used above.
+            // Apply an offset to move the line away from terrain.
             double depth = this.screenPoint.z - (8d * 0.00048875809d);
             depth = depth < 0d ? 0d : (depth > 1d ? 1d : depth);
             gl.glDepthRange(depth, depth);
