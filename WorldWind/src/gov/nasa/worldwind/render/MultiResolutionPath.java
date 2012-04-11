@@ -15,8 +15,14 @@ import java.nio.IntBuffer;
 import java.util.Iterator;
 
 /**
+ * A Version of {@link Path} that provides level-of-detail. Positions in a {@code Path} are filtered based on a "skip
+ * count", the number of positions to skip between positions that are drawn. The skip-count algorithm can be replaced by
+ * the application. The default algorithm skips up to four positions, depending on the eye distance from the positions.
+ * Also, if the segment between any two positions is too small to be distinguished, it is not drawn. See {@link
+ * #makePositions(DrawContext, gov.nasa.worldwind.render.Path.PathData)}.
+ *
  * @author tag
- * @version $ID$
+ * @version $Id$
  */
 public class MultiResolutionPath extends Path
 {
