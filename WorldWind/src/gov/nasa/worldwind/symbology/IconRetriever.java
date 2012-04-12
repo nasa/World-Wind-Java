@@ -11,8 +11,8 @@ import gov.nasa.worldwind.avlist.AVList;
 import java.awt.image.*;
 
 /**
- * An IconRetriever loads icons for symbols in a symbol set. Typically, an icon retriever will be implemented for a
- * specific symbol set. For example, the {@link gov.nasa.worldwind.symbology.milstd2525.MilStd2525IconRetriever}
+ * Retrieves icons for symbols in a symbol set from a local disk or the network. Typically, an icon retriever will be
+ * implemented for a specific symbol set. For example, the {@link gov.nasa.worldwind.symbology.milstd2525.MilStd2525IconRetriever}
  * retrieves icons for symbols in the MIL-STD-2525 symbology set.
  *
  * @author ccrick

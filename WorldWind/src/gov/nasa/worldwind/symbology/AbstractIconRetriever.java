@@ -15,50 +15,75 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Base class for icon retrievers. This class provides methods to load and manipulate icons. Icons may be loaded from
- * either a local or remote symbol store.
+ * Base class for icon retrievers. This class provides methods for loading and manipulating icons.
  * <p/>
- * <h1>How to implement a retriever for a new symbol set</h1>
+ * <h2>Icon retrieval</h2>
  * <p/>
- * <h2>Basic retrieval</h2>
+ * Each symbol in a symbology set must have a unique identifier. The IconRetriever's job is to create a BufferedImage to
+ * represent a symbol given the symbol identifier. Usually this means retrieving an image from the file system or the
+ * network, and optionally manipulating the symbol (for example, changing the color to represent a hostile or friendly
+ * entity).
  * <p/>
- * <h2>Composite symbols</h2>
+ * Each instance of AbstractIconRetriever is configured with a retrieval path which specifies the location of a symbol
+ * repository on the file system or the network. {@link #readImage(String) readImage} retrieves images relative to this
+ * base path. The retrieval path may be a file URL to a directory on the local file system (for example,
+ * file:///symbols/mil-std-2525). A URL to a network resource (http://myserver.com/milstd2525/), or a URL to a JAR or
+ * ZIP file (jar:file:milstd2525-symbols.zip!).
  * <p/>
- * Complicated symbols may be made up of several different graphical elements. This base class includes a {@link
- * #drawImage(java.awt.image.BufferedImage, java.awt.image.BufferedImage) drawImage} method to help build a complex
- * symbol from simple pieces. For example, if a symbol is composed of a frame and an icon, the icon retriever could load
- * appropriate frame and icon independently, draw the icon over the frame, and return the composite image. This would
- * look something like this:
+ * A simple icon retriever might use a symbol repository that is a simple directory of PNG files, where each file name
+ * matches a symbol identifier. Such an icon retriever could be implemented like this:
+ * <p/>
  * <pre>
- *     // Load the frame and icon as separate pieces.
- *     BufferedImage frame = this.readImage("/path/to/frame.png");
- *     BufferedImage icon = this.readImage("/path/to/icon.png");
- *
- *     // Draw the icon on top of the frame. This call modifies the frame image.
- *     this.drawImage(icon, frame);
- *
- *     // Return the composite image.
- *     return frame;
+ * class SimpleIconRetriever extends AbstractIconRetriever
+ * {
+ *     public BufferedImage createIcon(String symbolId)
+ *     {
+ *         // Retrieves retrievalPath/symbolId.png
+ *         return this.readImage(symbolId + ".png");
+ *     }
+ * }
  * </pre>
  * <p/>
- * <h2>Changing the color of a symbol</h2>
+ * <h2>Composite icons</h2>
  * <p/>
- * For a symbol set that requires multiple copies of a symbol in different colors it may be useful to create a single
- * copy of the symbol and set the color when the icon is retrieved. To do this, create the symbol with a white
- * foreground, and call {@link #multiply(java.awt.image.BufferedImage, java.awt.Color) multiply} to change the color.
- * The white pixels will be replaced with the multiplication color, while maintaining transparency and anti-aliasing.
+ * Complicated symbols may be made up of several different graphical elements. {@link
+ * #drawImage(java.awt.image.BufferedImage, java.awt.image.BufferedImage) drawImage} helps build a complex symbol from
+ * simple pieces. For example, if a symbol is composed of a frame and an icon, the icon retriever could load the frame
+ * and icon independently, draw the icon over the frame, and return the composite image:
+ * <pre>
+ * // Load the frame and icon as separate pieces.
+ * BufferedImage frame = this.readImage("path/to/frame.png");
+ * BufferedImage icon = this.readImage("path/to/icon.png");
+ *
+ * // Draw the icon on top of the frame. This call modifies the frame image.
+ * BufferedImage fullImage = this.drawImage(icon, frame);
+ *
+ * // Return the composite image.
+ * return fullImage;
+ * </pre>
+ * <p/>
+ * <h2>Changing the color of an icon</h2>
+ * <p/>
+ * {@link #multiply(java.awt.image.BufferedImage, java.awt.Color) multiply} can change the color of an image by
+ * multiplying each pixel in the image by a color. The multiplication color will replace any white pixels and black
+ * pixels will be unaffected. For example, a symbol set in which hostile symbols are drawn in red and friendly symbols
+ * are drawn in green could be implemented by creating white icons, and then multiplying by either red or green when the
+ * retriever constructs the icon.
  *
  * @author ccrick
  * @version $Id: AbstractIconRetriever.java 90 2011-17-10 23:58:29Z ccrick $
  */
 public abstract class AbstractIconRetriever implements IconRetriever
 {
+    /** Path in the file system or network to the symbol repository. */
     protected String retrieverPath;
 
     /**
-     * Create a new retriever.
+     * Create a new retriever that will retrieve icons from the specified location. The retrieval path may be a file URL
+     * to a directory on the local file system (for example, file:///symbols/mil-std-2525). A URL to a network resource
+     * (http://myserver.com/milstd2525/), or a URL to a JAR or ZIP file (jar:file:milstd2525-symbols.zip!).
      *
-     * @param retrieverPath Path to the base symbol directory.
+     * @param retrieverPath URL to to the base symbol directory on the local file system or the network.
      */
     public AbstractIconRetriever(String retrieverPath)
     {
@@ -72,11 +97,26 @@ public abstract class AbstractIconRetriever implements IconRetriever
         this.retrieverPath = retrieverPath;
     }
 
+    /**
+     * Indicates the file system or network path of the symbol directory.. The retrieval path may be a file URL to a
+     * directory on the local file system (for example, file:///symbols/mil-std-2525). A URL to a network resource (
+     * http://myserver.com/milstd2525/), or a URL to a JAR or ZIP file (jar:file:milstd2525-symbols.zip!).
+     *
+     * @return File system or network path to symbol repository.
+     */
     public String getRetrieverPath()
     {
         return this.retrieverPath;
     }
 
+    /**
+     * Indicates whether or not this retriever is equal to another.
+     *
+     * @param o Object to compare.
+     *
+     * @return {@code true} if {@code o} is an instance of AbstractIconRetriever and has the same retrieval path as this
+     *         retriever.
+     */
     @Override
     public boolean equals(Object o)
     {
@@ -89,6 +129,7 @@ public abstract class AbstractIconRetriever implements IconRetriever
         return this.retrieverPath != null ? this.retrieverPath.equals(that.retrieverPath) : that.retrieverPath == null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -96,7 +137,9 @@ public abstract class AbstractIconRetriever implements IconRetriever
     }
 
     /**
-     * Load an image from a local or remote path.
+     * Load an image from a local or remote path. The image path is interpreted relative to the retrieval path. For
+     * example, if the retrieval path is http://myserver.com/milstd2525/, calling readImage("icon.png") will attempt to
+     * retrieve an image from http://myserver.com/milstd2525/icon.png.
      *
      * @param path Path to the icon resource, relative to this retriever's retrieval path.
      *
@@ -141,10 +184,10 @@ public abstract class AbstractIconRetriever implements IconRetriever
     }
 
     /**
-     * Draw an image into a buffered image.
+     * Draw one image into another image. The image is drawn at location (0, 0).
      *
-     * @param src  Image to drawn into {@code dest}.
-     * @param dest Image to draw on.
+     * @param src  Image to draw.
+     * @param dest Image to draw into.
      *
      * @return {@code dest} BufferedImage.
      */
@@ -180,8 +223,8 @@ public abstract class AbstractIconRetriever implements IconRetriever
     }
 
     /**
-     * Multiply each pixel in an image by a color. White pixels in the image to be replaced by the multiplication color,
-     * black pixels will be unaffected.
+     * Multiply each pixel in an image by a color. White pixels are replaced by the multiplication color, black pixels
+     * are unaffected.
      *
      * @param image Image to operate on.
      * @param color Color to multiply by.

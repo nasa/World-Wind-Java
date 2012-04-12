@@ -17,7 +17,8 @@ import java.util.MissingResourceException;
 
 /**
  * Retriever to fetch icons for MIL-STD-2525C point graphics. The retriever can fetch images from either local or remote
- * locations.
+ * locations. See <a href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/#offline-use">Offline
+ * Use</a> for information on how to set the icon retrieval location.
  * <p/>
  * The retriever base URL must identify a location on a local or remote file system (including zip and jar files) that
  * holds the icon files in an expected directory structure. Each icon URL is constructed from three parts:
@@ -25,8 +26,8 @@ import java.util.MissingResourceException;
  * standard identity, order of battle, etc.) are replaced with hyphens. For example, the Underwater Datum graphic
  * (2.X.2.1.1.1.1.1) will be retrieved from this URL: [base]/icons/tacgrp/g-g-gpuud------.png
  * <p/>
- * Most applications should not use this class directly. See <a href="http://goworldwind.org/developers-guide/symbology/tactical-symbols/#offline-use">Offline
- * Use</a> for information on how to set the icon retrieval location.
+ * An application should only use this class directly if it needs to access point graphics independent of the {@link
+ * TacticalGraphic} system (for example, to populate a UI independent of the globe).
  *
  * @author pabercrombie
  * @version $Id$
@@ -46,18 +47,31 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     protected static final String DIR_FILL_TACGRP = "fills/tacgrp";
 
     /**
-     * Create a new icon retriever.
+     * Create a new retriever that will retrieve icons from the specified location. The retrieval path may be a file URL
+     * to a directory on the local file system (for example, file:///symbols/mil-std-2525). A URL to a network resource
+     * (http://myserver.com/milstd2525/), or a URL to a JAR or ZIP file (jar:file:milstd2525-symbols.zip!).
      *
-     * @param retrieverPath Base URL for symbol graphics.
+     * @param retrieverPath File path or URL to the symbol directory, for example "http://myserver.com/milstd2525/".
      */
     public MilStd2525PointGraphicRetriever(String retrieverPath)
     {
         super(retrieverPath);
     }
 
-    public BufferedImage createIcon(String symbolId, AVList params)
+    /**
+     * Create an icon for a MIL-STD-2525C point graphic. Point graphics are defined in Appendixes B (Tactical Graphics),
+     * C (Meteorological and Oceanographic), and G (Emergency Management).
+     *
+     * @param sidc   SIDC identifier for the symbol.
+     * @param params Parameters that affect icon retrieval. This retriever accepts only one parameter: AVKey.COLOR,
+     *               which determines the color of the image. By default the color will be determined from the standard
+     *               identity.
+     *
+     * @return An BufferedImage containing the icon for the requested graphic, or null if the icon cannot be retrieved.
+     */
+    public BufferedImage createIcon(String sidc, AVList params)
     {
-        if (symbolId == null)
+        if (sidc == null)
         {
             String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
             Logging.logger().severe(msg);
@@ -65,7 +79,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
         }
 
         // Retrieve desired symbol and convert to BufferedImage
-        SymbolCode symbolCode = new SymbolCode(symbolId);
+        SymbolCode symbolCode = new SymbolCode(sidc);
         String filename = this.composeFilename(symbolCode);
         BufferedImage srcImg = this.readImage(filename);
 
