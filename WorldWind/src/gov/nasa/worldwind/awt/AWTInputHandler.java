@@ -487,7 +487,7 @@ public class AWTInputHandler extends WWObjectImpl
         this.mousePoint = mouseEvent.getPoint();
         this.callMouseDraggedListeners(mouseEvent);
 
-        if (MouseEvent.BUTTON1_DOWN_MASK == mouseEvent.getModifiersEx())
+        if ((MouseEvent.BUTTON1_DOWN_MASK & mouseEvent.getModifiersEx()) != 0)
         {
             PickedObjectList pickedObjects = this.objectsAtButtonPress;
             if (this.isDragging
