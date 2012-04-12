@@ -270,7 +270,7 @@ public class EllipsoidalGlobe extends WWObjectImpl implements Globe
             throw new IllegalArgumentException(message);
         }
 
-        return frustum.intersects(this);
+        return frustum.intersects(new Sphere(Vec4.ZERO, this.getRadius()));
     }
 
     public Intersection[] intersect(Line line)
