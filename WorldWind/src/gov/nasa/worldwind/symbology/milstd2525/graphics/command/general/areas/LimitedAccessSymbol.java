@@ -151,14 +151,11 @@ public class LimitedAccessSymbol extends AbstractTacticalSymbol
          *
          * @param code Symbol code that identifies the graphic.
          *
-         * @return Color to apply based on the standard identity. (Red for hostile entities, black for others.)
+         * @return Color to apply based on the standard identity. (Red for hostile entities, black for friendly, etc.)
          */
         protected Color getColorForStandardIdentity(SymbolCode code)
         {
-            if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(code.getStandardIdentity()))
-                return MilStd2525TacticalGraphic.MATERIAL_HOSTILE.getDiffuse();
-            else
-                return MilStd2525TacticalGraphic.MATERIAL_FRIEND.getDiffuse();
+           return MilStd2525Util.getDefaultGraphicMaterial(code).getDiffuse();
         }
     }
 }

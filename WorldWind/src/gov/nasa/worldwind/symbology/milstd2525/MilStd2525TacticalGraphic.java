@@ -60,9 +60,6 @@ import gov.nasa.worldwind.symbology.*;
  */
 public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic implements TacticalGraphic, Renderable
 {
-    public final static Material MATERIAL_FRIEND = Material.BLACK;
-    public final static Material MATERIAL_HOSTILE = Material.RED;
-
     /** Factor applied to the stipple pattern used to draw graphics in anticipated state. */
     protected static final int OUTLINE_STIPPLE_FACTOR = 6;
     /** Stipple pattern applied to graphics in the anticipated state. */
@@ -205,11 +202,7 @@ public abstract class MilStd2525TacticalGraphic extends AbstractTacticalGraphic 
      */
     protected Material getDefaultMaterial()
     {
-        String identity = this.symbolCode.getStandardIdentity();
-        if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(identity))
-            return MATERIAL_HOSTILE;
-        else
-            return MATERIAL_FRIEND;
+        return MilStd2525Util.getDefaultGraphicMaterial(this.symbolCode);
     }
 
     protected TacticalSymbol createSymbol(String sidc, Position position, TacticalSymbolAttributes attrs)

@@ -411,4 +411,73 @@ public class MilStd2525Util
 
         return dir.transformBy3(surfaceOrientation).normalize3().multiply3(length * pixelSize);
     }
+
+    /**
+     * Determines a default color to apply to a symbol. MIL-STD-2525C section 5.5.1.1 (pg. 37) states that obstacles
+     * should be displayed in green, friendly entities in black or blue, and hostile entities in red. This method
+     * return green for obstacles and neutral entities, black for friendly entities, red for hostile entities, and
+     * yellow for unknown and pending entities.
+     *
+     * @param symbolCode Symbol for which to determine color.
+     *
+     * @return Default material for the specified symbol.
+     */
+    public static Material getDefaultGraphicMaterial(SymbolCode symbolCode)
+    {
+        if (symbolCode == null)
+        {
+            String msg = Logging.getMessage("nullValue.SymbolCodeIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (isObstacle(symbolCode))
+            return MilStd2525Constants.MATERIAL_OBSTACLE;
+
+        String id = symbolCode.getStandardIdentity();
+        if (SymbologyConstants.STANDARD_IDENTITY_FRIEND.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_ASSUMED_FRIEND.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_EXERCISE_ASSUMED_FRIEND.equalsIgnoreCase(id))
+        {
+            return MilStd2525Constants.MATERIAL_FRIEND;
+        }
+        else if (SymbologyConstants.STANDARD_IDENTITY_HOSTILE.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_SUSPECT.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_JOKER.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_FAKER.equalsIgnoreCase(id))
+        {
+            return MilStd2525Constants.MATERIAL_HOSTILE;
+        }
+        else if (SymbologyConstants.STANDARD_IDENTITY_NEUTRAL.equalsIgnoreCase(id)
+            || SymbologyConstants.STANDARD_IDENTITY_EXERCISE_NEUTRAL.equalsIgnoreCase(id))
+        {
+            return MilStd2525Constants.MATERIAL_NEUTRAL;
+        }
+
+        // Default to Unknown
+        return MilStd2525Constants.MATERIAL_UNKNOWN;
+    }
+
+    /**
+     * Indicates whether or not a symbol code identifiers an Obstacle. Obstacles defined in the Mobility and Survivability category of MIL-STD-2525C Appendix B.
+     *
+     * @param symbolCode Symbol code to test.
+     *
+     * @return True if the symbol code represents an obstacle, otherwise false.
+     */
+    protected static boolean isObstacle(SymbolCode symbolCode)
+    {
+        if (symbolCode == null)
+            return false;
+
+        String scheme = symbolCode.getScheme();
+        String category = symbolCode.getCategory();
+        String functionId = symbolCode.getFunctionId();
+
+        // Obstacle function IDs start with "O".
+        return SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equalsIgnoreCase(scheme)
+            && SymbologyConstants.CATEGORY_MOBILITY_SURVIVABILITY.equalsIgnoreCase(category)
+            && (functionId.charAt(0) == 'o' || functionId.charAt(0) == 'O');
+
+    }
 }
