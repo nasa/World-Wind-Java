@@ -20,7 +20,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class AdvanceForFeint extends AbstractOffenseArrow
+public class AdvanceForFeint extends AbstractAxisArrow
 {
     /**
      * Factor used to compute the distance between the solid and dashed lines in the arrow head. A larger value will

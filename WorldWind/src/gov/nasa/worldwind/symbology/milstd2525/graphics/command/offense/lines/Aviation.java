@@ -18,7 +18,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class Aviation extends AbstractOffenseArrow
+public class Aviation extends AbstractAxisArrow
 {
     /**
      * Indicates the graphics supported by this class.

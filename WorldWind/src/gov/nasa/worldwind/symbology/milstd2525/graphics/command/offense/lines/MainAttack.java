@@ -18,7 +18,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class MainAttack extends AbstractOffenseArrow
+public class MainAttack extends AbstractAxisArrow
 {
     /**
      * Indicates the graphics supported by this class.

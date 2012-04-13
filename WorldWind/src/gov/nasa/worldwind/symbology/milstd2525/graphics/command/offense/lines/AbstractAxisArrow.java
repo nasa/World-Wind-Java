@@ -17,12 +17,16 @@ import gov.nasa.worldwind.util.Logging;
 import java.util.*;
 
 /**
- * Base class for Offense arrow shapes.
+ * Base class for axis of advance arrow graphics. These arrows are specified by control points along the center line of
+ * the arrow. The final control point determines either the width of the arrowhead (default) or the width of the route.
+ * MIL-STD-2525C (pg. 517) specifies that the final control point determines the width of the arrowhead, but some
+ * applications may prefer to use this control point to set the width of the route precisely. The {@link
+ * #isFinalPointWidthOfRoute() finalPointWidthOfRoute} field controls this behavior.
  *
  * @author pabercrombie
  * @version $Id$
  */
-public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
+public abstract class AbstractAxisArrow extends MilStd2525TacticalGraphic
 {
     /** Path used to render the line. */
     protected Path[] paths;
@@ -34,11 +38,17 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
     protected List<? extends Position> arrowPositions;
 
     /**
+     * Indicates whether the final control point marks the width of the route or the width of the arrowhead. Default is
+     * the width of the arrowhead.
+     */
+    protected boolean finalPointWidthOfRoute;
+
+    /**
      * Create a new arrow graphic.
      *
      * @param sidc Symbol code the identifies the graphic.
      */
-    public AbstractOffenseArrow(String sidc)
+    public AbstractAxisArrow(String sidc)
     {
         this(sidc, 1);
     }
@@ -51,7 +61,7 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
      * @param sidc     Symbol code the identifies the graphic.
      * @param numPaths Number of paths to create.
      */
-    public AbstractOffenseArrow(String sidc, int numPaths)
+    public AbstractAxisArrow(String sidc, int numPaths)
     {
         super(sidc);
 
@@ -145,6 +155,45 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
     }
 
     /**
+     * Indicates whether or not the final control point marks the width of the arrowhead or the width of the route.
+     * MIL-STD-2525C specifies that the final control point marks the edge of the arrow (pg. 517), and this is the
+     * default. However, some applications may prefer to specify the width of the route rather than the width of the
+     * arrowhead. In the diagram below, the default behavior is for the final control point to specify point A. When
+     * {@code finalPointWidthOfRoute} is true the final control point specifies point B instead.
+     * <p/>
+     * <pre>
+     *                 A
+     *                 |\
+     *                 | \
+     * ----------------|  \
+     *                 B   \
+     *                     /
+     * ----------------|  /
+     *                 | /
+     *                 |/
+     * </pre>
+     *
+     * @return True if the final control point determines the width of the route instead of the width of the arrow head
+     *         (point B in the diagram above).
+     */
+    public boolean isFinalPointWidthOfRoute()
+    {
+        return this.finalPointWidthOfRoute;
+    }
+
+    /**
+     * Specifies whether or not the final control point marks the edge of the arrow head or the width of the route. See
+     * {@link #isFinalPointWidthOfRoute()} for details.
+     *
+     * @param finalPointIsWidthOfRoute True if the final control point determines the width of the route instead of the
+     *                                 width of the arrow head.
+     */
+    public void setFinalPointWidthOfRoute(boolean finalPointIsWidthOfRoute)
+    {
+        this.finalPointWidthOfRoute = finalPointIsWidthOfRoute;
+    }
+
+    /**
      * Create the list of positions that describe the arrow.
      *
      * @param dc Current draw context.
@@ -220,25 +269,34 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
             throw new IllegalArgumentException(message);
         }
 
-        Vec4 p1 = globe.computePointFromLocation(pos1);
-        Vec4 p2 = globe.computePointFromLocation(pos2);
-        Vec4 pN = globe.computePointFromLocation(posN);
+        Vec4 pt1 = globe.computePointFromLocation(pos1);
+        Vec4 pt2 = globe.computePointFromLocation(pos2);
+        Vec4 ptN = globe.computePointFromLocation(posN);
 
         // Compute a vector that points from Pt. 1 toward Pt. 2
-        Vec4 v12 = p1.subtract3(p2).normalize3();
+        Vec4 v12 = pt1.subtract3(pt2).normalize3();
 
-        Vec4 p1_prime = p1.add3(v12.multiply3(pN.subtract3(p1).dot3(v12)));
-        Vec4 pN_prime = p1_prime.subtract3(pN.subtract3(p1_prime));
+        Vec4 pt1_prime = pt1.add3(v12.multiply3(ptN.subtract3(pt1).dot3(v12)));
 
-        Vec4 normal = globe.computeSurfaceNormalAtPoint(p1_prime);
+        // If the final control point determines the width of the route (not the width of the arrowhead) then compute
+        // Point N from the final control point.
+        if (this.isFinalPointWidthOfRoute())
+        {
+            ptN = ptN.add3(ptN.subtract3(pt1_prime));
+            posN = globe.computePositionFromPoint(ptN);
+        }
+
+        Vec4 ptN_prime = pt1_prime.subtract3(ptN.subtract3(pt1_prime));
+
+        Vec4 normal = globe.computeSurfaceNormalAtPoint(pt1_prime);
 
         // Compute the distance from the center line to the left and right lines.
-        double halfWidth = pN.subtract3(p1_prime).getLength3() / 2;
+        double halfWidth = ptN.subtract3(pt1_prime).getLength3() / 2;
 
         Vec4 offset = normal.cross3(v12).normalize3().multiply3(halfWidth);
 
-        Vec4 pLeft = p1_prime.add3(offset);
-        Vec4 pRight = p1_prime.subtract3(offset);
+        Vec4 pLeft = pt1_prime.add3(offset);
+        Vec4 pRight = pt1_prime.subtract3(offset);
 
         Position posLeft = globe.computePositionFromPoint(pLeft);
         Position posRight = globe.computePositionFromPoint(pRight);
@@ -246,11 +304,11 @@ public abstract class AbstractOffenseArrow extends MilStd2525TacticalGraphic
         leftPositions.add(posLeft);
         rightPositions.add(posRight);
 
-        Position posN_prime = globe.computePositionFromPoint(pN_prime);
+        Position posN_prime = globe.computePositionFromPoint(ptN_prime);
 
         // Compute the scalar triple product of the vector 12, the normal vector, and a vector from the center line
         // toward Pt. N to determine if the offset points to the left or the right of the control line.
-        double tripleProduct = offset.dot3(pN.subtract3(p1_prime));
+        double tripleProduct = offset.dot3(ptN.subtract3(pt1_prime));
         if (tripleProduct < 0)
         {
             Position tmp = posN; // Swap N and N'
