@@ -152,7 +152,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         if (unfilledIconMap.contains(maskedCode))
             return false;
 
-        Object o = params.getValue(SymbologyConstants.SHOW_FILL);
+        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FILL) : null;
         return o == null || o.equals(Boolean.TRUE);
     }
 
@@ -162,14 +162,14 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
         if (unframedIconMap.contains(maskedCode))
             return false;
 
-        Object o = params.getValue(SymbologyConstants.SHOW_FRAME);
+        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_FRAME) : null;
         return o == null || o.equals(Boolean.TRUE);
     }
 
     @SuppressWarnings({"UnusedParameters"})
     protected boolean mustDrawIcon(SymbolCode symbolCode, AVList params)
     {
-        Object o = params.getValue(SymbologyConstants.SHOW_ICON);
+        Object o = params != null ? params.getValue(SymbologyConstants.SHOW_ICON) : null;
         return o == null || o.equals(Boolean.TRUE);
     }
 
