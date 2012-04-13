@@ -161,8 +161,7 @@ public class AllPointGraphics extends ApplicationTemplate
                 graphic.setPosition(pos);
 
                 graphic.setAttributes(this.sharedAttrs);
-                // TODO handle highlight for METOC graphics
-//                graphic.setHighlightAttributes(this.sharedHighlightAttrs);
+                graphic.setHighlightAttributes(this.sharedHighlightAttrs);
 
                 graphic.setValue(AVKey.DISPLAY_NAME, sidc);
 

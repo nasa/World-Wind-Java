@@ -97,10 +97,11 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
 
         this.drawImage(srcImg, destImg);
 
-        // TODO: handle color for METOC symbols
+        // Non-Metoc symbols take their color from the standard identity. Metoc symbols do not have a standard identity,
+        // so they take their color only from the override color.
+        Color color = this.getColorFromParams(params);
         if (!SymbologyConstants.SCHEME_METOC.equalsIgnoreCase(symbolCode.getScheme()))
         {
-            Color color = this.getColorFromParams(params);
             if (color == null)
                 color = this.getColorForStandardIdentity(symbolCode);
 
@@ -110,6 +111,13 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
             {
                 destImg = this.composeFilledImage(destImg, symbolCode);
             }
+        }
+        else if (color != null) // Metoc symbol
+        {
+            // There is not a clear use case for using an override color with Metoc so replace all colors in the
+            // source image with the override rather than attempting to multiply colors and change only part of
+            // the graphic.
+            this.replaceColor(destImg, color);
         }
         return destImg;
     }

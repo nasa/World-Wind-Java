@@ -228,6 +228,8 @@ public abstract class AbstractIconRetriever implements IconRetriever
      *
      * @param image Image to operate on.
      * @param color Color to multiply by.
+     *
+     * @see #replaceColor(java.awt.image.BufferedImage, java.awt.Color)
      */
     protected void multiply(BufferedImage image, Color color)
     {
@@ -274,6 +276,68 @@ public abstract class AbstractIconRetriever implements IconRetriever
                 int fr = (int) (cr * sr * 255 + 0.5);
                 int fg = (int) (cg * sg * 255 + 0.5);
                 int fb = (int) (cb * sb * 255 + 0.5);
+
+                pixels[x] = (fa & 0xff) << 24
+                    | (fr & 0xff) << 16
+                    | (fg & 0xff) << 8
+                    | (fb & 0xff);
+            }
+
+            image.setRGB(0, y, w, 1, pixels, 0, w);
+        }
+    }
+
+    /**
+     * Replace the color of each pixel in an image. This method retains the alpha channel of each pixel, but completely
+     * replaces the red, green, and blue components with the replacement color. Unlike {@link
+     * #multiply(java.awt.image.BufferedImage, java.awt.Color) multiply}, this method changes the color of all pixels.
+     *
+     * @param image Image to operate on.
+     * @param color Color to apply to to each pixel.
+     *
+     * @see #multiply(java.awt.image.BufferedImage, java.awt.Color)
+     */
+    protected void replaceColor(BufferedImage image, Color color)
+    {
+        if (image == null)
+        {
+            String msg = Logging.getMessage("nullValue.ImageIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (color == null)
+        {
+            String msg = Logging.getMessage("nullValue.ColorIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        int w = image.getWidth();
+        int h = image.getHeight();
+
+        if (w == 0 || h == 0)
+            return;
+
+        int[] pixels = new int[w];
+        int c = color.getRGB();
+        float cr = ((c >> 16) & 0xff) / 255f;
+        float cg = ((c >> 8) & 0xff) / 255f;
+        float cb = (c & 0xff) / 255f;
+
+        for (int y = 0; y < h; y++)
+        {
+            image.getRGB(0, y, w, 1, pixels, 0, w);
+
+            for (int x = 0; x < w; x++)
+            {
+                int s = pixels[x];
+                float sa = ((s >> 24) & 0xff) / 255f;
+
+                int fa = (int) (sa * 255 + 0.5);
+                int fr = (int) (cr * 255 + 0.5);
+                int fg = (int) (cg * 255 + 0.5);
+                int fb = (int) (cb * 255 + 0.5);
 
                 pixels[x] = (fa & 0xff) << 24
                     | (fr & 0xff) << 16
