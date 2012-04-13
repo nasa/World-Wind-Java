@@ -41,7 +41,7 @@ public class MilStd2525PointGraphicRetriever extends AbstractIconRetriever
     protected static final String DIR_ICON_TACGRP = "icons/tacgrp";
     /** Subdirectory for graphics in the Meteorological and Oceanographic scheme. */
     protected static final String DIR_ICON_METOC = "icons/metoc";
-    /** Subdirectory for graphics in the Meteorological and Oceanographic scheme. */
+    /** Subdirectory for graphics in the Emergency Management scheme. */
     protected static final String DIR_ICON_EMS = "icons/ems";
     /** Subdirectory for fill graphics. */
     protected static final String DIR_FILL_TACGRP = "fills/tacgrp";
