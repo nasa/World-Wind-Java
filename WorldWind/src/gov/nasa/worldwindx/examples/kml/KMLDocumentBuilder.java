@@ -119,7 +119,12 @@ public class KMLDocumentBuilder
     {
         for (Exportable exportable : exportables)
         {
-            exportable.export(KMLConstants.KML_MIME_TYPE, this.writer);
+            String supported = exportable.isExportFormatSupported(KMLConstants.KML_MIME_TYPE);
+            if (Exportable.FORMAT_SUPPORTED.equals(supported)
+                || Exportable.FORMAT_PARTIALLY_SUPPORTED.equals(supported))
+            {
+                exportable.export(KMLConstants.KML_MIME_TYPE, this.writer);
+            }
         }
     }
 }

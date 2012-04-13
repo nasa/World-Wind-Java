@@ -103,6 +103,13 @@ public class KMLExportTest
         Assert.assertTrue("Exported document failed to validate", docValid);
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void testKmlNotSupported() throws XMLStreamException, IOException
+    {
+        Pyramid pyramid = new Pyramid(Position.ZERO, 100, 100);
+        pyramid.export(KMLConstants.KML_MIME_TYPE, new StringWriter());
+    }
+
     public boolean validateDocument(String doc)
     {
         try

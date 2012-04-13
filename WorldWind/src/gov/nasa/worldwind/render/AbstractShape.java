@@ -1405,10 +1405,8 @@ public abstract class AbstractShape extends WWObjectImpl
             }
         }
 
-        Extent ext = Sector.computeBoundingBox(globe, verticalExaggeration, sector, minAndMaxElevations[0],
+        return Sector.computeBoundingBox(globe, verticalExaggeration, sector, minAndMaxElevations[0],
             minAndMaxElevations[1]);
-
-        return ext;
     }
 
     /**
@@ -1506,6 +1504,14 @@ public abstract class AbstractShape extends WWObjectImpl
             String message = Logging.getMessage("nullValue.OutputBufferIsNull");
             Logging.logger().severe(message);
             throw new IllegalArgumentException(message);
+        }
+
+        String supported = this.isExportFormatSupported(mimeType);
+        if (FORMAT_NOT_SUPPORTED.equals(supported))
+        {
+            String message = Logging.getMessage("Export.UnsupportedFormat", mimeType);
+            Logging.logger().warning(message);
+            throw new UnsupportedOperationException(message);
         }
 
         if (KMLConstants.KML_MIME_TYPE.equalsIgnoreCase(mimeType))
@@ -1609,6 +1615,8 @@ public abstract class AbstractShape extends WWObjectImpl
         }
 
         this.doExportAsKML(xmlWriter);
+
+        xmlWriter.writeEndElement(); // Placemark
 
         xmlWriter.flush();
         if (closeWriterWhenFinished)

@@ -2416,7 +2416,6 @@ public class ExtrudedPolygon extends AbstractShape
         this.writeKMLBoundaries(xmlWriter);
 
         xmlWriter.writeEndElement(); // Polygon
-        xmlWriter.writeEndElement(); // Placemark
     }
 
     protected void writeKMLBoundaries(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException

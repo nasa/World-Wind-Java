@@ -2371,6 +2371,5 @@ public class Path extends AbstractShape
         xmlWriter.writeEndElement();
 
         xmlWriter.writeEndElement(); // LineString
-        xmlWriter.writeEndElement(); // Placemark
     }
 }

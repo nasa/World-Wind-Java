@@ -1420,7 +1420,6 @@ public class Polygon extends AbstractShape
         this.writeKMLBoundaries(xmlWriter);
 
         xmlWriter.writeEndElement(); // Polygon
-        xmlWriter.writeEndElement(); // Placemark
     }
 
     /**
