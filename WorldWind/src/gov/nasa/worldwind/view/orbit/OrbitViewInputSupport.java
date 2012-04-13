@@ -17,7 +17,7 @@ import gov.nasa.worldwind.view.ViewUtil;
  */
 public class OrbitViewInputSupport
 {
-    protected static class OrbitViewState
+    public static class OrbitViewState // public to allow access from subclasses
     {
         private final Position center;
         private final Angle heading;
