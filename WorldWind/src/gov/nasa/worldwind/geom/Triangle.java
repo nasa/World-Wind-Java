@@ -261,7 +261,7 @@ public class Triangle
         if (t < 0)
             return null;
 
-        return new Intersection(line.getPointAt(t), false);
+        return new Intersection(line.getPointAt(t), t, false);
     }
 
     /**

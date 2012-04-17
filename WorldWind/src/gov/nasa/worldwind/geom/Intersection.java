@@ -16,6 +16,7 @@ import java.util.*;
 public final class Intersection // Instances are immutable
 {
     protected Vec4 intersectionPoint;
+    protected Double intersectionLength;
     protected Position intersectionPosition;
     protected boolean isTangent;
     protected Object object;
@@ -38,6 +39,23 @@ public final class Intersection // Instances are immutable
         }
         this.intersectionPoint = intersectionPoint;
         this.isTangent = isTangent;
+    }
+
+    /**
+     * Constructs an Intersection from an intersection point and tangency indicator.
+     *
+     * @param intersectionPoint  the intersection point
+     * @param intersectionLength the parametric length along the intersection geometry. If the geometry was a line, then
+     *                           this value will be the parametric value of the intersection point along the line.
+     * @param isTangent          true if the intersection is tangent to the object intersected, otherwise false.
+     *
+     * @throws IllegalArgumentException if <code>intersectionPoint</code> is null
+     */
+    public Intersection(Vec4 intersectionPoint, double intersectionLength, boolean isTangent)
+    {
+        this(intersectionPoint, isTangent);
+
+        this.intersectionLength = intersectionLength;
     }
 
     public Intersection(Vec4 intersectionPoint, Position intersectionPosition, boolean isTangent, Object object)
@@ -133,6 +151,17 @@ public final class Intersection // Instances are immutable
     public void setTangent(boolean tangent)
     {
         isTangent = tangent;
+    }
+
+    /**
+     * The parametric length along the intersection geometry. If the geometry involved a line, this value is the
+     * parametric distance at which the intersection occurred along the line.
+     *
+     * @return the intersection length, or null if the length was not calculated.
+     */
+    public Double getIntersectionLength()
+    {
+        return intersectionLength;
     }
 
     /**
