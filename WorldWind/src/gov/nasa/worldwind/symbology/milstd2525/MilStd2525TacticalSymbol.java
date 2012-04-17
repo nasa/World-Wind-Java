@@ -343,7 +343,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     }
 
     @Override
-    protected void layoutModifiers(DrawContext dc)
+    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
     {
         if (this.iconRect == null)
             return;
@@ -351,24 +351,21 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         // Layout all of the graphic and text modifiers around the symbol's frame bounds. The location of each modifier
         // is the same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4, page 34.
 
-        AVList modifierParams = new AVListImpl();
-        modifierParams.setValues(this.modifiers);
-        this.applyImplicitModifiers(modifierParams);
-
         if (this.mustDrawGraphicModifiers(dc))
         {
             this.currentGlyphs.clear();
             this.currentLines.clear();
-            this.layoutGraphicModifiers(dc, modifierParams);
+            this.layoutGraphicModifiers(dc, modifiers);
         }
 
         if (this.mustDrawTextModifiers(dc))
         {
             this.currentLabels.clear();
-            this.layoutTextModifiers(dc, modifierParams);
+            this.layoutTextModifiers(dc, modifiers);
         }
     }
 
+    @Override
     protected void applyImplicitModifiers(AVList modifiers)
     {
         String maskedCode = this.symbolCode.toMaskedString().toLowerCase();
@@ -423,7 +420,7 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
         // Determine location, if location modifier is enabled.
         if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation())
         {
-            modifiers.setValue(SymbologyConstants.LOCATION, this.getUnitsFormat().latLon(this.getPosition()));
+            modifiers.setValue(SymbologyConstants.LOCATION, this.getFormattedPosition());
         }
 
         // Determine altitude, if location modifier is enabled.
@@ -513,6 +510,15 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
                 this.addGlyph(dc, CENTER_OFFSET, CENTER_OFFSET, modifierCode, null, null);
             }
         }
+    }
+
+    @Override
+    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers)
+    {
+        this.currentLines.clear();
+
+        if (!this.isShowGraphicModifiers())
+            return;
 
         // Direction of Movement indicator. Placed either at the center of the icon or at the bottom of the symbol
         // layout.

@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.command.general.lines;
 
 import gov.nasa.worldwind.*;
-import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
@@ -91,7 +91,7 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
 
         /** {@inheritDoc} */
         @Override
-        protected void layoutModifiers(DrawContext dc)
+        protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
         {
             if (this.iconRect == null)
                 return;
@@ -99,17 +99,16 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
             if (this.mustDrawTextModifiers(dc))
             {
                 this.currentLabels.clear();
-                this.doLayoutModifiers(dc, this.iconRect);
+                this.doLayoutModifiers(dc);
             }
         }
 
         /**
          * Layout text and graphic modifiers around the symbol.
          *
-         * @param dc       Current draw context.
-         * @param iconRect Symbol's screen rectangle.
+         * @param dc Current draw context.
          */
-        protected void doLayoutModifiers(DrawContext dc, Rectangle iconRect)
+        protected void doLayoutModifiers(DrawContext dc)
         {
             // We compute a default font rather than using a static default in order to choose a font size that is
             // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier

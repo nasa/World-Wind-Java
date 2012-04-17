@@ -137,7 +137,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     }
 
     @Override
-    protected void layoutModifiers(DrawContext dc)
+    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
     {
         if (this.iconRect == null)
             return;
@@ -145,24 +145,14 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         // Layout all of the graphic and text modifiers around the symbol's frame bounds. The location of each modifier
         // is the same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4, page 34.
 
-        AVList modifierParams = new AVListImpl();
-        modifierParams.setValues(this.modifiers);
-        this.applyImplicitModifiers(modifierParams);
-
         if (this.mustDrawTextModifiers(dc))
         {
             this.currentLabels.clear();
-            this.doLayoutModifiers(dc, modifierParams, this.iconRect);
-        }
-
-        if (this.mustDrawGraphicModifiers(dc))
-        {
-            this.currentGlyphs.clear();
-            this.currentLines.clear();
-            this.layoutGraphicModifiers(dc);
+            this.doLayoutModifiers(dc, modifiers, this.iconRect);
         }
     }
 
+    @Override
     protected void applyImplicitModifiers(AVList modifiers)
     {
         String si = this.symbolCode.getStandardIdentity();
@@ -181,7 +171,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         // Determine location, if location modifier is enabled.
         if (!modifiers.hasKey(SymbologyConstants.LOCATION) && this.isShowLocation())
         {
-            modifiers.setValue(SymbologyConstants.LOCATION, this.getUnitsFormat().latLon(this.getPosition()));
+            modifiers.setValue(SymbologyConstants.LOCATION, this.getFormattedPosition());
         }
 
         // Determine altitude, if location modifier is enabled.
@@ -260,14 +250,17 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         }
     }
 
-    protected void layoutGraphicModifiers(DrawContext dc)
+    @Override
+    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers)
     {
-        AVList retrieverParams = new AVListImpl();
-        retrieverParams.setValue(AVKey.WIDTH, this.iconRect.width);
+        this.currentLines.clear();
+
+        if (!this.isShowGraphicModifiers())
+            return;
 
         // Direction of Movement indicator. Placed at the bottom of the symbol layout. Direction of Movement applies
         // only to CBRN graphics (see MIL-STD-2525C table XI, pg. 38).
-        Object o = this.getModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT);
+        Object o = modifiers.getValue(SymbologyConstants.DIRECTION_OF_MOVEMENT);
         if (this.isShowDirectionOfMovement() && o instanceof Angle)
         {
             // The length of the direction of movement line is equal to the height of the symbol frame. See

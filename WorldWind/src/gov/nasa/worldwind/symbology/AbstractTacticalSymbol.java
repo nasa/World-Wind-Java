@@ -457,6 +457,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected AVList modifiers = new AVListImpl();
     /**
+     * Modifiers active this frame. This list is determined by copying {@link #modifiers}, and applying changings in
+     * {@link #applyImplicitModifiers(gov.nasa.worldwind.avlist.AVList)}.
+     */
+    protected AVList activeModifiers = new AVListImpl();
+    /**
      * Indicates this symbol's normal (as opposed to highlight) attributes. May be <code>null</code>, indicating that
      * the default attributes are used. Initially <code>null</code>.
      */
@@ -526,6 +531,17 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected Rectangle layoutRect;
     protected Rectangle screenRect;
 
+    /**
+     * Screen rect computed from the icon and static modifiers. This rectangle is cached and only recomputed when the
+     * icon or modifiers change.
+     */
+    protected Rectangle staticScreenRect;
+    /**
+     * Layout rect computed from the icon and static modifiers. This rectangle is cached and only recomputed when the
+     * icon or modifiers change.
+     */
+    protected Rectangle staticLayoutRect;
+
     protected List<IconAtlasElement> currentGlyphs = new ArrayList<IconAtlasElement>();
     protected List<Label> currentLabels = new ArrayList<Label>();
     protected List<Line> currentLines = new ArrayList<Line>();
@@ -538,6 +554,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     /** Unit format used to format location and altitude for text modifiers. */
     protected UnitsFormat unitsFormat = DEFAULT_UNITS_FORMAT;
+    /** Current symbol position, formatted using the current unit format. */
+    protected String formattedPosition;
 
     /**
      * Support for setting up and restoring OpenGL state during rendering. Initialized to a new OGLStackHandler, and
@@ -625,6 +643,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             throw new IllegalArgumentException(msg);
         }
 
+        // If a new position is set then it must be reformatted.
+        if (!position.equals(this.position))
+            this.formattedPosition = null;
+
         this.position = position;
     }
 
@@ -653,6 +675,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             return;
 
         this.showGraphicModifiers = showGraphicModifiers;
+        this.reset();
     }
 
     /** {@inheritDoc} */
@@ -668,6 +691,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             return;
 
         this.showTextModifiers = showTextModifiers;
+        this.reset();
     }
 
     /** {@inheritDoc} */
@@ -792,6 +816,10 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             throw new IllegalArgumentException(msg);
         }
 
+        // If the unit format is changing then the position needs to be reformatted.
+        if (this.unitsFormat != unitsFormat)
+            this.formattedPosition = null;
+
         this.unitsFormat = unitsFormat;
     }
 
@@ -836,6 +864,26 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         this.setPosition(position);
     }
 
+    /**
+     * Indicates the symbol's current position, formatted according to the current UnitsFormat.
+     *
+     * @return The current position formatted according to the current unit format. Returns null if the position is
+     *         null.
+     */
+    protected String getFormattedPosition()
+    {
+        Position position = this.getPosition();
+        if (position == null)
+            return null;
+
+        // Format the position to a string only when necessary. formattedPosition is set to null when either the
+        // position or the units format is changed.
+        if (this.formattedPosition == null)
+            this.formattedPosition = this.getUnitsFormat().latLon(position);
+
+        return this.formattedPosition;
+    }
+
     protected Offset getOffset()
     {
         return this.offset;
@@ -874,6 +922,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected void setModifierRetriever(IconRetriever retriever)
     {
         this.modifierRetriever = retriever;
+        this.reset();
     }
 
     protected TextureAtlas getGlyphAtlas()
@@ -955,7 +1004,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 return;
 
             // Compute the icon and modifier layout.
-            // TODO: layout only when necessary
             this.layout(dc);
 
             // Compute the scale and offset parameters that are applied during rendering. This must be done after
@@ -1011,6 +1059,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected void determineActiveAttributes()
     {
+        Font previousFont = this.activeAttrs.getTextModifierFont();
+
         if (this.isHighlighted())
         {
             if (this.getHighlightAttributes() != null)
@@ -1033,6 +1083,12 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         {
             this.activeAttrs.copy(defaultAttrs);
         }
+
+        // If the font has changed since the last frame, then the layout needs to be recomputed since text may be a
+        // different size.
+        Font newFont = this.activeAttrs.getTextModifierFont();
+        if (newFont != null && !newFont.equals(previousFont))
+            this.reset();
     }
 
     protected TacticalSymbolAttributes getActiveAttributes()
@@ -1040,31 +1096,91 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         return this.activeAttrs;
     }
 
-    protected void layout(DrawContext dc)
+    /** Invalidate the symbol layout, causing it to be recomputed on the next frame. */
+    protected void reset()
     {
-        this.screenRect = null;
-        this.layoutRect = null;
-
-        if (this.mustDrawIcon(dc))
-            this.layoutIcon(dc);
-
-        if (this.mustDrawGraphicModifiers(dc) || this.mustDrawTextModifiers(dc))
-            this.layoutModifiers(dc);
-
-        this.removeDeadModifiers(System.currentTimeMillis());
+        this.staticScreenRect = null;
+        this.staticLayoutRect = null;
     }
 
-    protected void layoutIcon(DrawContext dc)
+    protected void layout(DrawContext dc)
+    {
+        AVList modifierParams = new AVListImpl();
+        modifierParams.setValues(this.modifiers);
+        this.applyImplicitModifiers(modifierParams);
+
+        boolean mustDrawModifiers = this.mustDrawGraphicModifiers(dc) || this.mustDrawTextModifiers(dc);
+
+        // If the icon retrieval parameters have changed then the icon needs to be updated, which may affect layout.
+        AVList retrieverParams = this.assembleIconRetrieverParameters(null);
+        IconSource iconSource = new IconSource(this.getIconRetriever(), this.getIdentifier(), retrieverParams);
+
+        // Compute layout of icon and static modifiers only when necessary.
+        if (this.mustLayout(iconSource, modifierParams))
+        {
+            this.screenRect = null;
+            this.layoutRect = null;
+
+            if (this.mustDrawIcon(dc))
+                this.layoutIcon(dc, iconSource);
+
+            if (mustDrawModifiers)
+                this.layoutStaticModifiers(dc, modifierParams);
+
+            // Save the static layout to reuse on subsequent frames.
+            this.staticScreenRect = new Rectangle(this.screenRect);
+            this.staticLayoutRect = new Rectangle(this.layoutRect);
+
+            // Save the active modifiers so that we can detect when they change.
+            this.activeModifiers.setValues(modifierParams);
+
+            this.removeDeadModifiers(System.currentTimeMillis());
+        }
+        else
+        {
+            // Reuse cached layout.
+            this.layoutRect = new Rectangle(this.staticLayoutRect);
+            this.screenRect = new Rectangle(this.staticScreenRect);
+        }
+
+        // Layout dynamic modifiers each frame because they are expected to change each frame.
+        if (mustDrawModifiers)
+            this.layoutDynamicModifiers(dc, modifierParams);
+    }
+
+    /**
+     * Determines if the icon layout or static modifier layout must be computed.
+     *
+     * @param iconSource Current icon source.
+     * @param modifiers  Current modifiers.
+     *
+     * @return true if the layout must be recomputed.
+     */
+    protected boolean mustLayout(IconSource iconSource, AVList modifiers)
+    {
+        // If there is no cached layout, then we need to layout.
+        if (this.staticScreenRect == null || this.staticLayoutRect == null)
+            return true;
+
+        // If the modifiers have changed since layout was computed then it needs to be recomputed.
+        if (!this.activeModifiers.getEntries().equals(modifiers.getEntries()))
+            return true;
+
+        // Layout may change if the icon is not update to date.
+        if (this.iconTexture == null || this.iconTexture != this.activeIconTexture)
+            return true;
+
+        // If the icon retrieval parameters have changed then the icon needs to be updated, which may affect layout.
+        return !this.iconTexture.getImageSource().equals(iconSource);
+    }
+
+    protected void layoutIcon(DrawContext dc, IconSource source)
     {
         if (this.getIconRetriever() == null)
             return;
 
-        // Assemble the icon retriever parameters.
-        AVList retrieverParams = this.assembleIconRetrieverParameters(null);
-
         // Lazily create the symbol icon texture when either the IconRetriever, the symbol ID, or the retriever
         // parameters change.
-        IconSource source = new IconSource(this.getIconRetriever(), this.getIdentifier(), retrieverParams);
         if (this.iconTexture == null || !this.iconTexture.getImageSource().equals(source))
             this.iconTexture = new IconTexture(source);
 
@@ -1130,10 +1246,51 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         return params;
     }
 
-    protected void layoutModifiers(DrawContext dc)
+    /**
+     * Layout static modifiers around the symbol. Static modifiers are not expected to change due to changes in view.
+     * The static layout is computed when a modifier is changed, but may not be computed each frame. For example, a text
+     * modifier indicating a symbol identifier would only need to be laid out when the text is changed, so this is best
+     * treated as a static modifier. However a direction of movement line that needs to be computed based on the current
+     * eye position should be treated as a dynamic modifier.
+     *
+     * @param dc        Current draw context.
+     * @param modifiers Current modifiers.
+     *
+     * @see #layoutDynamicModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
+     */
+    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
     {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
         // with this tactical symbol.
+    }
+
+    /**
+     * Layout dynamic modifiers around the symbol. Dynamic modifiers are expected to (potentially) change each frame,
+     * and are laid out each frame. For example, a direction of movement line that is computed based on the current eye
+     * position would be treated as a dynamic modifier. Dynamic modifiers are always laid out after static modifiers.
+     *
+     * @param dc        Current draw context.
+     * @param modifiers Current modifiers.
+     *
+     * @see #layoutStaticModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
+     */
+    protected void layoutDynamicModifiers(DrawContext dc, AVList modifiers)
+    {
+        // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
+        // with this tactical symbol.
+    }
+
+    /**
+     * Add implicit modifiers to the modifier list. This method is called each frame to add modifiers that are
+     * determined implicitly by the symbol state, rather than set explicitly by the application. For example, the
+     * location modifier can be determined by the symbol position without the application needing to specify it.
+     *
+     * @param modifiers List of modifiers. This method may modify this list by adding implicit modifiers.
+     */
+    protected void applyImplicitModifiers(AVList modifiers)
+    {
+        // Intentionally left blank. Subclasses can override this method in order to add modifiers that are implicitly
+        // determined by the symbol state.
     }
 
     protected Rectangle layoutRect(Offset offset, Offset hotspot, Dimension size, Object layoutMode)
@@ -1230,8 +1387,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected void addGlyph(DrawContext dc, Offset offset, Offset hotspot, String modifierCode,
-        AVList retrieverParams,
-        Object layoutMode)
+        AVList retrieverParams, Object layoutMode)
     {
         IconAtlasElement elem = this.getGlyph(modifierCode, retrieverParams);
 

@@ -344,8 +344,8 @@ public class MilStd2525Util
     }
 
     /**
-     * Compute screen points required to draw a leader line on a tactical ground symbol. This method returns two points
-     * that will draw a line down from the base of the symbol and then out in the direction of movement.
+     * Compute screen points required to draw a leader line on a tactical ground symbol. This method returns three
+     * points that will draw a line down from the base of the symbol and then out in the direction of movement.
      *
      * @param dc          Current draw context.
      * @param symbolPoint Symbol position in model coordinates.
@@ -414,9 +414,9 @@ public class MilStd2525Util
 
     /**
      * Determines a default color to apply to a symbol. MIL-STD-2525C section 5.5.1.1 (pg. 37) states that obstacles
-     * should be displayed in green, friendly entities in black or blue, and hostile entities in red. This method
-     * return green for obstacles and neutral entities, black for friendly entities, red for hostile entities, and
-     * yellow for unknown and pending entities.
+     * should be displayed in green, friendly entities in black or blue, and hostile entities in red. This method return
+     * green for obstacles and neutral entities, black for friendly entities, red for hostile entities, and yellow for
+     * unknown and pending entities.
      *
      * @param symbolCode Symbol for which to determine color.
      *
@@ -459,7 +459,8 @@ public class MilStd2525Util
     }
 
     /**
-     * Indicates whether or not a symbol code identifiers an Obstacle. Obstacles defined in the Mobility and Survivability category of MIL-STD-2525C Appendix B.
+     * Indicates whether or not a symbol code identifiers an Obstacle. Obstacles defined in the Mobility and
+     * Survivability category of MIL-STD-2525C Appendix B.
      *
      * @param symbolCode Symbol code to test.
      *
@@ -478,6 +479,5 @@ public class MilStd2525Util
         return SymbologyConstants.SCHEME_TACTICAL_GRAPHICS.equalsIgnoreCase(scheme)
             && SymbologyConstants.CATEGORY_MOBILITY_SURVIVABILITY.equalsIgnoreCase(category)
             && (functionId.charAt(0) == 'o' || functionId.charAt(0) == 'O');
-
     }
 }
