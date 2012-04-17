@@ -106,7 +106,7 @@ public class ExtentVisibilitySupport
     /**
      * Converts the specified Iterable of {@link gov.nasa.worldwind.geom.ExtentHolder} references to a new Iterable of
      * {@link gov.nasa.worldwind.geom.Extent} references. The new Extents are constructed from the specified
-     * ExtenHolders by invoking {@link gov.nasa.worldwind.geom.ExtentHolder#getExtent(gov.nasa.worldwind.globes.Globe,
+     * ExtentHolders by invoking {@link gov.nasa.worldwind.geom.ExtentHolder#getExtent(gov.nasa.worldwind.globes.Globe,
      * double)} with the specified Globe and vertical exaggeration. This ignores any null ExtentHolders in the specified
      * Iterable, and any null Extents returned by the ExtentHolders. This returns null if the Iterable is null or
      * empty.
