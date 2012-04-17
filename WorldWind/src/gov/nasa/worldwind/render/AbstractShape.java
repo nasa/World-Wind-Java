@@ -1388,7 +1388,8 @@ public abstract class AbstractShape extends WWObjectImpl
         if (globe == null || positions == null)
             return null;
 
-        double[] minAndMaxElevations = globe.getMinAndMaxElevations(sector);
+        Sector mySector = this.getSector();
+        double[] minAndMaxElevations = globe.getMinAndMaxElevations(mySector);
         if (this.getAltitudeMode() != WorldWind.CLAMP_TO_GROUND)
         {
             double[] extremes = new double[] {Double.MAX_VALUE, -Double.MAX_VALUE};
@@ -1405,7 +1406,7 @@ public abstract class AbstractShape extends WWObjectImpl
             }
         }
 
-        return Sector.computeBoundingBox(globe, verticalExaggeration, sector, minAndMaxElevations[0],
+        return Sector.computeBoundingBox(globe, verticalExaggeration, mySector, minAndMaxElevations[0],
             minAndMaxElevations[1]);
     }
 
