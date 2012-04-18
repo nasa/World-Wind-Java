@@ -14,7 +14,7 @@ import java.util.logging.Level;
 
 /**
  * An implementation class for the {@link AVList} interface. Classes implementing <code>AVList</code> can subclass or
- * aggreate this class to provide default <code>AVList</code> functionality. This class maintains a hash table of
+ * aggregate this class to provide default <code>AVList</code> functionality. This class maintains a hash table of
  * attribute-value pairs.
  * <p/>
  * This class implements a notification mechanism for attribute-value changes. The mechanism provides a means for
@@ -40,7 +40,7 @@ public class AVListImpl implements AVList
     /**
      * Constructor enabling aggregation
      *
-     * @param sourceBean The bean to be given as the soruce for any events.
+     * @param sourceBean The bean to be given as the source for any events.
      */
     public AVListImpl(Object sourceBean)
     {
@@ -260,7 +260,7 @@ public class AVListImpl implements AVList
         this.getChangeSupport().removePropertyChangeListener(listener);
     }
 
-    synchronized public void firePropertyChange(java.beans.PropertyChangeEvent propertyChangeEvent)
+    public void firePropertyChange(java.beans.PropertyChangeEvent propertyChangeEvent)
     {
         if (propertyChangeEvent == null)
         {
@@ -271,7 +271,7 @@ public class AVListImpl implements AVList
         this.getChangeSupport().firePropertyChange(propertyChangeEvent);
     }
 
-    synchronized public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
+    public void firePropertyChange(String propertyName, Object oldValue, Object newValue)
     {
         if (propertyName == null)
         {
