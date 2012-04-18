@@ -290,10 +290,9 @@ public abstract class AbstractGeneralShape extends AbstractShape
         throw new UnsupportedOperationException(message);
     }
 
+    /** {@inheritDoc} Not currently supported. */
     public Sector getSector()
     {
-        String message = Logging.getMessage("unsupportedOperation.getSector");
-        Logging.logger().severe(message);
-        throw new UnsupportedOperationException(message);
+        return null;
     }
 }

@@ -1389,6 +1389,9 @@ public abstract class AbstractShape extends WWObjectImpl
             return null;
 
         Sector mySector = this.getSector();
+        if (mySector == null)
+            return null;
+
         double[] minAndMaxElevations = globe.getMinAndMaxElevations(mySector);
         if (this.getAltitudeMode() != WorldWind.CLAMP_TO_GROUND)
         {

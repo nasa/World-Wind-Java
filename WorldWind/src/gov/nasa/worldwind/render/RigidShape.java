@@ -995,9 +995,7 @@ public abstract class RigidShape extends AbstractShape
      */
     public Sector getSector()
     {
-        String message = Logging.getMessage("generic.UnsupportedOperation", "getSector");
-        Logging.logger().severe(message);
-        throw new UnsupportedOperationException(message);
+        return null;
     }
 
     /**
