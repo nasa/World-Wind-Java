@@ -54,22 +54,15 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:zoom="0.59"
      inkscape:cx="200"
      inkscape:cy="200"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="161"
+     inkscape:window-y="97"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
-  <polygon
-     points="90,220 140,170 260,170 310,220 260,270 140,270"
-     style="fill:rgb(255,255,255);stroke:rgb(255,255,255);stroke-width:1"
+  <path
+     inkscape:connector-curvature="0"
+     style="fill:#ffffff;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0"
+     d="m 190,110 0,60 -50,0 -50,50 50,50 120,0 50,-50 -50,-50 -50,0 0,-60 -20,0 z"
      id="polygon4" />
-  <line
-     style="stroke:rgb(255,255,255);stroke-width:20"
-     transform="matrix(1 0 0 1 0 0)"
-     x1="200"
-     x2="200"
-     y1="205"
-     y2="110"
-     id="line6" />
   <polyline
      points="123,155 145,130 167,155 189,130 211,155 233,130 255,155 277,130"
      style="fill:none;stroke:rgb(255, 255, 255);stroke-width:8;stroke-miterlimit:4;stroke-dasharray:16,8;stroke-dashoffset:0"

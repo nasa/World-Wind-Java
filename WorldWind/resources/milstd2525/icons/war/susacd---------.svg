@@ -54,25 +54,25 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:zoom="0.59"
      inkscape:cx="200"
      inkscape:cy="200"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-x="101"
+     inkscape:window-y="57"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <polygon
-     points="120,180 160,135 160,225"
-     style="fill:rgb(255, 255, 255);stroke:rgb(255, 255, 255);stroke-width:10;stroke-miterlimit:4;stroke-dasharray:20,10;stroke-dashoffset:0"
+     points="160,225 120,180 160,135 "
+     style="fill:#ffffff;stroke:#000000;stroke-width:10;stroke-opacity:1;stroke-dasharray:10"
      id="polygon4" />
   <polygon
-     points="180,180 220,135 220,225"
-     style="fill:rgb(255, 255, 255);stroke:rgb(255, 255, 255);stroke-width:10;stroke-miterlimit:4;stroke-dasharray:20,10;stroke-dashoffset:0"
+     points="220,225 180,180 220,135 "
+     style="fill:#ffffff;stroke:#000000;stroke-width:10;stroke-opacity:1;stroke-dasharray:10"
      id="polygon6" />
   <polygon
-     points="240,180 280,135 280,225"
-     style="fill:rgb(255, 255, 255);stroke:rgb(255, 255, 255);stroke-width:10;stroke-miterlimit:4;stroke-dasharray:20,10;stroke-dashoffset:0"
+     points="280,225 240,180 280,135 "
+     style="fill:#ffffff;stroke:#000000;stroke-width:10;stroke-opacity:1;stroke-dasharray:10"
      id="polygon8" />
   <rect
      height="20"
-     style="fill:rgb(255, 255, 255);stroke:rgb(255, 255, 255);stroke-width:10;stroke-miterlimit:4;stroke-dasharray:20,10;stroke-dashoffset:0"
+     style="fill:#ffffff;stroke:#000000;stroke-width:10;stroke-opacity:1;stroke-dasharray:10"
      width="160"
      x="120"
      y="250"
