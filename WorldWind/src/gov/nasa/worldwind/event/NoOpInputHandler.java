@@ -79,4 +79,13 @@ public class NoOpInputHandler extends WWObjectImpl implements InputHandler
     public void dispose()
     {
     }
+
+    public boolean isForceRedrawOnMousePressed()
+    {
+        return false;
+    }
+
+    public void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed)
+    {
+    }
 }

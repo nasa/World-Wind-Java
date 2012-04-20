@@ -32,6 +32,7 @@ public class AWTInputHandler extends WWObjectImpl
     protected PickedObjectList objectsAtButtonPress;
     protected boolean isHovering = false;
     protected boolean isDragging = false;
+    protected boolean forceRedrawOnMousePressed = false;
     protected javax.swing.Timer hoverTimer = new javax.swing.Timer(600, new ActionListener()
     {
         public void actionPerformed(ActionEvent actionEvent)
@@ -50,7 +51,6 @@ public class AWTInputHandler extends WWObjectImpl
 
     public AWTInputHandler()
     {
-
     }
 
     public void dispose()
@@ -228,7 +228,16 @@ public class AWTInputHandler extends WWObjectImpl
         this.objectsAtButtonPress = objectsAtButtonPress;
     }
 
-    /*
+    public boolean isForceRedrawOnMousePressed()
+    {
+        return forceRedrawOnMousePressed;
+    }
+
+    public void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed)
+    {
+        this.forceRedrawOnMousePressed = forceRedrawOnMousePressed;
+    }
+/*
     public ViewInputHandler getViewInputHandler()
     {
         return viewInputHandler;
@@ -365,6 +374,9 @@ public class AWTInputHandler extends WWObjectImpl
         this.mousePoint = mouseEvent.getPoint();
         this.cancelHover();
         this.cancelDrag();
+
+        if (this.isForceRedrawOnMousePressed())
+            this.wwd.redrawNow();
 
         this.objectsAtButtonPress = this.wwd.getObjectsAtCurrentPosition();
 

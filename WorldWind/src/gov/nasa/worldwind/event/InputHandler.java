@@ -45,4 +45,24 @@ public interface InputHandler extends AVList, java.beans.PropertyChangeListener
     void removeMouseWheelListener(MouseWheelListener listener);
 
     void dispose();
+
+    /**
+     * Indicates whether a redraw is forced when the a mouse button is pressed. Touch screen devices require this so
+     * that the current position and selection are updated when the button is pressed. The update occurs naturally on
+     * non-touch screen devices because the motion of the mouse prior to the press causes the current position and
+     * selection to be updated.
+     *
+     * @return true if a redraw is forced when a button is pressed, otherwise false.
+     */
+    boolean isForceRedrawOnMousePressed();
+
+    /**
+     * Specifies whether a redraw is forced when the a mouse button is pressed. Touch screen devices require this so
+     * that the current position and selection are updated when the button is pressed. The update occurs naturally on
+     * non-touch screen devices because the motion of the mouse prior to the press causes the current position and
+     * selection to be updated.
+     *
+     * @param forceRedrawOnMousePressed true to force a redraw on button press, otherwise false, the default.
+     */
+    void setForceRedrawOnMousePressed(boolean forceRedrawOnMousePressed);
 }
