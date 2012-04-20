@@ -260,7 +260,7 @@ public class BasicDataFileStore extends AbstractFileStore
         DBEntry entry = (DBEntry) this.db.getObject(address);
         if (entry != null)
         {
-            if (entry.state == DBEntry.LOCAL)
+            if (entry.state == DBEntry.LOCAL) // Check here for HTTP expiration
                 return entry.localUrl;
 
             if (entry.state == DBEntry.PENDING && (System.currentTimeMillis() - entry.lastUpdateTime <= TIMEOUT))
