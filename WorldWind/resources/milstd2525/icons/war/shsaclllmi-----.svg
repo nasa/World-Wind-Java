@@ -52,7 +52,7 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      id="namedview8"
      showgrid="false"
      inkscape:zoom="0.59"
-     inkscape:cx="200"
+     inkscape:cx="101.69492"
      inkscape:cy="200"
      inkscape:window-x="83"
      inkscape:window-y="75"
@@ -71,19 +71,19 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
        id="path2992" />
   </g>
   <g
-     style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+     style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12, 6;stroke-dashoffset:0"
      id="text6">
     <path
        d="m 137.82471,277 0,-46.52832 14.06006,0 8.44238,31.73828 8.34717,-31.73828 14.09179,0 0,46.52832 -8.72802,0 0,-36.62598 -9.23584,36.62598 -9.04541,0 -9.20411,-36.62598 0,36.62598 z"
-       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12, 6;stroke-dashoffset:0"
        id="path2995" />
     <path
        d="m 191.875,277 0,-46.52832 9.39453,0 0,46.52832 z"
-       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12, 6;stroke-dashoffset:0"
        id="path2997" />
     <path
        d="m 216.78955,277 -11.1084,-46.52832 9.6167,0 7.01416,31.96045 8.50586,-31.96045 11.17188,0 8.15673,32.5 7.14112,-32.5 9.45801,0 L 255.44678,277 245.48096,277 236.21338,242.21484 226.97754,277 z"
-       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12, 6;stroke-dashoffset:0"
        id="path2999" />
   </g>
 </svg>

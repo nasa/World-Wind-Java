@@ -59,28 +59,31 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <g
-     transform="translate(0 40)"
+     transform="translate(-9.5367426e-8,40)"
      id="g4"
-     style="stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0">
+     style="stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0">
     <g
-       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
        id="text6">
       <path
+         inkscape:connector-curvature="0"
          d="m 156.3623,232 0,-64.42383 19.46778,0 11.68945,43.94531 11.55762,-43.94531 19.51172,0 0,64.42383 -12.08496,0 0,-50.71289 L 193.71582,232 l -12.52441,0 -12.74414,-50.71289 0,50.71289 z"
-         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
          id="path2994" />
       <path
+         inkscape:connector-curvature="0"
          d="m 231.20117,232 0,-64.42383 13.00781,0 0,64.42383 z"
-         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
          id="path2996" />
     </g>
   </g>
   <g
-     transform="translate(60 10) scale(0.7 0.7)"
+     transform="matrix(0.7,0,0,0.7,60,9.9999999)"
      id="g8"
-     style="stroke:#000000;stroke-opacity:1;stroke-width:8.57142857;stroke-miterlimit:4;stroke-dasharray:none">
+     style="stroke:#000000;stroke-width:8.5714283;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none">
     <path
-       style="fill:#ffffff;stroke:#000000;stroke-width:8.57142857;stroke-miterlimit:4;stroke-dasharray:17.14285714,8.57142857;stroke-dashoffset:0"
+       inkscape:connector-curvature="0"
+       style="fill:#ffffff;stroke:#000000;stroke-width:8.5714283;stroke-miterlimit:4;stroke-dasharray:17.14285714, 8.57142857;stroke-dashoffset:0"
        d="m 100,170 0,30 100,60 100,-60 0,-30 -100,50 z"
        id="polyline10" />
   </g>

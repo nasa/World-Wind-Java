@@ -59,21 +59,22 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <g
-     transform="scale(0.5 0.5) translate(204 85)"
+     transform="matrix(0.5,0,0,0.5,102,42.499995)"
      id="g6"
-     style="stroke:#000000;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24,12;stroke-dashoffset:0">
+     style="stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24,12;stroke-dashoffset:0"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
        id="text8">
       <path
+         inkscape:connector-curvature="0"
          d="m 157.00684,230 0,-107.37305 21.67968,0 0,47.68067 43.79883,-47.68067 29.15039,0 -40.42969,41.82129 42.62696,65.55176 -28.05176,0 -29.5166,-50.39063 -17.57813,17.94434 0,32.44629 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24,12;stroke-dashoffset:0"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
          id="path2999" />
     </g>
   </g>
   <path
      inkscape:connector-curvature="0"
      style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0"
-     d="m 100,160 0,40 100,60 100,-60 0,-40 -100,60 z"
+     d="m 100,160 0,40 100,59.99999 L 300,200 l 0,-40 -100,59.99999 z"
      id="polyline4" />
 </svg>

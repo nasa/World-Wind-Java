@@ -66,14 +66,14 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
   <g
      transform="matrix(0.5,0,0,0.5,100,29.999995)"
      id="g6"
-     style="stroke:#000000;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
        id="text8">
       <path
          inkscape:connector-curvature="0"
          d="m 160.81543,230 0,-107.37305 34.79004,0 c 13.18353,1.1e-4 21.77728,0.53722 25.78125,1.61133 6.15226,1.61143 11.30363,5.11485 15.4541,10.51026 4.1503,5.39559 6.22549,12.3658 6.22559,20.91064 -1e-4,6.59186 -1.19638,12.13385 -3.58887,16.62598 -2.39267,4.49224 -5.43221,8.02007 -9.11865,10.58349 -3.6866,2.56352 -7.43416,4.2603 -11.24268,5.09033 -5.17584,1.02544 -12.67095,1.53813 -22.48535,1.53809 l -14.13574,0 0,40.50293 z m 21.67969,-89.20898 0,30.46875 11.86523,0 c 8.54487,5e-5 14.25776,-0.56147 17.13867,-1.68457 2.8808,-1.12299 5.1391,-2.8808 6.77491,-5.27344 1.63567,-2.39251 2.45354,-5.17571 2.45361,-8.34961 -7e-5,-3.90617 -1.14753,-7.12883 -3.44238,-9.66797 -2.29499,-2.53898 -5.20026,-4.12589 -8.71582,-4.76074 -2.58795,-0.48819 -7.78814,-0.73234 -15.60059,-0.73242 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
          id="path3760" />
     </g>
   </g>

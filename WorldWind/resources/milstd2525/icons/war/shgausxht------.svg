@@ -73,19 +73,6 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      d="M115 175 C150 175 150 225 115 225"
      style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:10"
      id="path8" />
-  <g
-     transform="translate(0 -30)"
-     id="g10"
-     style="stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0">
-    <g
-       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
-       id="text12">
-      <path
-         d="m 181.27441,307 0,-46.52832 9.39454,0 0,18.31299 18.4082,0 0,-18.31299 9.39453,0 0,46.52832 -9.39453,0 0,-20.34424 -18.4082,0 0,20.34424 z"
-         style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
-         id="path3000" />
-    </g>
-  </g>
   <polyline
      points="70,155 100,200 70,245"
      style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-miterlimit:4;stroke-dasharray:20,10;stroke-dashoffset:0"
@@ -94,4 +81,18 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      points="330,155 300,200 330,245"
      style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-miterlimit:4;stroke-dasharray:20,10;stroke-dashoffset:0"
      id="polyline16" />
+  <g
+     transform="translate(0,-30)"
+     id="g10"
+     style="stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0">
+    <g
+       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+       id="text12">
+      <path
+         inkscape:connector-curvature="0"
+         d="m 181.27441,307 0,-46.52832 9.39454,0 0,18.31299 18.4082,0 0,-18.31299 9.39453,0 0,46.52832 -9.39453,0 0,-20.34424 -18.4082,0 0,20.34424 z"
+         style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+         id="path3000" />
+    </g>
+  </g>
 </svg>

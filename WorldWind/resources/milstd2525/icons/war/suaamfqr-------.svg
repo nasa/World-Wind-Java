@@ -52,7 +52,7 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      id="namedview10"
      showgrid="false"
      inkscape:zoom="0.59"
-     inkscape:cx="200"
+     inkscape:cx="139.7485"
      inkscape:cy="200"
      inkscape:window-x="50"
      inkscape:window-y="100"
@@ -61,9 +61,9 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
   <g
      transform="scale(0.5 0.5) translate(202 85)"
      id="g6"
-     style="stroke:#000000;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24,12;stroke-dashoffset:0">
+     style="stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0">
     <text
-       style="fill:rgb(255, 255, 255);font-family:Arial;font-size:150;font-weight:bold;text-anchor:middle;stroke:#000000;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24,12;stroke-dashoffset:0"
+       style="fill:rgb(255, 255, 255);font-family:Arial;font-size:150;font-weight:bold;text-anchor:middle;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
        x="200"
        y="230"
        id="text8">R</text>

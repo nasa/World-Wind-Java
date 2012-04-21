@@ -47,7 +47,7 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="640"
+     inkscape:window-width="705"
      inkscape:window-height="480"
      id="namedview8"
      showgrid="false"
@@ -63,17 +63,17 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:10"
      id="polyline6" />
   <g
-     style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+     style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8,4;stroke-dashoffset:0;font-family:Arial"
      id="text4">
     <path
        inkscape:connector-curvature="0"
        d="m 134.03809,232 0,-64.42383 47.76855,0 0,10.89844 -34.76074,0 0,14.28223 32.34375,0 0,10.85449 -32.34375,0 0,17.53418 35.99121,0 0,10.85449 z"
-       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8,4;stroke-dashoffset:0;font-family:Arial"
        id="path2990" />
     <path
        inkscape:connector-curvature="0"
        d="m 203.2959,232 -15.38086,-64.42383 13.31543,0 9.71191,44.25293 11.77735,-44.25293 15.46875,0 11.29394,45 9.8877,-45 13.0957,0 L 256.82129,232 243.02246,232 230.19043,183.83594 217.40234,232 z"
-       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#000000;stroke-width:4;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:8,4;stroke-dashoffset:0;font-family:Arial"
        id="path2992" />
   </g>
 </svg>

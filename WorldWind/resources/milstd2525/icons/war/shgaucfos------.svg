@@ -52,7 +52,7 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      id="namedview12"
      showgrid="false"
      inkscape:zoom="0.59"
-     inkscape:cx="200"
+     inkscape:cx="241.22471"
      inkscape:cy="200"
      inkscape:window-x="172"
      inkscape:window-y="80"
@@ -61,21 +61,21 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
   <g
      transform="translate(16 50) scale(0.9 0.9)"
      id="g4"
-     style="stroke:#000000;stroke-opacity:1;stroke-width:6.66666667;stroke-miterlimit:4;stroke-dasharray:13.33333333,6.66666667;fill:#ffffff;fill-opacity:1;stroke-dashoffset:0">
+     style="stroke:#ffffff;stroke-opacity:1;stroke-width:6.66666666999999970;stroke-miterlimit:4;stroke-dasharray:13.33333333000000000, 6.66666666999999970;fill:#ffffff;fill-opacity:1;stroke-dashoffset:0">
     <g
-       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6.66666667;stroke-miterlimit:4;stroke-dasharray:13.33333333,6.66666667;fill-opacity:1;stroke-dashoffset:0"
+       style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6.66666666999999970;stroke-miterlimit:4;stroke-dasharray:13.33333333000000000, 6.66666666999999970;fill-opacity:1;stroke-dashoffset:0"
        id="text6">
       <path
          d="m 111.27441,232 0,-64.42383 19.46778,0 11.68945,43.94531 11.55762,-43.94531 19.51172,0 0,64.42383 -12.08496,0 0,-50.71289 L 148.62793,232 l -12.52441,0 -12.74414,-50.71289 0,50.71289 z"
-         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6.66666667;stroke-miterlimit:4;stroke-dasharray:13.33333333,6.66666667;fill-opacity:1;stroke-dashoffset:0"
+         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6.66666666999999970;stroke-miterlimit:4;stroke-dasharray:13.33333333000000000, 6.66666666999999970;fill-opacity:1;stroke-dashoffset:0"
          id="path3762" />
       <path
          d="m 186.50879,232 0,-64.42383 47.76855,0 0,10.89844 -34.76074,0 0,14.28223 32.34375,0 0,10.85449 -32.34375,0 0,17.53418 35.99121,0 0,10.85449 z"
-         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6.66666667;stroke-miterlimit:4;stroke-dasharray:13.33333333,6.66666667;fill-opacity:1;stroke-dashoffset:0"
+         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6.66666666999999970;stroke-miterlimit:4;stroke-dasharray:13.33333333000000000, 6.66666666999999970;fill-opacity:1;stroke-dashoffset:0"
          id="path3764" />
       <path
          d="m 261.12793,232 0,-53.52539 -19.11621,0 0,-10.89844 51.19629,0 0,10.89844 -19.07227,0 0,53.52539 z"
-         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6.66666667;stroke-miterlimit:4;stroke-dasharray:13.33333333,6.66666667;fill-opacity:1;stroke-dashoffset:0"
+         style="font-size:90px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:6.66666666999999970;stroke-miterlimit:4;stroke-dasharray:13.33333333000000000, 6.66666666999999970;fill-opacity:1;stroke-dashoffset:0"
          id="path3766" />
     </g>
   </g>
