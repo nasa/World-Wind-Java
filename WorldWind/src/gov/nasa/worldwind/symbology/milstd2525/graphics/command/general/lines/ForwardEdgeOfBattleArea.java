@@ -91,28 +91,10 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
 
         /** {@inheritDoc} */
         @Override
-        protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
+        protected void layoutTextModifiers(DrawContext dc, AVList modifiers)
         {
-            if (this.iconRect == null)
-                return;
+            this.currentLabels.clear();
 
-            if (this.mustDrawTextModifiers(dc))
-            {
-                this.currentLabels.clear();
-                this.doLayoutModifiers(dc);
-            }
-        }
-
-        /**
-         * Layout text and graphic modifiers around the symbol.
-         *
-         * @param dc Current draw context.
-         */
-        protected void doLayoutModifiers(DrawContext dc)
-        {
-            // We compute a default font rather than using a static default in order to choose a font size that is
-            // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
-            // height must be 0.3x the symbol's frame height.
             Font font = this.getActiveAttributes().getTextModifierFont();
             Offset imgOffset = this.leftAlign ? RIGHT_CENTER : LEFT_CENTER;
             Offset txtOffset = this.leftAlign ? LEFT_CENTER : RIGHT_CENTER;
@@ -128,6 +110,12 @@ public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
         protected String getText()
         {
             return "FEBA";
+        }
+
+        @Override
+        protected int getMaxLabelLines(AVList modifiers)
+        {
+            return 1; // Only one line of text.
         }
     }
 

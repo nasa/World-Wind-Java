@@ -137,22 +137,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     }
 
     @Override
-    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
-    {
-        if (this.iconRect == null)
-            return;
-
-        // Layout all of the graphic and text modifiers around the symbol's frame bounds. The location of each modifier
-        // is the same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4, page 34.
-
-        if (this.mustDrawTextModifiers(dc))
-        {
-            this.currentLabels.clear();
-            this.doLayoutModifiers(dc, modifiers, this.iconRect);
-        }
-    }
-
-    @Override
     protected void applyImplicitModifiers(AVList modifiers)
     {
         String si = this.symbolCode.getStandardIdentity();
@@ -208,11 +192,12 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      *
      * @param dc        Current draw context.
      * @param modifiers Modifiers applied to this graphic.
-     * @param iconRect  Symbol's screen rectangle.
      */
-    @SuppressWarnings("UnusedParameters")
-    protected void doLayoutModifiers(DrawContext dc, AVList modifiers, Rectangle iconRect)
+    @Override
+    protected void layoutTextModifiers(DrawContext dc, AVList modifiers)
     {
+        this.currentLabels.clear();
+
         // We compute a default font rather than using a static default in order to choose a font size that is
         // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
         // height must be 0.3x the symbol's frame height.

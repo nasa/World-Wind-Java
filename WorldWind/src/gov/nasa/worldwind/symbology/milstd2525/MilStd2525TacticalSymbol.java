@@ -343,29 +343,6 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
     }
 
     @Override
-    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
-    {
-        if (this.iconRect == null)
-            return;
-
-        // Layout all of the graphic and text modifiers around the symbol's frame bounds. The location of each modifier
-        // is the same regardless of whether the symbol is framed or unframed. See MIL-STD-2525C section 5.4.4, page 34.
-
-        if (this.mustDrawGraphicModifiers(dc))
-        {
-            this.currentGlyphs.clear();
-            this.currentLines.clear();
-            this.layoutGraphicModifiers(dc, modifiers);
-        }
-
-        if (this.mustDrawTextModifiers(dc))
-        {
-            this.currentLabels.clear();
-            this.layoutTextModifiers(dc, modifiers);
-        }
-    }
-
-    @Override
     protected void applyImplicitModifiers(AVList modifiers)
     {
         String maskedCode = this.symbolCode.toMaskedString().toLowerCase();
@@ -446,6 +423,9 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 
     protected void layoutGraphicModifiers(DrawContext dc, AVList modifiers)
     {
+        this.currentGlyphs.clear();
+        this.currentLines.clear();
+
         AVList retrieverParams = new AVListImpl();
         retrieverParams.setValue(AVKey.WIDTH, this.iconRect.width);
 
@@ -549,6 +529,8 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
 
     protected void layoutTextModifiers(DrawContext dc, AVList modifiers)
     {
+        this.currentLabels.clear();
+
         StringBuilder sb = new StringBuilder();
 
         // We compute a default font rather than using a static default in order to choose a font size that is
@@ -665,6 +647,43 @@ public class MilStd2525TacticalSymbol extends AbstractTacticalSymbol
             this.addLabel(dc, Offset.fromFraction(0.0, -0.1), RIGHT_CENTER_OFFSET, sb.toString(), font, null, null);
             sb.delete(0, sb.length());
         }
+    }
+
+    @Override
+    protected int getMaxLabelLines(AVList modifiers)
+    {
+        // Determine how many lines of text are on the left side of the symbol.
+        int leftLines = 0;
+        if (modifiers.hasKey(SymbologyConstants.DATE_TIME_GROUP))
+            leftLines++;
+        if (modifiers.hasKey(SymbologyConstants.ALTITUDE_DEPTH) || modifiers.hasKey(SymbologyConstants.LOCATION))
+            leftLines++;
+        if (modifiers.hasKey(SymbologyConstants.TYPE))
+            leftLines++;
+        if (modifiers.hasKey(SymbologyConstants.UNIQUE_DESIGNATION))
+            leftLines++;
+        if (modifiers.hasKey(SymbologyConstants.SPEED))
+            leftLines++;
+
+        // Determine how many lines of text are on the right side of the symbol.
+        int rightLines = 0;
+        if (modifiers.hasKey(SymbologyConstants.FRAME_SHAPE) || modifiers.hasKey(SymbologyConstants.REINFORCED_REDUCED))
+            rightLines++;
+        if (modifiers.hasKey(SymbologyConstants.STAFF_COMMENTS))
+            rightLines++;
+        if (modifiers.hasKey(SymbologyConstants.ADDITIONAL_INFORMATION))
+            rightLines++;
+        if (modifiers.hasKey(SymbologyConstants.HIGHER_FORMATION))
+            rightLines++;
+        if (modifiers.hasKey(SymbologyConstants.COMBAT_EFFECTIVENESS)
+            || modifiers.hasKey(SymbologyConstants.SIGNATURE_EQUIPMENT)
+            || modifiers.hasKey(SymbologyConstants.HOSTILE_ENEMY)
+            || modifiers.hasKey(SymbologyConstants.IFF_SIF))
+        {
+            rightLines++;
+        }
+
+        return Math.max(leftLines, rightLines);
     }
 
     protected String getModifierCode(AVList modifiers, String modifierKey)

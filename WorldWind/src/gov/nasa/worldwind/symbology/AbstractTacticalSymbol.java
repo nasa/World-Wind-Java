@@ -392,6 +392,8 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * 2048x2048. Configured to remove the least recently used texture elements when more space is needed.
      */
     protected static final TextureAtlas DEFAULT_GLYPH_ATLAS = new TextureAtlas(1024, 128, 2048, 2048);
+    /** The default number of label lines to expect when computing the minimum size of the text layout rectangle. */
+    protected static final int DEFAULT_LABEL_LINES = 5;
 
     /** The attributes used if attributes are not specified. */
     protected static TacticalSymbolAttributes defaultAttrs;
@@ -530,6 +532,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected Rectangle iconRect;
     protected Rectangle layoutRect;
     protected Rectangle screenRect;
+
+    /** iconRect with scaling applied, used to lay out text. */
+    protected Rectangle iconRectScaled;
+    /** layoutRect with scaling applied, used to lay out text. */
+    protected Rectangle layoutRectScaled;
 
     /**
      * Screen rect computed from the icon and static modifiers. This rectangle is cached and only recomputed when the
@@ -1060,6 +1067,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     protected void determineActiveAttributes()
     {
         Font previousFont = this.activeAttrs.getTextModifierFont();
+        Double previousScale = this.activeAttrs.getScale();
 
         if (this.isHighlighted())
         {
@@ -1088,6 +1096,11 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         // different size.
         Font newFont = this.activeAttrs.getTextModifierFont();
         if (newFont != null && !newFont.equals(previousFont))
+            this.reset();
+
+        // If the scale has changed then the layout needs to be recomputed.
+        Double newScale = this.activeAttrs.getScale();
+        if (newScale != null && !newScale.equals(previousScale))
             this.reset();
     }
 
@@ -1248,17 +1261,65 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     /**
      * Layout static modifiers around the symbol. Static modifiers are not expected to change due to changes in view.
-     * The static layout is computed when a modifier is changed, but may not be computed each frame. For example, a text
-     * modifier indicating a symbol identifier would only need to be laid out when the text is changed, so this is best
-     * treated as a static modifier. However a direction of movement line that needs to be computed based on the current
-     * eye position should be treated as a dynamic modifier.
+     * Subclasses should not override this method. Instead, subclasses may override {@link
+     * #layoutGraphicModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
+     * layoutGraphicModifiers} and {@link #layoutTextModifiers(gov.nasa.worldwind.render.DrawContext,
+     * gov.nasa.worldwind.avlist.AVList) layoutTextModifiers}.
+     *
+     * @param dc        Current draw context.
+     * @param modifiers Current modifiers.
+     *
+     * @see #layoutDynamicModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
+     * @see #layoutGraphicModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
+     * @see #layoutTextModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
+     */
+    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
+    {
+        if (this.iconRect == null)
+            return;
+
+        if (this.mustDrawGraphicModifiers(dc))
+            this.layoutGraphicModifiers(dc, modifiers);
+
+        // Compute the bounds of the symbol and graphic modifiers with scaling applied. The text will be laid out
+        // based on this size (text is not scaled with the symbol).
+        this.computeScaledBounds(dc, modifiers);
+
+        if (this.mustDrawTextModifiers(dc))
+            this.layoutTextModifiers(dc, modifiers);
+    }
+
+    /**
+     * Layout static graphic modifiers around the symbol. Static modifiers are not expected to change due to changes in
+     * view. The static layout is computed when a modifier is changed, but may not be computed each frame. For example,
+     * a text modifier indicating a symbol identifier would only need to be laid out when the text is changed, so this
+     * is best treated as a static modifier. However a direction of movement line that needs to be computed based on the
+     * current eye position should be treated as a dynamic modifier.
      *
      * @param dc        Current draw context.
      * @param modifiers Current modifiers.
      *
      * @see #layoutDynamicModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
      */
-    protected void layoutStaticModifiers(DrawContext dc, AVList modifiers)
+    protected void layoutGraphicModifiers(DrawContext dc, AVList modifiers)
+    {
+        // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
+        // with this tactical symbol.
+    }
+
+    /**
+     * Layout static text modifiers around the symbol. Static modifiers are not expected to change due to changes in
+     * view. The static layout is computed when a modifier is changed, but may not be computed each frame. For example,
+     * a text modifier indicating a symbol identifier would only need to be laid out when the text is changed, so this
+     * is best treated as a static modifier. However a direction of movement line that needs to be computed based on the
+     * current eye position should be treated as a dynamic modifier.
+     *
+     * @param dc        Current draw context.
+     * @param modifiers Current modifiers.
+     *
+     * @see #layoutDynamicModifiers(gov.nasa.worldwind.render.DrawContext, gov.nasa.worldwind.avlist.AVList)
+     */
+    protected void layoutTextModifiers(DrawContext dc, AVList modifiers)
     {
         // Intentionally left blank. Subclasses can override this method in order to layout any modifiers associated
         // with this tactical symbol.
@@ -1293,6 +1354,16 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         // determined by the symbol state.
     }
 
+    /**
+     * Layout a rectangle relative to the current layout.
+     *
+     * @param offset     Offset into either the {@code iconRect} or {@code layoutRect} at which to align the hot spot.
+     * @param hotspot    Offset into the rectangle of the hot spot.
+     * @param size       Size of the rectangle.
+     * @param layoutMode One of {@link #LAYOUT_ABSOLUTE}, {@link #LAYOUT_RELATIVE}, or {@link #LAYOUT_NONE}.
+     *
+     * @return the laid out rectangle.
+     */
     protected Rectangle layoutRect(Offset offset, Offset hotspot, Dimension size, Object layoutMode)
     {
         int x = 0;
@@ -1333,6 +1404,57 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
                 this.layoutRect.add(rect);
             else
                 this.layoutRect = new Rectangle(rect);
+        }
+
+        return rect;
+    }
+
+    /**
+     * Layout a label rectangle relative to the current layout. This method lays out text around the icon and graphic
+     * modifiers after scaling has been applied (text is not scaled with the icon).
+     *
+     * @param offset     Offset into either the {@code iconRect} or {@code layoutRect} at which to align the hot spot.
+     * @param hotspot    Offset into the rectangle of the hot spot.
+     * @param size       Size of the rectangle.
+     * @param layoutMode One of {@link #LAYOUT_ABSOLUTE}, {@link #LAYOUT_RELATIVE}, or {@link #LAYOUT_NONE}.
+     *
+     * @return the laid out rectangle.
+     */
+    protected Rectangle layoutLabelRect(Offset offset, Offset hotspot, Dimension size, Object layoutMode)
+    {
+        int x = 0;
+        int y = 0;
+
+        if (offset != null)
+        {
+            Rectangle rect;
+            if (LAYOUT_ABSOLUTE.equals(layoutMode))
+                rect = this.iconRectScaled;
+            else if (LAYOUT_RELATIVE.equals(layoutMode))
+                rect = this.layoutRectScaled;
+            else // LAYOUT_NONE
+                rect = this.iconRectScaled;
+
+            Point2D p = offset.computeOffset(rect.getWidth(), rect.getHeight(), null, null);
+            x += rect.getX() + p.getX();
+            y += rect.getY() + p.getY();
+        }
+
+        if (hotspot != null)
+        {
+            Point2D p = hotspot.computeOffset(size.getWidth(), size.getHeight(), null, null);
+            x -= p.getX();
+            y -= p.getY();
+        }
+
+        Rectangle rect = new Rectangle(x, y, size.width, size.height);
+
+        if (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode))
+        {
+            if (this.layoutRectScaled != null)
+                this.layoutRectScaled.add(rect);
+            else
+                this.layoutRectScaled = new Rectangle(rect);
         }
 
         return rect;
@@ -1405,8 +1527,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     protected void addLabel(DrawContext dc, Offset offset, Offset hotspot, String modifierText, Font font,
-        Color color,
-        Object layoutMode)
+        Color color, Object layoutMode)
     {
         if (font == null)
         {
@@ -1435,7 +1556,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
         TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
         Rectangle bounds = tr.getBounds(modifierText).getBounds();
-        Rectangle rect = this.layoutRect(offset, hotspot, bounds.getSize(), layoutMode);
+        Rectangle rect = this.layoutLabelRect(offset, hotspot, bounds.getSize(), layoutMode);
         Point point = new Point(rect.getLocation().x, rect.getLocation().y + bounds.y + bounds.height);
 
         this.currentLabels.add(new Label(tr, modifierText, point, color));
@@ -1501,17 +1622,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected void computeTransform(DrawContext dc)
     {
-        if (this.getActiveAttributes().getScale() != null)
-        {
-            this.sx = this.getActiveAttributes().getScale();
-            this.sy = this.getActiveAttributes().getScale();
-        }
-        else
-        {
-            this.sx = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
-            this.sy = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
-        }
-
         if (this.getOffset() != null && this.iconRect != null)
         {
             Point2D p = this.getOffset().computeOffset(this.iconRect.getWidth(), this.iconRect.getHeight(), null,
@@ -1524,6 +1634,88 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             this.dx = 0;
             this.dy = 0;
         }
+    }
+
+    /**
+     * Compute the bounds of symbol after the scale has been applied. This method computes {@link #iconRectScaled} and
+     * {@link #layoutRectScaled}.
+     *
+     * @param dc        Current draw context.
+     * @param modifiers Current modifiers.
+     */
+    protected void computeScaledBounds(DrawContext dc, AVList modifiers)
+    {
+        if (this.getActiveAttributes().getScale() != null)
+        {
+            this.sx = this.getActiveAttributes().getScale();
+            this.sy = this.getActiveAttributes().getScale();
+        }
+        else
+        {
+            this.sx = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
+            this.sy = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
+        }
+
+        Dimension maxDimension = this.computeMinTextLayout(dc, modifiers);
+        this.iconRectScaled = this.computeScaledRect(this.iconRect, maxDimension, this.sx, this.sy);
+        this.layoutRectScaled = this.computeScaledRect(this.layoutRect, maxDimension, this.sx, this.sy);
+    }
+
+    /**
+     * Compute the dimension of the minimum layout rectangle for the text modifiers. A minimum dimension is enforced to
+     * prevent the text from overlapping if the symbol is scaled to a very small size.
+     *
+     * @param dc Current draw context.
+     *
+     * @return Minimum dimension for the label layout rectangle.
+     */
+    protected Dimension computeMinTextLayout(DrawContext dc, AVList modifiers)
+    {
+        // Use either the currently specified text modifier font or compute a default if no font is specified.
+        Font font = this.getActiveAttributes().getTextModifierFont();
+        if (font == null)
+            font = BasicTacticalSymbolAttributes.DEFAULT_TEXT_MODIFIER_FONT;
+
+        TextRenderer tr = OGLTextRenderer.getOrCreateTextRenderer(dc.getTextRendererCache(), font);
+
+        // Get the bounds of "E" to estimate how tall a typical line of text will be.
+        Rectangle2D bounds = tr.getBounds("E");
+
+        // Determine how many lines of text to expect so that we can compute a reasonable minimum size.
+        int maxLines = this.getMaxLabelLines(modifiers);
+
+        int maxDim = (int) (bounds.getHeight() * maxLines * 1.5); // Add 50% for line spacing
+        return new Dimension(maxDim, maxDim);
+    }
+
+    @SuppressWarnings({"UnusedParameters"})
+    protected int getMaxLabelLines(AVList modifiers)
+    {
+        return DEFAULT_LABEL_LINES;
+    }
+
+    protected Rectangle computeScaledRect(Rectangle rect, Dimension maxDimension, double scaleX, double scaleY)
+    {
+        double x = rect.getX() * scaleX;
+        double y = rect.getY() * scaleY;
+        double width = rect.getWidth() * scaleX;
+        double height = rect.getHeight() * scaleY;
+
+        double maxWidth = maxDimension.getWidth();
+        double maxHeight = maxDimension.getHeight();
+
+        if (width < maxWidth)
+        {
+            x = x + (width - maxWidth) / 2.0;
+            width = maxWidth;
+        }
+        if (height < maxHeight)
+        {
+            y = y + (height - maxHeight) / 2.0;
+            height = maxHeight;
+        }
+
+        return new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
     }
 
     protected Rectangle computeScreenExtent()
@@ -1762,20 +1954,42 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         GL gl = dc.getGL();
         gl.glLoadIdentity(); // Assumes that the current matrix mode is GL_MODELVIEW.
         gl.glTranslated(this.screenPoint.x, this.screenPoint.y, this.screenPoint.z);
-        gl.glScaled(this.sx, this.sy, 1d);
-        gl.glTranslated(this.dx, this.dy, 0d);
     }
 
     protected void draw(DrawContext dc)
     {
-        if (this.mustDrawIcon(dc))
-            this.drawIcon(dc);
+        GL gl = dc.getGL();
+        try
+        {
+            gl.glPushMatrix();
+            gl.glScaled(this.sx, this.sy, 1d);
+            gl.glTranslated(this.dx, this.dy, 0d);
 
-        if (this.mustDrawGraphicModifiers(dc))
-            this.drawGraphicModifiers(dc);
+            if (this.mustDrawIcon(dc))
+                this.drawIcon(dc);
 
-        if (this.mustDrawTextModifiers(dc) && !dc.isPickingMode())
-            this.drawTextModifiers(dc);
+            if (this.mustDrawGraphicModifiers(dc))
+                this.drawGraphicModifiers(dc);
+        }
+        finally
+        {
+            gl.glPopMatrix();
+        }
+
+        try
+        {
+            // Do not apply scale to text modifiers. The size of the text is determined by the font. Do apply scale
+            // to dx and dy to put the text in the right place.
+            gl.glPushMatrix();
+            gl.glTranslated(this.dx * this.sx, this.dy * this.sy, 0d);
+
+            if (this.mustDrawTextModifiers(dc) && !dc.isPickingMode())
+                this.drawTextModifiers(dc);
+        }
+        finally
+        {
+            gl.glPopMatrix();
+        }
     }
 
     @SuppressWarnings({"UnusedParameters"})
