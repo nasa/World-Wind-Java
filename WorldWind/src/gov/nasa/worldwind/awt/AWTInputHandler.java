@@ -32,7 +32,7 @@ public class AWTInputHandler extends WWObjectImpl
     protected PickedObjectList objectsAtButtonPress;
     protected boolean isHovering = false;
     protected boolean isDragging = false;
-    protected boolean forceRedrawOnMousePressed = false;
+    protected boolean forceRedrawOnMousePressed = Configuration.getBooleanValue(AVKey.REDRAW_ON_MOUSE_PRESSED, false);
     protected javax.swing.Timer hoverTimer = new javax.swing.Timer(600, new ActionListener()
     {
         public void actionPerformed(ActionEvent actionEvent)

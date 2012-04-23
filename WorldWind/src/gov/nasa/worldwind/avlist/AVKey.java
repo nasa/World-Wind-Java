@@ -327,6 +327,7 @@ public interface AVKey // TODO: Eliminate unused constants, if any
     final String PROTOCOL_HTTPS = "gov.nasa.worldwind.avkey.Protocol.HTTPS";
 
     final String RECTANGLES = "gov.nasa.worldwind.avkey.Rectangles";
+    final String REDRAW_ON_MOUSE_PRESSED = "gov.nasa.worldwind.avkey.ForceRedrawOnMousePressed";
 
     final String RELATIVE_TO_GLOBE = "gov.nasa.worldwind.avkey.RelativeToGlobe";
     final String RELATIVE_TO_SCREEN = "gov.nasa.worldwind.avkey.RelativeToScreen";
