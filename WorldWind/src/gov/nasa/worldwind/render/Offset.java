@@ -28,6 +28,12 @@ import java.awt.*;
  */
 public class Offset
 {
+    public static final Offset CENTER = Offset.fromFraction(0.5, 0.5);
+    public static final Offset BOTTOM_CENTER = Offset.fromFraction(0.5, 0.0);
+    public static final Offset TOP_CENTER = Offset.fromFraction(0.5, 1.0);
+    public static final Offset LEFT_CENTER = Offset.fromFraction(0.0, 0.5);
+    public static final Offset RIGHT_CENTER = Offset.fromFraction(1.0, 0.5);
+
     protected Double x;
     protected Double y;
     protected String xUnits;

@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
 import gov.nasa.worldwind.symbology.SymbologyConstants;
 import gov.nasa.worldwind.util.Logging;
@@ -25,9 +24,6 @@ import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacticalGraphicSy
  */
 public class DefaultLabelLayouts
 {
-    /** Offset to align the center of the graphic with the geographic position. */
-    protected static Offset CENTER_OFFSET = new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION);
-
     /** Map to hold layouts. */
     protected Map<String, Map<String, List<LabelLayout>>> layouts
         = new HashMap<String, Map<String, List<LabelLayout>>>();
@@ -59,11 +55,11 @@ public class DefaultLabelLayouts
     {
         // The C2GM.GNL.PNT.HBR graphic supports the H modifier in the center of the graphic.
         this.layouts.put(C2GM_GNL_PNT_HBR,
-            this.createLayout(SymbologyConstants.ADDITIONAL_INFORMATION, CENTER_OFFSET, CENTER_OFFSET));
+            this.createLayout(SymbologyConstants.ADDITIONAL_INFORMATION, Offset.CENTER, Offset.CENTER));
 
         // C2GM.GNL.PNT.ACTPNT.DCNPNT supports the T modifier in teh center of the graphic.
         this.layouts.put(C2GM_GNL_PNT_ACTPNT_DCNPNT,
-            this.createLayout(SymbologyConstants.UNIQUE_DESIGNATION, CENTER_OFFSET, CENTER_OFFSET));
+            this.createLayout(SymbologyConstants.UNIQUE_DESIGNATION, Offset.CENTER, Offset.CENTER));
 
         // Most pentagon shaped graphics support the same modifiers around the pentagon.
         Map<String, List<LabelLayout>> layout = new HashMap<String, List<LabelLayout>>();
@@ -71,8 +67,8 @@ public class DefaultLabelLayouts
             Offset.fromFraction(1.1, 1.0),
             Offset.fromFraction(0.0, 1.0));
         this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
-            Offset.fromFraction(0.5, 1.0),
-            Offset.fromFraction(0.5, 0.0));
+            Offset.TOP_CENTER,
+            Offset.BOTTOM_CENTER);
         this.putLayout(layout, SymbologyConstants.HOSTILE_ENEMY,
             Offset.fromFraction(1.1, 0.35),
             Offset.fromFraction(0.0, 0.0));
@@ -135,10 +131,10 @@ public class DefaultLabelLayouts
         // middle of the pentagon.
         layout = new HashMap<String, List<LabelLayout>>(layout);
         this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
-            Offset.fromFraction(0.5, 1.0),
-            Offset.fromFraction(0.5, 0.0),
+            Offset.TOP_CENTER,
+            Offset.BOTTOM_CENTER,
             Offset.fromFraction(0.5, 0.9),
-            Offset.fromFraction(0.5, 1.0));
+            Offset.TOP_CENTER);
         this.layouts.put(C2GM_GNL_PNT_ACTPNT, layout);
 
         // CSS.PNT.AEP supports all the normal pentagon graphic modifiers, and also supports T1 in the
@@ -147,11 +143,11 @@ public class DefaultLabelLayouts
         this.putLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(1.1, 1.0),
             Offset.fromFraction(0.0, 1.0),
-            Offset.fromFraction(0.5, 0.5),
-            Offset.fromFraction(0.5, 0.5));
+            Offset.CENTER,
+            Offset.CENTER);
         this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
-            Offset.fromFraction(0.5, 1.0),
-            Offset.fromFraction(0.5, 0.0));
+            Offset.TOP_CENTER,
+            Offset.BOTTOM_CENTER);
         this.layouts.put(CSS_PNT_AEP, layout);
 
         // The Chemical and Biological release graphics support the same modifiers.
@@ -169,38 +165,38 @@ public class DefaultLabelLayouts
             Offset.fromFraction(1.0, 0.0),
             Offset.fromFraction(0.0, 0.0));
         this.putLayout(layout, SymbologyConstants.TYPE,
-            Offset.fromFraction(0.0, 0.5),
-            Offset.fromFraction(1.0, 0.5));
+            Offset.LEFT_CENTER,
+            Offset.RIGHT_CENTER);
         this.putLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(0.0, 0.0),
             Offset.fromFraction(1.0, 0.0));
         this.putLayout(layout, SymbologyConstants.LOCATION,
             Offset.fromFraction(0.5, -0.1),
-            Offset.fromFraction(0.5, 1.0));
+            Offset.TOP_CENTER);
         this.layouts.put(MOBSU_CBRN_REEVNT_BIO, layout);
         this.layouts.put(MOBSU_CBRN_REEVNT_CML, layout);
 
         // The Nuclear graphic is mostly the same as chem/bio, but also supports the quantity modifier.
         layout = new HashMap<String, List<LabelLayout>>(layout);
         this.putLayout(layout, SymbologyConstants.QUANTITY,
-            Offset.fromFraction(0.5, 1.0),
-            Offset.fromFraction(0.5, 0.0));
+            Offset.TOP_CENTER,
+            Offset.BOTTOM_CENTER);
         this.layouts.put(MOBSU_CBRN_NDGZ, layout);
 
         // C2GM.GNL.PNT.REFPNT.PNTINR supports the T modifier
         layout = this.createLayout(SymbologyConstants.UNIQUE_DESIGNATION,
-            Offset.fromFraction(0.5, 0.7), CENTER_OFFSET);
+            Offset.fromFraction(0.5, 0.7), Offset.CENTER);
         this.layouts.put(C2GM_GNL_PNT_REFPNT_PNTINR, layout);
 
         // Square flag
         layout = this.createLayout(SymbologyConstants.UNIQUE_DESIGNATION,
-            Offset.fromFraction(0.5, 0.65), CENTER_OFFSET);
+            Offset.fromFraction(0.5, 0.65), Offset.CENTER);
         this.layouts.put(C2GM_GNL_PNT_ACTPNT_CONPNT, layout);
 
         // X shaped graphics, T on left
         layout = this.createLayout(SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(0.75, 0.5),
-            Offset.fromFraction(0.0, 0.5));
+            Offset.LEFT_CENTER);
         this.layouts.put(C2GM_GNL_PNT_ACTPNT_WAP, layout);
         this.layouts.put(FSUPP_PNT_C2PNT_FSS, layout);
 

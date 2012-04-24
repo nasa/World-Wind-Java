@@ -31,7 +31,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     // interface to the TacticalSymbol interface.
 
     /** Symbol used to render this graphic. */
-    protected TacticalSymbol symbol;
+    protected TacticalGraphicSymbol symbol;
 
     /** Indicates whether or not the graphic is highlighted. */
     protected boolean highlighted;
@@ -71,7 +71,7 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
      *
      * @return A new tactical symbol.
      */
-    protected TacticalSymbol createSymbol(String sidc)
+    protected TacticalGraphicSymbol createSymbol(String sidc)
     {
         TacticalGraphicSymbol symbol = new TacticalGraphicSymbol(sidc);
         symbol.setAttributes(this.activeSymbolAttributes);
@@ -240,6 +240,32 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     public void setLabelOffset(Offset offset)
     {
         // Does not apply to point graphic
+    }
+
+    /**
+     * Indicates a location within the symbol to align with the symbol point. See {@link
+     * #setOffset(gov.nasa.worldwind.render.Offset) setOffset} for more information.
+     *
+     * @return the hot spot controlling the symbol's placement relative to the symbol point. null indicates default
+     *         alignment.
+     */
+    public Offset getOffset()
+    {
+        return this.symbol.getOffset();
+    }
+
+    /**
+     * Specifies a location within the tactical symbol to align with the symbol point. By default, ground symbols are
+     * aligned at the bottom center of the symbol, and other symbols are aligned to the center of the symbol. {@code
+     * setOffset(Offset.CENTER)} aligns the center of the symbol with the symbol point, and {@code
+     * setOffset(Offset.BOTTOM_CENTER)} aligns the center of the bottom edge with the symbol point.
+     *
+     * @param offset the hot spot controlling the symbol's placement relative to the symbol point. May be null to
+     *               indicate default alignment.
+     */
+    public void setOffset(Offset offset)
+    {
+        this.symbol.setOffset(offset);
     }
 
     /** {@inheritDoc} */

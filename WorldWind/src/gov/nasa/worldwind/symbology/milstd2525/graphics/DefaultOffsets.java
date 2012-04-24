@@ -6,7 +6,6 @@
 
 package gov.nasa.worldwind.symbology.milstd2525.graphics;
 
-import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.render.Offset;
 
 import java.util.*;
@@ -25,27 +24,23 @@ import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc.*;
 public class DefaultOffsets
 {
     /** Offset to align the center of the graphic with the geographic position. */
-    protected static Offset DEFAULT_OFFSET = new Offset(0.5, 0.5, AVKey.FRACTION, AVKey.FRACTION);
+    protected static Offset DEFAULT_OFFSET = Offset.CENTER;
 
-    /** Offset to align the center of the bottom edge of the graphic with the geographic position. */
-    public static final Offset OFFSET_BOTTOM_CENTER = new Offset(0.5, 0.0, AVKey.FRACTION, AVKey.FRACTION);
-    /** Offset to align the center of the left edge of the graphic with the geographic position. */
-    public static final Offset OFFSET_LEFT_CENTER = new Offset(0.0, 0.5, AVKey.FRACTION, AVKey.FRACTION);
     /** Offset to align a point 25% up from the bottom edge with the geographic position. */
-    public static final Offset OFFSET_BOTTOM_QUARTER = new Offset(0.5, 0.25, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset OFFSET_BOTTOM_QUARTER = Offset.fromFraction(0.5, 0.25);
 
     /** Offset for the Drop Point graphic (2.X.2.1.1.3.2). */
-    public static final Offset OFFSET_C2GM_GNL_PNT_WPN_DRPPNT = new Offset(0.5, 0.17, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset OFFSET_C2GM_GNL_PNT_WPN_DRPPNT = Offset.fromFraction(0.5, 0.17);
 
     /** Offset for the Antitank Mine with Anti-handling Device graphic (2.X.3.1.5.3). */
-    public static final Offset OFFSET_MOBSU_OBST_MNE_ATMAHD = new Offset(0.5, 0.75, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset OFFSET_MOBSU_OBST_MNE_ATMAHD = Offset.fromFraction(0.5, 0.75);
     /** Offset for the Antipersonnel (AP) Mines graphic (2.X.3.1.5.5). */
-    public static final Offset OFFSET_MOBSU_OBST_MNE_APMNE = new Offset(0.5, 0.35, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset OFFSET_MOBSU_OBST_MNE_APMNE = Offset.fromFraction(0.5, 0.35);
     /** Offset for the Wide Area Mines graphic (2.X.3.1.5.6). */
-    public static final Offset OFFSET_MOBSU_OBST_MNE_WAMNE = new Offset(0.5, 0.71, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset OFFSET_MOBSU_OBST_MNE_WAMNE = Offset.fromFraction(0.5, 0.71);
 
     /** Offset for the Sea Mine-Like Hazard graphic (2.X.6.2.1). */
-    public static final Offset OFFSET_OTH_HAZ_SML = new Offset(0.5, 0.33, AVKey.FRACTION, AVKey.FRACTION);
+    public static final Offset OFFSET_OTH_HAZ_SML = Offset.fromFraction(0.5, 0.33);
 
     /** Map to store defaults. */
     protected Map<String, Offset> offsets = new HashMap<String, Offset>();
@@ -73,7 +68,7 @@ public class DefaultOffsets
     protected void populate()
     {
         // A bunch of graphics are anchored on the bottom edge
-        this.putAll(OFFSET_BOTTOM_CENTER,
+        this.putAll(Offset.BOTTOM_CENTER,
             C2GM_GNL_PNT_USW_UH2_BCON,
             C2GM_GNL_PNT_USW_UH2_LCON,
             C2GM_GNL_PNT_USW_UH2_SNK,
@@ -198,7 +193,7 @@ public class DefaultOffsets
         this.offsets.put(MOBSU_OBST_MNE_APMNE, OFFSET_MOBSU_OBST_MNE_APMNE);
         this.offsets.put(MOBSU_OBST_MNE_WAMNE, OFFSET_MOBSU_OBST_MNE_WAMNE);
         this.offsets.put(OTH_HAZ_SML, OFFSET_OTH_HAZ_SML);
-        this.offsets.put(OTH_SSUBSR_MARLFE, OFFSET_LEFT_CENTER);
+        this.offsets.put(OTH_SSUBSR_MARLFE, Offset.LEFT_CENTER);
     }
 
     /**

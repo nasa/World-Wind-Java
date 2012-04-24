@@ -42,7 +42,6 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     /** Object that provides the default label layouts for each point graphic. */
     protected static DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
 
-    protected static final Offset CENTER_OFFSET = Offset.fromFraction(0.5, 0.5);
     protected static final Offset BELOW_BOTTOM_CENTER_OFFSET = Offset.fromFraction(0.5, -0.1);
 
     public static class LabelLayout

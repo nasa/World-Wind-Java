@@ -878,6 +878,32 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
     }
 
     /**
+     * Indicates a location within the symbol to align with the symbol point. See {@link
+     * #setOffset(gov.nasa.worldwind.render.Offset) setOffset} for more information.
+     *
+     * @return the hot spot controlling the symbol's placement relative to the symbol point. null indicates default
+     *         alignment.
+     */
+    public Offset getOffset()
+    {
+        return this.offset;
+    }
+
+    /**
+     * Specifies a location within the tactical symbol to align with the symbol point. By default, ground symbols are
+     * aligned at the bottom center of the symbol, and other symbols are aligned to the center of the symbol. {@code
+     * setOffset(Offset.CENTER)} aligns the center of the symbol with the symbol point, and {@code
+     * setOffset(Offset.BOTTOM_CENTER)} aligns the center of the bottom edge with the symbol point.
+     *
+     * @param offset the hot spot controlling the symbol's placement relative to the symbol point. May be null to
+     *               indicate default alignment.
+     */
+    public void setOffset(Offset offset)
+    {
+        this.offset = offset;
+    }
+
+    /**
      * Indicates the symbol's current position, formatted according to the current UnitsFormat.
      *
      * @return The current position formatted according to the current unit format. Returns null if the position is
@@ -895,16 +921,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             this.formattedPosition = this.getUnitsFormat().latLon(position);
 
         return this.formattedPosition;
-    }
-
-    protected Offset getOffset()
-    {
-        return this.offset;
-    }
-
-    protected void setOffset(Offset offset)
-    {
-        this.offset = offset;
     }
 
     protected Double getDepthOffset()
