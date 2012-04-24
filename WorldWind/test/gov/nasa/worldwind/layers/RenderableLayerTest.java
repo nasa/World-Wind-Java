@@ -19,7 +19,7 @@ public class RenderableLayerTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Basic Operation Tests **/
-    /** ********************************************************************************************************* */
+    /** ******************************************************************************************************** */
 
     @org.junit.Test
     public void testConstructor()
@@ -104,7 +104,7 @@ public class RenderableLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Edge Case Tests **/
-    /** ********************************************************************************************************* */
+    /** ******************************************************************************************************** */
 
     @org.junit.Test
     public void testSetRenderablesClearsRenderables()
@@ -172,7 +172,7 @@ public class RenderableLayerTest extends junit.framework.TestCase
         }
 
         // Test that the layer contents do not change, even if the returned list can be modified.
-        assertEquals("", renderables, layerRenderables);
+        assertEquals("", renderables, layer.getRenderables());
     }
 
     @org.junit.Test
@@ -223,7 +223,7 @@ public class RenderableLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Exceptional Condition Tests **/
-    /** ********************************************************************************************************* */
+    /** ******************************************************************************************************** */
 
     @org.junit.Test
     public void testAddRenderableFail()
@@ -322,27 +322,27 @@ public class RenderableLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /** ********************************************************************************************************* */
-//
-//    @SuppressWarnings( {"JavaDoc"})
-//    private static void assertEquals(String message, Iterable<Renderable> expected, Iterable<Renderable> actual)
-//    {
-//        if (expected == null)
-//        {
-//            assertNull(message, actual);
-//        }
-//        else
-//        {
-//            java.util.Iterator<Renderable> expectedIter = expected.iterator(), actualIter = actual.iterator();
-//            // Compare the elements in each iterator, as long as they both have elements.
-//            while (expectedIter.hasNext() && actualIter.hasNext())
-//            {
-//                assertEquals(message, expectedIter.next(), actualIter.next());
-//            }
-//            // If either iterator has more elements, then their lengths are different.
-//            assertFalse(message, expectedIter.hasNext() || actualIter.hasNext());
-//        }
-//    }
+    /** ******************************************************************************************************** */
+
+    @SuppressWarnings({"JavaDoc"})
+    private static void assertEquals(String message, Iterable<Renderable> expected, Iterable<Renderable> actual)
+    {
+        if (expected == null)
+        {
+            assertNull(message, actual);
+        }
+        else
+        {
+            java.util.Iterator<Renderable> expectedIter = expected.iterator(), actualIter = actual.iterator();
+            // Compare the elements in each iterator, as long as they both have elements.
+            while (expectedIter.hasNext() && actualIter.hasNext())
+            {
+                assertEquals(message, expectedIter.next(), actualIter.next());
+            }
+            // If either iterator has more elements, then their lengths are different.
+            assertFalse(message, expectedIter.hasNext() || actualIter.hasNext());
+        }
+    }
 
     private static Iterable<Renderable> createExampleIterable()
     {
