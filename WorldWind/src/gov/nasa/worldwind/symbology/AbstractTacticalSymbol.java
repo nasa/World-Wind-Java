@@ -392,6 +392,12 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      * 2048x2048. Configured to remove the least recently used texture elements when more space is needed.
      */
     protected static final TextureAtlas DEFAULT_GLYPH_ATLAS = new TextureAtlas(1024, 128, 2048, 2048);
+    /**
+     * Maximum expected size of a symbol, used to estimate screen bounds for view frustum culling. This value is
+     * configured a bit higher than a symbol is likely to be drawn in practice to err on the side of not culling a
+     * symbol that is not visible, rather culling one that is visible.
+     */
+    protected static final int MAX_SYMBOL_DIMENSION = 256;
     /** The default number of label lines to expect when computing the minimum size of the text layout rectangle. */
     protected static final int DEFAULT_LABEL_LINES = 5;
 
@@ -1005,9 +1011,22 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (this.placePoint == null || this.screenPoint == null)
                 return;
 
+            // Don't draw if beyond the horizon.
+            double horizon = dc.getView().getHorizonDistance();
+            if (this.eyeDistance > horizon)
+                return;
+
+            // Do not compute layout if the symbol is not visible.
+            if (!this.intersectsFrustum(dc))
+                return;
+
             // Compute the currently active attributes from either the normal or the highlight attributes.
             this.determineActiveAttributes();
             if (this.getActiveAttributes() == null)
+                return;
+
+            Double scale = this.getActiveAttributes().getScale();
+            if (scale != null && scale == 0)
                 return;
 
             // Compute the icon and modifier layout.
@@ -1020,13 +1039,7 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             this.frameNumber = dc.getFrameTimeStamp();
         }
 
-        // Don't draw if beyond the horizon.
-        double horizon = dc.getView().getHorizonDistance();
-        if (this.eyeDistance > horizon)
-            return;
-
-        if (this.intersectsFrustum(dc))
-            dc.addOrderedRenderable(this);
+        dc.addOrderedRenderable(this);
 
         if (dc.isPickingMode())
             this.pickLayer = dc.getCurrentLayer();
@@ -1720,15 +1733,25 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected Rectangle computeScreenExtent()
     {
-        if (this.screenRect == null)
-            return null;
+        double width = MAX_SYMBOL_DIMENSION;
+        double height = MAX_SYMBOL_DIMENSION;
 
-        double x = this.screenPoint.x + this.sx * (this.dx + this.screenRect.getX());
-        double y = this.screenPoint.y + this.sy * (this.dy + this.screenRect.getY());
-        double width = this.sx * this.screenRect.getWidth();
-        double height = this.sy * this.screenRect.getHeight();
+        double x = this.screenPoint.x - width / 2.0;
+        double y = this.screenPoint.y - height / 2.0;
 
         return new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
+    }
+
+    /**
+     * Indicates the maximum expected size of a rendered tactical symbol. This value is used to estimate the size of a
+     * symbol and perform culling. If the symbol would not be visible (assuming it is the max size), then the icon does
+     * not need to be retrieved.
+     *
+     * @return Maximum size of a symbol, in pixels.
+     */
+    protected int getMaxSymbolDimension()
+    {
+        return MAX_SYMBOL_DIMENSION;
     }
 
     protected boolean intersectsFrustum(DrawContext dc)
