@@ -74,7 +74,7 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
     protected static final String DEFAULT_IMAGE_FORMAT = "image/png";
 
     /** Radius (in pixels) of circle that is drawn to the represent the symbol when both frame and icon are off. */
-    protected static final int CIRCLE_RADIUS = 32;
+    protected static final int CIRCLE_RADIUS = 16;
     /** Line width used to stroke circle when fill is turned off. */
     protected static final int CIRCLE_LINE_WIDTH = 2;
 
@@ -215,8 +215,8 @@ public class MilStd2525IconRetriever extends AbstractIconRetriever
             g = dest.createGraphics();
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int upperLeft = dest.getWidth() / 2 - CIRCLE_RADIUS / 2 - CIRCLE_LINE_WIDTH;
-            int width = CIRCLE_RADIUS - 2 * CIRCLE_LINE_WIDTH;
+            int upperLeft = (int) (dest.getWidth() / 2.0 - CIRCLE_RADIUS + CIRCLE_LINE_WIDTH);
+            int width = CIRCLE_RADIUS * 2 - CIRCLE_LINE_WIDTH * 2;
             @SuppressWarnings({"SuspiciousNameCombination"})
             Ellipse2D circle = new Ellipse2D.Double(upperLeft, upperLeft, width, width);
 
