@@ -8,12 +8,15 @@ package gov.nasa.worldwind.symbology.milstd2525;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.layers.RenderableLayer;
+import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.render.Renderable;
 import gov.nasa.worldwind.symbology.*;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
@@ -30,6 +33,7 @@ public class AllTacticalSymbols extends ApplicationTemplate
             super(true, true, false);
 
             this.addSymbols();
+            this.addSymbolControls();
 
             // Size the World Window to provide enough screen space for the symbols and center the World Window on the
             // screen.
@@ -41,20 +45,13 @@ public class AllTacticalSymbols extends ApplicationTemplate
 
         protected void addSymbols()
         {
-            this.addSymbolLayer(emsSymbolIds, SymbologyConstants.STATUS_PRESENT, "EMS Symbols");
-            this.addSymbolLayer(emsSymbolIds, SymbologyConstants.STATUS_ANTICIPATED, "EMS Symbols (Anticipated)");
-
-            this.addSymbolLayer(sigintSymbolIds, SymbologyConstants.STATUS_PRESENT, "SIGINT Symbols");
-            this.addSymbolLayer(sigintSymbolIds, SymbologyConstants.STATUS_ANTICIPATED, "SIGINT Symbols (Anticipated)");
-
-            this.addSymbolLayer(stbopsSymbolIds, SymbologyConstants.STATUS_PRESENT, "STBOPS Symbols");
-            this.addSymbolLayer(stbopsSymbolIds, SymbologyConstants.STATUS_ANTICIPATED, "STBOPS Symbols (Anticipated)");
-
-            this.addSymbolLayer(warSymbolIds, SymbologyConstants.STATUS_PRESENT, "WAR Symbols");
-            this.addSymbolLayer(warSymbolIds, SymbologyConstants.STATUS_ANTICIPATED, "WAR Symbols (Anticipated)");
+            this.addSymbolLayer(emsSymbolIds, "EMS Symbols");
+            this.addSymbolLayer(sigintSymbolIds, "SIGINT Symbols");
+            this.addSymbolLayer(stbopsSymbolIds, "STBOPS Symbols");
+            this.addSymbolLayer(warSymbolIds, "WAR Symbols");
         }
 
-        protected void addSymbolLayer(List<String> nameList, String status, String layerName)
+        protected void addSymbolLayer(List<String> nameList, String layerName)
         {
             RenderableLayer layer = new RenderableLayer();
             layer.setEnabled(false);
@@ -69,11 +66,12 @@ public class AllTacticalSymbols extends ApplicationTemplate
 
             for (String name : nameList)
             {
-                for (String symbolId : this.makeSymbolIds(name, status))
+                for (String symbolId : this.makeSymbolIds(name))
                 {
                     Position pos = Position.fromDegrees(lat, lon, 2000);
-                    TacticalSymbol symbol = new MilStd2525TacticalSymbol(symbolId, pos);
+                    MilStd2525TacticalSymbol symbol = new MilStd2525TacticalSymbol(symbolId, pos);
                     symbol.setValue(AVKey.DISPLAY_NAME, symbolId);
+                    symbol.setShowLocation(false);
                     layer.addRenderable(symbol);
                     lon += dLon;
                 }
@@ -89,7 +87,7 @@ public class AllTacticalSymbols extends ApplicationTemplate
             this.getLayerPanel().update(this.getWwd());
         }
 
-        protected List<String> makeSymbolIds(String name, String status)
+        protected List<String> makeSymbolIds(String name)
         {
             ArrayList<String> symbolIds = new ArrayList<String>();
             StringBuilder sb = new StringBuilder(name);
@@ -97,11 +95,124 @@ public class AllTacticalSymbols extends ApplicationTemplate
             for (String si : standardIdentities)
             {
                 sb.setCharAt(1, si.charAt(0));
-                sb.setCharAt(3, status.charAt(0));
+                sb.setCharAt(3, 'p'); // Present
                 symbolIds.add(sb.toString().toUpperCase());
             }
 
             return symbolIds;
+        }
+
+        protected void addSymbolControls()
+        {
+            Box box = Box.createVerticalBox();
+            box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            // Create a check box that toggles the frame visibility for all symbols.
+            JCheckBox cb = new JCheckBox("Show Frame", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Layer layer : getWwd().getModel().getLayers())
+                    {
+                        if (!(layer instanceof RenderableLayer))
+                            continue;
+
+                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        {
+                            if (r instanceof TacticalSymbol)
+                                ((MilStd2525TacticalSymbol) r).setShowFrame(tf);
+                            getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                        }
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the fill visibility for all symbols.
+            cb = new JCheckBox("Show Fill", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Layer layer : getWwd().getModel().getLayers())
+                    {
+                        if (!(layer instanceof RenderableLayer))
+                            continue;
+
+                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        {
+                            if (r instanceof TacticalSymbol)
+                                ((MilStd2525TacticalSymbol) r).setShowFill(tf);
+                            getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                        }
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the icon visibility for all symbols.
+            cb = new JCheckBox("Show Icon", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Layer layer : getWwd().getModel().getLayers())
+                    {
+                        if (!(layer instanceof RenderableLayer))
+                            continue;
+
+                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        {
+                            if (r instanceof TacticalSymbol)
+                                ((MilStd2525TacticalSymbol) r).setShowIcon(tf);
+                            getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                        }
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the icon visibility for all symbols.
+            cb = new JCheckBox("Present/anticipated", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    String status = ((JCheckBox) actionEvent.getSource()).isSelected()
+                        ? SymbologyConstants.STATUS_PRESENT : SymbologyConstants.STATUS_ANTICIPATED;
+
+                    for (Layer layer : getWwd().getModel().getLayers())
+                    {
+                        if (!(layer instanceof RenderableLayer))
+                            continue;
+
+                        for (Renderable r : ((RenderableLayer) layer).getRenderables())
+                        {
+                            if (r instanceof TacticalSymbol)
+                                ((MilStd2525TacticalSymbol) r).setStatus(status);
+                            getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                        }
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(Box.createVerticalStrut(10));
+            box.add(cb);
+
+            this.getLayerPanel().add(box, BorderLayout.SOUTH);
         }
     }
 
