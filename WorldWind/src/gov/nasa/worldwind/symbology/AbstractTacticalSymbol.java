@@ -1045,10 +1045,14 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (scale != null && scale == 0)
                 return;
 
+            // Compute the scale for this frame. This must happen before layout because the text layout may depend
+            // on the scale.
+            this.computeScale();
+
             // Compute the icon and modifier layout.
             this.layout(dc);
 
-            // Compute the scale and offset parameters that are applied during rendering. This must be done after
+            // Compute the offset parameters that are applied during rendering. This must be done after
             // layout, because the transform depends on the frame rectangle computed during layout.
             this.computeTransform(dc);
 
@@ -1649,6 +1653,20 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         }
     }
 
+    protected void computeScale()
+    {
+        if (this.getActiveAttributes().getScale() != null)
+        {
+            this.sx = this.getActiveAttributes().getScale();
+            this.sy = this.getActiveAttributes().getScale();
+        }
+        else
+        {
+            this.sx = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
+            this.sy = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
+        }
+    }
+
     protected void computeTransform(DrawContext dc)
     {
         if (this.getOffset() != null && this.iconRect != null)
@@ -1674,17 +1692,6 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
      */
     protected void computeScaledBounds(DrawContext dc, AVList modifiers)
     {
-        if (this.getActiveAttributes().getScale() != null)
-        {
-            this.sx = this.getActiveAttributes().getScale();
-            this.sy = this.getActiveAttributes().getScale();
-        }
-        else
-        {
-            this.sx = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
-            this.sy = BasicTacticalSymbolAttributes.DEFAULT_SCALE;
-        }
-
         Dimension maxDimension = this.computeMinTextLayout(dc, modifiers);
         this.iconRectScaled = this.computeScaledRect(this.iconRect, maxDimension, this.sx, this.sy);
         this.layoutRectScaled = this.computeScaledRect(this.layoutRect, maxDimension, this.sx, this.sy);
