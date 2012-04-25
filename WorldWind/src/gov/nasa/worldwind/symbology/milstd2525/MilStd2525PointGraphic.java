@@ -24,7 +24,7 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
+public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525TacticalGraphic, TacticalPoint
 {
     // Implementation note: This class wraps an instance of TacticalGraphicSymbol. TacticalGraphicSymbol implements the
     // logic for rendering point graphics using the TacticalSymbol base classes. This class adapts the TacticalGraphic
@@ -345,6 +345,22 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
     public void setAltitudeMode(int altitudeMode)
     {
         this.symbol.setAltitudeMode(altitudeMode);
+    }
+
+    ////////////////////////////////////////
+    // MilStd2525TacticalGraphic interface
+    ////////////////////////////////////////
+
+    /** {@inheritDoc} */
+    public String getStatus()
+    {
+        return this.symbol.getStatus();
+    }
+
+    /** {@inheritDoc} */
+    public void setStatus(String value)
+    {
+        this.symbol.setStatus(value);
     }
 
     /////////////////////////////

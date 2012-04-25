@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -32,7 +32,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class HoldingLine extends MilStd2525TacticalGraphic
+public class HoldingLine extends AbstractMilStd2525TacticalGraphic
 {
     /** Default number of intervals used to draw the arc. */
     public final static int DEFAULT_NUM_INTERVALS = 32;

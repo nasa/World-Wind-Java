@@ -126,6 +126,59 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     }
 
     /**
+     * Indicates the current value of graphic's Status/Operational Condition field.
+     *
+     * @return this graphic's Status/Operational Condition field.
+     *
+     * @see #setStatus(String)
+     */
+    public String getStatus()
+    {
+        return this.symbolCode.getStatus();
+    }
+
+    /**
+     * Specifies this graphic's Status/Operational Condition field. A graphic's Status defines whether the represented
+     * object exists at the time the symbol was generated, or is anticipated to exist in the future. Additionally, a
+     * graphic's Status can define its operational condition. The recognized values depend on the graphic's scheme:
+     * <p/>
+     * <strong>Tactical graphics</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_SUSPECTED</li> <li>STATUS_PRESENT</li> <li>STATUS_KNOWN</li> </ul>
+     * <p/>
+     * <strong>Meteorological and Oceanographic</strong>
+     * <p/>
+     * <ul> <li>Not supported</li> </ul>
+     * <p/>
+     * <strong>Emergency Management</strong>
+     * <p/>
+     * <ul> <li>STATUS_ANTICIPATED</li> <li>STATUS_PRESENT</li> </ul>
+     *
+     * @param value the new value for the Status/Operational Condition field.
+     *
+     * @throws IllegalArgumentException if the specified value is <code>null</code> or is not one of the accepted status
+     *                                  values.
+     */
+    public void setStatus(String value)
+    {
+        if (value == null)
+        {
+            String msg = Logging.getMessage("nullValue.StringIsNull");
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (!SymbologyConstants.STATUS_ALL.contains(value.toUpperCase()))
+        {
+            String msg = Logging.getMessage("Symbology.InvalidStatus", value);
+            Logging.logger().severe(msg);
+            throw new IllegalArgumentException(msg);
+        }
+
+        this.symbolCode.setStatus(value);
+    }
+
+    /**
      * Initialize the new symbol.
      *
      * @param sidc Code that identifies the graphic.

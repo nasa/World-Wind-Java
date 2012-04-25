@@ -124,7 +124,7 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
      * @param sidc MIL-STD-2525 symbol identification code (SIDC).
      */
     @SuppressWarnings({"unchecked"})
-    public TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions,
+    public MilStd2525TacticalGraphic createGraphic(String sidc, Iterable<? extends Position> positions,
         AVList modifiers)
     {
         SymbolCode symbolCode = new SymbolCode(sidc);
@@ -135,19 +135,18 @@ public class MilStd2525GraphicFactory implements TacticalGraphicFactory
             return null;
         }
 
-        if (!TacticalGraphic.class.isAssignableFrom(clazz))
+        if (!MilStd2525TacticalGraphic.class.isAssignableFrom(clazz))
         {
-            String msg = Logging.getMessage("Symbology.CannotCast", clazz,
-                MilStd2525TacticalGraphic.class);
+            String msg = Logging.getMessage("Symbology.CannotCast", clazz, MilStd2525TacticalGraphic.class);
             Logging.logger().severe(msg);
             throw new IllegalArgumentException(msg);
         }
 
-        TacticalGraphic graphic;
+        MilStd2525TacticalGraphic graphic;
         try
         {
             Constructor ct = clazz.getConstructor(String.class);
-            graphic = (TacticalGraphic) ct.newInstance(sidc);
+            graphic = (MilStd2525TacticalGraphic) ct.newInstance(sidc);
 
             if (positions != null)
             {

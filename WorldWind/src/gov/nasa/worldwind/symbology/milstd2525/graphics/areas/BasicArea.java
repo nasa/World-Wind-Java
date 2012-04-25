@@ -10,7 +10,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.WWUtil;
 
@@ -26,7 +26,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class BasicArea extends MilStd2525TacticalGraphic implements PreRenderable
+public class BasicArea extends AbstractMilStd2525TacticalGraphic implements PreRenderable
 {
     protected SurfacePolygon polygon;
 

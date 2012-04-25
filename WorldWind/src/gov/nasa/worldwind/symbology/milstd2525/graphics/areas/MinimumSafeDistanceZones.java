@@ -8,7 +8,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
@@ -24,7 +24,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class MinimumSafeDistanceZones extends MilStd2525TacticalGraphic implements PreRenderable
+public class MinimumSafeDistanceZones extends AbstractMilStd2525TacticalGraphic implements PreRenderable
 {
     /**
      * Default angle used to position the graphic's labels. This default angle (60 degrees) is chosen to match the

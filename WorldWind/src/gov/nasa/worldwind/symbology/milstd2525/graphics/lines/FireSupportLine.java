@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -27,7 +27,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class FireSupportLine extends MilStd2525TacticalGraphic
+public class FireSupportLine extends AbstractMilStd2525TacticalGraphic
 {
     /** Factor applied to the stipple pattern used to draw the dashed line for a Coordinated Fire Line. */
     protected static final int CFL_OUTLINE_STIPPLE_FACTOR = 12;

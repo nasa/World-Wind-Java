@@ -79,8 +79,6 @@ public class AllPointGraphics extends ApplicationTemplate
             WWUtil.alignComponent(null, this, AVKey.CENTER);
         }
 
-        protected static final char[] ALL_STATUS = new char[] {'P', 'A'};
-
         protected void createTacGrpPoints(RenderableLayer layer)
         {
             List<String> allGraphics = MilStd2525PointGraphic.getTacGrpGraphics();
@@ -95,47 +93,44 @@ public class AllPointGraphics extends ApplicationTemplate
 
             for (int i = 0; i < numGraphics; i++)
             {
-                for (int j = 0; j < ALL_STATUS.length; j++)
+                Position pos = Position.fromDegrees(latitude, longitude, 0);
+
+                StringBuilder sidc = new StringBuilder(allGraphics.get(i));
+
+                sidc.setCharAt(1, 'F'); // Standard identify: Friend
+                sidc.setCharAt(3, 'P'); // Present
+
+                TacticalPoint graphic = new MilStd2525PointGraphic(sidc.toString());
+                graphic.setPosition(pos);
+
+                // Set all modifiers, even on graphics that do not support them. This allows us to confirm
+                // that modifiers are only drawn for graphics that ^do^ support them.
+                graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("T", "T1"));
+                graphic.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, Arrays.asList("H", "H1"));
+                graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "X");
+                graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("W", "W1"));
+                graphic.setModifier(SymbologyConstants.QUANTITY, "C"); // Only applies to Nuclear graphic
+                graphic.setModifier(SymbologyConstants.TYPE, "V"); // Applies only to Nuclear graphic
+
+                // Location and Direction of Movement apply only to CBRN graphics.
+                graphic.setModifier(SymbologyConstants.LOCATION, "Y");
+                graphic.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
+
+                graphic.setAttributes(this.sharedAttrs);
+                graphic.setHighlightAttributes(this.sharedHighlightAttrs);
+
+                graphic.setValue(AVKey.DISPLAY_NAME, sidc.toString());
+
+                layer.addRenderable(graphic);
+
+                if ((i + 1) % cols == 0)
                 {
-                    Position pos = Position.fromDegrees(latitude, longitude, 0);
-
-                    StringBuilder sidc = new StringBuilder(allGraphics.get(i));
-
-                    sidc.setCharAt(1, 'F'); // Standard identify: Friend
-                    sidc.setCharAt(3, ALL_STATUS[j]);
-
-                    TacticalPoint graphic = new MilStd2525PointGraphic(sidc.toString());
-                    graphic.setPosition(pos);
-
-                    // Set all modifiers, even on graphics that do not support them. This allows us to confirm
-                    // that modifiers are only drawn for graphics that ^do^ support them.
-                    graphic.setModifier(SymbologyConstants.UNIQUE_DESIGNATION, Arrays.asList("T", "T1"));
-                    graphic.setModifier(SymbologyConstants.ADDITIONAL_INFORMATION, Arrays.asList("H", "H1"));
-                    graphic.setModifier(SymbologyConstants.ALTITUDE_DEPTH, "X");
-                    graphic.setModifier(SymbologyConstants.DATE_TIME_GROUP, Arrays.asList("W", "W1"));
-                    graphic.setModifier(SymbologyConstants.QUANTITY, "C"); // Only applies to Nuclear graphic
-                    graphic.setModifier(SymbologyConstants.TYPE, "V"); // Applies only to Nuclear graphic
-
-                    // Location and Direction of Movement apply only to CBRN graphics.
-                    graphic.setModifier(SymbologyConstants.LOCATION, "Y");
-                    graphic.setModifier(SymbologyConstants.DIRECTION_OF_MOVEMENT, Angle.fromDegrees(45));
-
-                    graphic.setAttributes(this.sharedAttrs);
-                    graphic.setHighlightAttributes(this.sharedHighlightAttrs);
-
-                    graphic.setValue(AVKey.DISPLAY_NAME, sidc.toString());
-
-                    layer.addRenderable(graphic);
-
-                    if ((i * ALL_STATUS.length + j + 1) % cols == 0)
-                    {
-                        latitude -= delta;
-                        longitude = startLon;
-                    }
-                    else
-                    {
-                        longitude += delta;
-                    }
+                    latitude -= delta;
+                    longitude = startLon;
+                }
+                else
+                {
+                    longitude += delta;
                 }
             }
         }
@@ -332,6 +327,27 @@ public class AllPointGraphics extends ApplicationTemplate
                     {
                         if (r instanceof TacticalGraphic)
                             ((TacticalGraphic) r).setShowLocation(tf);
+                    }
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the visibility of the location modifier.
+            cb = new JCheckBox("Present/anticipated", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : tacgrpLayer.getRenderables())
+                    {
+                        String status = tf ? SymbologyConstants.STATUS_PRESENT : SymbologyConstants.STATUS_ANTICIPATED;
+                        if (r instanceof MilStd2525TacticalGraphic)
+                            ((MilStd2525TacticalGraphic) r).setStatus(status);
                     }
                     getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                 }

@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.TacticalGraphicLabel;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
@@ -28,7 +28,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class PhaseLine extends MilStd2525TacticalGraphic
+public class PhaseLine extends AbstractMilStd2525TacticalGraphic
 {
     /** Factor applied to the stipple pattern used to draw the dashed line for a Probable Line of Deployment. */
     protected static final int PLD_OUTLINE_STIPPLE_FACTOR = 12;

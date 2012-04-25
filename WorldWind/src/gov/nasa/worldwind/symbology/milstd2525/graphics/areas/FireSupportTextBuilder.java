@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.*;
+import gov.nasa.worldwind.symbology.milstd2525.SymbolCode;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -33,7 +33,7 @@ public class FireSupportTextBuilder
      *         include a second element. The second element (if present) is text for a label that must be placed at the
      *         left side of the area.
      */
-    public String[] createText(MilStd2525TacticalGraphic graphic)
+    public String[] createText(TacticalGraphic graphic)
     {
         if (graphic == null)
         {
@@ -114,7 +114,7 @@ public class FireSupportTextBuilder
             || TacGrpSidc.FSUPP_ARS_C2ARS_ACA_CIRCLR.equalsIgnoreCase(functionId);
     }
 
-    protected String createMainText(MilStd2525TacticalGraphic graphic, String functionId, boolean includeTime,
+    protected String createMainText(TacticalGraphic graphic, String functionId, boolean includeTime,
         boolean includeAltitude)
     {
         StringBuilder sb = new StringBuilder();
@@ -267,7 +267,7 @@ public class FireSupportTextBuilder
         return "";
     }
 
-    protected String createAirspaceCoordinationText(MilStd2525TacticalGraphic graphic)
+    protected String createAirspaceCoordinationText(TacticalGraphic graphic)
     {
         StringBuilder sb = new StringBuilder();
         sb.append("ACA\n");

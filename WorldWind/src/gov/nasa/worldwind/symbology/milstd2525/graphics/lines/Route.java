@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.*;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
@@ -28,7 +28,7 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, PreRenderable
+public class Route extends AbstractMilStd2525TacticalGraphic implements TacticalRoute, PreRenderable
 {
     /** Width of the route if no width is specified in the modifiers. */
     public static final double DEFAULT_WIDTH = 2000;
@@ -209,6 +209,24 @@ public class Route extends MilStd2525TacticalGraphic implements TacticalRoute, P
             for (TacticalGraphic child : this.children)
             {
                 child.setAttributes(attributes);
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setStatus(String status)
+    {
+        super.setStatus(status);
+
+        if (this.children != null)
+        {
+            for (TacticalGraphic child : this.children)
+            {
+                if (child instanceof MilStd2525TacticalGraphic)
+                {
+                    ((MilStd2525TacticalGraphic) child).setStatus(status);
+                }
             }
         }
     }

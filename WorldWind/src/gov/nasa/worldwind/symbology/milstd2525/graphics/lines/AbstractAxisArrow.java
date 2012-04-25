@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public abstract class AbstractAxisArrow extends MilStd2525TacticalGraphic
+public abstract class AbstractAxisArrow extends AbstractMilStd2525TacticalGraphic
 {
     /** Path used to render the line. */
     protected Path[] paths;

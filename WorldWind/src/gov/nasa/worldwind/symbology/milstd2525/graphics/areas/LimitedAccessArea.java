@@ -11,7 +11,7 @@ import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
@@ -26,7 +26,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class LimitedAccessArea extends MilStd2525TacticalGraphic
+public class LimitedAccessArea extends AbstractMilStd2525TacticalGraphic
 {
     protected TacticalSymbol symbol;
     protected Path path;

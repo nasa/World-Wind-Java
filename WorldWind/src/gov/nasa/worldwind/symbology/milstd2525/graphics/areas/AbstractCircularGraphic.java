@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.util.Logging;
 
 import java.util.*;
@@ -20,7 +20,8 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public abstract class AbstractCircularGraphic extends MilStd2525TacticalGraphic implements TacticalCircle, PreRenderable
+public abstract class AbstractCircularGraphic extends AbstractMilStd2525TacticalGraphic
+    implements TacticalCircle, PreRenderable
 {
     protected SurfaceCircle circle;
 

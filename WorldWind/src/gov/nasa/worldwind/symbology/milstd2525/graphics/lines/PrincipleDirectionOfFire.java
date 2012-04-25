@@ -12,7 +12,7 @@ import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.globes.Globe;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.*;
 
@@ -24,7 +24,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class PrincipleDirectionOfFire extends MilStd2525TacticalGraphic implements PreRenderable
+public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic implements PreRenderable
 {
     /** Default length of the arrowhead, as a fraction of the total line length. */
     public final static double DEFAULT_ARROWHEAD_LENGTH = 0.1;

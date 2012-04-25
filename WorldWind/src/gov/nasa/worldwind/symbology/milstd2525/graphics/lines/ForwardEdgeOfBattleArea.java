@@ -25,7 +25,7 @@ import java.util.List;
  * @author pabercrombie
  * @version $Id$
  */
-public class ForwardEdgeOfBattleArea extends MilStd2525TacticalGraphic
+public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic
 {
     protected final static Offset LEFT_CENTER = Offset.fromFraction(-0.1, 0.5);
     protected final static Offset RIGHT_CENTER = Offset.fromFraction(1.1, 0.5);

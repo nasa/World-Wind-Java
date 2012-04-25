@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525.graphics.areas;
 import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalGraphic;
+import gov.nasa.worldwind.symbology.milstd2525.AbstractMilStd2525TacticalGraphic;
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
 import gov.nasa.worldwind.util.Logging;
 
@@ -21,7 +21,7 @@ import java.util.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class CircularRangeFan extends MilStd2525TacticalGraphic implements PreRenderable
+public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implements PreRenderable
 {
     protected final static Offset LABEL_OFFSET = Offset.fromFraction(0d, 0d);
 
