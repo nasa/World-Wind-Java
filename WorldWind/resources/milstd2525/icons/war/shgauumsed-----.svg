@@ -82,28 +82,28 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
   <g
      transform="matrix(0.5,0,0,0.5,37.999995,150)"
      id="g4"
-     style="stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:none">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
        id="text6">
       <path
          inkscape:connector-curvature="0"
          d="m 160.81543,230 0,-107.37305 79.61426,0 0,18.16407 -57.93457,0 0,23.80371 53.90625,0 0,18.09082 -53.90625,0 0,29.22363 59.98535,0 0,18.09082 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
          id="path3003" />
     </g>
   </g>
   <g
      transform="matrix(0.5,0,0,0.5,147.99999,150)"
      id="g8"
-     style="stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:none">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
        id="text10">
       <path
          inkscape:connector-curvature="0"
          d="m 155.39551,230 -25.63477,-107.37305 22.19238,0 16.18653,73.75489 19.6289,-73.75489 25.78125,0 18.82325,75 16.47949,-75 21.82617,0 L 244.60449,230 221.60645,230 200.21973,149.72656 178.90625,230 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
          id="path3000" />
     </g>
   </g>
