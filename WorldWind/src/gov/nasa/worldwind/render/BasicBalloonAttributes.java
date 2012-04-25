@@ -409,9 +409,13 @@ public class BasicBalloonAttributes extends BasicShapeAttributes implements Ball
         if (so != null)
             this.getSize().getRestorableState(restorableSupport, so);
 
-        so = restorableSupport.addStateObject(context, "maxSize");
-        if (so != null)
-            this.getMaximumSize().getRestorableState(restorableSupport, so);
+        Size maxSize = this.getMaximumSize();
+        if (maxSize != null)
+        {
+            so = restorableSupport.addStateObject(context, "maxSize");
+            if (so != null)
+                this.getMaximumSize().getRestorableState(restorableSupport, so);
+        }
 
         so = restorableSupport.addStateObject(context, "drawOffset");
         if (so != null)
