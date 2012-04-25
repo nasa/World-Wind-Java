@@ -5,7 +5,7 @@
  */
 package gov.nasa.worldwind.layers;
 
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.terrain.SectorGeometryList;
 import gov.nasa.worldwind.util.*;
@@ -41,7 +41,7 @@ public class IconLayer extends AbstractLayer
 
     /**
      * Adds the specified <code>icon</code> to this layer's internal collection. If this layer's internal collection has
-     * been overriden with a call to {@link #setIcons}, this will throw an exception.
+     * been overridden with a call to {@link #setIcons}, this will throw an exception.
      *
      * @param icon Icon to add.
      *
@@ -127,7 +127,7 @@ public class IconLayer extends AbstractLayer
 
     /**
      * Clears the contents of this layer's internal Icon collection. If this layer's internal collection has been
-     * overriden with a call to {@link #setIcons}, this will throw an exception.
+     * overridden with a call to {@link #setIcons}, this will throw an exception.
      *
      * @throws IllegalStateException If a custom Iterable has been specified by a call to <code>setIcons</code>.
      */

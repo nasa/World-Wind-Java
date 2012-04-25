@@ -117,7 +117,7 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
 
     /**
      * Add a named item to the quadtree. Any item duplicates are duplicated in the tree. Any name duplicates replace the
-     * current name assocation; the name then refers to the item added.
+     * current name association; the name then refers to the item added.
      *
      * @param item       the item to add.
      * @param itemCoords an array specifying the region or location of the item. If the array's length is 2 it
