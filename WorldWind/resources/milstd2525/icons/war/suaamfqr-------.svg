@@ -59,11 +59,11 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <g
-     transform="scale(0.5 0.5) translate(202 85)"
+     transform="matrix(0.5,0,0,0.5,101,42.500003)"
      id="g6"
-     style="stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:none">
     <text
-       style="fill:rgb(255, 255, 255);font-family:Arial;font-size:150;font-weight:bold;text-anchor:middle;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
        x="200"
        y="230"
        id="text8">R</text>

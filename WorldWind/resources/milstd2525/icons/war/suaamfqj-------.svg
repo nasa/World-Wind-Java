@@ -59,21 +59,22 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <g
-     transform="scale(0.5 0.5) translate(205 85)"
+     transform="matrix(0.5,0,0,0.5,102.5,42.499995)"
      id="g6"
-     style="stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:none">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
        id="text8">
       <path
+         inkscape:connector-curvature="0"
          d="m 207.91016,122.62695 21.60644,0 0,67.96875 c -7e-5,8.88675 -0.78132,15.72268 -2.34375,20.50782 -2.09967,6.25001 -5.90826,11.26709 -11.42578,15.05127 -5.51763,3.78417 -12.79301,5.67626 -21.82617,5.67626 -10.59573,0 -18.75002,-2.9663 -24.46289,-8.89892 -5.7129,-5.93261 -8.59375,-14.63621 -8.64258,-26.11084 L 181.25,194.47754 c 0.24412,6.15237 1.14744,10.49807 2.70996,13.03711 2.34372,3.85744 5.90817,5.78615 10.69336,5.78613 4.83394,2e-5 8.25191,-1.37938 10.25391,-4.13818 2.0019,-2.75877 3.00288,-8.48386 3.00293,-17.1753 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
          id="path2999" />
     </g>
   </g>
   <path
      inkscape:connector-curvature="0"
      style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0"
-     d="m 100,160 0,40 100,60 100,-60 0,-40 -100,60 z"
+     d="m 100,160 0,40 100,59.99999 L 300,200 l 0,-40 -100,59.99999 z"
      id="polyline4" />
 </svg>

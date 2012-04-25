@@ -59,21 +59,22 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <g
-     transform="translate(100 30) scale(0.5 0.5)"
+     transform="matrix(0.5,0,0,0.5,100,29.999995)"
      id="g6"
-     style="stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:none">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
        id="text8">
       <path
+         inkscape:connector-curvature="0"
          d="m 156.78711,230 0,-107.37305 21.67969,0 0,42.26075 42.48047,0 0,-42.26075 21.67968,0 0,107.37305 -21.67968,0 0,-46.94824 -42.48047,0 0,46.94824 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
          id="path2999" />
     </g>
   </g>
   <path
      inkscape:connector-curvature="0"
      style="fill:#ffffff;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0"
-     d="m 200,200 -90,-50 0,100 90,-50 90,-50 0,100 -90,-50"
+     d="M 200,199.99999 110,150 l 0,99.99999 90,-50 L 290,150 l 0,99.99999 -90,-50"
      id="polyline4" />
 </svg>

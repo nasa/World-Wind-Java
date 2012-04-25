@@ -70,15 +70,16 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      style="fill:none;stroke:rgb(255,255,255);stroke-width:10;stroke-dasharray:10"
      id="path6" />
   <g
-     transform="translate(78 70) scale(0.4 0.4)"
+     transform="matrix(0.4,0,0,0.4,77.999996,70)"
      id="g8"
-     style="stroke:#ffffff;stroke-opacity:1;stroke-width:15;stroke-miterlimit:4;stroke-dasharray:30, 15;stroke-dashoffset:0">
+     style="fill:#ffffff;stroke:none">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:15;stroke-miterlimit:4;stroke-dasharray:30, 15;stroke-dashoffset:0"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
        id="text10">
       <path
+         inkscape:connector-curvature="0"
          d="m 165.20996,230 0,-107.37305 73.6084,0 0,18.16407 -51.92871,0 0,25.41503 44.82422,0 0,18.16407 -44.82422,0 0,45.62988 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:15;stroke-miterlimit:4;stroke-dasharray:30, 15;stroke-dashoffset:0"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;stroke:none;font-family:Arial"
          id="path2994" />
     </g>
   </g>

@@ -54,13 +54,14 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:zoom="0.59"
      inkscape:cx="200"
      inkscape:cy="200"
-     inkscape:window-x="39"
-     inkscape:window-y="42"
+     inkscape:window-x="464"
+     inkscape:window-y="343"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg2" />
   <path
-     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:12, 6;stroke-dashoffset:0"
-     d="M 184 78.40625 L 184 102.40625 L 160 102.40625 L 160 134.40625 L 184 134.40625 L 184 158.40625 L 216 158.40625 L 216 134.40625 L 240 134.40625 L 240 102.40625 L 216 102.40625 L 216 78.40625 L 184 78.40625 z "
+     inkscape:connector-curvature="0"
+     style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+     d="m 184,78.40625 0,24 -24,0 0,32 24,0 0,24 32,0 0,-24 24,0 0,-32 -24,0 0,-24 -32,0 z"
      id="line8" />
   <path
      inkscape:connector-curvature="0"

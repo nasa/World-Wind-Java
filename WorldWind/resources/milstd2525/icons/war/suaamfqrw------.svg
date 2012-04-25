@@ -47,7 +47,7 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="640"
+     inkscape:window-width="705"
      inkscape:window-height="480"
      id="namedview10"
      showgrid="false"
@@ -61,15 +61,15 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
   <g
      transform="matrix(0.5,0,0,0.5,100,42.500003)"
      id="g6"
-     style="stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:none;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0">
     <g
        transform="translate(-46.8,55.7)"
-       style="font-size:150px;font-weight:bold;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:150px;font-weight:bold;fill:#ffffff;stroke:none;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
        id="text8">
       <path
          inkscape:connector-curvature="0"
          d="M 202.14746,198 176.5127,90.626953 l 22.19238,0 16.18652,73.754887 19.62891,-73.754887 25.78125,0 18.82324,74.999997 16.47949,-74.999997 21.82617,0 L 291.35645,198 268.3584,198 246.97168,117.72656 225.6582,198 z"
-         style="font-size:150px;font-weight:bold;fill:#ffffff;stroke:#ffffff;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
+         style="font-size:150px;font-weight:bold;fill:#ffffff;stroke:none;stroke-width:12;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:24, 12;stroke-dashoffset:0;font-family:Arial"
          id="path3010" />
     </g>
   </g>

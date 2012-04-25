@@ -52,7 +52,7 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      id="namedview10"
      showgrid="false"
      inkscape:zoom="0.59"
-     inkscape:cx="139.7485"
+     inkscape:cx="114.37944"
      inkscape:cy="200"
      inkscape:window-x="208"
      inkscape:window-y="133"
@@ -61,13 +61,13 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
   <g
      transform="scale(0.5 0.5) translate(200 85)"
      id="g6"
-     style="stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0">
+     style="stroke:none;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0">
     <g
-       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
+       style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:none;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
        id="text8">
       <path
          d="m 189.01367,230 0,-45.19043 -39.33105,-62.18262 25.41504,0 25.26855,42.48047 24.75586,-42.48047 24.97559,0 -39.47754,62.3291 0,45.04395 z"
-         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#ffffff;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
+         style="font-size:150px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:none;stroke-opacity:1;stroke-width:12;stroke-miterlimit:4;stroke-dasharray:24, 12;stroke-dashoffset:0"
          id="path2999" />
     </g>
   </g>

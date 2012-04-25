@@ -47,12 +47,12 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="705"
-     inkscape:window-height="480"
+     inkscape:window-width="909"
+     inkscape:window-height="550"
      id="namedview8"
      showgrid="false"
      inkscape:zoom="0.59"
-     inkscape:cx="200"
+     inkscape:cx="-61.864407"
      inkscape:cy="200"
      inkscape:window-x="72"
      inkscape:window-y="76"
@@ -67,11 +67,11 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
        id="path2990" />
   </g>
   <g
-     style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+     style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:none;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
      id="text6">
     <path
        d="m 181.21094,103.47168 17.17041,0 c 3.87204,5e-5 6.8237,0.29627 8.85498,0.88867 2.72946,0.80408 5.06751,2.2323 7.01416,4.28467 1.94657,2.05245 3.42769,4.56506 4.44336,7.53784 1.01558,2.97285 1.52339,6.63862 1.52344,10.99732 -5e-5,3.82977 -0.47612,7.13055 -1.42823,9.90234 -1.16378,3.38543 -2.82474,6.12549 -4.98291,8.22021 -1.62927,1.58692 -3.82978,2.82471 -6.60156,3.71338 -2.0736,0.65593 -4.8454,0.98389 -8.31543,0.98389 l -17.67822,0 z m 9.39453,7.87109 0,30.81787 7.01416,0 c 2.62367,1e-5 4.51739,-0.1481 5.68115,-0.44433 1.52341,-0.38085 2.78765,-1.0262 3.79273,-1.93604 1.00501,-0.90982 1.82491,-2.4068 2.45971,-4.49096 0.63473,-2.08413 0.95212,-4.92471 0.95215,-8.52173 -3e-5,-3.59698 -0.31742,-6.35821 -0.95215,-8.28369 -0.6348,-1.92543 -1.52347,-3.4277 -2.66601,-4.50684 -1.14261,-1.07906 -2.59199,-1.80904 -4.34815,-2.18994 -1.31187,-0.29619 -3.88267,-0.4443 -7.7124,-0.44434 z"
-       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:#000000;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:12,6;stroke-dashoffset:0"
+       style="font-size:65px;font-weight:bold;text-anchor:middle;fill:#ffffff;font-family:Arial;stroke:none;stroke-opacity:1;stroke-width:6;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
        id="path2993" />
   </g>
 </svg>
