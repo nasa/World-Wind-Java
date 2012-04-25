@@ -1032,17 +1032,15 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             if (this.eyeDistance > horizon)
                 return;
 
-            // Do not compute layout if the symbol is not visible.
-            if (!this.intersectsFrustum(dc))
+            // If the symbol has never been laid out perform a frustum test using estimated screen bounds. If the symbol
+            // is not visible, then don't compute layout. This avoids downloading icons and laying out symbols that are
+            // not yet visible.
+            if (this.screenRect == null && !this.intersectsFrustum(dc))
                 return;
 
             // Compute the currently active attributes from either the normal or the highlight attributes.
             this.determineActiveAttributes();
             if (this.getActiveAttributes() == null)
-                return;
-
-            Double scale = this.getActiveAttributes().getScale();
-            if (scale != null && scale == 0)
                 return;
 
             // Compute the scale for this frame. This must happen before layout because the text layout may depend
@@ -1059,7 +1057,9 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             this.frameNumber = dc.getFrameTimeStamp();
         }
 
-        dc.addOrderedRenderable(this);
+        // Determine if the symbol is visible, now that the layout is known.
+        if (this.intersectsFrustum(dc))
+            dc.addOrderedRenderable(this);
 
         if (dc.isPickingMode())
             this.pickLayer = dc.getCurrentLayer();
@@ -1767,11 +1767,25 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
 
     protected Rectangle computeScreenExtent()
     {
-        double width = MAX_SYMBOL_DIMENSION;
-        double height = MAX_SYMBOL_DIMENSION;
+        double width;
+        double height;
+        double x;
+        double y;
 
-        double x = this.screenPoint.x - width / 2.0;
-        double y = this.screenPoint.y - height / 2.0;
+        if (this.screenRect != null)
+        {
+            x = this.screenPoint.x + this.sx * (this.dx + this.screenRect.getX());
+            y = this.screenPoint.y + this.sy * (this.dy + this.screenRect.getY());
+            width = this.sx * this.screenRect.getWidth();
+            height = this.sy * this.screenRect.getHeight();
+        }
+        else
+        {
+            width = MAX_SYMBOL_DIMENSION;
+            height = MAX_SYMBOL_DIMENSION;
+            x = this.screenPoint.x - width / 2.0;
+            y = this.screenPoint.y - height / 2.0;
+        }
 
         return new Rectangle((int) x, (int) y, (int) Math.ceil(width), (int) Math.ceil(height));
     }
