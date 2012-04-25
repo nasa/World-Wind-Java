@@ -60,11 +60,11 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      inkscape:current-layer="svg2" />
   <polyline
      points="120,255 120,165 181,105"
-     style="fill:none;stroke:rgb(255, 255, 255);stroke-width:5;stroke-miterlimit:4;stroke-dasharray:10,5;stroke-dashoffset:0"
+     style="fill:none;stroke:#ffffff;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:10, 5;stroke-dashoffset:0"
      id="polyline6" />
   <polyline
      points="280,255 280,165 219,105"
-     style="fill:none;stroke:rgb(255, 255, 255);stroke-width:5;stroke-miterlimit:4;stroke-dasharray:10,5;stroke-dashoffset:0"
+     style="fill:none;stroke:#ffffff;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:10, 5;stroke-dashoffset:0"
      id="polyline8" />
   <polyline
      points="120,255 120,165 181,105"
@@ -75,17 +75,17 @@ MIL-STD-2525 tactical symbol icon image. During icon composition this image is m
      style="fill:none;stroke:#ffffff;stroke-width:5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:10, 5;stroke-dashoffset:0"
      id="polyline8-7" />
   <g
-     style="font-size:60px;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+     style="font-size:60px;fill:#ffffff;stroke:none;font-family:Arial"
      id="text10">
     <path
        inkscape:connector-curvature="0"
        d="m 185.55664,310 0,-37.88086 -14.15039,0 0,-5.06836 34.04297,0 0,5.06836 -14.20899,0 0,37.88086 z"
-       style="font-size:60px;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:60px;fill:#ffffff;stroke:none;font-family:Arial"
        id="path3006" />
     <path
        inkscape:connector-curvature="0"
        d="m 211.60156,310 0,-42.94922 28.97461,0 0,5.06836 -23.29101,0 0,13.30078 20.15625,0 0,5.06836 -20.15625,0 0,19.51172 z"
-       style="font-size:60px;fill:#ffffff;stroke:#ffffff;stroke-width:6;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:12, 6;stroke-dashoffset:0;font-family:Arial"
+       style="font-size:60px;fill:#ffffff;stroke:none;font-family:Arial"
        id="path3008" />
   </g>
   <path
