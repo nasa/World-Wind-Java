@@ -320,6 +320,33 @@ public class MilStd2525PointGraphic extends AVListImpl implements TacticalPoint
         this.symbol.setPosition(position);
     }
 
+    /**
+     * Indicates this symbol's altitude mode. See {@link #setAltitudeMode(int)} for a description of the valid altitude
+     * modes.
+     *
+     * @return this symbol's altitude mode.
+     */
+    public int getAltitudeMode()
+    {
+        return this.symbol.getAltitudeMode();
+    }
+
+    /**
+     * Specifies this graphic's altitude mode. Altitude mode defines how the altitude component of this symbol's
+     * position is interpreted. Recognized modes are: <ul> <li>WorldWind.CLAMP_TO_GROUND -- this graphic is placed on
+     * the terrain at the latitude and longitude of its position.</li> <li>WorldWind.RELATIVE_TO_GROUND -- this graphic
+     * is placed above the terrain at the latitude and longitude of its position and the distance specified by its
+     * elevation.</li> <li>WorldWind.ABSOLUTE -- this graphic is placed at its specified position.</li> </ul>
+     * <p/>
+     * This graphic assumes the altitude mode WorldWind.ABSOLUTE if the specified mode is not recognized.
+     *
+     * @param altitudeMode this symbol's new altitude mode.
+     */
+    public void setAltitudeMode(int altitudeMode)
+    {
+        this.symbol.setAltitudeMode(altitudeMode);
+    }
+
     /////////////////////////////
     // Movable interface
     /////////////////////////////
