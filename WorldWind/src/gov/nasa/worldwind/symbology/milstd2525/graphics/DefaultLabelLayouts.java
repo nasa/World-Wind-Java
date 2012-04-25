@@ -25,8 +25,7 @@ import static gov.nasa.worldwind.symbology.milstd2525.graphics.TacticalGraphicSy
 public class DefaultLabelLayouts
 {
     /** Map to hold layouts. */
-    protected Map<String, Map<String, List<LabelLayout>>> layouts
-        = new HashMap<String, Map<String, List<LabelLayout>>>();
+    protected Map<String, List<LabelLayout>> layouts = new HashMap<String, List<LabelLayout>>();
 
     /** Create the map and populate it with the default layouts. */
     public DefaultLabelLayouts()
@@ -44,10 +43,10 @@ public class DefaultLabelLayouts
      *         some graphics support multiple instances of the same modifier, in which case the list will contain
      *         multiple layouts.
      */
-    public Map<String, List<LabelLayout>> get(String sidc)
+    public List<LabelLayout> get(String sidc)
     {
-        Map<String, List<LabelLayout>> layout = this.layouts.get(sidc);
-        return layout != null ? layout : Collections.<String, List<LabelLayout>>emptyMap();
+        List<LabelLayout> layout = this.layouts.get(sidc);
+        return layout != null ? layout : Collections.<LabelLayout>emptyList();
     }
 
     /** Populate the map with the default layouts. */
@@ -57,22 +56,22 @@ public class DefaultLabelLayouts
         this.layouts.put(C2GM_GNL_PNT_HBR,
             this.createLayout(SymbologyConstants.ADDITIONAL_INFORMATION, Offset.CENTER, Offset.CENTER));
 
-        // C2GM.GNL.PNT.ACTPNT.DCNPNT supports the T modifier in teh center of the graphic.
+        // C2GM.GNL.PNT.ACTPNT.DCNPNT supports the T modifier in the center of the graphic.
         this.layouts.put(C2GM_GNL_PNT_ACTPNT_DCNPNT,
             this.createLayout(SymbologyConstants.UNIQUE_DESIGNATION, Offset.CENTER, Offset.CENTER));
 
         // Most pentagon shaped graphics support the same modifiers around the pentagon.
-        Map<String, List<LabelLayout>> layout = new HashMap<String, List<LabelLayout>>();
-        this.putLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
+        List<LabelLayout> layout = new ArrayList<LabelLayout>();
+        this.addLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(1.1, 1.0),
             Offset.fromFraction(0.0, 1.0));
-        this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
+        this.addLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
             Offset.TOP_CENTER,
             Offset.BOTTOM_CENTER);
-        this.putLayout(layout, SymbologyConstants.HOSTILE_ENEMY,
+        this.addLayout(layout, SymbologyConstants.HOSTILE_ENEMY,
             Offset.fromFraction(1.1, 0.35),
             Offset.fromFraction(0.0, 0.0));
-        this.putLayout(layout, SymbologyConstants.DATE_TIME_GROUP,
+        this.addLayout(layout, SymbologyConstants.DATE_TIME_GROUP,
             Offset.fromFraction(-0.1, 0.8),
             Offset.fromFraction(1.0, 0.0),
             Offset.fromFraction(-0.1, 0.8),
@@ -129,8 +128,8 @@ public class DefaultLabelLayouts
 
         // C2GM.GNL.PNT.ACTPNT supports all the normal pentagon graphic modifiers, and also supports H1 in the
         // middle of the pentagon.
-        layout = new HashMap<String, List<LabelLayout>>(layout);
-        this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
+        layout = new ArrayList<LabelLayout>(layout);
+        this.addLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
             Offset.TOP_CENTER,
             Offset.BOTTOM_CENTER,
             Offset.fromFraction(0.5, 0.9),
@@ -139,46 +138,43 @@ public class DefaultLabelLayouts
 
         // CSS.PNT.AEP supports all the normal pentagon graphic modifiers, and also supports T1 in the
         // middle of the pentagon.
-        layout = new HashMap<String, List<LabelLayout>>(layout);
-        this.putLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
+        layout = new ArrayList<LabelLayout>(layout);
+        this.addLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
             Offset.fromFraction(1.1, 1.0),
             Offset.fromFraction(0.0, 1.0),
             Offset.CENTER,
             Offset.CENTER);
-        this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
+        this.addLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
             Offset.TOP_CENTER,
             Offset.BOTTOM_CENTER);
         this.layouts.put(CSS_PNT_AEP, layout);
 
         // The Chemical and Biological release graphics support the same modifiers.
-        layout = new HashMap<String, List<LabelLayout>>();
-        this.putLayout(layout, SymbologyConstants.DATE_TIME_GROUP,
-            Offset.fromFraction(0.0, 1.0),
-            Offset.fromFraction(1.0, 1.0));
-        this.putLayout(layout, SymbologyConstants.DATE_TIME_GROUP,
-            Offset.fromFraction(0.0, 1.0),
-            Offset.fromFraction(1.0, 1.0));
-        this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
-            Offset.fromFraction(1.0, 1.0),
-            Offset.fromFraction(0.0, 1.0));
-        this.putLayout(layout, SymbologyConstants.HOSTILE_ENEMY,
-            Offset.fromFraction(1.0, 0.0),
-            Offset.fromFraction(0.0, 0.0));
-        this.putLayout(layout, SymbologyConstants.TYPE,
-            Offset.LEFT_CENTER,
-            Offset.RIGHT_CENTER);
-        this.putLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
-            Offset.fromFraction(0.0, 0.0),
-            Offset.fromFraction(1.0, 0.0));
-        this.putLayout(layout, SymbologyConstants.LOCATION,
+        layout = new ArrayList<LabelLayout>();
+        this.addLayout(layout, SymbologyConstants.LOCATION,
             Offset.fromFraction(0.5, -0.1),
             Offset.TOP_CENTER);
+        this.addLayout(layout, SymbologyConstants.DATE_TIME_GROUP,
+            Offset.fromFraction(0.0, 1.0),
+            Offset.fromFraction(1.0, 1.0));
+        this.addLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
+            Offset.fromFraction(1.0, 1.0),
+            Offset.fromFraction(0.0, 1.0));
+        this.addLayout(layout, SymbologyConstants.HOSTILE_ENEMY,
+            Offset.fromFraction(1.0, 0.0),
+            Offset.fromFraction(0.0, 0.0));
+        this.addLayout(layout, SymbologyConstants.TYPE,
+            Offset.LEFT_CENTER,
+            Offset.RIGHT_CENTER);
+        this.addLayout(layout, SymbologyConstants.UNIQUE_DESIGNATION,
+            Offset.fromFraction(0.0, 0.0),
+            Offset.fromFraction(1.0, 0.0));
         this.layouts.put(MOBSU_CBRN_REEVNT_BIO, layout);
         this.layouts.put(MOBSU_CBRN_REEVNT_CML, layout);
 
         // The Nuclear graphic is mostly the same as chem/bio, but also supports the quantity modifier.
-        layout = new HashMap<String, List<LabelLayout>>(layout);
-        this.putLayout(layout, SymbologyConstants.QUANTITY,
+        layout = new ArrayList<LabelLayout>(layout);
+        this.addLayout(layout, SymbologyConstants.QUANTITY,
             Offset.TOP_CENTER,
             Offset.BOTTOM_CENTER);
         this.layouts.put(MOBSU_CBRN_NDGZ, layout);
@@ -209,8 +205,8 @@ public class DefaultLabelLayouts
 
         // FSUPP.PNT.TGT.PTGT is also cross shaped. In addition T in the upper right quad, it supports H and H1 in
         // the lower quads.
-        layout = new HashMap<String, List<LabelLayout>>(layout);
-        this.putLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
+        layout = new ArrayList<LabelLayout>(layout);
+        this.addLayout(layout, SymbologyConstants.ADDITIONAL_INFORMATION,
             Offset.fromFraction(0.75, 0.25),
             Offset.fromFraction(0.0, 1.0),
             Offset.fromFraction(0.25, 0.25),
@@ -234,27 +230,26 @@ public class DefaultLabelLayouts
      *
      * @return New map, populated with one entry for the key/value pair specified in the parameters.
      */
-    protected Map<String, List<LabelLayout>> createLayout(String key, Offset offset, Offset hotspot)
+    protected List<LabelLayout> createLayout(String key, Offset offset, Offset hotspot)
     {
-        Map<String, List<LabelLayout>> layout = new HashMap<String, List<LabelLayout>>(1);
+        LabelLayout layout = new LabelLayout(key);
+        layout.add(offset, hotspot);
 
-        layout.put(key, Arrays.asList(new LabelLayout(offset, hotspot)));
-
-        return layout;
+        return Arrays.asList(layout);
     }
 
     /**
      * Add a layout to a layout map, possibly replacing an existing layout.
      *
-     * @param layout  Map to which to add an entry.
-     * @param key     Modifier key.
-     * @param offsets List of offsets from which to create one or more LabelLayout objects. The offsets are specified in
-     *                pairs: first the image offset and then the label offset. If multiple pairs are provided, then
-     *                multiple LabelLayouts will be created and added to the map.
+     * @param layoutList List to which to add an entry.
+     * @param key        Modifier key.
+     * @param offsets    List of offsets from which to create one or more LabelLayout objects. The offsets are specified
+     *                   in pairs: first the image offset and then the label offset. If multiple pairs are provided,
+     *                   then multiple LabelLayouts will be created and added to the map.
      *
      * @throws IllegalArgumentException if offsets does not have even length.
      */
-    protected void putLayout(Map<String, List<LabelLayout>> layout, String key, Offset... offsets)
+    protected void addLayout(List<LabelLayout> layoutList, String key, Offset... offsets)
     {
         if (offsets.length % 2 != 0)
         {
@@ -263,16 +258,16 @@ public class DefaultLabelLayouts
             throw new IllegalArgumentException(msg);
         }
 
-        List<LabelLayout> list = new ArrayList<LabelLayout>();
+        LabelLayout layout = new LabelLayout(key);
         for (int i = 0; i < offsets.length; i += 2)
         {
             Offset offset = offsets[i];
             Offset hotspot = offsets[i + 1];
 
-            list.add(new LabelLayout(offset, hotspot));
+            layout.add(offset, hotspot);
         }
 
-        layout.put(key, list);
+        layoutList.add(layout);
     }
 
     /**
@@ -281,7 +276,7 @@ public class DefaultLabelLayouts
      * @param value Value to add.
      * @param keys  Keys that map to the value.
      */
-    protected void putAll(Map<String, List<LabelLayout>> value, String... keys)
+    protected void putAll(List<LabelLayout> value, String... keys)
     {
         for (String sidc : keys)
         {

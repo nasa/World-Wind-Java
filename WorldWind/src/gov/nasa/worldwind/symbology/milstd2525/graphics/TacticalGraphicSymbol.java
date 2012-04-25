@@ -17,6 +17,7 @@ import gov.nasa.worldwind.util.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Implementation of TacticalSymbol to render point graphics defined by MIL-STD-2525C Appendix B (Tactical Graphics).
@@ -43,13 +44,41 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     protected static DefaultLabelLayouts defaultLayouts = new DefaultLabelLayouts();
 
     protected static final Offset BELOW_BOTTOM_CENTER_OFFSET = Offset.fromFraction(0.5, -0.1);
+    /** The default number of label lines to expect when computing the minimum size of the text layout rectangle. */
+    protected static final int DEFAULT_LABEL_LINES = 2;
 
     public static class LabelLayout
+    {
+        protected String modifier;
+        protected List<OffsetPair> offsets = new ArrayList<OffsetPair>();
+
+        public LabelLayout(String modifier)
+        {
+            this.modifier = modifier;
+        }
+
+        public void add(Offset offset, Offset hotspot)
+        {
+            this.offsets.add(new OffsetPair(offset, hotspot));
+        }
+
+        public String getModifier()
+        {
+            return modifier;
+        }
+
+        public List<OffsetPair> getOffsets()
+        {
+            return this.offsets;
+        }
+    }
+
+    public static class OffsetPair
     {
         public Offset offset;
         public Offset hotSpot;
 
-        public LabelLayout(Offset offset, Offset hotSpot)
+        public OffsetPair(Offset offset, Offset hotSpot)
         {
             this.offset = offset;
             this.hotSpot = hotSpot;
@@ -136,6 +165,12 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     }
 
     @Override
+    protected int getMaxLabelLines(AVList modifiers)
+    {
+        return DEFAULT_LABEL_LINES;
+    }
+
+    @Override
     protected void applyImplicitModifiers(AVList modifiers)
     {
         String si = this.symbolCode.getStandardIdentity();
@@ -197,39 +232,37 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
     {
         this.currentLabels.clear();
 
-        // We compute a default font rather than using a static default in order to choose a font size that is
-        // appropriate for the symbol's frame height. According to the MIL-STD-2525C specification, the text modifier
-        // height must be 0.3x the symbol's frame height.
         Font font = this.getActiveAttributes().getTextModifierFont();
-        Map<String, java.util.List<LabelLayout>> allLayouts = defaultLayouts.get(this.symbolCode.toMaskedString());
+        List<LabelLayout> allLayouts = defaultLayouts.get(this.symbolCode.toMaskedString());
 
-        for (Map.Entry<String, java.util.List<LabelLayout>> entry : allLayouts.entrySet())
+        for (LabelLayout layout : allLayouts)
         {
-            String key = entry.getKey();
-            java.util.List<LabelLayout> layouts = entry.getValue();
+            java.util.List<OffsetPair> offsets = layout.offsets;
 
-            if (WWUtil.isEmpty(layouts))
+            if (WWUtil.isEmpty(offsets))
                 continue;
 
-            Object value = modifiers.getValue(key);
+            Object value = modifiers.getValue(layout.modifier);
+            if (WWUtil.isEmpty(value))
+                continue;
 
             // If we're retrieving the date modifier, maybe add a hyphen to the first value to indicate a date range.
-            if (SymbologyConstants.DATE_TIME_GROUP.equals(key) && (value instanceof Iterable))
+            if (SymbologyConstants.DATE_TIME_GROUP.equals(layout.modifier) && (value instanceof Iterable))
             {
-                value = this.addHyphenToDateRange((Iterable) value, layouts);
+                value = this.addHyphenToDateRange((Iterable) value, offsets);
             }
 
-            String mode = SymbologyConstants.LOCATION.equals(key) ? LAYOUT_RELATIVE : LAYOUT_NONE;
+            String mode = SymbologyConstants.LOCATION.equals(layout.modifier) ? LAYOUT_RELATIVE : LAYOUT_NONE;
 
             // Some graphics support multiple instances of the same modifier. Handle this case differently than the
             // single instance case.
             if (value instanceof Iterable)
             {
-                this.layoutMultiLabel(dc, font, layouts, (Iterable) value, mode);
+                this.layoutMultiLabel(dc, font, offsets, (Iterable) value, mode);
             }
             else if (value != null)
             {
-                this.layoutLabel(dc, font, layouts.get(0), value.toString(), mode);
+                this.layoutLabel(dc, font, layout.offsets.get(0), value.toString(), mode);
             }
         }
     }
@@ -266,15 +299,15 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
      * date list if exactly two dates are displayed in the graphic.
      *
      * @param value   Iterable of date modifiers.
-     * @param layouts Layouts for the date modifiers.
+     * @param offsets Layouts for the date modifiers.
      *
      * @return Iterable of modified dates. This may be a new, modified list, or the same list as {@code value} if no
      *         modification was required.
      */
-    protected Iterable addHyphenToDateRange(Iterable value, java.util.List<LabelLayout> layouts)
+    protected Iterable addHyphenToDateRange(Iterable value, java.util.List<OffsetPair> offsets)
     {
         // Only add a hyphen if exactly two dates are displayed in the graphic.
-        if (layouts.size() != 2)
+        if (offsets.size() != 2)
             return value;
 
         // Make sure that two date values are provided.
@@ -291,7 +324,7 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         return value;
     }
 
-    protected void layoutLabel(DrawContext dc, Font font, LabelLayout layout, String value, String mode)
+    protected void layoutLabel(DrawContext dc, Font font, OffsetPair layout, String value, String mode)
     {
         if (!WWUtil.isEmpty(value))
         {
@@ -299,15 +332,15 @@ public class TacticalGraphicSymbol extends AbstractTacticalSymbol
         }
     }
 
-    protected void layoutMultiLabel(DrawContext dc, Font font, java.util.List<LabelLayout> layouts, Iterable values,
+    protected void layoutMultiLabel(DrawContext dc, Font font, java.util.List<OffsetPair> layouts, Iterable values,
         String mode)
     {
         Iterator valueIterator = values.iterator();
-        Iterator<LabelLayout> layoutIterator = layouts.iterator();
+        Iterator<OffsetPair> layoutIterator = layouts.iterator();
 
         while (layoutIterator.hasNext() && valueIterator.hasNext())
         {
-            LabelLayout layout = layoutIterator.next();
+            OffsetPair layout = layoutIterator.next();
             Object value = valueIterator.next();
             if (value != null)
             {

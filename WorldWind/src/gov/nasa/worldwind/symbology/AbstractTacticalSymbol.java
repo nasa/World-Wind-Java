@@ -1485,9 +1485,20 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
         if (LAYOUT_ABSOLUTE.equals(layoutMode) || LAYOUT_RELATIVE.equals(layoutMode))
         {
             if (this.layoutRectScaled != null)
+            {
                 this.layoutRectScaled.add(rect);
+            }
             else
                 this.layoutRectScaled = new Rectangle(rect);
+
+            // Compute where the label rectangle falls in the icon layout before scaling is applied. This is necessary
+            // to layout graphic modifiers such as the ground direction of movement indicator that are scaled down with
+            // the icon, but should not overlap text which is not scaled with the icon.
+            Rectangle scaledRect = this.computeScaledRect(rect, rect.getSize(), 1 / this.sx, 1 / this.sy);
+            if (this.layoutRect != null)
+                this.layoutRect.add(scaledRect);
+            else
+                this.layoutRect = new Rectangle(scaledRect);
         }
 
         return rect;
@@ -2022,19 +2033,21 @@ public abstract class AbstractTacticalSymbol extends WWObjectImpl implements Tac
             gl.glPopMatrix();
         }
 
-        try
+        if (this.mustDrawTextModifiers(dc) && !dc.isPickingMode())
         {
-            // Do not apply scale to text modifiers. The size of the text is determined by the font. Do apply scale
-            // to dx and dy to put the text in the right place.
-            gl.glPushMatrix();
-            gl.glTranslated(this.dx * this.sx, this.dy * this.sy, 0d);
+            try
+            {
+                // Do not apply scale to text modifiers. The size of the text is determined by the font. Do apply scale
+                // to dx and dy to put the text in the right place.
+                gl.glPushMatrix();
+                gl.glTranslated(this.dx * this.sx, this.dy * this.sy, 0d);
 
-            if (this.mustDrawTextModifiers(dc) && !dc.isPickingMode())
                 this.drawTextModifiers(dc);
-        }
-        finally
-        {
-            gl.glPopMatrix();
+            }
+            finally
+            {
+                gl.glPopMatrix();
+            }
         }
     }
 
