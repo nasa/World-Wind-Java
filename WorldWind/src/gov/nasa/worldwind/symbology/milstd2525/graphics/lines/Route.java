@@ -288,13 +288,15 @@ public class Route extends AbstractMilStd2525TacticalGraphic implements Tactical
 
         if (this.children != null)
         {
-            boolean showModifiers = this.isShowModifiers();
+            boolean showTextModifiers = this.isShowTextModifiers();
+            boolean showGraphicModifiers = this.isShowGraphicModifiers();
             boolean showHostile = this.isShowHostileIndicator();
 
             for (TacticalGraphic child : this.children)
             {
                 child.setDelegateOwner(owner);
-                child.setShowModifiers(showModifiers);
+                child.setShowTextModifiers(showTextModifiers);
+                child.setShowGraphicModifiers(showGraphicModifiers);
                 child.setShowHostileIndicator(showHostile);
             }
         }

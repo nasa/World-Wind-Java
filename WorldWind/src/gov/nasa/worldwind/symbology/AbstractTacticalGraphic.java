@@ -48,7 +48,9 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     /** Indicates whether or not to render the graphic. */
     protected boolean visible = true;
     /** Indicates whether or not to render text modifiers. */
-    protected boolean showModifiers = true;
+    protected boolean showTextModifiers = true;
+    /** Indicates whether or not to render graphic modifiers. */
+    protected boolean showGraphicModifiers = true;
 
     // Implementation note: by default, show the hostile indicator (the letters "ENY"). Note that this default is
     // different from MilStd2525TacticalSymbol, which does not display the hostile indicator by default. Section 5.5.1.1
@@ -107,7 +109,8 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      *
      * @param dc Current draw context.
      *
-     * @see #doRenderModifiers(gov.nasa.worldwind.render.DrawContext)
+     * @see #doRenderTextModifiers(gov.nasa.worldwind.render.DrawContext)
+     * @see #doRenderGraphicModifiers(gov.nasa.worldwind.render.DrawContext)
      */
     protected abstract void doRenderGraphic(DrawContext dc);
 
@@ -137,15 +140,27 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
     }
 
     /** {@inheritDoc} */
-    public boolean isShowModifiers()
+    public boolean isShowTextModifiers()
     {
-        return this.showModifiers;
+        return this.showTextModifiers;
     }
 
     /** {@inheritDoc} */
-    public void setShowModifiers(boolean showModifiers)
+    public void setShowTextModifiers(boolean showModifiers)
     {
-        this.showModifiers = showModifiers;
+        this.showTextModifiers = showModifiers;
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowGraphicModifiers()
+    {
+        return this.showGraphicModifiers;
+    }
+
+    /** {@inheritDoc} */
+    public void setShowGraphicModifiers(boolean showModifiers)
+    {
+        this.showGraphicModifiers = showModifiers;
     }
 
     /** {@inheritDoc} */
@@ -341,10 +356,11 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
 
         this.doRenderGraphic(dc);
 
-        if (this.isShowModifiers())
-        {
-            this.doRenderModifiers(dc);
-        }
+        if (this.isShowTextModifiers())
+            this.doRenderTextModifiers(dc);
+
+        if (this.isShowGraphicModifiers())
+            this.doRenderGraphicModifiers(dc);
     }
 
     /**
@@ -383,7 +399,7 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
      *
      * @param dc Current draw context.
      */
-    protected void doRenderModifiers(DrawContext dc)
+    protected void doRenderTextModifiers(DrawContext dc)
     {
         if (this.labels == null)
             return;
@@ -392,6 +408,17 @@ public abstract class AbstractTacticalGraphic extends AVListImpl implements Tact
         {
             label.render(dc);
         }
+    }
+
+    /**
+     * Render the graphic modifiers. This base class does not render anything, but subclasses may override this method
+     * to draw graphic modifiers.
+     *
+     * @param dc Current draw context.
+     */
+    protected void doRenderGraphicModifiers(DrawContext dc)
+    {
+        // Do nothing, but allow subclasses to override to add graphic modifiers.
     }
 
     /**

@@ -222,30 +222,9 @@ public class AllPointGraphics extends ApplicationTemplate
             javax.swing.Box box = javax.swing.Box.createVerticalBox();
             box.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-            // Create a slider that controls the opacity of all symbols.
-            JLabel label = new JLabel("Opacity");
-            JSlider slider = new JSlider(0, 100, 100);
-            slider.addChangeListener(new ChangeListener()
-            {
-                public void stateChanged(ChangeEvent changeEvent)
-                {
-                    // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
-                    // when highlighted. Changes in these attributes are reflected in all symbols that use them.
-                    JSlider slider = (JSlider) changeEvent.getSource();
-                    double opacity = (double) slider.getValue() / 100d;
-                    sharedAttrs.setInteriorOpacity(opacity);
-                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
-                }
-            });
-            box.add(javax.swing.Box.createVerticalStrut(10));
-            label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-            slider.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-            box.add(label);
-            box.add(slider);
-
             // Create a slider that controls the scale factor of all symbols.
-            label = new JLabel("Scale");
-            slider = new JSlider(0, 100, 100);
+            JLabel label = new JLabel("Scale");
+            JSlider slider = new JSlider(0, 100, 100);
             slider.addChangeListener(new ChangeListener()
             {
                 public void stateChanged(ChangeEvent changeEvent)
@@ -265,8 +244,29 @@ public class AllPointGraphics extends ApplicationTemplate
             box.add(label);
             box.add(slider);
 
-            // Create a check box that toggles the visibility of text and graphic modifiers for all symbols.
-            JCheckBox cb = new JCheckBox("Show modifiers", true);
+            // Create a slider that controls the opacity of all symbols.
+            label = new JLabel("Opacity");
+            slider = new JSlider(0, 100, 100);
+            slider.addChangeListener(new ChangeListener()
+            {
+                public void stateChanged(ChangeEvent changeEvent)
+                {
+                    // Set the opacity for only the normal attributes. This causes symbols to return to 100% opacity
+                    // when highlighted. Changes in these attributes are reflected in all symbols that use them.
+                    JSlider slider = (JSlider) changeEvent.getSource();
+                    double opacity = (double) slider.getValue() / 100d;
+                    sharedAttrs.setInteriorOpacity(opacity);
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            label.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            slider.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(label);
+            box.add(slider);
+
+            // Create a check box that toggles the visibility of text modifiers for all symbols.
+            JCheckBox cb = new JCheckBox("Show text modifiers", true);
             cb.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent actionEvent)
@@ -276,12 +276,37 @@ public class AllPointGraphics extends ApplicationTemplate
                     for (Renderable r : tacgrpLayer.getRenderables())
                     {
                         if (r instanceof TacticalGraphic)
-                            ((TacticalGraphic) r).setShowModifiers(tf);
+                            ((TacticalGraphic) r).setShowTextModifiers(tf);
                     }
                     for (Renderable r : metocLayer.getRenderables())
                     {
                         if (r instanceof TacticalGraphic)
-                            ((TacticalGraphic) r).setShowModifiers(tf);
+                            ((TacticalGraphic) r).setShowTextModifiers(tf);
+                    }
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the visibility of graphic modifiers for all symbols.
+            cb = new JCheckBox("Show graphic modifiers", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    for (Renderable r : tacgrpLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowGraphicModifiers(tf);
+                    }
+                    for (Renderable r : metocLayer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowGraphicModifiers(tf);
                     }
                     getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
                 }

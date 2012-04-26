@@ -956,8 +956,8 @@ public class TacticalGraphics extends ApplicationTemplate
             box.add(label);
             box.add(slider);
 
-            // Create a check box that toggles the visibility of text and graphic modifiers for all symbols.
-            JCheckBox cb = new JCheckBox("Modifiers", true);
+            // Create a check box that toggles the visibility of text modifiers for all symbols.
+            JCheckBox cb = new JCheckBox("Text Modifiers", true);
             cb.addActionListener(new ActionListener()
             {
                 public void actionPerformed(ActionEvent actionEvent)
@@ -976,7 +976,35 @@ public class TacticalGraphics extends ApplicationTemplate
                     for (Renderable r : layer.getRenderables())
                     {
                         if (r instanceof TacticalGraphic)
-                            ((TacticalGraphic) r).setShowModifiers(show);
+                            ((TacticalGraphic) r).setShowTextModifiers(show);
+                    }
+                }
+            });
+            cb.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+            box.add(javax.swing.Box.createVerticalStrut(10));
+            box.add(cb);
+
+            // Create a check box that toggles the visibility of graphic modifiers for all symbols.
+            cb = new JCheckBox("Graphic Modifiers", true);
+            cb.addActionListener(new ActionListener()
+            {
+                public void actionPerformed(ActionEvent actionEvent)
+                {
+                    boolean tf = ((JCheckBox) actionEvent.getSource()).isSelected();
+
+                    this.setShowModifiers(pointLayer, tf);
+                    this.setShowModifiers(lineLayer, tf);
+                    this.setShowModifiers(areaLayer, tf);
+
+                    getWwd().redraw(); // Cause the World Window to refresh in order to make these changes visible.
+                }
+
+                protected void setShowModifiers(RenderableLayer layer, boolean show)
+                {
+                    for (Renderable r : layer.getRenderables())
+                    {
+                        if (r instanceof TacticalGraphic)
+                            ((TacticalGraphic) r).setShowGraphicModifiers(show);
                     }
                 }
             });

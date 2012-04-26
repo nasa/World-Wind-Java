@@ -198,9 +198,9 @@ public class ForwardEdgeOfBattleArea extends AbstractMilStd2525TacticalGraphic
 
     /** {@inheritDoc} */
     @Override
-    public void setShowModifiers(boolean show)
+    public void setShowTextModifiers(boolean show)
     {
-        super.setShowModifiers(show);
+        super.setShowTextModifiers(show);
         this.symbol1.setShowTextModifiers(show);
         this.symbol2.setShowTextModifiers(show);
     }

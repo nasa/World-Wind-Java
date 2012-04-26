@@ -117,9 +117,9 @@ public class Airborne extends Aviation
 
     /** {@inheritDoc} Overridden to render tactical symbol. */
     @Override
-    public void doRenderModifiers(DrawContext dc)
+    public void doRenderGraphicModifiers(DrawContext dc)
     {
-        super.doRenderModifiers(dc);
+        super.doRenderGraphicModifiers(dc);
 
         if (this.symbol != null)
             this.symbol.render(dc);

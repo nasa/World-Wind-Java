@@ -288,8 +288,10 @@ public class PrincipleDirectionOfFire extends AbstractMilStd2525TacticalGraphic 
 
     /** {@inheritDoc} */
     @Override
-    protected void doRenderModifiers(DrawContext dc)
+    protected void doRenderGraphicModifiers(DrawContext dc)
     {
+        super.doRenderGraphicModifiers(dc);
+
         if (this.symbol != null)
         {
             this.symbol.render(dc);

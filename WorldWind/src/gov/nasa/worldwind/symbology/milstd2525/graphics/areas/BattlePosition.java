@@ -64,9 +64,9 @@ public class BattlePosition extends BasicArea
 
     /** {@inheritDoc} Overridden to render the echelon modifier. */
     @Override
-    protected void doRenderModifiers(DrawContext dc)
+    protected void doRenderGraphicModifiers(DrawContext dc)
     {
-        super.doRenderModifiers(dc);
+        super.doRenderGraphicModifiers(dc);
 
         if (this.echelonSymbol != null)
         {

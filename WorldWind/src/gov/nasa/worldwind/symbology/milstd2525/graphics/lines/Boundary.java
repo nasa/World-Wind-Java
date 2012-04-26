@@ -135,9 +135,9 @@ public class Boundary extends PhaseLine
 
     /** {@inheritDoc} Overridden to render the echelon modifier. */
     @Override
-    protected void doRenderModifiers(DrawContext dc)
+    protected void doRenderGraphicModifiers(DrawContext dc)
     {
-        super.doRenderModifiers(dc);
+        super.doRenderGraphicModifiers(dc);
 
         for (TacticalSymbol symbol : this.echelonSymbols)
         {

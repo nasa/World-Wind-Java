@@ -104,16 +104,27 @@ public class MilStd2525PointGraphic extends AVListImpl implements MilStd2525Tact
     }
 
     /** {@inheritDoc} */
-    public boolean isShowModifiers()
+    public boolean isShowTextModifiers()
     {
         return this.symbol.isShowTextModifiers();
     }
 
     /** {@inheritDoc} */
-    public void setShowModifiers(boolean showModifiers)
+    public void setShowTextModifiers(boolean showModifiers)
+    {
+        this.symbol.setShowTextModifiers(showModifiers);
+    }
+
+    /** {@inheritDoc} */
+    public boolean isShowGraphicModifiers()
+    {
+        return this.symbol.isShowGraphicModifiers();
+    }
+
+    /** {@inheritDoc} */
+    public void setShowGraphicModifiers(boolean showModifiers)
     {
         this.symbol.setShowGraphicModifiers(showModifiers);
-        this.symbol.setShowTextModifiers(showModifiers);
     }
 
     /** {@inheritDoc} */

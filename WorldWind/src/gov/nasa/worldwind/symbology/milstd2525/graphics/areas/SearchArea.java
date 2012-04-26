@@ -285,8 +285,10 @@ public class SearchArea extends AbstractMilStd2525TacticalGraphic implements Pre
 
     /** {@inheritDoc} */
     @Override
-    protected void doRenderModifiers(DrawContext dc)
+    protected void doRenderGraphicModifiers(DrawContext dc)
     {
+        super.doRenderGraphicModifiers(dc);
+
         if (this.symbol != null)
         {
             this.symbol.render(dc);

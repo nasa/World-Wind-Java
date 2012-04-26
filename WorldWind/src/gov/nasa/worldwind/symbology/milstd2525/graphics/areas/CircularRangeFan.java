@@ -278,9 +278,9 @@ public class CircularRangeFan extends AbstractMilStd2525TacticalGraphic implemen
 
     /** {@inheritDoc} Overridden to render symbol at the center of the range fan. */
     @Override
-    protected void doRenderModifiers(DrawContext dc)
+    protected void doRenderGraphicModifiers(DrawContext dc)
     {
-        super.doRenderModifiers(dc);
+        super.doRenderGraphicModifiers(dc);
 
         if (this.symbol != null)
         {

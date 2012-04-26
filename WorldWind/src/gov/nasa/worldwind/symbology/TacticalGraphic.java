@@ -177,18 +177,32 @@ public interface TacticalGraphic extends Renderable, Highlightable, Movable, AVL
     void setModifier(String modifier, Object value);
 
     /**
-     * Indicates whether or not a text or graphic modifiers are visible.
+     * Indicates whether this graphic draws its supplemental graphic modifiers.
      *
-     * @return true if the modifiers are visible.
+     * @return true if this graphic draws its graphic modifiers, otherwise false.
      */
-    boolean isShowModifiers();
+    boolean isShowGraphicModifiers();
 
     /**
-     * Specifies whether or not to draw text and graphic modifiers.
+     * Specifies whether to draw this graphic's supplemental graphic modifiers.
      *
-     * @param showModifiers true if the modifier should be visible.
+     * @param showGraphicModifiers true if this graphic should draw its graphic modifiers, otherwise false.
      */
-    void setShowModifiers(boolean showModifiers);
+    void setShowGraphicModifiers(boolean showGraphicModifiers);
+
+    /**
+     * Indicates whether this graphic draws its supplemental text modifiers.
+     *
+     * @return true if this graphic draws its text modifiers, otherwise false.
+     */
+    boolean isShowTextModifiers();
+
+    /**
+     * Specifies whether to draw this graphic's supplemental text modifiers.
+     *
+     * @param showTextModifiers true if this graphic should draw its text modifiers, otherwise false.
+     */
+    void setShowTextModifiers(boolean showTextModifiers);
 
     /**
      * Indicates whether or not the graphic should display its location as a text modifier. Not all graphics support the
