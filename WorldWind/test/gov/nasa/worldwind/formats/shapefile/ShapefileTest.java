@@ -12,7 +12,6 @@ import gov.nasa.worldwind.util.*;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.junit.*;
-import org.junit.Test;
 
 import java.io.File;
 import java.net.*;
@@ -52,7 +51,6 @@ public class ShapefileTest
         //********************  Test Basic Reading  ********************//
         //**************************************************************//
 
-        @Test
         public void testOpenFile()
         {
             Shapefile shapefile = new Shapefile(new File(STATE_BOUNDS_PATH));
@@ -66,7 +64,6 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @Test
         public void testOpenPath()
         {
             Shapefile shapefile = new Shapefile(STATE_BOUNDS_PATH);
@@ -80,7 +77,6 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @Test
         public void testOpenURL() throws MalformedURLException
         {
             Shapefile shapefile = new Shapefile(new URL(SPRINGFIELD_URBAN_GROWTH_URL));
@@ -94,7 +90,6 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @Test
         public void testOpenURLString()
         {
             Shapefile shapefile = new Shapefile(SPRINGFIELD_URBAN_GROWTH_URL);
@@ -108,7 +103,6 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @Test
         public void testOpenSingleInputStream() throws Exception
         {
             Shapefile shapefile = new Shapefile(WWIO.openStream(STATE_BOUNDS_PATH));
@@ -122,7 +116,6 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @Test
         public void testOpenMultipleInputStreams() throws Exception
         {
             Shapefile shapefile = new Shapefile(
@@ -144,7 +137,6 @@ public class ShapefileTest
         //********************  Test Coordinate Conversion  ************//
         //**************************************************************//
 
-        @Test
         public void testUTMCoordinates()
         {
             Shapefile shapefile = new Shapefile(SPRINGFIELD_URBAN_GROWTH_URL);
@@ -153,7 +145,6 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @Test
         public void testGeographicCoordinates()
         {
             Shapefile shapefile = new Shapefile(WORLD_BORDERS_PATH);
@@ -162,7 +153,7 @@ public class ShapefileTest
             shapefile.close();
         }
 
-        @SuppressWarnings( {"UnusedDeclaration"})
+        @SuppressWarnings({"UnusedDeclaration"})
         public void testUnsupportedCoordinates() throws Exception
         {
             AVList params = new AVListImpl();
@@ -183,7 +174,6 @@ public class ShapefileTest
         //********************  Test Expected Values  ******************//
         //**************************************************************//
 
-        @Test
         public void testExpectedValuesForStateBounds()
         {
             Shapefile shapefile = new Shapefile(STATE_BOUNDS_PATH);

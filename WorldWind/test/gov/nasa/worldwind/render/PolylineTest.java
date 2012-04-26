@@ -7,10 +7,8 @@ package gov.nasa.worldwind.render;
 
 import gov.nasa.worldwind.geom.Position;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.ArrayList;
 import java.awt.*;
+import java.util.*;
 
 /**
  * @author dcollins
@@ -20,9 +18,8 @@ public class PolylineTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testSaveAndRestoreOnNewObject_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -38,7 +35,6 @@ public class PolylineTest extends junit.framework.TestCase
         assertEquals(expected, polyline);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnSameObject_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -54,7 +50,6 @@ public class PolylineTest extends junit.framework.TestCase
         assertEquals(expected, polyline);
     }
 
-    @org.junit.Test
     public void testEmptyStateDocument_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -62,7 +57,7 @@ public class PolylineTest extends junit.framework.TestCase
 
         String emptyStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<emptyDocumentRoot/>";
+                "<emptyDocumentRoot/>";
         polyline.restoreState(emptyStateInXml);
 
         // No attributes should have changed.
@@ -72,7 +67,6 @@ public class PolylineTest extends junit.framework.TestCase
         assertEquals(expected, polyline);
     }
 
-    @org.junit.Test
     public void testInvalidStateDocument_Polyline()
     {
         try
@@ -88,7 +82,6 @@ public class PolylineTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testPartialStateDocument_Polyline()
     {
         Polyline polyline = new Polyline();
@@ -96,24 +89,24 @@ public class PolylineTest extends junit.framework.TestCase
 
         String partialStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"filled\">true</stateObject>" +
                 "<stateObject name=\"offset\">1000.5</stateObject>" +
                 "<unknownElement name=\"unknownName\">unknownValue</unknownElement>" +
-            "</restorableState>";
+                "</restorableState>";
         polyline.restoreState(partialStateInXml);
 
         Polyline expected = new Polyline();
         assignNullValues(expected);
         expected.setFilled(true);
         expected.setOffset(1000.5);
-        
+
         assertEquals(expected, polyline);
     }
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(Polyline polyline)
@@ -133,9 +126,9 @@ public class PolylineTest extends junit.framework.TestCase
         polyline.setStippleFactor(128);
         polyline.setNumSubsegments(100);
         polyline.setPositions(Arrays.asList(
-                Position.fromDegrees(2, 3, 0.5),
-                Position.fromDegrees(4, 9, 111.5),
-                Position.fromDegrees(8, 27, 222.5)));
+            Position.fromDegrees(2, 3, 0.5),
+            Position.fromDegrees(4, 9, 111.5),
+            Position.fromDegrees(8, 27, 222.5)));
     }
 
     private static void assignNullValues(Polyline polyline)

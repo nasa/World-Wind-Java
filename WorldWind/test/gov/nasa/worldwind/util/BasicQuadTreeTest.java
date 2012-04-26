@@ -10,7 +10,6 @@ package gov.nasa.worldwind.util;
 import gov.nasa.worldwind.geom.Sector;
 import junit.framework.*;
 import junit.textui.TestRunner;
-import org.junit.Test;
 
 import java.util.*;
 
@@ -35,10 +34,7 @@ public class BasicQuadTreeTest
             return map.size();
         }
 
-        @Test
-        /**
-         * Tests incremental removal of all items from the tree.
-         */
+        /** Tests incremental removal of all items from the tree. */
         public void testFullRemoval()
         {
             int numItems = 1000;
@@ -58,10 +54,7 @@ public class BasicQuadTreeTest
             }
         }
 
-        @Test
-        /**
-         * Tests removal of named items from the tree.
-         */
+        /** Tests removal of named items from the tree. */
         public void testIndividualRemoval()
         {
             int numItems = 1000;

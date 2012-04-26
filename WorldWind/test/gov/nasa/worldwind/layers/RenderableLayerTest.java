@@ -19,9 +19,8 @@ public class RenderableLayerTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Basic Operation Tests **/
-    /** ******************************************************************************************************** */
+    /** ****************************************************************************************************** */
 
-    @org.junit.Test
     public void testConstructor()
     {
         RenderableLayer layer;
@@ -31,7 +30,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertNotNull("", layer);
     }
 
-    @org.junit.Test
     public void testAddRenderable()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -46,7 +44,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertEquals("", renderables, layer.getRenderables());
     }
 
-    @org.junit.Test
     public void testAddRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -58,7 +55,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertEquals("", renderables, layer.getRenderables());
     }
 
-    @org.junit.Test
     public void testRemoveRenderable()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -77,7 +73,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertFalse("", layer.getRenderables().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testRemoveAllRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -90,7 +85,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertFalse("", layer.getRenderables().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testSetRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -104,9 +98,8 @@ public class RenderableLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Edge Case Tests **/
-    /** ******************************************************************************************************** */
+    /** ****************************************************************************************************** */
 
-    @org.junit.Test
     public void testSetRenderablesClearsRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -122,7 +115,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertFalse("", layer.getRenderables().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testSetRenderablesThenAddRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -138,7 +130,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertEquals("", renderables, layer.getRenderables());
     }
 
-    @org.junit.Test
     public void testMaliciousGetRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -175,7 +166,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         assertEquals("", renderables, layer.getRenderables());
     }
 
-    @org.junit.Test
     public void testMaliciousSetRenderables()
     {
         // Create an Iterable with null elements.
@@ -207,7 +197,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testDisposeDoesNotClearRenderables()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -223,9 +212,8 @@ public class RenderableLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Exceptional Condition Tests **/
-    /** ******************************************************************************************************** */
+    /** ****************************************************************************************************** */
 
-    @org.junit.Test
     public void testAddRenderableFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -244,7 +232,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testAddRenderablesFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -263,7 +250,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRemoveRenderableFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -282,7 +268,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRemoveAllRenderablesFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -301,7 +286,6 @@ public class RenderableLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testDisposeFail()
     {
         Iterable<Renderable> renderables = createExampleIterable();
@@ -322,7 +306,7 @@ public class RenderableLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /** ******************************************************************************************************** */
+    /** ****************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assertEquals(String message, Iterable<Renderable> expected, Iterable<Renderable> actual)

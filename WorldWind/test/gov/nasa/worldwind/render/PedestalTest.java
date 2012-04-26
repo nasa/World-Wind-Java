@@ -17,9 +17,8 @@ public class PedestalTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testRestore_NewInstance()
     {
         Pedestal pedestal = new Pedestal("", null);
@@ -31,11 +30,10 @@ public class PedestalTest extends junit.framework.TestCase
 
         Pedestal expected = new Pedestal("", null);
         assignExampleValues(expected);
-        
+
         assertEquals(expected, pedestal);
     }
 
-    @org.junit.Test
     public void testRestore_SameInstance()
     {
         Pedestal pedestal = new Pedestal("", null);
@@ -51,7 +49,6 @@ public class PedestalTest extends junit.framework.TestCase
         assertEquals(expected, pedestal);
     }
 
-    @org.junit.Test
     public void testRestore_EmptyStateDocument()
     {
         Pedestal pedestal = new Pedestal("", null);
@@ -59,7 +56,7 @@ public class PedestalTest extends junit.framework.TestCase
 
         String emptyStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<emptyDocumentRoot/>";
+                "<emptyDocumentRoot/>";
         pedestal.restoreState(emptyStateInXml);
 
         // No attributes should have changed.
@@ -69,7 +66,6 @@ public class PedestalTest extends junit.framework.TestCase
         assertEquals(expected, pedestal);
     }
 
-    @org.junit.Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -77,7 +73,7 @@ public class PedestalTest extends junit.framework.TestCase
             String badStateInXml = "!!invalid xml string!!";
             Pedestal pedestal = new Pedestal("", null);
             pedestal.restoreState(badStateInXml);
-            
+
             fail("Expected an IllegalArgumentException");
         }
         catch (IllegalArgumentException e)
@@ -85,7 +81,6 @@ public class PedestalTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRestore_PartialStateDocument()
     {
         Pedestal pedestal = new Pedestal("", null);
@@ -93,13 +88,13 @@ public class PedestalTest extends junit.framework.TestCase
 
         String partialStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"highlighted\">true</stateObject>" +
                 "<stateObject name=\"highlightScale\">3.141592</stateObject>" +
                 "<stateObject name=\"spacingPixels\">3.5</stateObject>" +
                 "<stateObject name=\"scale\">5.5</stateObject>" +
                 "<unknownElement name=\"unknownName\">unknownValue</unknownElement>" +
-            "</restorableState>";
+                "</restorableState>";
         pedestal.restoreState(partialStateInXml);
 
         Pedestal expected = new Pedestal("", null);
@@ -108,13 +103,13 @@ public class PedestalTest extends junit.framework.TestCase
         expected.setHighlightScale(3.141592);
         expected.setSpacingPixels(3.5);
         expected.setScale(5.5);
-        
+
         assertEquals(expected, pedestal);
     }
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(Pedestal pedestal)
@@ -164,14 +159,14 @@ public class PedestalTest extends junit.framework.TestCase
         if (expected.getPosition() != null && actual.getPosition() != null)
         {
             assertEquals("position.latitude",
-                    expected.getPosition().getLatitude(),
-                    actual.getPosition().getLatitude());
+                expected.getPosition().getLatitude(),
+                actual.getPosition().getLatitude());
             assertEquals("position.longitude",
-                    expected.getPosition().getLongitude(),
-                    actual.getPosition().getLongitude());
+                expected.getPosition().getLongitude(),
+                actual.getPosition().getLongitude());
             assertEquals("position.elevation",
-                    expected.getPosition().getElevation(),
-                    actual.getPosition().getElevation());
+                expected.getPosition().getElevation(),
+                actual.getPosition().getElevation());
         }
         else
         {

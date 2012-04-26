@@ -6,8 +6,9 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.symbology.milstd2525.graphics.*;
+import gov.nasa.worldwind.symbology.milstd2525.graphics.MetocSidc;
 import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.lang.reflect.Field;
 
@@ -17,9 +18,9 @@ import java.lang.reflect.Field;
  * @author pabercrombie
  * @version $Id$
  */
-public class MetocSidcTest extends TestCase
+public class MetocSidcTest
 {
-    @org.junit.Test
+    @Test
     public void testParse() throws IllegalAccessException
     {
         // MetocSidc declares constants for each SIDC. Grab all of these fields and make sure that each one can be
@@ -28,10 +29,10 @@ public class MetocSidcTest extends TestCase
 
         for (Field f : fields)
         {
-            StringBuilder sidc = new StringBuilder((String) f.get(null));
+            String sidc = (String) f.get(null);
 
-            SymbolCode code = new SymbolCode(sidc.toString());
-            TestCase.assertEquals(sidc.toString(), code.toString());
+            SymbolCode code = new SymbolCode(sidc);
+            TestCase.assertEquals(sidc, code.toString());
         }
     }
 

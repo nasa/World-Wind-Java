@@ -7,7 +7,7 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import java.lang.reflect.Field;
 
@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
  * @author pabercrombie
  * @version $Id$
  */
-public class TacGrpSidcTest extends TestCase
+public class TacGrpSidcTest
 {
     /** Valid standard identity characters for MIL-STD-2525C tactical graphics (see Table B-I, pg. 305). */
     protected static final char[] ALL_STANDARD_IDENTITY = {'P', 'U', 'A', 'F', 'N', 'S', 'H', 'G', 'W', 'M', 'D', 'L',
@@ -52,7 +52,7 @@ public class TacGrpSidcTest extends TestCase
                         sidc.setCharAt(11, echelon);
 
                         SymbolCode code = new SymbolCode(sidc.toString());
-                        TestCase.assertEquals(sidc.toString(), code.toString());
+                        Assert.assertEquals(sidc.toString(), code.toString());
                     }
                 }
             }

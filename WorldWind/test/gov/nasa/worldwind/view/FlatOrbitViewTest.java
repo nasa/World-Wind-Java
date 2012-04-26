@@ -5,8 +5,7 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.view;
 
-import gov.nasa.worldwind.geom.Angle;
-import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.*;
 import gov.nasa.worldwind.view.orbit.*;
 
 /**
@@ -17,9 +16,8 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /*************************************************************************************************************/
-    
-    @org.junit.Test
+    /** ******************************************************************************************************** */
+
     public void testRestore_NewInstance()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -31,11 +29,10 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
 
         FlatOrbitView expected = new FlatOrbitView();
         assignExampleValues(expected);
-        
+
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_SameInstance()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -51,7 +48,6 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_EmptyStateDocument()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -59,7 +55,7 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
 
         String emptyStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<emptyDocumentRoot/>";
+                "<emptyDocumentRoot/>";
         orbitView.restoreState(emptyStateInXml);
 
         // No attributes should have changed.
@@ -69,7 +65,6 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -85,7 +80,6 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRestore_PartialStateDocument()
     {
         FlatOrbitView orbitView = new FlatOrbitView();
@@ -93,11 +87,11 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
 
         String partialStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"fieldOfView\">10.5</stateObject>" +
                 "<stateObject name=\"zoom\">1000.5</stateObject>" +
                 "<unknownElement name=\"unknownName\">unknownValue</unknownElement>" +
-            "</restorableState>";
+                "</restorableState>";
         orbitView.restoreState(partialStateInXml);
 
         FlatOrbitView expected = new FlatOrbitView();
@@ -108,7 +102,6 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_SaveOrbitView_RestoreFlatOrbitView()
     {
         BasicOrbitView basicOrbitView = new BasicOrbitView();
@@ -123,23 +116,22 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
         assertEquals((OrbitView) flatOrbitView, (OrbitView) basicOrbitView);
     }
 
-    @org.junit.Test
     public void testRestore_OldVersionStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
         String stateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"center\">" +
-                    "<stateObject name=\"latitude\">-20.5</stateObject>" +
-                    "<stateObject name=\"longitude\">30.5</stateObject>" +
-                    "<stateObject name=\"elevation\">100.5</stateObject>" +
+                "<stateObject name=\"latitude\">-20.5</stateObject>" +
+                "<stateObject name=\"longitude\">30.5</stateObject>" +
+                "<stateObject name=\"elevation\">100.5</stateObject>" +
                 "</stateObject>" +
                 "<stateObject name=\"heading\">-40.5</stateObject>" +
                 "<stateObject name=\"pitch\">50.5</stateObject>" +
                 "<stateObject name=\"zoom\">1000.5</stateObject>" +
                 "<stateObject name=\"fieldOfView\">10.5</stateObject>" +
-            "</restorableState>";
+                "</restorableState>";
         orbitView.restoreState(stateInXml);
 
         BasicOrbitView expected = new BasicOrbitView();
@@ -151,10 +143,10 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
 
         assertEquals(expected, orbitView);
     }
-    
+
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(OrbitView orbitView)
@@ -187,9 +179,12 @@ public class FlatOrbitViewTest extends junit.framework.TestCase
     {
         assertNotNull("Expected is null", expected);
         assertNotNull("Actual is null", actual);
-        assertEquals("center.latitude", expected.getCenterPosition().getLatitude(), actual.getCenterPosition().getLatitude());
-        assertEquals("center.longitude", expected.getCenterPosition().getLongitude(), actual.getCenterPosition().getLongitude());
-        assertEquals("center.elevation", expected.getCenterPosition().getElevation(), actual.getCenterPosition().getElevation());
+        assertEquals("center.latitude", expected.getCenterPosition().getLatitude(),
+            actual.getCenterPosition().getLatitude());
+        assertEquals("center.longitude", expected.getCenterPosition().getLongitude(),
+            actual.getCenterPosition().getLongitude());
+        assertEquals("center.elevation", expected.getCenterPosition().getElevation(),
+            actual.getCenterPosition().getElevation());
         assertEquals("heading", expected.getHeading(), actual.getHeading());
         assertEquals("pitch", expected.getPitch(), actual.getPitch());
         assertEquals("zoom", expected.getZoom(), actual.getZoom());

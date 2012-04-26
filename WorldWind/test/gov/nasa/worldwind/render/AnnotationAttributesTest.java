@@ -15,9 +15,8 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testRestore_NewInstance()
     {
         AnnotationAttributes attrib = new AnnotationAttributes();
@@ -33,7 +32,6 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
         assertEquals(expected, attrib);
     }
 
-    @org.junit.Test
     public void testRestore_SameInstance()
     {
         AnnotationAttributes attrib = new AnnotationAttributes();
@@ -49,14 +47,13 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
         assertEquals(expected, attrib);
     }
 
-    @org.junit.Test
     public void testRestore_EmptyStateDocument()
     {
         AnnotationAttributes attrib = new AnnotationAttributes();
         assignExampleValues(attrib);
 
         String emptyStateInXml =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<emptyDocumentRoot/>";
         attrib.restoreState(emptyStateInXml);
 
@@ -67,7 +64,6 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
         assertEquals(expected, attrib);
     }
 
-    @org.junit.Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -83,7 +79,6 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRestore_PartialStateDocument()
     {
         AnnotationAttributes attrib = new AnnotationAttributes();
@@ -91,33 +86,32 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
 
         String partialStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"scale\">10.5</stateObject>" +
                 "<stateObject name=\"cornerRadius\">11</stateObject>" +
                 "<unknownElement name=\"unknownName\">unknownValue</unknownElement>" +
-            "</restorableState>";
+                "</restorableState>";
         attrib.restoreState(partialStateInXml);
 
         AnnotationAttributes expected = new AnnotationAttributes();
         assignExampleValues(expected);
         expected.setScale(10.5);
         expected.setCornerRadius(11);
-        
+
         assertEquals(expected, attrib);
     }
 
-    @org.junit.Test
     public void testRestore_LegacyStateDocument()
     {
         AnnotationAttributes attrib = new AnnotationAttributes();
         assignExampleValues(attrib);
         String partialStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"textAlign\">2</stateObject>" +
                 "<stateObject name=\"imageRepeat\">render.Annotation.RepeatXY</stateObject>" +
                 "<stateObject name=\"adjustWidthToText\">render.Annotation.SizeFitText</stateObject>" +
-            "</restorableState>";
+                "</restorableState>";
         attrib.restoreState(partialStateInXml);
 
         AnnotationAttributes expected = new AnnotationAttributes();
@@ -129,7 +123,6 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
         assertEquals(expected, attrib);
     }
 
-    @org.junit.Test
     public void testRestore_PartialSave()
     {
         AnnotationAttributes attrib = new AnnotationAttributes();
@@ -146,7 +139,6 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
         assertEquals(expected, attrib);
     }
 
-    @org.junit.Test
     public void testRestore_CustomDefaults()
     {
         AnnotationAttributes defaults = new AnnotationAttributes();
@@ -169,7 +161,7 @@ public class AnnotationAttributesTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(AnnotationAttributes attrib)

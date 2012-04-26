@@ -57,7 +57,6 @@ public class ShapeAttributesTest
             return exampleAttributes.copy();
         }
 
-        @org.junit.Test
         public void testBasicSaveRestore()
         {
             RestorableSupport rs = RestorableSupport.newRestorableSupport();
@@ -71,7 +70,6 @@ public class ShapeAttributesTest
             assertEquals(expected, actual);
         }
 
-        @org.junit.Test
         public void testRestoreSameInstance()
         {
             RestorableSupport rs = RestorableSupport.newRestorableSupport();
@@ -86,7 +84,6 @@ public class ShapeAttributesTest
             assertEquals(expected, actual);
         }
 
-        @org.junit.Test
         public void testRestoreNullDocument()
         {
             try
@@ -100,7 +97,6 @@ public class ShapeAttributesTest
             }
         }
 
-        @org.junit.Test
         public void testRestoreEmptyDocument()
         {
             ShapeAttributes expected = this.createExampleAttributes();
@@ -116,7 +112,6 @@ public class ShapeAttributesTest
             assertEquals(expected, actual);
         }
 
-        @org.junit.Test
         public void testRestoreOneAttribute()
         {
             ShapeAttributes expected = this.createExampleAttributes();

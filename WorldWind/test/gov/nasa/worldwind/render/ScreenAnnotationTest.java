@@ -5,8 +5,8 @@ All Rights Reserved.
 */
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.geom.Position;
 
 /**
  * @author dcollins
@@ -16,9 +16,8 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testRestore_NewInstance()
     {
         ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
@@ -34,7 +33,6 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
         assertEquals(expected, annotation);
     }
 
-    @org.junit.Test
     public void testRestore_SameInstance()
     {
         ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
@@ -50,14 +48,13 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
         assertEquals(expected, annotation);
     }
 
-    @org.junit.Test
     public void testRestore_EmptyStateDocument()
     {
         ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
         assignExampleValues(annotation);
 
         String emptyStateInXml =
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<emptyDocumentRoot/>";
         annotation.restoreState(emptyStateInXml);
 
@@ -68,7 +65,6 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
         assertEquals(expected, annotation);
     }
 
-    @org.junit.Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -84,7 +80,6 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRestore_PartialStateDocument()
     {
         ScreenAnnotation annotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
@@ -92,10 +87,10 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
 
         String partialStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"text\">Hello, World!</stateObject>" +
                 "<unknownElement name=\"unknownName\">unknownValue</unknownElement>" +
-            "</restorableState>";
+                "</restorableState>";
         annotation.restoreState(partialStateInXml);
 
         ScreenAnnotation expected = new ScreenAnnotation("", new java.awt.Point(0, 0));
@@ -105,7 +100,6 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
         assertEquals(expected, annotation);
     }
 
-    @org.junit.Test
     public void testRestore_AnnotationSharing()
     {
         ScreenAnnotation annotation1 = new ScreenAnnotation("", new java.awt.Point(0, 0));
@@ -125,7 +119,6 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
         assertEquals(expected, annotation2.getAttributes());
     }
 
-    @org.junit.Test
     public void test_SaveScreenAnnotation_RestoreGlobeAnnotation()
     {
         ScreenAnnotation screenAnnotation = new ScreenAnnotation("", new java.awt.Point(0, 0));
@@ -142,12 +135,13 @@ public class ScreenAnnotationTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(ScreenAnnotation annotation)
     {
-        annotation.setText("<p>\n<b><font color=\"#664400\">LA CLAPI\u00c8RE</font></b><br />\n<i>Alt: 1100-1700m</i>\n</p>\n<p>\n<b>Glissement de terrain majeur</b> dans la haute Tin\u00e9e, sur un flanc du <a href=\"http://www.mercantour.eu\">Parc du Mercantour</a>, Alpes Maritimes.\n</p>\n<p>\nRisque aggrav\u00e9 d'<b>inondation</b> du village de <i>Saint \u00c9tienne de Tin\u00e9e</i> juste en amont.\n</p>");
+        annotation.setText(
+            "<p>\n<b><font color=\"#664400\">LA CLAPI\u00c8RE</font></b><br />\n<i>Alt: 1100-1700m</i>\n</p>\n<p>\n<b>Glissement de terrain majeur</b> dans la haute Tin\u00e9e, sur un flanc du <a href=\"http://www.mercantour.eu\">Parc du Mercantour</a>, Alpes Maritimes.\n</p>\n<p>\nRisque aggrav\u00e9 d'<b>inondation</b> du village de <i>Saint \u00c9tienne de Tin\u00e9e</i> juste en amont.\n</p>");
         annotation.setScreenPoint(new java.awt.Point(321, 105));
         assignExampleValues(annotation.getAttributes());
     }

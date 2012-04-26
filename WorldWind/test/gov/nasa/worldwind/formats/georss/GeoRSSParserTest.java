@@ -16,24 +16,22 @@ public class GeoRSSParserTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** GeoRSS-Simple Parsing Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testSimple_Point()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:point>45.256 -71.92</georss:point>");
+            "<georss:point>45.256 -71.92</georss:point>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // <georss:point> is not translated to any renderable shape.
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testSimple_PointWithElevation()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:point>45.256 -71.92</georss:point>" +
+            "<georss:point>45.256 -71.92</georss:point>" +
                 "<georss:elev>313</georss:elev>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
@@ -41,11 +39,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testSimple_Line()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>");
+            "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
@@ -64,11 +61,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", Position.fromDegrees(43.84, -109.86, 0.0), positions.get(2));
     }
 
-    @org.junit.Test
     public void testSimple_LineWithElevation()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>" +
+            "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>" +
                 "<georss:elev>313</georss:elev>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
@@ -88,11 +84,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", Position.fromDegrees(43.84, -109.86, 313.0), positions.get(2));
     }
 
-    @org.junit.Test
     public void testSimple_Polygon()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>");
+            "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
@@ -112,11 +107,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", LatLon.fromDegrees(45.256, -110.45), positions.get(3));
     }
 
-    @org.junit.Test
     public void testSimple_PolygonWithElevation()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>" +
+            "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86 45.256 -110.45</georss:polygon>" +
                 "<georss:elev>313</georss:elev>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
@@ -137,11 +131,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", Position.fromDegrees(45.256, -110.45, 313.0), positions.get(3));
     }
 
-    @org.junit.Test
     public void testSimple_Box()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:box>42.943 -71.032 43.039 -69.856</georss:box>");
+            "<georss:box>42.943 -71.032 43.039 -69.856</georss:box>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
@@ -161,11 +154,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", LatLon.fromDegrees(43.039, -71.032), positions.get(3));
     }
 
-    @org.junit.Test
     public void testSimple_BoxWithElevation()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:box>42.943 -71.032 43.039 -69.856</georss:box>" +
+            "<georss:box>42.943 -71.032 43.039 -69.856</georss:box>" +
                 "<georss:elev>313</georss:elev>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
@@ -187,13 +179,12 @@ public class GeoRSSParserTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** GeoRSS-GML Parsing Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testGML_Point()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:Point>" +
                 "    <gml:pos>45.256 -71.92</gml:pos>" +
                 "  </gml:Point>" +
@@ -204,11 +195,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testGML_Line()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:LineString>" +
                 "    <gml:posList>" +
                 "      45.256 -110.45 46.46 -109.48 43.84 -109.86" +
@@ -233,11 +223,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", Position.fromDegrees(43.84, -109.86, 0.0), positions.get(2));
     }
 
-    @org.junit.Test
     public void testGML_Polygon()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:Polygon>" +
                 "    <gml:exterior>" +
                 "      <gml:LinearRing>" +
@@ -267,11 +256,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", LatLon.fromDegrees(45.256, -110.45), positions.get(3));
     }
 
-    @org.junit.Test
     public void testGML_Box()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:Envelope>" +
                 "    <gml:lowerCorner>42.943 -71.032</gml:lowerCorner>" +
                 "    <gml:upperCorner>43.039 -69.856</gml:upperCorner>" +
@@ -298,53 +286,48 @@ public class GeoRSSParserTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Exceptional Condition Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testSimple_PointNotEnoughPairs()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:point></georss:point>");
+            "<georss:point></georss:point>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testSimple_LineNotEnoughPairs()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:line>45.256 -110.45</georss:line>");
+            "<georss:line>45.256 -110.45</georss:line>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testSimple_PolygonNotEnoughPairs()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:polygon>");
+            "<georss:polygon>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:polygon>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testSimple_BoxNotEnoughPairs()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:box>42.943 -71.032</georss:box>");
+            "<georss:box>42.943 -71.032</georss:box>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testGML_PointNotEnoughPairs()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:Point>" +
                 "    <gml:pos></gml:pos>" +
                 "  </gml:Point>" +
@@ -354,11 +337,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testGML_LineNotEnoughPairs()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:LineString>" +
                 "    <gml:posList>" +
                 "      45.256 -110.45" +
@@ -370,11 +352,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testGML_PolygonNotEnoughPairs()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:Polygon>" +
                 "    <gml:exterior>" +
                 "      <gml:LinearRing>" +
@@ -390,15 +371,14 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void testGML_BoxMissingElement()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:where>" +
+            "<georss:where>" +
                 "  <gml:Envelope>" +
                 "    <gml:lowerCorner>42.943 -71.032</gml:lowerCorner>" +
-             // The next line would normally be included.
-             // "    <gml:upperCorner>43.039 -69.856</gml:upperCorner>" +
+                // The next line would normally be included.
+                // "    <gml:upperCorner>43.039 -69.856</gml:upperCorner>" +
                 "  </gml:Envelope>" +
                 "</georss:where>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
@@ -406,7 +386,6 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void test_NoShapes()
     {
         String xmlString = createExampleGeoRSS("");
@@ -415,11 +394,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertNull("", shapes);
     }
 
-    @org.junit.Test
     public void test_MultipleShapes()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>" +
+            "<georss:line>45.256 -110.45 46.46 -109.48 43.84 -109.86</georss:line>" +
                 "<georss:where>" +
                 "  <gml:LineString>" +
                 "    <gml:posList>" +
@@ -459,11 +437,10 @@ public class GeoRSSParserTest extends junit.framework.TestCase
         assertEquals("", Position.fromDegrees(43.84, -109.86, 0.0), positions.get(2));
     }
 
-    @org.junit.Test
     public void test_CommaDelimitedCoordinates()
     {
         String xmlString = createExampleGeoRSS(
-                "<georss:line>45.256, -110.45, 46.46, -109.48, 43.84, -109.86</georss:line>");
+            "<georss:line>45.256, -110.45, 46.46, -109.48, 43.84, -109.86</georss:line>");
         java.util.List<Renderable> shapes = GeoRSSParser.parseShapes(xmlString);
 
         // Parsed shapes list should have at least one non-null element.
@@ -484,15 +461,15 @@ public class GeoRSSParserTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static String createExampleGeoRSS(String georssXml)
     {
         String xmlString =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
                 "<feed xmlns=\"http://www.w3.org/2005/Atom\"" +
-                "      xmlns:georss=\"http://www.georss.org/georss\"" + 
+                "      xmlns:georss=\"http://www.georss.org/georss\"" +
                 "      xmlns:gml=\"http://www.opengis.net/gml\">" +
                 "  <title>Earthquakes</title>" +
                 "    <subtitle>International earthquake observation labs</subtitle>" +

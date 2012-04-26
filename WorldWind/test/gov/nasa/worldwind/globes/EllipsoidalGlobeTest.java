@@ -11,7 +11,6 @@ import junit.framework.*;
 import junit.textui.TestRunner;
 import org.junit.*;
 import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * @author tag
@@ -37,7 +36,6 @@ public class EllipsoidalGlobeTest
             this.globe = null;
         }
 
-        @Test
         public void testEquatorialRadius()
         {
             double radius = this.globe.getEquatorialRadius();
@@ -45,7 +43,6 @@ public class EllipsoidalGlobeTest
             assertEquals("Equatorial radius", radius, 6378137d);
         }
 
-        @Test
         public void testgeodeticToCartesian()
         {
             Position orig = new Position(LatLon.fromDegrees(30.42515, -97.547562), 200.5d);
@@ -63,7 +60,6 @@ public class EllipsoidalGlobeTest
             assertEquals("Height comparision", orig.getElevation(), p.getElevation(), TOLERANCE);
         }
 
-        @Test
         public void testgeodeticToCartesian2()
         {
 
@@ -82,7 +78,6 @@ public class EllipsoidalGlobeTest
             assertEquals("Height comparision", orig.getElevation(), p.getElevation(), TOLERANCE);
         }
 
-        @Test
         public void testgeodeticToCartesian3()
         {
 
@@ -101,7 +96,6 @@ public class EllipsoidalGlobeTest
             assertEquals("Height comparision", orig.getElevation(), p.getElevation(), TOLERANCE);
         }
 
-        @Test
         public void testgeodeticToCartesian4()
         {
 
@@ -130,7 +124,6 @@ public class EllipsoidalGlobeTest
     {
         private static final double REQUIRED_PRECISION = 0.00000001;
 
-        @Test
         public void testEllipsoidEquatorialPlane()
         {
             // Test to make sure that coordinate transforms near the equatorial plane work correctly.
@@ -155,6 +148,7 @@ public class EllipsoidalGlobeTest
                     // coordinates.
                     String msg = "At x " + x + ", and z " + z;
                     assertRelativelyEqual(msg, Math.sqrt(x * x + z * z) - a, p.elevation);
+                    //noinspection SuspiciousNameCombination
                     Assert.assertEquals(msg, Math.atan2(x, z), p.longitude.radians, REQUIRED_PRECISION);
                     Assert.assertEquals(msg, 0, p.latitude.radians, REQUIRED_PRECISION);
 
@@ -199,7 +193,6 @@ public class EllipsoidalGlobeTest
             }
         }
 
-        @Test
         public void testEllipsoidAxis()
         {
             // Test to make sure that coordinate transforms near the equatorial plane work correctly.
@@ -232,7 +225,6 @@ public class EllipsoidalGlobeTest
             }
         }
 
-        @Test
         public void testEllipsoidCenter()
         {
             Earth earth = new Earth();
@@ -258,7 +250,6 @@ public class EllipsoidalGlobeTest
             // I'm wrong - it's case b, and lat and lon are just wrong at the moment.  Perhaps fix?
         }
 
-        @Test
         public void testGeneralRoundTripCartesianConversion()
         {
             // Tests cartesian->geodetic->cartesian conversion in a rough grid all
@@ -297,7 +288,6 @@ public class EllipsoidalGlobeTest
             }
         }
 
-        @Test
         public void testRoundTripCartesianConversionAtEvolute()
         {
             // The evolute is the area in the center of the ellipsoid where we get the most problems.  Normalizing the ellipse (2d) to a unit circle in p and q (q is minor axis), the formula for it is:

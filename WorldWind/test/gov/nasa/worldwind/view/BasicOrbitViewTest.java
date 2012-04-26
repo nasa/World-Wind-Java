@@ -16,9 +16,8 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /** ******************************************************************************************************** */
+    /** ****************************************************************************************************** */
 
-    @org.junit.Test
     public void testRestore_NewInstance()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -33,7 +32,6 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_SameInstance()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -48,7 +46,6 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_EmptyStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -65,7 +62,6 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -80,7 +76,6 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRestore_PartialStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -102,7 +97,6 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testLegacyStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -143,7 +137,6 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
         assertEquals(expected, orbitView);
     }
 
-    @org.junit.Test
     public void testRestore_OldVersionStateDocument()
     {
         BasicOrbitView orbitView = new BasicOrbitView();
@@ -174,7 +167,7 @@ public class BasicOrbitViewTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /** ******************************************************************************************************** */
+    /** ****************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(OrbitView orbitView)

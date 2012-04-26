@@ -9,7 +9,6 @@ package gov.nasa.worldwind.geom;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.junit.*;
-import org.junit.Test;
 
 /**
  * @author tag
@@ -29,40 +28,44 @@ public class LineTest
         {
         }
 
-        @Test
         public void testFrustumClipping()
         {
             Frustum f = new Frustum(); // default frustum is [-1,1] in all 3 dimensions
             Vec4 pa, pb;
             Vec4[] clipped;
 
-            pa = Vec4.ZERO; pb = new Vec4(1, 0, 0);
+            pa = Vec4.ZERO;
+            pb = new Vec4(1, 0, 0);
             clipped = Line.clipToFrustum(pa, pb, f);
             assertTrue("Trivial accept A", clipped != null && clipped[0].equals(pa) && clipped[1].equals(pb));
 
-            pa = Vec4.ZERO; pb = new Vec4(0.5, 0, 0);
+            pa = Vec4.ZERO;
+            pb = new Vec4(0.5, 0, 0);
             clipped = Line.clipToFrustum(pa, pb, f);
             assertTrue("Trivial accept B", clipped != null && clipped[0].equals(pa) && clipped[1].equals(pb));
 
-            pa = Vec4.ZERO; pb = new Vec4(-0.5, 0, 0);
+            pa = Vec4.ZERO;
+            pb = new Vec4(-0.5, 0, 0);
             clipped = Line.clipToFrustum(pa, pb, f);
             assertTrue("Trivial accept C", clipped != null && clipped[0].equals(pa) && clipped[1].equals(pb));
 
-            pa = new Vec4(.5, .5, 2); pb = new Vec4(.5, .5, -2);
+            pa = new Vec4(.5, .5, 2);
+            pb = new Vec4(.5, .5, -2);
             clipped = Line.clipToFrustum(pa, pb, f);
             assertTrue("Clipped at near and far",
                 clipped != null && clipped[0].equals(new Vec4(.5, .5, 1)) && clipped[1].equals(new Vec4(.5, .5, -1)));
 
-            pa = new Vec4(.5, .5, .5); pb = new Vec4(.5, .5, -.5);
+            pa = new Vec4(.5, .5, .5);
+            pb = new Vec4(.5, .5, -.5);
             clipped = Line.clipToFrustum(pa, pb, f);
             assertTrue("Trivial accept D", clipped != null && clipped[0].equals(pa) && clipped[1].equals(pb));
 
-            pa = new Vec4(2, 2, 2); pb = new Vec4(4, 4, 4);
+            pa = new Vec4(2, 2, 2);
+            pb = new Vec4(4, 4, 4);
             clipped = Line.clipToFrustum(pa, pb, f);
             assertTrue("Segment not in frustum", clipped == null);
         }
 
-        @Test
         public void testDistanceToPoint()
         {
             Vec4 p0 = Vec4.ZERO;

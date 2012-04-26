@@ -28,7 +28,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         LatLon.fromDegrees(14, 19),
         LatLon.fromDegrees(12, 13));
 
-    @org.junit.Test
     public void testSaveAndRestoreOnNewObject()
     {
         AbstractSurfaceShape shape = new SurfacePolygon(emptyLocations);
@@ -44,7 +43,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(expected, shape);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnSameObject()
     {
         AbstractSurfaceShape shape = new SurfacePolygon(emptyLocations);
@@ -60,7 +58,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(expected, shape);
     }
 
-    @org.junit.Test
     public void testEmptyStateDocument()
     {
         AbstractSurfaceShape shape = new SurfacePolygon(emptyLocations);
@@ -78,7 +75,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(expected, shape);
     }
 
-    @org.junit.Test
     public void testInvalidStateDocument()
     {
         try
@@ -94,7 +90,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testPartialStateDocument()
     {
         AbstractSurfaceShape shape = new SurfacePolygon(sampleLocations);
@@ -117,7 +112,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(expected, shape);
     }
 
-    @org.junit.Test
     public void testLegacyStateDocument()
     {
         AbstractSurfaceShape shape = new SurfacePolygon(sampleLocations);
@@ -147,7 +141,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(expected, shape);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnPolyline()
     {
         SurfacePolyline shape = new SurfacePolyline(sampleLocations);
@@ -159,7 +152,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(shape, shape2);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnPolygon()
     {
         SurfacePolygon shape = new SurfacePolygon(sampleLocations);
@@ -172,7 +164,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(shape, shape2);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnEllipse()
     {
         SurfaceEllipse shape = new SurfaceEllipse(LatLon.fromDegrees(24, 32), 6d, 5d, Angle.POS90);
@@ -184,7 +175,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(shape, shape2);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnQuad()
     {
         SurfaceQuad shape = new SurfaceQuad(LatLon.fromDegrees(24, 32), 6d, 5d, Angle.POS90);
@@ -196,7 +186,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(shape, shape2);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnSquare()
     {
         SurfaceSquare shape = new SurfaceSquare(LatLon.fromDegrees(24, 32), 6d);
@@ -208,7 +197,6 @@ public class SurfaceShapeTest extends junit.framework.TestCase
         assertEquals(shape, shape2);
     }
 
-    @org.junit.Test
     public void testSaveAndRestoreOnSector()
     {
         SurfaceSector shape = new SurfaceSector(Sector.fromDegrees(23, 36, 51, 87));
@@ -222,7 +210,7 @@ public class SurfaceShapeTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /** ************************************************************************************************** */
+    /** ************************************************************************************************ */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(AbstractSurfaceShape shape)

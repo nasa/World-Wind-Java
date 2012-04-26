@@ -11,7 +11,6 @@ import gov.nasa.worldwind.globes.*;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.junit.*;
-import org.junit.Test;
 
 /**
  * @author tag
@@ -50,7 +49,6 @@ public class BoundingVolumeTest
         }
 
         @SuppressWarnings({"UnusedAssignment"})
-        @Test
         public void testBoxCulling()
         {
             this.frustum = new Frustum(
@@ -68,7 +66,6 @@ public class BoundingVolumeTest
         }
 
         @SuppressWarnings({"UnusedAssignment"})
-        @Test
         public void testSphereCulling()
         {
             this.frustum = new Frustum(
@@ -91,7 +88,6 @@ public class BoundingVolumeTest
         }
 
         @SuppressWarnings({"UnusedAssignment"})
-        @Test
         public void testBoxCullingSpeed()
         {
             this.frustum = new Frustum(); // unit frustum around origin
@@ -114,7 +110,6 @@ public class BoundingVolumeTest
         }
 
         @SuppressWarnings({"UnusedAssignment"})
-        @Test
         public void testCylinderCullingSpeed()
         {
             this.frustum = new Frustum(); // unit frustum around origin
@@ -137,7 +132,6 @@ public class BoundingVolumeTest
         }
 
         @SuppressWarnings({"UnusedAssignment"})
-        @Test
         public void testBoxCreationSpeed()
         {
             Box box = new Box(Vec4.ZERO);
@@ -157,7 +151,6 @@ public class BoundingVolumeTest
         }
 
         @SuppressWarnings({"UnusedAssignment"})
-        @Test
         public void testCylinderCreationSpeed()
         {
             Cylinder cyl = new Cylinder(Vec4.ZERO, new Vec4(1, 1, 1), 1);

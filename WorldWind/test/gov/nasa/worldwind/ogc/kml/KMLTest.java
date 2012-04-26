@@ -17,7 +17,6 @@ import gov.nasa.worldwind.util.xml.xal.XALConstants;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.junit.*;
-import org.junit.Test;
 
 import java.io.*;
 import java.net.URL;
@@ -132,7 +131,6 @@ public class KMLTest
         {
         }
 
-        @org.junit.Test
         public void testRootElement()
         {
             StringBuilder sb = this.newDocument();
@@ -144,7 +142,6 @@ public class KMLTest
             assertNull("KML root hint is not null", root.getHint());
         }
 
-        @org.junit.Test
         public void testRootHint()
         {
             StringBuilder sb = this.newDocument();
@@ -157,7 +154,6 @@ public class KMLTest
             assertNotNull("KML root hint is null", root.getHint());
         }
 
-        @org.junit.Test
         public void testAbstractObjectAttributes()
         {
             String ID = "ABC123";
@@ -176,7 +172,6 @@ public class KMLTest
             assertEquals("Target ID not as expected", feature.getTargetId(), targetID);
         }
 
-        @org.junit.Test
         public void testUnassignedAbstractObjectAttributes()
         {
             StringBuilder sb = this.newDocument();
@@ -194,8 +189,7 @@ public class KMLTest
             assertNull("Target ID not null", feature.getTargetId());
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testAbstractFeatureAttributes()
         {
             String name = "XXXYYYZZZ";
@@ -287,8 +281,7 @@ public class KMLTest
             assertEquals("Author URI not as expected", feature.getAuthor().getUri(), authorUri);
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testUnassignedAbstractFeatureAttributes()
         {
             StringBuilder sb = this.newDocument();
@@ -320,8 +313,7 @@ public class KMLTest
             assertNull("Extended data not null", feature.getExtendedData());
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testPrefixUsage()
         {
             String altitudeMode = "absolute";
@@ -357,8 +349,7 @@ public class KMLTest
             assertEquals("Coordinates not as expected", point.getCoordinates(), coords);
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testNoDefaultNamespace()
         {
             String altitudeMode = "absolute";
@@ -395,8 +386,7 @@ public class KMLTest
             assertEquals("Coordinates not as expected", point.getCoordinates(), coords);
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testPoint()
         {
             String altitudeMode = "absolute";
@@ -432,8 +422,7 @@ public class KMLTest
             assertEquals("Coordinates not as expected", point.getCoordinates(), coords);
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testLinearRing()
         {
             String altitudeMode = "clampToGround";
@@ -479,8 +468,7 @@ public class KMLTest
             assertEquals("Coordinates not as expected", ring.getCoordinates().list, coords);
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testLineString()
         {
             String altitudeMode = "clampToGround";
@@ -526,8 +514,7 @@ public class KMLTest
             assertEquals("Coordinates not as expected", ring.getCoordinates().list, coords);
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testPolygon()
         {
             String altitudeMode = "clampToGround";
@@ -633,7 +620,6 @@ public class KMLTest
                 innerTessellate);
         }
 
-        @org.junit.Test
         public void testSimpleDataType()
         {
             String item = "Test a String";
@@ -657,7 +643,6 @@ public class KMLTest
             assertEquals("SimpleData string not as expected", dataItem.getCharacters(), item);
         }
 
-        @org.junit.Test
         public void testUnrecognizedElement()
         {
             String item = "Test a String";
@@ -694,8 +679,7 @@ public class KMLTest
             assertTrue("Unrecognized element not found", true);
         }
 
-        @SuppressWarnings( {"ConstantConditions"})
-        @Test
+        @SuppressWarnings({"ConstantConditions"})
         public void testCoordinatesParser()
         {
             // Test parsing coordinates separated by newline and tab characters instead of just spaces 
@@ -738,7 +722,6 @@ public class KMLTest
         }
 
         /** Test coordinate tokenizer with a mix of well formed and not so well formed input. */
-        @Test
         public void testCoordinatesTokenizer()
         {
             List<Position> coords = new ArrayList<Position>();
@@ -766,7 +749,6 @@ public class KMLTest
             assertEquals("Coordinates not as expected", coords, positions);
         }
 
-        @org.junit.Test
         public void testNestedUnrecognizedElement()
         {
             String item = "Test a String";
@@ -850,7 +832,6 @@ public class KMLTest
             return root;
         }
 
-        @org.junit.Test
         public void testGoogleTutorialExample01()
         {
             KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample01.kml");
@@ -872,7 +853,6 @@ public class KMLTest
             assertEquals("Incorrect altitude", 0d, coords.getAltitude());
         }
 
-        @org.junit.Test
         public void testGoogleTutorialExample02()
         {
             KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample02.kml");
@@ -905,7 +885,6 @@ public class KMLTest
             assertEquals("Incorrect altitude", 0d, coords.getAltitude());
         }
 
-        @org.junit.Test
         public void testGoogleTutorialExample03()
         {
             KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample03.kml");
@@ -934,7 +913,6 @@ public class KMLTest
             assertEquals("Incorrect altitude", 0d, coords.getAltitude());
         }
 
-        @org.junit.Test
         public void testGoogleTutorialExample04()
         {
             KMLRoot root = this.openAndParseFile("testData/KML/GoogleTutorialExample04.kml");
@@ -967,7 +945,6 @@ public class KMLTest
             assertEquals("Incorrect box west", 14.60128369746704, box.getWest());
         }
 
-        @org.junit.Test
         public void testStyleReference()
         {
             KMLRoot root = this.openAndParseFile("testData/KML/StyleReferences.kml");
@@ -1002,7 +979,6 @@ public class KMLTest
 //            assertEquals("Poly style color is not as expected", "7dff0000", polyStyle.getColor());
         }
 
-        @org.junit.Test
         public void testKMZFromFileURL()
         {
             try

@@ -9,7 +9,6 @@ package gov.nasa.worldwind.geom;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.junit.*;
-import org.junit.Test;
 
 /**
  * @author tag
@@ -29,7 +28,6 @@ public class PlaneTest
         {
         }
 
-        @Test
         public void testSegmentIntersection()
         {
             Plane p = new Plane(new Vec4(0, 0, -1, 0));
@@ -75,7 +73,6 @@ public class PlaneTest
             assertNull("Parallel, integer end points off origin, should produce null for no intersection", pt);
         }
 
-        @Test
         public void testLineIntersection()
         {
             Plane p = new Plane(new Vec4(0, 0, 1, 0));

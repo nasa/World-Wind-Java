@@ -17,9 +17,8 @@ public class UserFacingIconTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Persistence Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testRestore_NewInstance()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -35,7 +34,6 @@ public class UserFacingIconTest extends junit.framework.TestCase
         assertEquals(expected, icon);
     }
 
-    @org.junit.Test
     public void testRestore_SameInstance()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -51,7 +49,6 @@ public class UserFacingIconTest extends junit.framework.TestCase
         assertEquals(expected, icon);
     }
 
-    @org.junit.Test
     public void testRestore_EmptyStateDocument()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -59,7 +56,7 @@ public class UserFacingIconTest extends junit.framework.TestCase
 
         String emptyStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<emptyDocumentRoot/>";
+                "<emptyDocumentRoot/>";
         icon.restoreState(emptyStateInXml);
 
         // No attributes should have changed.
@@ -69,7 +66,6 @@ public class UserFacingIconTest extends junit.framework.TestCase
         assertEquals(expected, icon);
     }
 
-    @org.junit.Test
     public void testRestore_InvalidStateDocument()
     {
         try
@@ -85,7 +81,6 @@ public class UserFacingIconTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRestore_PartialStateDocument()
     {
         UserFacingIcon icon = new UserFacingIcon("", null);
@@ -93,11 +88,11 @@ public class UserFacingIconTest extends junit.framework.TestCase
 
         String partialStateInXml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<restorableState>" +
+                "<restorableState>" +
                 "<stateObject name=\"highlighted\">true</stateObject>" +
                 "<stateObject name=\"highlightScale\">3.141592</stateObject>" +
                 "<unknownElement name=\"unknownName\">unknownValue</unknownElement>" +
-            "</restorableState>";
+                "</restorableState>";
         icon.restoreState(partialStateInXml);
 
         UserFacingIcon expected = new UserFacingIcon("", null);
@@ -110,7 +105,7 @@ public class UserFacingIconTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assignExampleValues(WWIcon icon)
@@ -151,14 +146,14 @@ public class UserFacingIconTest extends junit.framework.TestCase
         if (expected.getPosition() != null && actual.getPosition() != null)
         {
             assertEquals("position.latitude",
-                    expected.getPosition().getLatitude(),
-                    actual.getPosition().getLatitude());
+                expected.getPosition().getLatitude(),
+                actual.getPosition().getLatitude());
             assertEquals("position.longitude",
-                    expected.getPosition().getLongitude(),
-                    actual.getPosition().getLongitude());
+                expected.getPosition().getLongitude(),
+                actual.getPosition().getLongitude());
             assertEquals("position.elevation",
-                    expected.getPosition().getElevation(),
-                    actual.getPosition().getElevation());
+                expected.getPosition().getElevation(),
+                actual.getPosition().getElevation());
         }
         else
         {

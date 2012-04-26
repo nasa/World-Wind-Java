@@ -18,9 +18,8 @@ public class AnnotationLayerTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Basic Operation Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testConstructor()
     {
         AnnotationLayer layer;
@@ -30,20 +29,20 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         assertNotNull("", layer);
     }
 
-    @org.junit.Test
     public void testAddAnnotation()
     {
         Iterable<Annotation> annotations = createExampleIterable();
 
         AnnotationLayer layer = new AnnotationLayer();
         for (Annotation item : annotations)
+        {
             layer.addAnnotation(item);
+        }
 
         // Test that the layer contains the annotations.
         assertEquals("", annotations, layer.getAnnotations());
     }
 
-    @org.junit.Test
     public void testAddAnnotations()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -55,22 +54,24 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         assertEquals("", annotations, layer.getAnnotations());
     }
 
-    @org.junit.Test
     public void testRemoveAnnotation()
     {
         Iterable<Annotation> annotations = createExampleIterable();
 
         AnnotationLayer layer = new AnnotationLayer();
         for (Annotation item : annotations)
+        {
             layer.addAnnotation(item);
+        }
         for (Annotation item : annotations)
+        {
             layer.removeAnnotation(item);
+        }
 
         // Test that the layer contains no annotations.
         assertFalse("", layer.getAnnotations().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testRemoveAllAnnotations()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -83,7 +84,6 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         assertFalse("", layer.getAnnotations().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testSetAnnotations()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -97,9 +97,8 @@ public class AnnotationLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Edge Case Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testSetAnnotationsClearsAnnotations()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -115,7 +114,6 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         assertFalse("", layer.getAnnotations().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testSetAnnotationsThenAddAnnotations()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -131,7 +129,6 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         assertEquals("", annotations, layer.getAnnotations());
     }
 
-    @org.junit.Test
     public void testMaliciousGetAnnotations()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -168,7 +165,6 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         assertEquals("", annotations, layerAnnotations);
     }
 
-    @org.junit.Test
     public void testMaliciousSetAnnotations()
     {
         // Create an Iterable with null elements.
@@ -188,7 +184,7 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         DrawContext dc = new DrawContextImpl();
         dc.setModel(new BasicModel());
         dc.setView(new BasicOrbitView());
-        
+
         try
         {
             // Test that the layer does not fail when the Iterable is used.
@@ -202,9 +198,8 @@ public class AnnotationLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Exceptional Condition Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testAddAnnotationFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -223,7 +218,6 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testAddAnnotationsFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -242,7 +236,6 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRemoveAnnotationFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -261,7 +254,6 @@ public class AnnotationLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRemoveAllAnnotationsFail()
     {
         Iterable<Annotation> annotations = createExampleIterable();
@@ -282,7 +274,7 @@ public class AnnotationLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assertEquals(String message, Iterable<Annotation> expected, Iterable<Annotation> actual)
@@ -296,7 +288,9 @@ public class AnnotationLayerTest extends junit.framework.TestCase
             java.util.Iterator<Annotation> expectedIter = expected.iterator(), actualIter = actual.iterator();
             // Compare the elements in each iterator, as long as they both have elements.
             while (expectedIter.hasNext() && actualIter.hasNext())
+            {
                 assertEquals(message, expectedIter.next(), actualIter.next());
+            }
             // If either iterator has more elements, then their lengths are different.
             assertFalse(message, expectedIter.hasNext() || actualIter.hasNext());
         }
@@ -306,9 +300,9 @@ public class AnnotationLayerTest extends junit.framework.TestCase
     {
         //noinspection RedundantArrayCreation
         return java.util.Arrays.asList(new Annotation[] {
-                new GlobeAnnotation("", Position.ZERO),
-                new GlobeAnnotation("", Position.ZERO),
-                new GlobeAnnotation("", Position.ZERO)});
+            new GlobeAnnotation("", Position.ZERO),
+            new GlobeAnnotation("", Position.ZERO),
+            new GlobeAnnotation("", Position.ZERO)});
     }
 
     public static void main(String[] args)

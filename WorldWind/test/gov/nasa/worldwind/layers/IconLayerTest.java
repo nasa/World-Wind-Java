@@ -20,9 +20,8 @@ public class IconLayerTest extends junit.framework.TestCase
 {
     /*************************************************************************************************************/
     /** Basic Operation Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testConstructor()
     {
         IconLayer layer;
@@ -32,20 +31,20 @@ public class IconLayerTest extends junit.framework.TestCase
         assertNotNull("", layer);
     }
 
-    @org.junit.Test
     public void testAddIcon()
     {
         Iterable<WWIcon> icons = createExampleIterable();
 
         IconLayer layer = new IconLayer();
         for (WWIcon item : icons)
+        {
             layer.addIcon(item);
+        }
 
         // Test that the layer contains the icons.
         assertEquals("", icons, layer.getIcons());
     }
 
-    @org.junit.Test
     public void testAddIcons()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -57,22 +56,24 @@ public class IconLayerTest extends junit.framework.TestCase
         assertEquals("", icons, layer.getIcons());
     }
 
-    @org.junit.Test
     public void testRemoveIcon()
     {
         Iterable<WWIcon> icons = createExampleIterable();
 
         IconLayer layer = new IconLayer();
         for (WWIcon item : icons)
+        {
             layer.addIcon(item);
+        }
         for (WWIcon item : icons)
+        {
             layer.removeIcon(item);
+        }
 
         // Test that the layer contains no icons.
         assertFalse("", layer.getIcons().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testRemoveAllIcons()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -85,7 +86,6 @@ public class IconLayerTest extends junit.framework.TestCase
         assertFalse("", layer.getIcons().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testSetIcons()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -99,9 +99,8 @@ public class IconLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Edge Case Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testSetIconsClearsIcons()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -117,7 +116,6 @@ public class IconLayerTest extends junit.framework.TestCase
         assertFalse("", layer.getIcons().iterator().hasNext());
     }
 
-    @org.junit.Test
     public void testSetIconsThenAddIcons()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -133,7 +131,6 @@ public class IconLayerTest extends junit.framework.TestCase
         assertEquals("", icons, layer.getIcons());
     }
 
-    @org.junit.Test
     public void testMaliciousGetIcons()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -170,7 +167,6 @@ public class IconLayerTest extends junit.framework.TestCase
         assertEquals("", icons, layerIcons);
     }
 
-    @org.junit.Test
     public void testMaliciousSetIcons()
     {
         // Create an Iterable with null elements.
@@ -204,9 +200,8 @@ public class IconLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Exceptional Condition Tests **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
-    @org.junit.Test
     public void testAddIconFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -225,7 +220,6 @@ public class IconLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testAddIconsFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -244,7 +238,6 @@ public class IconLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRemoveIconFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -263,7 +256,6 @@ public class IconLayerTest extends junit.framework.TestCase
         }
     }
 
-    @org.junit.Test
     public void testRemoveAllIconsFail()
     {
         Iterable<WWIcon> icons = createExampleIterable();
@@ -284,7 +276,7 @@ public class IconLayerTest extends junit.framework.TestCase
 
     /*************************************************************************************************************/
     /** Helper Methods **/
-    /*************************************************************************************************************/
+    /** ******************************************************************************************************** */
 
     @SuppressWarnings({"JavaDoc"})
     private static void assertEquals(String message, Iterable<WWIcon> expected, Iterable<WWIcon> actual)
@@ -298,7 +290,9 @@ public class IconLayerTest extends junit.framework.TestCase
             // Since actual may contain duplicates, make a Set that eliminates duplicates.
             Set<WWIcon> actualSet = new HashSet<WWIcon>();
             for (WWIcon wwIcon : actual)
+            {
                 actualSet.add(wwIcon);
+            }
 
             // Test that all the expected are in the actual. Order does not matter.
             int count = 0;
@@ -317,9 +311,9 @@ public class IconLayerTest extends junit.framework.TestCase
     {
         //noinspection RedundantArrayCreation
         return java.util.Arrays.asList(new WWIcon[] {
-                new UserFacingIcon("", Position.ZERO),
-                new UserFacingIcon("", Position.ZERO),
-                new UserFacingIcon("", Position.ZERO)});
+            new UserFacingIcon("", Position.ZERO),
+            new UserFacingIcon("", Position.ZERO),
+            new UserFacingIcon("", Position.ZERO)});
     }
 
     public static void main(String[] args)

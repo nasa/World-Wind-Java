@@ -31,7 +31,6 @@ public class PolygonTest
         Position.fromDegrees(28, -106, 0));
     protected Sector sector = Sector.boundingSector(this.positions);
 
-    @org.junit.Test
     public void testGetExtentClampToGround()
     {
         double[] minAndMaxElevations = this.globe.getMinAndMaxElevations(this.sector);
@@ -48,7 +47,6 @@ public class PolygonTest
         TestCase.assertEquals(expected, actual);
     }
 
-    @org.junit.Test
     public void testGetExtentAbsolute()
     {
         Extent expected = Sector.computeBoundingBox(this.globe, this.verticalExaggeration, this.sector, 0, 100);
@@ -61,7 +59,6 @@ public class PolygonTest
         TestCase.assertEquals(expected, actual);
     }
 
-    @org.junit.Test
     public void testGetExtentRelative()
     {
         double[] minAndMaxElevations = this.globe.getMinAndMaxElevations(this.sector);

@@ -9,7 +9,6 @@ package gov.nasa.worldwind.util;
 
 import junit.framework.*;
 import junit.textui.TestRunner;
-import org.junit.Test;
 
 /**
  * Tests operation of AbsentResourceList.
@@ -50,10 +49,7 @@ public class AbsentResourceListTest
             }
         }
 
-        @Test
-        /**
-         * Tests addition of resources to the list.
-         */
+        /** Tests addition of resources to the list. */
         public void testResourceAddition()
         {
             int numResources = 100;
@@ -63,10 +59,7 @@ public class AbsentResourceListTest
             this.testResourcesAbsent(list, numResources);
         }
 
-        @Test
-        /**
-         * Tests whether resources are considered not absent after initial check interval expires.
-         */
+        /** Tests whether resources are considered not absent after initial check interval expires. */
         public void testCheckInitialInterval()
         {
             int numResources = 100;
@@ -86,10 +79,7 @@ public class AbsentResourceListTest
             }
         }
 
-        @Test
-        /**
-         * Tests whether resources are considered absent after maximum number of tries.
-         */
+        /** Tests whether resources are considered absent after maximum number of tries. */
         public void testMaxTries()
         {
             int numResources = 100;
@@ -121,10 +111,7 @@ public class AbsentResourceListTest
             this.testResourcesAbsent(list, numResources);
         }
 
-        @Test
-        /**
-         * Tests whether resources are considered not absent after try-again interval expires.
-         */
+        /** Tests whether resources are considered not absent after try-again interval expires. */
         public void testCheckTryAgainInterval()
         {
             int numResources = 100;
@@ -148,10 +135,7 @@ public class AbsentResourceListTest
             }
         }
 
-        @Test
-        /**
-         * Tests whether a specified list size is adhered to.
-         */
+        /** Tests whether a specified list size is adhered to. */
         public void testListSize()
         {
             int maxListSize = 100;

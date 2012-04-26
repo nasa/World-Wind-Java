@@ -9,7 +9,7 @@ package gov.nasa.worldwind.symbology.milstd2525;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.*;
 import gov.nasa.worldwind.symbology.IconRetriever;
-import junit.framework.TestCase;
+import org.junit.Assert;
 
 import java.awt.image.*;
 
@@ -17,7 +17,7 @@ import java.awt.image.*;
  * @author pabercrombie
  * @version $Id$
  */
-public class PointGraphicRetrievalTest extends TestCase
+public class PointGraphicRetrievalTest
 {
     // This path should correspond to the location of the appropriate symbology source icons on your system
     private final static String ICON_RETRIEVER_PATH = Configuration.getStringValue(
@@ -36,7 +36,7 @@ public class PointGraphicRetrievalTest extends TestCase
     {
         IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
         BufferedImage img = symGen.createIcon("GFFPPCB-------X", null);
-        assertNotNull(img);
+        Assert.assertNotNull(img);
     }
 
     //////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public class PointGraphicRetrievalTest extends TestCase
         {
             IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("SUAPC", null);
-            fail("Should raise an IllegalArgumentException");
+            Assert.fail("Should raise an IllegalArgumentException");
         }
         catch (Exception e)
         {
@@ -65,7 +65,7 @@ public class PointGraphicRetrievalTest extends TestCase
         {
             IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("SUAPCTEST", null);
-            fail("Should raise an IllegalArgumentException");
+            Assert.fail("Should raise an IllegalArgumentException");
         }
         catch (Exception e)
         {
@@ -79,7 +79,7 @@ public class PointGraphicRetrievalTest extends TestCase
         {
             IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon(null, null);
-            fail("Should raise an IllegalArgumentException");
+            Assert.fail("Should raise an IllegalArgumentException");
         }
         catch (Exception e)
         {
@@ -99,7 +99,7 @@ public class PointGraphicRetrievalTest extends TestCase
         {
             IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon(".FFPPCB-------X", null);
-            fail("Should raise an IllegalArgumentException");
+            Assert.fail("Should raise an IllegalArgumentException");
         }
         catch (Exception e)
         {
@@ -113,7 +113,7 @@ public class PointGraphicRetrievalTest extends TestCase
         {
             IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("G.FPPCB-------X", null);
-            fail("Should raise an IllegalArgumentException");
+            Assert.fail("Should raise an IllegalArgumentException");
         }
         catch (Exception e)
         {
@@ -127,7 +127,7 @@ public class PointGraphicRetrievalTest extends TestCase
         {
             IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("GFF.PCB-------X", null);
-            fail("Should raise an IllegalArgumentException");
+            Assert.fail("Should raise an IllegalArgumentException");
         }
         catch (Exception e)
         {
@@ -141,7 +141,7 @@ public class PointGraphicRetrievalTest extends TestCase
         {
             IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
             symGen.createIcon("GFFP...-------X", null);
-            fail("Should raise an IllegalArgumentException");
+            Assert.fail("Should raise an IllegalArgumentException");
         }
         catch (Exception e)
         {
@@ -164,7 +164,7 @@ public class PointGraphicRetrievalTest extends TestCase
                 sidc.setCharAt(3, status);
 
                 BufferedImage img = symGen.createIcon(sidc.toString(), null);
-                assertNotNull("Icon " + s.toLowerCase() + "-----.png not found.", img);
+                Assert.assertNotNull("Icon " + s.toLowerCase() + "-----.png not found.", img);
             }
         }
     }
@@ -182,7 +182,7 @@ public class PointGraphicRetrievalTest extends TestCase
         for (String s : MilStd2525PointGraphic.getMetocGraphics())
         {
             img = symGen.createIcon(s, params);
-            assertNotNull("Icon " + s.toLowerCase() + ".png not found.", img);
+            Assert.assertNotNull("Icon " + s.toLowerCase() + ".png not found.", img);
         }
     }
 
