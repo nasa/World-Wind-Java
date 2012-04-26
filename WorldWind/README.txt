@@ -80,7 +80,7 @@ New features and improvements in World Wind Java SDK 1.2.0 - July 19, 2011
   - Adds support for most common image and elevation data formats.
   - Reduces the hard drive footprint and time required to import large datasets.
 
-- Bulk download / cache building support for surface image layers, place name layer, and selevation models.
+- Bulk download / cache building support for surface image layers, place name layer, and elevation models.
 - Screen credit support for surface image layers.
 - New high resolution topographic maps for the United States.
 - High resolution NAIP imagery for the United States.
