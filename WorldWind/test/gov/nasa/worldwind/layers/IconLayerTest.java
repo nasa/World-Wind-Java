@@ -10,6 +10,8 @@ import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.render.*;
 import gov.nasa.worldwind.view.orbit.BasicOrbitView;
 
+import java.util.*;
+
 /**
  * @author dcollins
  * @version $Id$
@@ -293,12 +295,21 @@ public class IconLayerTest extends junit.framework.TestCase
         }
         else
         {
-            java.util.Iterator<WWIcon> expectedIter = expected.iterator(), actualIter = actual.iterator();
-            // Compare the elements in each iterator, as long as they both have elements.
-            while (expectedIter.hasNext() && actualIter.hasNext())
-                assertEquals(message, expectedIter.next(), actualIter.next());
-            // If either iterator has more elements, then their lengths are different.
-            assertFalse(message, expectedIter.hasNext() || actualIter.hasNext());
+            // Since actual may contain duplicates, make a Set that eliminates duplicates.
+            Set<WWIcon> actualSet = new HashSet<WWIcon>();
+            for (WWIcon wwIcon : actual)
+                actualSet.add(wwIcon);
+
+            // Test that all the expected are in the actual. Order does not matter.
+            int count = 0;
+            for (WWIcon wwIcon : expected)
+            {
+                ++count;
+                assertTrue(actualSet.contains(wwIcon));
+            }
+
+            // Test that actual and expected contain the same number of icons.
+            assertTrue(actualSet.size() == count);
         }
     }
 
