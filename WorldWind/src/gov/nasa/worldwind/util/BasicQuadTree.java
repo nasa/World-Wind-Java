@@ -252,7 +252,8 @@ public class BasicQuadTree<T> extends BitSetQuadTreeFilter implements Iterable<T
     }
 
     /**
-     * Returns an iterator over the items in the tree. There is no specific iteration order.
+     * Returns an iterator over the items in the tree. There is no specific iteration order and the iterator may
+     * return duplicate entries.
      * <p/>
      * <em>Note</em> The {@link java.util.Iterator#remove()} operation is not supported.
      *

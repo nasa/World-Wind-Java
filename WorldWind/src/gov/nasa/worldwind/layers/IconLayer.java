@@ -153,12 +153,15 @@ public class IconLayer extends AbstractLayer
      * Returns the Iterable of Icons currently in use by this layer. If the caller has specified a custom Iterable via
      * {@link #setIcons}, this will returns a reference to that Iterable. If the caller passed <code>setIcons</code> a
      * null parameter, or if <code>setIcons</code> has not been called, this returns a view of this layer's internal
-     * collection of Icons.
+     * collection of Icons. The view has no definitive order and may contain duplicate entries.
      *
      * @return Iterable of currently active Icons.
      */
     public Iterable<WWIcon> getIcons()
     {
+        if (this.iconsOverride != null)
+            return this.iconsOverride;
+        
         if (this.icons != null)
             return this.icons;
 
