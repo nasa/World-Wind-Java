@@ -182,14 +182,30 @@ public class EchelonSymbol extends AbstractTacticalSymbol
 
     /** Overridden to apply rotation. */
     @Override
-    protected void prepareToDraw(DrawContext dc)
+    protected void drawIcon(DrawContext dc)
     {
-        super.prepareToDraw(dc);
-
-        if (this.rotation != null)
+        boolean matrixPushed = false;
+        GL gl = dc.getGL();
+        try
         {
-            GL gl = dc.getGL();
-            gl.glRotated(this.rotation.degrees, 0, 0, 1);
+            if (this.rotation != null)
+            {
+                gl.glPushMatrix();
+                gl.glRotated(this.rotation.degrees, 0, 0, 1);
+                matrixPushed = true;
+            }
+
+            // Don't depth buffer the echelon symbol. It should behave the same as text.
+            gl.glDisable(GL.GL_DEPTH_TEST);
+
+            super.drawIcon(dc);
+        }
+        finally
+        {
+            gl.glEnable(GL.GL_DEPTH_TEST);
+
+            if (matrixPushed)
+                gl.glPopMatrix();
         }
     }
 
