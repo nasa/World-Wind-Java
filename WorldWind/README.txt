@@ -26,7 +26,7 @@ World Wind Forum:
 http://forum.worldwindcentral.com/forumdisplay.php?f=37
 
 World Wind API Documentation:
-http://builds.worldwind.arc.nasa.gov/worldwind-releases/1.2/docs/api/index.html
+http://builds.worldwind.arc.nasa.gov/worldwind-releases/1.3/docs/api/index.html
 
 World Wind Bug Base:
 http://issues.worldwind.arc.nasa.gov/secure/IssueNavigator.jspa?reset=true&pid=10021&status=1
@@ -51,6 +51,12 @@ problems is an out-of-date graphics driver. To get an updated driver, visit your
 This will most likely be either NVIDIA, ATI or Intel. The drivers are typically under a link named "Downloads" or
 "Support". If your computer is a laptop, then updated drivers are probably at the laptop manufacturer's web site rather
 than the graphics card manufacturer's.
+
+
+New features and improvements in World Wind Java SDK 1.3.0 - April 27, 2012
+------------------------------------------------------------
+- 2525C Symbology
+- KML NetworkLinkControl and Update
 
 
 New features and improvements in World Wind Java SDK 1.2.0 - July 19, 2011

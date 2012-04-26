@@ -73,7 +73,7 @@ Here is an example of a sample WWJ-based Java WebStart application that refers o
 
         <jar href="MyWWJDemo.jar" main="true"/>
 
-        <extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/>
+        <extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.3.0/webstart/worldwind.jnlp"/>
 
         <extension name="gdal" href="http://worldwind.arc.nasa.gov/java/gdal/webstart/gdal.jnlp"/>
 
