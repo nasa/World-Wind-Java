@@ -53,16 +53,23 @@ This will most likely be either NVIDIA, ATI or Intel. The drivers are typically 
 than the graphics card manufacturer's.
 
 
-Using World Wind on Windows 64-bit
-----------------------------------
+Using World Wind on Windows or Linux 64-bit
+-------------------------------------------
 
-To run World Wind on Windows with a 64-bit Java Virtual Machine, you must extract the 64-bit libraries:
+To run World Wind on Windows with a 64-bit Java Virtual Machine, you must extract the 64-bit native libraries:
     1) Open a terminal.
     2) cd to the World Wind release folder.
     3) jar xf jogl-natives-windows-amd64.jar
     4) jar xf gluegen-rt-natives-windows-amd64.jar
 
 This will replace the 32-bit JOGL libraries with 64-bit libraries.
+
+64-bit libraries for Linux are not included with the release, but can be downloaded from:
+
+http://worldwind.arc.nasa.gov/java/jogl/webstart/jogl-natives-linux-amd64.jar
+http://worldwind.arc.nasa.gov/java/jogl/webstart/gluegen-rt-natives-linux-amd64.jar
+
+Follow instructions above to extract the archives into the World Wind release folder.
 
 
 New features and improvements in World Wind Java SDK 1.3.0 - April 27, 2012
