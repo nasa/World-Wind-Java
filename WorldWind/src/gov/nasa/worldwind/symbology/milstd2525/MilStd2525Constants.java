@@ -20,9 +20,9 @@ public interface MilStd2525Constants
 {
     /**
      * The default location that MIL-STD-2525 tactical symbols and tactical point graphics retrieve their icons from:
-     * http://http://worldwindserver.net/milstd2525c/rev1
+     * http://worldwind.arc.nasa.gov/milstd2525c/rev1/
      */
-    final String DEFAULT_ICON_RETRIEVER_PATH = "http://worldwindserver.net/milstd2525c/rev1/";
+    final String DEFAULT_ICON_RETRIEVER_PATH = "http://worldwind.arc.nasa.gov/milstd2525c/rev1/";
 
     // Color RGB values from MIL-STD-2525C Table XIII, pg. 44.
     /** Default material used to color tactical graphics that represent friendly entities. */
