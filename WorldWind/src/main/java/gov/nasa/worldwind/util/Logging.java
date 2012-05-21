@@ -25,7 +25,7 @@ import java.util.logging.*;
  */
 public class Logging
 {
-    protected static final String MESSAGE_BUNDLE_NAME = Logging.class.getPackage().getName() + ".MessageStrings";
+    protected static final String MESSAGE_BUNDLE_NAME = "config.i18n.MessageStrings";
     protected static final int MAX_MESSAGE_REPEAT = Configuration.getIntegerValue(AVKey.MAX_MESSAGE_REPEAT, 10);
 
     private Logging()
