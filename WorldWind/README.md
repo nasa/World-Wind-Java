@@ -56,8 +56,8 @@ This will replace the 32-bit JOGL libraries with 64-bit libraries.
 
 64-bit libraries for Linux are not included with the release, but can be downloaded from:
 
-http://worldwind.arc.nasa.gov/java/jogl/webstart/jogl-natives-linux-amd64.jar
-http://worldwind.arc.nasa.gov/java/jogl/webstart/gluegen-rt-natives-linux-amd64.jar
+* http://worldwind.arc.nasa.gov/java/jogl/webstart/jogl-natives-linux-amd64.jar
+* http://worldwind.arc.nasa.gov/java/jogl/webstart/gluegen-rt-natives-linux-amd64.jar
 
 Follow instructions above to extract the archives into the World Wind release folder.
 
