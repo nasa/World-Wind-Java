@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>worldwind</artifactId>
+    <name>worldwind</name>
+    <groupId>gov.nasa.worldwind</groupId>
+    <packaging>jar</packaging>
+    <version>1.3.0</version>
+    <url>http://worldwind.arc.nasa.gov/java/index.html</url>
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jogl.version>1.1.1a</jogl.version>
+        <gluegen.version>1.0</gluegen.version>
+        <gdal.version>1.7.2</gdal.version>
+    </properties>
+    
+    <licenses>
+        <license>
+            <distribution>repo</distribution>
+            <name>NASA OPEN SOURCE AGREEMENT VERSION 1.3</name>
+            <url>http://worldwind.arc.nasa.gov/worldwind-nosa-1.3.html</url>
+        </license>
+    </licenses>
+    
+    <issueManagement>
+        <system>Worldwind java forums</system>
+        <url>http://forum.worldwindcentral.com/forumdisplay.php?f=37</url>
+    </issueManagement>
+    
+    <developers>
+        <developer>
+            <id>patrick.hogan</id>
+            <name>Patrick Hogan</name>
+            <email>patrick.hogan@nasa.gov</email>
+            <roles>
+                <role>Project Manager</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <repositories>
+        <repository>
+            <id>mxtelecom-repo</id>
+            <name>MX Telecom Repository</name>
+            <url>http://opensource.mxtelecom.com/maven/repo</url>
+        </repository>
+    </repositories>
+    
+    <build>
+       <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>2.8.1</version>
+                            <configuration>
+                                <javadocVersion>1.5</javadocVersion>
+                                <aggregate>true</aggregate>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>changelog-maven-plugin</artifactId>
+                            <version>2.0-beta-1</version>
+                            <configuration>
+                                <type>range</type>
+                                <range>30</range>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-checkstyle-plugin</artifactId>
+                            <version>2.9.1</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.4</version>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    
+    <profiles>
+        <profile>
+            <id>windows-x86</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <properties>
+                <operating-system>windows-i586</operating-system>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows-x86_64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>x86_64</arch>
+                </os>
+            </activation>
+            <properties>
+                <operating-system>windows-amd64</operating-system>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-x86</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>i386</arch>
+                </os>
+            </activation>
+            <properties>
+                <operating-system>linux-i586</operating-system>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-x86_64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <operating-system>linux-amd64</operating-system>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <!-- Runtime dependencies -->
+        <dependency>
+            <groupId>sun.plugin</groupId>
+            <artifactId>plugin</artifactId>
+            <version>1.6</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/lib/plugin.jar</systemPath>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.java.dev.jogl</groupId>
+            <artifactId>jogl-${operating-system}</artifactId>
+            <version>${jogl.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>net.java.dev.gluegen</groupId>
+            <artifactId>gluegen-rt-${operating-system}</artifactId>
+            <version>${gluegen.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.gdal</groupId>
+            <artifactId>gdal-${operating-system}</artifactId>
+            <version>${gdal.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.wapmx.native</groupId>
+            <artifactId>mx-native-loader</artifactId>
+            <version>1.2</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.6</version>
+        </dependency>
+        
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
