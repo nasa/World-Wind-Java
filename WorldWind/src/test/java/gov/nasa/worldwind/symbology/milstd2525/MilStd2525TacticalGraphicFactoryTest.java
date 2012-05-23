@@ -6,7 +6,10 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for {@link MilStd2525GraphicFactory}.
@@ -16,17 +19,17 @@ import junit.framework.TestCase;
  */
 public class MilStd2525TacticalGraphicFactoryTest
 {
-    @org.junit.Test
+    @Test
     public void testGraphicSupported() throws IllegalAccessException
     {
         MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
-        TestCase.assertTrue(factory.isSupported("GFGPGLP----AUSX"));
+        assertTrue(factory.isSupported("GFGPGLP----AUSX"));
     }
 
-    @org.junit.Test
+    @Test
     public void testGraphicNotSupported() throws IllegalAccessException
     {
         MilStd2525GraphicFactory factory = new MilStd2525GraphicFactory();
-        TestCase.assertFalse(factory.isSupported("GFGPXXX----AUSX")); // Non-existent function ID.
+        assertFalse(factory.isSupported("GFGPXXX----AUSX")); // Non-existent function ID.
     }
 }

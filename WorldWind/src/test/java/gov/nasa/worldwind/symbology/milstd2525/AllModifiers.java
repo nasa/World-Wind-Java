@@ -14,8 +14,8 @@ import gov.nasa.worldwind.symbology.TacticalSymbol;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.util.Arrays;
 
 /**
  * Test program that renders MIL-STD-2525C symbols with all combinations of graphic modifiers.

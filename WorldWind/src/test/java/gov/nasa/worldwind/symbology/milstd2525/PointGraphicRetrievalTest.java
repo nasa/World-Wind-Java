@@ -6,17 +6,24 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.Configuration;
-import gov.nasa.worldwind.avlist.*;
-import gov.nasa.worldwind.symbology.IconRetriever;
-import org.junit.Assert;
+import junit.framework.Assert;
 
-import java.awt.image.*;
+import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.avlist.AVKey;
+import gov.nasa.worldwind.avlist.AVList;
+import gov.nasa.worldwind.avlist.AVListImpl;
+import gov.nasa.worldwind.symbology.IconRetriever;
+
+import java.awt.image.BufferedImage;
+
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @author pabercrombie
  * @version $Id$
  */
+@Ignore
 public class PointGraphicRetrievalTest
 {
     // This path should correspond to the location of the appropriate symbology source icons on your system
@@ -31,7 +38,7 @@ public class PointGraphicRetrievalTest
     // server and the local file system.
     //////////////////////////////////////////////////////////
 
-    @org.junit.Test
+    @Test
     public void testServerRetrieval()
     {
         IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
@@ -44,7 +51,7 @@ public class PointGraphicRetrievalTest
     // MilStd2525 SymCodes should be exactly 15 characters.
     //////////////////////////////////////////////////////////
 
-    @org.junit.Test
+    @Test
     public void testParseCodeTooShort()
     {
         try
@@ -58,7 +65,7 @@ public class PointGraphicRetrievalTest
         }
     }
 
-    @org.junit.Test
+    @Test
     public void testParseCodeTooLong()
     {
         try
@@ -72,7 +79,7 @@ public class PointGraphicRetrievalTest
         }
     }
 
-    @org.junit.Test
+    @Test
     public void testParseNullCode()
     {
         try
@@ -92,7 +99,7 @@ public class PointGraphicRetrievalTest
     // TODO: is this correct?
     //////////////////////////////////////////////////////////
 
-    @org.junit.Test
+    @Test
     public void testInvalidCodingScheme()
     {
         try
@@ -106,7 +113,7 @@ public class PointGraphicRetrievalTest
         }
     }
 
-    @org.junit.Test
+    @Test
     public void testInvalidStandardIdentity()
     {
         try
@@ -120,7 +127,7 @@ public class PointGraphicRetrievalTest
         }
     }
 
-    @org.junit.Test
+    @Test
     public void testInvalidStatus()
     {
         try
@@ -134,7 +141,7 @@ public class PointGraphicRetrievalTest
         }
     }
 
-    @org.junit.Test
+    @Test
     public void testInvalidFunctionID()
     {
         try
@@ -149,7 +156,7 @@ public class PointGraphicRetrievalTest
     }
 
     /** Test for the presence and retrieval of a every tactical point graphic */
-    @org.junit.Test
+    @Test
     public void testTacticalGraphicRetrieval()
     {
         IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
@@ -172,7 +179,7 @@ public class PointGraphicRetrievalTest
     /*
      * Test for the presence and retrieval of a every possible Meteorological point graphic
      */
-    @org.junit.Test
+    @Test
     public void testMeteorologicalSymbolRetrieval()
     {
         IconRetriever symGen = new MilStd2525PointGraphicRetriever(ICON_RETRIEVER_PATH);
@@ -184,10 +191,5 @@ public class PointGraphicRetrievalTest
             img = symGen.createIcon(s, params);
             Assert.assertNotNull("Icon " + s.toLowerCase() + ".png not found.", img);
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(PointGraphicRetrievalTest.class));
     }
 }

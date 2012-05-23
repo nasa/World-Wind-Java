@@ -8,17 +8,26 @@ package gov.nasa.worldwind.symbology.milstd2525;
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
 import gov.nasa.worldwind.geom.Position;
-import gov.nasa.worldwind.layers.*;
+import gov.nasa.worldwind.layers.Layer;
+import gov.nasa.worldwind.layers.RenderableLayer;
 import gov.nasa.worldwind.render.Renderable;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.TacticalSymbol;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 
 /**
  * @author dcollins

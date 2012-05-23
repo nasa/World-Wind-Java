@@ -8,15 +8,18 @@ package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.Configuration;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.symbology.*;
-import gov.nasa.worldwind.symbology.milstd2525.MilStd2525TacticalSymbol;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.TacticalSymbol;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * @author ccrick

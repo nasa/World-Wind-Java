@@ -7,9 +7,11 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.symbology.milstd2525.graphics.TacGrpSidc;
-import org.junit.Assert;
 
 import java.lang.reflect.Field;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Test parsing of all SIDC constants declared in {@link TacGrpSidc}.
@@ -30,7 +32,7 @@ public class TacGrpSidcTest
     protected static final char[] ALL_ECHELON = {'-', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
         'N'};
 
-    @org.junit.Test
+    @Test
     public void testParse() throws IllegalAccessException
     {
         // TacGrpSidc declares constants for each SIDC. Grab all of these fields and make
@@ -57,10 +59,5 @@ public class TacGrpSidcTest
                 }
             }
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(TacGrpSidcTest.class));
     }
 }

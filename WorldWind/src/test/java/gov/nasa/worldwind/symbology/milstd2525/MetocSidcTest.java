@@ -7,10 +7,12 @@
 package gov.nasa.worldwind.symbology.milstd2525;
 
 import gov.nasa.worldwind.symbology.milstd2525.graphics.MetocSidc;
-import junit.framework.TestCase;
-import org.junit.Test;
 
 import java.lang.reflect.Field;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test parsing of all SIDC constants declared in {@link MetocSidc}.
@@ -32,12 +34,7 @@ public class MetocSidcTest
             String sidc = (String) f.get(null);
 
             SymbolCode code = new SymbolCode(sidc);
-            TestCase.assertEquals(sidc, code.toString());
+            assertEquals(sidc, code.toString());
         }
-    }
-
-    public static void main(String[] args)
-    {
-        new junit.textui.TestRunner().doRun(new junit.framework.TestSuite(MetocSidcTest.class));
     }
 }

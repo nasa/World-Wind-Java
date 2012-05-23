@@ -6,21 +6,36 @@
 
 package gov.nasa.worldwind.symbology.milstd2525;
 
-import gov.nasa.worldwind.*;
+import gov.nasa.worldwind.Configuration;
+import gov.nasa.worldwind.WorldWindow;
 import gov.nasa.worldwind.avlist.AVKey;
-import gov.nasa.worldwind.geom.*;
+import gov.nasa.worldwind.geom.Angle;
+import gov.nasa.worldwind.geom.Position;
 import gov.nasa.worldwind.layers.RenderableLayer;
-import gov.nasa.worldwind.render.*;
-import gov.nasa.worldwind.symbology.*;
+import gov.nasa.worldwind.render.Material;
+import gov.nasa.worldwind.render.Renderable;
+import gov.nasa.worldwind.symbology.BasicTacticalGraphicAttributes;
+import gov.nasa.worldwind.symbology.SymbologyConstants;
+import gov.nasa.worldwind.symbology.TacticalGraphic;
+import gov.nasa.worldwind.symbology.TacticalGraphicAttributes;
+import gov.nasa.worldwind.symbology.TacticalPoint;
 import gov.nasa.worldwind.util.WWUtil;
 import gov.nasa.worldwindx.examples.ApplicationTemplate;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 /**
  * Display all MIL-STD-2525 point graphics in a grid so that a human operator can confirm that they are rendered

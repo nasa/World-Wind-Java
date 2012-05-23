@@ -6,12 +6,17 @@
 
 package gov.nasa.worldwind.render;
 
-import gov.nasa.worldwind.WorldWind;
-import gov.nasa.worldwind.geom.*;
-import gov.nasa.worldwind.globes.*;
 import junit.framework.TestCase;
 
-import java.util.*;
+import gov.nasa.worldwind.WorldWind;
+import gov.nasa.worldwind.geom.Extent;
+import gov.nasa.worldwind.geom.Position;
+import gov.nasa.worldwind.geom.Sector;
+import gov.nasa.worldwind.globes.Earth;
+import gov.nasa.worldwind.globes.Globe;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Unit tests for {@link Polygon}.

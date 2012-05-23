@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Enclosed.class)
-@Ignore
+@Ignore // This test takes very long to execute, ignoring it for the time-being.
 public class IconRetrievalTest
 {
     // TODO: test all possible values for Standard Identity and Status
