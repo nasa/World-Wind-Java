@@ -2,7 +2,7 @@ This document provides links on getting started with the World Wind Java SDK, pr
 World Wind demo application, and outlines the key changes between each World Wind Java SDK release.
 
 Getting Started With the World Wind Java SDK
---------------------------------------------
+============================================
 
 Key files and folders in the World Wind Java SDK:
 * build.xml: Apache ANT build file for the World Wind Java SDK.
@@ -24,12 +24,14 @@ Running a Basic Demo Application
 --------------------------------
 
 To run the basic demo on Mac OS X or Linux:
+
 1. Open a terminal.
 2. cd to the World Wind release folder.
 3. `chmod +x run-demo.bash`
 4. `./run-demo.bash gov.nasa.worldwindx.examples.ApplicationTemplate`
 
 To run the basic demo on Windows:
+
 1. Open a command prompt.
 2. cd to the World Wind release folder.
 3. `run-demo.bat gov.nasa.worldwindx.examples.ApplicationTemplate`
@@ -44,6 +46,7 @@ Using World Wind on Windows or Linux 64-bit
 -------------------------------------------
 
 To run World Wind on Windows with a 64-bit Java Virtual Machine, you must extract the 64-bit native libraries:
+
 1. Open a terminal.
 2. cd to the World Wind release folder.
 3. `jar xf jogl-natives-windows-amd64.jar`
@@ -58,13 +61,16 @@ http://worldwind.arc.nasa.gov/java/jogl/webstart/gluegen-rt-natives-linux-amd64.
 
 Follow instructions above to extract the archives into the World Wind release folder.
 
-New features and improvements in World Wind Java SDK 1.3.0 - April 27, 2012
----------------------------------------------------------------------------
+New Features and Improvements
+=============================
+
+World Wind Java SDK 1.3.0 - April 27, 2012
+------------------------------------------
 * 2525C Symbology
 * KML NetworkLinkControl and Update
 
-New features and improvements in World Wind Java SDK 1.2.0 - July 19, 2011
---------------------------------------------------------------------------
+World Wind Java SDK 1.2.0 - July 19, 2011
+-----------------------------------------
 
 * KML file parsing and display.
 * Improved Shapefile parsing and display performance.
