@@ -31,12 +31,14 @@ To build or reconstruct the VPF symbols JAR file for the World Wind Java SDK, fo
 1. Download and extract the GeoSym Second Edition package.
 Download the GeoSym archive from the [National Geospatial-Intelligence Agency (NGA)](http://www.gwg.nga.mil/pfg_documents.php),
 then extract it to a folder named _GeoSymEd2Final_:
+
 2. Create a new directory structure to hold the contents of the VPF symbols JAR file as follows:
 ```
 geosym/
 geosym/graphics/bin
 geosym/symasgn/ascii
 ```
+
 3. Convert all Geosym images from CGW format to PNG format.
 Convert all images under the folder _GeoSymEd2Final/GRAPHICS/BIN_ from CGM to PNG format. Pad the PNG files to the next
 largest power-of-two, adding extra transparent pixels out from the image's center. Place the PNG files under the
@@ -45,13 +47,16 @@ The PNG images in the current version of vpf-symbols.jar were created by (a) con
 images using CorelDRAW Graphics Suite X4, (b) converting the TIFF images to PNG images using the open source application
 tiff2png version 0.91, and (c) padding the images to the next largest power-of-two using a simple Java application built 
 on ImageIO.
+
 4. Copy all GeoSym style tables.
 Copy all files under the directory _GeoSymEd2Final/SYMASGN/ASCII_ to the directory _geosym/symasgn/ascii_.
+
 5. Convert GeoSym line and area styles to World Wind shape attributes.
 Run the Java application gov.nasa.worldwind.formats.vpf.GeoSymAttributeConverter from the shell, passing the full path
 to _GeoSymEd2Final/GRAPHICS/TEXT_ as the application's only parameter. Copy the output PNG files under
 _gsac-out/geosym/graphics/bin_ to the following directory created earlier: _geosym/graphics/bin_. Copy the output CSV
 files under _gsac-out/geosym/symasgn/ascii_ to the following directory created earlier: _geosym/symasgn/ascii_.
+
 6. Create the VPF symbols JAR file:
 Execute the following shell command from the parent directory of the _geosym_ directory structure created earlier,
 making sure that a Java SDK is on the path: `jar -cf vpf-symbols.jar geosym`
