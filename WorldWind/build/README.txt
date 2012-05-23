@@ -10,7 +10,7 @@ These are the Build scripts for NASA World Wind Java SDK.
 These scripts are intended to be used by developers wishing to update/modify the World Wind source files, and recompile
 or re-generate a fresh worldwind.jar
 
-By default, the initial worldwind.jar file should be runnable simply by uzipping worldwind-1.2.0.xx.yyyy.zip into a
+By default, the initial worldwind.jar file should be runnable simply by uzipping worldwind-1.3.0.xx.yyyy.zip into a
 local folder (to be referenced as WORLDWIND_HOME) and launching it with java:
 
 	java -jar WORLDWIND_HOME/worldwind.jar

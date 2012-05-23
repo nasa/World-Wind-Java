@@ -17,6 +17,8 @@
     <import file="build/demosite.xml"/>
     <!-- Import the World Wind native native library targets. -->
     <import file="build/native.xml"/>
+    <!-- Import the World Wind resource targets. -->
+    <import file="build/resources.xml"/>
     <!-- Import the World Wind general utility targets. -->
     <import file="build/util.xml"/>
     <!-- Import the World Wind Server Applications targets. -->
@@ -49,8 +51,10 @@
                target="${worldwind.jdk.version}"
                fork="true"
                includeantruntime="false"
+               encoding="ISO-8859-1"
                memoryMaximumSize="512m">
             <classpath>
+	        <pathelement location="lib-external/jackson/jackson-core-asl-1.9.6.jar"/>
                 <pathelement location="jogl.jar"/>
                 <pathelement location="gluegen-rt.jar"/>
                 <pathelement location="gdal.jar"/>
@@ -70,7 +74,8 @@
                  overview="${worldwind.src.dir}/overview.html"
                  windowtitle="NASA World Wind" doctitle="NASA World Wind API" header="NASA World Wind"
                  splitindex="true" protected="true" nodeprecated="true" version="false" author="false" use="true"
-                 maxmemory="512m">
+                 maxmemory="512m"
+		 encoding="ISO-8859-1">
             <packageset dir="${worldwind.src.dir}" defaultexcludes="yes">
                 <include name="gov/nasa/worldwind/**"/>
                 <include name="gov/nasa/worldwindx/**"/>
@@ -107,7 +112,6 @@
             <fileset dir="${worldwind.classes.dir}">
                 <include name="gov/nasa/worldwind/**/*.class"/>
                 <include name="com/zebraimaging/**/*.class"/>
-                <include name="org/codehaus/jackson/**/*.class"/>
                 <type type="file"/>
             </fileset>
             <!-- Include the MessageStrings properties files, and all resource files under the config and images
@@ -212,6 +216,8 @@
                                       clean.worldwind.release,
                                       clean.demosite.all,
                                       clean.native.all,
+                                      clean.resources.all,
+                                      clean.build.util.all,
                                       clean.servers.all"
             description="Main clean target for the World Wind Java SDK. Removes all files and directories created by all World Wind build targets."/>
 

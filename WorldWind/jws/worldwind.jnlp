@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--$Id$-->
 <jnlp spec="1.0"
-      codebase="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/"
+      codebase="http://worldwind.arc.nasa.gov/java/1.3.0/webstart/"
       href="worldwind.jnlp">
     <information>
         <title>NASA World Wind Java</title>
         <vendor>NASA</vendor>
         <homepage href="http://worldwind.arc.nasa.gov/java"/>
-        <description>NASA World Wind Java version 1.2.0</description>
+        <description>NASA World Wind Java version 1.3.0</description>
         <description kind="short">NASA World Wind Planetary Visualization Software Library</description>
         <offline-allowed/>
     </information>
@@ -19,18 +19,26 @@
         <j2se href="http://java.sun.com/products/autodl/j2se" version="1.6+" initial-heap-size="512m"
               max-heap-size="512m"/>
         <property name="sun.java2d.noddraw" value="true"/>
+        <!-- Add worldwind.jar to the class path. All World Wind applications depend on this JAR file. -->
         <jar href="worldwind.jar"/>
+        <!-- Add gdal.jar to the class path. World Wind must include the GDAL JAR file on its class path, even if the
+             GDAL native libraries are not used. We include the GDAL JAR file at the GDAL webstart site to avoid a
+             version conflict should the application choose to include the GDAL JNLP file in order to use the GDAL
+             native libraries. -->
+        <jar href="http://worldwind.arc.nasa.gov/java/gdal/webstart/gdal.jar"/>
+        <!-- Add the JOGL webstart JNLP file as an extension of this JNLP file. World Wind depends on the JOGL library
+             to communicate with the platform native OpenGL libraries. -->
         <extension name="jogl" href="http://worldwind.arc.nasa.gov/java/jogl/webstart/jogl.jnlp"/>
     </resources>
 
-    <!--Include the WebView native library JAR archive for all Mac OS X platforms.-->
-    <!--The WebView libraries are required by World Wind BrowserBalloons.-->
+    <!-- Include the WebView native library JAR archive for all Mac OS X platforms. The WebView libraries are required by
+         World Wind BrowserBalloons. -->
     <resources os="Mac OS X">
         <nativelib href="webview-natives-macosx.jar"/>
     </resources>
 
-    <!--Include the WebView native library JAR archive for Windows 32-bit and 64-bit platforms.-->
-    <!--The WebView libraries are required by World Wind BrowserBalloons.-->
+    <!-- Include the WebView native library JAR archive for Windows 32-bit and 64-bit platforms. The WebView libraries
+         are required by World Wind BrowserBalloons. -->
     <resources os="Windows">
         <nativelib href="webview-natives-windows.jar"/>
     </resources>

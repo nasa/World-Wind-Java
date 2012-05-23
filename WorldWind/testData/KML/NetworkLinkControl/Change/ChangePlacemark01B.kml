@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test Suite for local NetworkLinkControl. -->
+<!--$Id$-->
+<kml xmlns="http://www.opengis.net/kml/2.2">
+    <Folder>
+        <Placemark id="targetPlacemark">
+            <name>Target Placemark</name>
+            <Point>
+                <coordinates>-111,36</coordinates>
+            </Point>
+        </Placemark>
+    </Folder>
+</kml>

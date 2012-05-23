@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--$Id$-->
 <jnlp spec="1.0"
-      codebase="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/"
+      codebase="http://worldwind.arc.nasa.gov/java/1.3.0/webstart/"
       href="WorldWindDiagnostics.jnlp">
     <information>
         <title>World Wind Diagnostics Program</title>
@@ -20,7 +20,7 @@
               max-heap-size="512m"/>
         <property name="sun.java2d.noddraw" value="true"/>
         <jar href="worldwindx.jar" main="true"/>
-        <extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.2.0/webstart/worldwind.jnlp"/>
+        <extension name="worldwind" href="http://worldwind.arc.nasa.gov/java/1.3.0/webstart/worldwind.jnlp"/>
     </resources>
     <application-desc main-class="gov.nasa.worldwindx.examples.WorldWindDiagnostics"/>
 </jnlp>
