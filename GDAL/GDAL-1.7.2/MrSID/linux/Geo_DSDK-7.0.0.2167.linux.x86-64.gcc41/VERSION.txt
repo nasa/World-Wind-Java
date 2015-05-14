@@ -1,4 +1,0 @@
-Name:       GeoExpress Decode SDK
-Version:    7.0.0.2167
-Platform:   linux.x86-64.gcc41
-Build type: Release
