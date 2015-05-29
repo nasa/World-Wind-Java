@@ -19,7 +19,7 @@ public class GLDisplay
     private static final int DEFAULT_HEIGHT = 780;
 
     private static final int DONT_CARE = -1;
-    private static final String appTitle = "Vertex buffer objects";
+    private static final String appTitle = "Vertex buffer objects - String Modified for Lingoport.WorldWind";
 
     private JFrame frame;
     private GLCanvas glCanvas;
