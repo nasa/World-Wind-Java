@@ -1,2 +1,0 @@
-java -Xmx512M -Djava.awt.headless=true -Dsun.java2d.noddraw=true -Djava.util.logging.config.file=wms.logging.properties -classpath .;lib\worldwind-servers.jar;lib\worldwind.jar;lib\jogl.jar;lib\gluegen-rt.jar; -Djava.library.path=lib gov.nasa.worldwind.servers.app.ApplicationServerLauncher
-    
