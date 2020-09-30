@@ -16,4 +16,4 @@ the 'WWAndroid' folder contains the World Wind Android SDK project. Many resourc
 - examples: Contains example applications that use the World Wind Android SDK.
 
 trunk/GDAL
-The 'GDAL' folder contains the GDAL native library project. This project produces the GDAL native libraries used by the World Wind Java SDK (see WorldWind/lib-external/gdal). The GDAL native library project contains detailed instructions for building the GDAL native libraries on the three supported platforms: Linux, Mac OS X, and Windows.
+The 'GDAL' folder contains the GDAL native library project. This project produces the GDAL native libraries used by the World Wind Java SDK (see WorldWind/lib-external/gdal). The GDAL native library project contains detailed instructions for building the GDAL native libraries on the three supported platforms: Linux, macOS X, and Windows.
