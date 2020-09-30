@@ -1,6 +1,6 @@
-$Id$
+********************************OVER VIEW*******************************8
 
-This file explains the organization of the World Wind Subversion repository's trunk directories, and briefly outlines their contents.
+This file explains the Organization of the World Wind Subversion repository's trunk directories, and briefly outlines their contents.
 
 trunk/WorldWind
 The 'WorldWind' folder contains the World Wind Java SDK project. Many resources are available at http://oneworldwind.org to help you understand and use World Wind. Key files and folders in the World Wind Java SDK:
